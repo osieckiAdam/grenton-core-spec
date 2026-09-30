@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Status** | Projekt (do implementacji) |
-| **Wersja** | 0.5.1 |
+| **Wersja** | 0.6.0 |
 | **Data** | 2026-09-30 |
 | **Implementacja referencyjna** | `homeassistant-grenton` (Python, integracja Home Assistant) |
 | **Przeznaczenie** | Specyfikacja niezależna od języka — podstawa dla portów (pierwszy: Swift) |
@@ -388,10 +388,12 @@ Datagram `clientReport` na sockecie endpointu → sparsuj wartości → wyemituj
 
 | Pętla | Interwał | Działanie |
 |---|---|---|
-| **Ping** | co **5 s** | `checkAlive()` do każdego CLU; porażka → log warning (sesja żyje dalej — pojedynczy zgubiony ping to norma UDP) |
-| **Re-rejestracja** | co **45 s** | pełny `register(keys)` od nowa (nowe sockety; `sessionId` zawsze 0). Pełni dwie funkcje: odnowienie „leasingu" subskrypcji po stronie CLU oraz okresową pełną resynchronizację wartości (samonaprawa po zgubionych raportach) |
+| **Ping** | **5 s** od zakończenia poprzedniego pingu pętli (odpowiedź albo timeout) | `checkAlive()`; porażka → log warning (sesja żyje dalej — pojedynczy zgubiony ping to norma UDP) |
+| **Re-rejestracja** | **45 s** od zakończenia poprzedniej rejestracji, jeżeli lista kluczy jest niepusta | pełny `register(keys)` od nowa (nowe sockety; `sessionId` zawsze 0). Pełni dwie funkcje: odnowienie „leasingu" subskrypcji po stronie CLU oraz okresową pełną resynchronizację wartości (samonaprawa po zgubionych raportach) |
 
-**Δ** W implementacji referencyjnej pętla re-rejestracji ma drobną usterkę sekwencji (sprawdza warunek przed `sleep`, przez co pierwsza iteracja może czekać 45 s mimo braku pracy). Core specyfikuje prosto: *co 45 s od zakończenia poprzedniej rejestracji, jeżeli lista kluczy jest niepusta*.
+Pętle należą do sesji: pętla pingów rusza po zakończeniu `start()` (także gdy sesja jest `degraded` — wtedy pełni rolę retry, §5.4.5), a obie kończą się w `stop()`. „Poprzednia rejestracja" to każda rejestracja sesji: jawne `register(keys)`, re-rejestracja po odzyskaniu połączenia (§5.4.5) i sama pętla; każda z nich odlicza 45 s od nowa. Wartości z re-rejestracji pętli trafiają do warstwy wyżej ścieżką raportu (§5.4.3), jak przy odzyskaniu połączenia. Interwały 5 s i 45 s są domyślne; port może pozwolić je skonfigurować (testy, tryby oszczędzania energii).
+
+**Δ** W implementacji referencyjnej pętla re-rejestracji ma drobną usterkę sekwencji (sprawdza warunek przed `sleep`, przez co pierwsza iteracja może czekać 45 s mimo braku pracy). Core specyfikuje prosto: *45 s od zakończenia poprzedniej rejestracji, jeżeli lista kluczy jest niepusta*.
 
 **Δ** Core dodaje: zmiana zbioru subskrypcji w trakcie życia sesji (doszły/ubyły urządzenia) wyzwala natychmiastową re-rejestrację, bez czekania na tik pętli. W implementacji referencyjnej zbiór jest budowany raz przy starcie.
 

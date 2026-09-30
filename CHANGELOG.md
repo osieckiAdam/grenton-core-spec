@@ -1,5 +1,25 @@
 # Changelog
 
+## Spec 0.6.0, suite 0.6.0 — 2026-09-30
+
+- §5.4.4, the maintenance loops, is now precise:
+  - the next loop ping goes 5 s after the previous loop ping ends (reply or timeout);
+  - re-registration runs 45 s after ANY registration ends: explicit, recovery or the loop itself;
+  - the ping loop starts when `start()` ends, even when the session is `degraded`, and both loops end with `stop()`;
+  - the loop's re-registration values reach the upper layer through the report path;
+  - the intervals are defaults that a port may make configurable.
+- conformance.md §4b:
+  - `session.scenario` takes optional `pingIntervalMs` and `registerIntervalMs`. An omitted interval means the port's default;
+  - `advance` jumps in one step, and a scenario crosses at most one deadline per timer and never two timers at the same instant;
+  - the scenarios that do not test the loops set both intervals to an hour.
+- New requirement id `session.loops`, and six loop scenarios (31 in total):
+  - ping cadence counted from completion;
+  - the ping loop retries a degraded session;
+  - re-registration 45 s after completion, with a report;
+  - an explicit registration restarts the wait;
+  - no re-registration without keys;
+  - nothing sent after `stop()`.
+
 ## Spec 0.5.1, suite 0.5.1 — 2026-09-30
 
 Fixes from the review of the `session` profile.

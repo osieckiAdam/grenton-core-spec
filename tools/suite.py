@@ -27,8 +27,8 @@ FIXTURES = os.path.join(CONFORMANCE, "fixtures")
 MANIFEST = os.path.join(CONFORMANCE, "manifest.json")
 
 SCHEMA_VERSION = 1
-SUITE_VERSION = "0.5.1"
-SPEC_VERSION = "0.5.1"
+SUITE_VERSION = "0.6.0"
+SPEC_VERSION = "0.6.0"
 
 # operation -> (profile, required input keys, optional input keys)
 OPERATIONS = {
@@ -45,7 +45,7 @@ OPERATIONS = {
     "coercion.truthy": ("stateless", {"value"}, set()),
     "number.format": ("stateless", {"value", "precision"}, set()),
     "mapping.interface": ("mapping", {"fixture"}, set()),
-    "session.scenario": ("session", {"clu", "responseTimeoutMs", "steps"}, set()),
+    "session.scenario": ("session", {"clu", "responseTimeoutMs", "steps"}, {"pingIntervalMs", "registerIntervalMs"}),
 }
 
 # Stable requirement ids -> spec sections (see spec/conformance.md).
@@ -60,6 +60,7 @@ REQUIREMENTS = {
     "session.correlation": "§5.4.1", "session.chunking": "§5.4.2, §5.3.2",
     "session.report-routing": "§5.4.3, §5.3.3", "session.keepalive": "§5.3.1",
     "session.lifecycle": "§5.4.5", "session.actions": "§5.3.4, §3.3",
+    "session.loops": "§5.4.4",
 }
 
 ERROR_CODES = {"crypto.invalidKeyMaterial", "provisioning.connection", "payload.unresolvedPlaceholder"}

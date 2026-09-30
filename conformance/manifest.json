@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "suiteVersion": "0.5.1",
-  "specVersion": "0.5.1",
+  "suiteVersion": "0.6.0",
+  "specVersion": "0.6.0",
   "profiles": {
     "mapping": [
       "mapping.interface"
@@ -46,6 +46,7 @@
     "session.correlation": "\u00a75.4.1",
     "session.keepalive": "\u00a75.3.1",
     "session.lifecycle": "\u00a75.4.5",
+    "session.loops": "\u00a75.4.4",
     "session.report-routing": "\u00a75.4.3, \u00a75.3.3",
     "wire.msg-id-case": "\u00a75.2",
     "wire.request": "\u00a75.2",
@@ -593,129 +594,159 @@
       "sha256": "a4365bf4fd21929e63bdc62ac2e776888d0f9e7d203ece02aa34ab3f031a6bc4"
     },
     {
+      "id": "session.scenario.a-registration-restarts-the-45-s-wait",
+      "path": "cases/session/session.scenario.a-registration-restarts-the-45-s-wait.json",
+      "sha256": "4a83f390c733bd57a8acf46a1db2b7438bcc2fdf1fd401c8fb353c2405f6ddf0"
+    },
+    {
       "id": "session.scenario.chunks-are-registered-one-after-another",
       "path": "cases/session/session.scenario.chunks-are-registered-one-after-another.json",
-      "sha256": "6c32e045936191fe4002a5751d00e2685c1f7d3b35a93241b1383cfc2bbc774f"
+      "sha256": "cee91e1d079a3ff8ee08dff249a2f2502ffed28d1c71c870d4f7be7e917d6a11"
     },
     {
       "id": "session.scenario.execute-before-start-is-not-connected",
       "path": "cases/session/session.scenario.execute-before-start-is-not-connected.json",
-      "sha256": "289605189e609c98a10a020baca32c2138224121c39ac820e82bfa83ad626a15"
+      "sha256": "533d9cda5dc43eec8a275af2cd33f3ad3be6fef5a02c0ddc41f58558b58a651f"
     },
     {
       "id": "session.scenario.execute-refuses-an-unresolved-placeholder",
       "path": "cases/session/session.scenario.execute-refuses-an-unresolved-placeholder.json",
-      "sha256": "3830d4710438f699c9defa9d709dd3cf85fafaf5cb98ef94c2666d21d951e092"
+      "sha256": "a7cf4a263256460c5fb5bcc800c65af5ca55bf9e9e2cb14bfca4dbe455d9a4b9"
     },
     {
       "id": "session.scenario.execute-sends-the-action-on-the-main-socket",
       "path": "cases/session/session.scenario.execute-sends-the-action-on-the-main-socket.json",
-      "sha256": "87df95f3d1242b109a293a6e471a78a2fd892b00626a068bd70489b528ddea9b"
+      "sha256": "654327775df487e1f2a540ba9c8fbe53830a72ec64996fa2b463b282cf572068"
     },
     {
       "id": "session.scenario.execute-times-out",
       "path": "cases/session/session.scenario.execute-times-out.json",
-      "sha256": "169869879bd8b121c7df4ce42c2a147f3b11b7a980165b1f019d50a812febc3a"
+      "sha256": "a94b29470e87166e7bf682a51cc8e0519c4e386c9f34880176a940879abbe60f"
     },
     {
       "id": "session.scenario.garbage-and-unknown-frames-are-dropped",
       "path": "cases/session/session.scenario.garbage-and-unknown-frames-are-dropped.json",
-      "sha256": "872c4e5fe1686ec45ec48dcb4de4efa93dd77b6896c730b87b6ba8d71f08451e"
+      "sha256": "3cb525cf91373853c6b967d79b1230a6f6c952066061178831b9557198893d0c"
     },
     {
       "id": "session.scenario.keep-alive-id-is-stable",
       "path": "cases/session/session.scenario.keep-alive-id-is-stable.json",
-      "sha256": "36dfe326d08bb3a82e5081bc48a90d84955872d319e87ae110d639168aa24f5b"
+      "sha256": "75a3c319eff46fb0a3666f2afbd2e40a4250424e789717ebbf07ba55be7fad7a"
     },
     {
       "id": "session.scenario.late-reply-is-dropped",
       "path": "cases/session/session.scenario.late-reply-is-dropped.json",
-      "sha256": "d0ea3ad93c0486252e5ffc56209e2f5925762fee3373db61989a24a670c95714"
+      "sha256": "dcddcac3e389f42b79f1766a10f00fa8181c2fda383e6ec5872db3a777b9b569"
+    },
+    {
+      "id": "session.scenario.loops-end-with-stop",
+      "path": "cases/session/session.scenario.loops-end-with-stop.json",
+      "sha256": "61f6444c46e52bcc721ea9ad5ac05aa8401275785cab8471bf3b34dcd3881097"
     },
     {
       "id": "session.scenario.main-socket-failure-ends-pending-requests",
       "path": "cases/session/session.scenario.main-socket-failure-ends-pending-requests.json",
-      "sha256": "a1ebb0c8f3b5db69201de042a930e9f60efe07a31d8e37932aa40f83289c4632"
+      "sha256": "4d88e3ff4e2b808af9f22a1d6e375f0f28b2aa729d3865b6135730c66ac4dac9"
+    },
+    {
+      "id": "session.scenario.no-re-registration-without-keys",
+      "path": "cases/session/session.scenario.no-re-registration-without-keys.json",
+      "sha256": "7f8cd33a270a962fca0e54bdce94c67220eddfd058e44d4da3f53fbf4873540d"
     },
     {
       "id": "session.scenario.notifications-are-routed-by-socket",
       "path": "cases/session/session.scenario.notifications-are-routed-by-socket.json",
-      "sha256": "9f38396665932375ca596eaba9b20cb04bfba4e686af4b820bea2c0fbd12035d"
+      "sha256": "db74b6effdd79a2f6851eda5afc07abbbc72a162411750b111eea7eaa7029856"
+    },
+    {
+      "id": "session.scenario.ping-loop-retries-a-degraded-session",
+      "path": "cases/session/session.scenario.ping-loop-retries-a-degraded-session.json",
+      "sha256": "605e002df09e2e564a445639ea851b25986f52f2673b28a3dc4d1e59951b6969"
+    },
+    {
+      "id": "session.scenario.ping-loop-runs-5-s-after-the-previous-ping",
+      "path": "cases/session/session.scenario.ping-loop-runs-5-s-after-the-previous-ping.json",
+      "sha256": "1c3a0ba0739e32bf1e5527b71e4e4c4415d3550c194758b64a3e7dfa03396d10"
     },
     {
       "id": "session.scenario.ping-timeout-degrades-then-recovers",
       "path": "cases/session/session.scenario.ping-timeout-degrades-then-recovers.json",
-      "sha256": "544d324180673899e352293e7cbbaec8ec85bc832721b1614b4e53ba526e96ab"
+      "sha256": "652604ccc0fa38c4ea82baf6eb2acf01f24850e252aef0d2304fc212cfc34a76"
     },
     {
       "id": "session.scenario.re-registration-closes-the-old-sockets",
       "path": "cases/session/session.scenario.re-registration-closes-the-old-sockets.json",
-      "sha256": "6cde4203368a468ec6703ed8632130dd02f12d872f4a38768bb3bee19f44d2d9"
+      "sha256": "f4df5eea8d174a3c6095f1fb550bf98a9ab6dcd4c512e52d604966737cc61bbd"
+    },
+    {
+      "id": "session.scenario.re-registration-runs-45-s-after-the-previous-one",
+      "path": "cases/session/session.scenario.re-registration-runs-45-s-after-the-previous-one.json",
+      "sha256": "e8b51ff75705f57bcc9ba5b9e023eb9fd7b068b3d1dcf1fdbaa97ac18a20b486"
     },
     {
       "id": "session.scenario.recovery-re-registers-before-ready",
       "path": "cases/session/session.scenario.recovery-re-registers-before-ready.json",
-      "sha256": "39e747b6f083b3834ff30dbc946530176cbbfc4c6259727bc93d22dc3ba720ec"
+      "sha256": "2623043af2f867997bee913c1f4f358e3e36237947e3112defdac8800a1697c8"
     },
     {
       "id": "session.scenario.register-one-chunk-with-session-id-0",
       "path": "cases/session/session.scenario.register-one-chunk-with-session-id-0.json",
-      "sha256": "971f87c756cefcedad1413dcb19b26ad400408a64a9e884579d717146645ce04"
+      "sha256": "5704889edfbf89a5ead2084f676023bf507972b90f210160db853ce82232f8d0"
     },
     {
       "id": "session.scenario.register-waits-for-start",
       "path": "cases/session/session.scenario.register-waits-for-start.json",
-      "sha256": "909592abdd287505b78ee1a18dc1cdb905b06b4af22f143eeee8d7caa6d0ed90"
+      "sha256": "145ae0a1f6c094ecec0d0314c83bd3a6caa87ecea23e36472707386c73efe764"
     },
     {
       "id": "session.scenario.registration-reply-session-id-is-not-checked",
       "path": "cases/session/session.scenario.registration-reply-session-id-is-not-checked.json",
-      "sha256": "6dffdd81bf3c32564f0b5611fd23ae11e8e4ce6d72bc0a425e076cb8252b24dc"
+      "sha256": "397ab09a069a5c0c5658525940bda230c30758a41497c2529313050da0605d73"
     },
     {
       "id": "session.scenario.registrations-do-not-interleave",
       "path": "cases/session/session.scenario.registrations-do-not-interleave.json",
-      "sha256": "af6c52f9a578cd3b34cf180d3bf220024712c9357274ace36b93879c915f6fb0"
+      "sha256": "05385348ac798bdb38f96892ab4f6a6778dd76fdfc911b51b3a6233bf3f1736a"
     },
     {
       "id": "session.scenario.start-after-stop-opens-a-new-main-socket",
       "path": "cases/session/session.scenario.start-after-stop-opens-a-new-main-socket.json",
-      "sha256": "1ed4579233dc6eae30caa4b2e3afec6b1ca8201e5557bc2a06c943fc72bf4eb3"
+      "sha256": "9a02875435e1acdcd4e31a21e22a2fed34e3a523dde4ebf523b528cdf5531690"
     },
     {
       "id": "session.scenario.start-and-stop-are-idempotent",
       "path": "cases/session/session.scenario.start-and-stop-are-idempotent.json",
-      "sha256": "5f6dd3a7f27ea9d9ed18f2a4333c55af6bcf59c92b847a9ca3468c6c766ccd26"
+      "sha256": "f592258a4d8dc39ef4a05e1cdba3c0beb37fe2e1ed052afb86912b7491b483e8"
     },
     {
       "id": "session.scenario.start-pings-and-becomes-ready",
       "path": "cases/session/session.scenario.start-pings-and-becomes-ready.json",
-      "sha256": "418926622a8fce932bd86d1250a440f4b028bb5a1a0e9ba42f9def8ff97da509"
+      "sha256": "99be1116d19bec7a950e0e1bc9b0381b9a71d2d286953b2d98ba04871400130a"
     },
     {
       "id": "session.scenario.stop-closes-sockets-and-ends-pending-requests",
       "path": "cases/session/session.scenario.stop-closes-sockets-and-ends-pending-requests.json",
-      "sha256": "c6318968f500b14ef38db6dfa94f345b95d35a719b1080241b0ff72b664aa28e"
+      "sha256": "2b5b4dce268b78eb50c7a87815e6dd647ca8ee431722223d7d9bdcf58e19d2e4"
     },
     {
       "id": "session.scenario.stop-during-registration-fails-the-chunk",
       "path": "cases/session/session.scenario.stop-during-registration-fails-the-chunk.json",
-      "sha256": "7852ecf806028d9ba796b0955725a548848f23f8f2d5979f904dfe2892449168"
+      "sha256": "4c19ee66c72c3be57d12c075372b3611c18fc456a60f4f3c3c9121c730b39331"
     },
     {
       "id": "session.scenario.unanswered-chunk-yields-failed-slots",
       "path": "cases/session/session.scenario.unanswered-chunk-yields-failed-slots.json",
-      "sha256": "94672d064aca56765c4c7ce6a1337711e03f5e72d5076be24914c4bc0f44b15b"
+      "sha256": "ad449f3acf5f3e5b050bef1e02827b4a638802acba1d956df72cb39faa354f8a"
     },
     {
       "id": "session.scenario.uppercase-msg-id-matches",
       "path": "cases/session/session.scenario.uppercase-msg-id-matches.json",
-      "sha256": "0f761cf81cb1dea1e1f54346f827ab94ace697d37fbfd1a489210e713707cd3b"
+      "sha256": "5c202bd9439158d162a326f8402e8e118ef86a0299ebbf448334a786688de36a"
     },
     {
       "id": "session.scenario.wrong-value-count-fails-the-chunk",
       "path": "cases/session/session.scenario.wrong-value-count-fails-the-chunk.json",
-      "sha256": "f4086d1796ec02c3b0775007f4db2a46ee231291d2f28e91a010ec59e8ba3886"
+      "sha256": "3289b17c029dc0ecd5ac6c397bb3104713f14d729dfe72a52d8b88dae40cef23"
     },
     {
       "id": "value.cast.all-surrounding-quotes-stripped",

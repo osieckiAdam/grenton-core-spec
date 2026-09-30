@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Wersja zestawu** | 0.5.1 (specyfikacja 0.5.1, schemat przypadków 1) |
+| **Wersja zestawu** | 0.6.0 (specyfikacja 0.6.0, schemat przypadków 1) |
 | **Dotyczy** | `spec/grenton-core-design.md` §9 |
 
 Zestaw zgodności to **dane, nie kod**: każdy przypadek to plik JSON w `conformance/cases/`. Port dostarcza cienki runner, który wczytuje przypadki, wywołuje produkcyjne API portu i porównuje obserwację z oczekiwaniem. Dopisanie przypadku raz obejmuje wszystkie porty.
@@ -128,11 +128,11 @@ Deszyfracja zwraca **bajty**; dekodowanie UTF-8 i obcinanie białych znaków nal
 
 ## 4b. Scenariusze sesji (profil `session`)
 
-Operacja `session.scenario` sprawdza jedną sesję CLU (spec §5.3–§5.4) w rozmowie z CLU, którego rolę gra runner, krok po kroku według scenariusza. Wejście: `{"clu": {"id", "ip", "port"}, "responseTimeoutMs", "steps": [...]}`; wynik `ok` to `{"completed": true}`. Runner, który napotka niezgodny krok, zwraca `{"completed": false, "failedStep": <indeks>, "observed": …}`, dzięki czemu różnica wskazuje krok.
+Operacja `session.scenario` sprawdza jedną sesję CLU (spec §5.3–§5.4) w rozmowie z CLU, którego rolę gra runner, krok po kroku według scenariusza. Wejście: `{"clu": {"id", "ip", "port"}, "responseTimeoutMs", "pingIntervalMs"?, "registerIntervalMs"?, "steps": [...]}`. Interwał pominięty oznacza domyślny interwał portu (spec §5.4.4: 5 s i 45 s) — tak scenariusze pętli sprawdzają wartości normatywne; pozostałe scenariusze odsuwają pętle na godzinę, żeby nie przeplatały się z krokami. wynik `ok` to `{"completed": true}`. Runner, który napotka niezgodny krok, zwraca `{"completed": false, "failedStep": <indeks>, "observed": …}`, dzięki czemu różnica wskazuje krok.
 
 **Co port udostępnia runnerowi** (nazwy dowolne, zachowanie wg §5.4): utworzenie sesji dla CLU z kluczem i IV z §9.1, zegarem i transportem dostarczonymi przez runnera; `start()`, `stop()`, `ping()`, `register(keys) → slots`, `execute(action)`, bieżący stan (§5.4.5) i strumień raportów (§5.4.3). Transport runnera widzi każde otwarte gniazdo, każdy wysłany datagram i zamknięcie gniazda; runner deszyfruje wysłane datagramy i szyfruje wstrzykiwane, więc scenariusze operują na tekście ramek (§5.2).
 
-**Wirtualny czas.** Zegar sesji należy do runnera i stoi, dopóki krok `advance` go nie przesunie. Timeout odpowiedzi (§5.4.1) upływa wyłącznie przez `advance`.
+**Wirtualny czas.** Zegar sesji należy do runnera i stoi, dopóki krok `advance` go nie przesunie. Timeout odpowiedzi (§5.4.1) i interwały pętli (§5.4.4) upływają wyłącznie przez `advance`. `advance` przesuwa zegar jednym skokiem; scenariusz dobiera kroki tak, by w jednym `advance` upływał co najwyżej jeden termin każdego timera i by terminy różnych timerów nie wypadały w tej samej chwili, bo ich kolejność nie jest określona.
 
 **Bariera.** Po każdym kroku runner czeka, aż sesja przestanie wykonywać pracę możliwą bez czasu i bez nowych datagramów (w praktyce: aż zaplanowane zadania się wykonają), łącznie z dostarczeniem raportów do strumienia, który runner subskrybuje przed pierwszym krokiem. Dopiero wtedy sprawdza oczekiwania. `expectSent` czeka na datagram najdłużej ustaloną przez runnera chwilę realnego czasu.
 
@@ -221,6 +221,7 @@ Zestaw jest wersjonowany razem ze specyfikacją w repo `grenton-core-spec`. Port
 | `session.keepalive` | §5.3.1 |
 | `session.lifecycle` | §5.4.5 |
 | `session.actions` | §5.3.4, §3.3 |
+| `session.loops` | §5.4.4 |
 
 ## 7. Utrzymanie
 

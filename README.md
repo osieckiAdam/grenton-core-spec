@@ -20,7 +20,7 @@ Polish.
 
 | Port | Suite version | Profiles |
 |---|---|---|
-| [grenton-core-swift](https://github.com/osieckiAdam/grenton-core-swift) | 0.5.1 | `stateless`, `mapping`, `session` |
+| [grenton-core-swift](https://github.com/osieckiAdam/grenton-core-swift) | 0.6.0 | `stateless`, `mapping`, `session` |
 
 ## Conformance suite
 
@@ -47,7 +47,7 @@ Expected values never come from a port. They come from the spec text,
 Python derivation written from the spec (`tools/oracles/`).
 `tools/suite.py check` re-derives them wherever such an oracle exists.
 
-Version 0.5.1 contains three profiles, 180 cases in total:
+Version 0.6.0 contains three profiles, 186 cases in total:
 
 - `stateless` (149 cases): AES-CBC, frames, payloads, value casting, the
   Object Manager URL and PIN, coercions, number formatting.
@@ -55,11 +55,10 @@ Version 0.5.1 contains three profiles, 180 cases in total:
   entities, completeness rules, widget-level tolerance, normative order,
   thermostats and double scenes, and devices grouped by the CLU object
   they operate.
-- `session` (25 scenarios): one CLU session against a CLU played by the
+- `session` (31 scenarios): one CLU session against a CLU played by the
   runner on a virtual clock — correlation and timeouts, keep-alive,
   sequential chunked registration, report routing by socket, lifecycle,
-  recovery and actions. The periodic ping and re-registration loops are
-  not covered yet.
+  recovery, actions, and the periodic ping and re-registration loops.
 
 The `provisioning` profile is planned. See
 [`spec/conformance.md`](spec/conformance.md) §8 for the open decisions.

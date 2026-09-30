@@ -1,0 +1,167 @@
+{
+  "schemaVersion": 1,
+  "id": "session.scenario.a-registration-restarts-the-45-s-wait",
+  "specRefs": [
+    "session.loops"
+  ],
+  "description": "An explicit registration 30 s after the previous one moves the next periodic re-registration to 45 s after it, with the new keys.",
+  "provenance": "spec §5.3–§5.4 text, conformance.md §4b",
+  "operation": "session.scenario",
+  "input": {
+    "clu": {
+      "id": "CLU_1",
+      "ip": "10.0.0.1",
+      "port": 1234
+    },
+    "responseTimeoutMs": 5000,
+    "pingIntervalMs": 3600000,
+    "steps": [
+      {
+        "call": "start",
+        "as": "start"
+      },
+      {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "checkAlive()"
+        }
+      },
+      {
+        "respond": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "1"
+        }
+      },
+      {
+        "await": "start",
+        "result": null
+      },
+      {
+        "expectState": "ready"
+      },
+      {
+        "call": "register",
+        "keys": [
+          {
+            "type": "attribute",
+            "objectName": "OBJ",
+            "index": "0"
+          }
+        ],
+        "as": "r1"
+      },
+      {
+        "expectSent": {
+          "socket": "@first",
+          "msgId": "$m1",
+          "payload": "SYSTEM:clientRegister(0,0,1,{{OBJ,0}})"
+        }
+      },
+      {
+        "respond": {
+          "socket": "@first",
+          "msgId": "$m1",
+          "payload": "clientReport:1:{1}"
+        }
+      },
+      {
+        "await": "r1",
+        "result": {
+          "slots": [
+            {
+              "type": "int",
+              "value": "1"
+            }
+          ]
+        }
+      },
+      {
+        "advance": 30000
+      },
+      {
+        "call": "register",
+        "keys": [
+          {
+            "type": "attribute",
+            "objectName": "OBJ",
+            "index": "1"
+          }
+        ],
+        "as": "r2"
+      },
+      {
+        "expectSent": {
+          "socket": "@second",
+          "msgId": "$m2",
+          "payload": "SYSTEM:clientRegister(0,0,1,{{OBJ,1}})"
+        }
+      },
+      {
+        "respond": {
+          "socket": "@second",
+          "msgId": "$m2",
+          "payload": "clientReport:1:{2}"
+        }
+      },
+      {
+        "await": "r2",
+        "result": {
+          "slots": [
+            {
+              "type": "int",
+              "value": "2"
+            }
+          ]
+        }
+      },
+      {
+        "advance": 44999
+      },
+      {
+        "expectQuiet": true
+      },
+      {
+        "advance": 1
+      },
+      {
+        "expectSent": {
+          "socket": "@third",
+          "msgId": "$m3",
+          "payload": "SYSTEM:clientRegister(0,0,1,{{OBJ,1}})"
+        }
+      },
+      {
+        "respond": {
+          "socket": "@third",
+          "msgId": "$m3",
+          "payload": "clientReport:1:{2}"
+        }
+      },
+      {
+        "expectReport": {
+          "keys": [
+            {
+              "type": "attribute",
+              "objectName": "OBJ",
+              "index": "1"
+            }
+          ],
+          "values": [
+            {
+              "type": "int",
+              "value": "2"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "completed": true
+    }
+  }
+}

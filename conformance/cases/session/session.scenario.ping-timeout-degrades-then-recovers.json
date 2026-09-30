@@ -16,6 +16,8 @@
       "port": 1234
     },
     "responseTimeoutMs": 5000,
+    "pingIntervalMs": 3600000,
+    "registerIntervalMs": 3600000,
     "steps": [
       {
         "call": "start",
