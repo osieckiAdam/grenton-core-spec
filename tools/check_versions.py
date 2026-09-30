@@ -5,8 +5,8 @@
     python3 tools/check_versions.py --staged   also: staged spec/suite changes
                                                come with a staged CHANGELOG entry
 
-The spec header (| **Wersja** |), SPEC_VERSION in tools/suite.py and the
-newest CHANGELOG heading must name the same spec version; SUITE_VERSION must
+The spec header (| **Wersja** |), the conformance.md header, SPEC_VERSION in
+tools/suite.py and the newest CHANGELOG heading must name the same spec version; SUITE_VERSION must
 match conformance/manifest.json (tools/suite.py check verifies the manifest).
 """
 import json
@@ -29,6 +29,11 @@ if not header or header.group(1) != spec_version:
     problems.append(f"spec header says {header.group(1) if header else '?'}, tools/suite.py SPEC_VERSION says {spec_version}")
 if manifest["specVersion"] != spec_version or manifest["suiteVersion"] != suite_version:
     problems.append("manifest.json versions differ from tools/suite.py — run: python3 tools/suite.py manifest")
+conformance_header = re.search(r"\| \*\*Wersja zestawu\*\* \| ([0-9.]+) \(specyfikacja ([0-9.]+)",
+                               (ROOT / "spec/conformance.md").read_text())
+if not conformance_header or conformance_header.groups() != (suite_version, spec_version):
+    problems.append(f"spec/conformance.md header says {conformance_header.groups() if conformance_header else '?'}, "
+                    f"expected suite {suite_version}, spec {spec_version}")
 if spec_version not in newest:
     problems.append(f"newest CHANGELOG entry “{newest}” does not name spec {spec_version}")
 

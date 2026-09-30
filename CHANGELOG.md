@@ -1,5 +1,12 @@
 # Changelog
 
+## Spec 0.4.5, suite 0.4.4 — 2026-09-30
+
+- §3.3, §8: an action whose `value` is exactly `$value$` fails with `PayloadError.unresolvedPlaceholder` when its payload is built, so nothing is sent. This also applies to low-level raw execution. Before, the rule only said such an action "must not be executed", and a port's raw path sent the placeholder literally.
+- New case `payload.action.error-unresolved-placeholder` and error code `payload.unresolvedPlaceholder`.
+- conformance.md §5: the runner validates each case's shape and enforces the port's declared profiles. Cases of undeclared profiles are reported, not counted as passed.
+- conformance.md §8 is no longer titled "0.1.0". `tools/check_versions.py` also checks the conformance.md version header, which was left at 0.4.3.
+
 ## Spec 0.4.4 — 2026-09-30 (suite unchanged, 0.4.3)
 
 - The spec text states rules, not a verification log.

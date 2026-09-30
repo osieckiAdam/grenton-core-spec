@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Status** | Projekt (do implementacji) |
-| **Wersja** | 0.4.4 |
+| **Wersja** | 0.4.5 |
 | **Data** | 2026-09-30 |
 | **Implementacja referencyjna** | `homeassistant-grenton` (Python, integracja Home Assistant) |
 | **Przeznaczenie** | Specyfikacja niezależna od języka — podstawa dla portów (pierwszy: Swift) |
@@ -124,7 +124,7 @@ Akcja mówi, *co* wysłać do CLU. JSON:
 - `event ∈ {CLICK, ON, OFF}` — rola akcji w widgecie (po którym zdarzeniu UI ją wywołać).
 - `callType ∈ {VARIABLE, ATTRIBUTE, METHOD, SCRIPT}` — wariant wykonania; `SCRIPT` **nie ma** pola `index`.
 - `value` — argument; dla suwaków nadpisywany w locie wartością wybraną przez użytkownika, dla scen może być nadpisany parametrem (§6.3.10).
-- **Placeholder `$value$`:** Object Manager eksportuje akcje ustawiające (np. `setValueAction` ściemniacza, `setPositionAction` rolety, wszystkie `set*Action` termostatu) z `value` równym dokładnie `$value$`. Intencja, która nadpisuje wartość, **zastępuje całe `value`** — dla `$value$` wynik jest ten sam co podstawienie. Akcja z `$value$` nie może zostać wykonana bez nadpisania (wysłałaby do CLU dosłowny tekst); w katalogu §6.3 każda taka akcja jest używana wyłącznie przez intencję z wartością.
+- **Placeholder `$value$`:** Object Manager eksportuje akcje ustawiające (np. `setValueAction` ściemniacza, `setPositionAction` rolety, wszystkie `set*Action` termostatu) z `value` równym dokładnie `$value$`. Intencja, która nadpisuje wartość, **zastępuje całe `value`** — dla `$value$` wynik jest ten sam co podstawienie. Akcja, której `value` to dokładnie `$value$`, nie może zostać wysłana bez nadpisania: budowa jej payloadu (§5.3.4) kończy się błędem `PayloadError.unresolvedPlaceholder` i nic nie trafia do CLU. Dotyczy to także niskopoziomowego wykonania surowej akcji; w katalogu §6.3 każda taka akcja jest używana wyłącznie przez intencję z wartością.
 
 Payloady przewodowe akcji — patrz §5.3.4.
 
@@ -684,6 +684,7 @@ Port zapewnia prymitywy: uruchomienie zadania, anulowanie, serializacja mutacji 
 | `ProvisioningError` | `authenticationFailed`, `connection`, `invalidData` | §4 |
 | `CryptoError` | `invalidKeyMaterial`, `encryptFailed`, `decryptFailed` | §5.1; `decryptFailed` na ścieżce odbioru → drop datagramu, nie propagacja |
 | `ProtocolError` | `malformedFrame`, `malformedPayload` | walidacja ramek/payloadów |
+| `PayloadError` | `unresolvedPlaceholder` | akcja z `value` = `$value$` bez nadpisania (§3.3) — nic nie jest wysyłane |
 | `TimeoutError` | — | brak odpowiedzi w 5 s |
 | `SessionError` | `notConnected`, `connectionClosed` | cykl życia §5.4.5 |
 

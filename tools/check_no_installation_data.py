@@ -7,9 +7,13 @@
 
 Identifiers come from a real interface archive, read locally and never
 stored: object names, widget ids, page names, script names, CLU ids, names,
-serial numbers and addresses, and distinctive labels. The archive is
-$GRENTON_INTERFACE, or dist/interface.zip of grenton-core-swift. Without one
-the check is skipped (a fresh clone has no installation to leak).
+serial numbers and addresses, and distinctive labels. The archive is, in
+order: $GRENTON_INTERFACE, `git config grenton.interface`, then
+dist/interface.zip of grenton-core-swift.
+
+Without an archive the check fails rather than pass unchecked. Someone with
+no installation declares that once per clone:
+    git config grenton.interface none
 """
 import io
 import json
@@ -21,7 +25,13 @@ import sys
 import zipfile
 
 HERE = pathlib.Path(__file__).resolve().parent
-CANDIDATES = [os.environ.get("GRENTON_INTERFACE", ""),
+def git_config(key):
+    result = subprocess.run(["git", "config", "--get", key], capture_output=True, text=True)
+    return result.stdout.strip()
+
+
+DECLARED = os.environ.get("GRENTON_INTERFACE", "") or git_config("grenton.interface")
+CANDIDATES = [DECLARED,
               HERE.parent / "dist" / "interface.zip",
               HERE.parent.parent / "grenton-core-swift" / "dist" / "interface.zip"]
 GENERIC = {"sufit", "kinkiet", "temperatura", "gniazdo", "gniazda", "roleta", "salon", "kuchnia",
@@ -85,10 +95,16 @@ def texts(mode, argument):
         sys.exit(__doc__)
 
 
-archive = next((pathlib.Path(c) for c in CANDIDATES if c and pathlib.Path(c).is_file()), None)
-if archive is None:
-    print("installation data: skipped (no interface archive to compare against)")
+if DECLARED == "none":
+    print("installation data: not checked (this clone declares no installation: grenton.interface=none)")
     sys.exit(0)
+archive = next((pathlib.Path(c).expanduser() for c in CANDIDATES
+                if c and pathlib.Path(c).expanduser().is_file()), None)
+if archive is None:
+    print("installation data: no interface archive to compare against.\n"
+          "  Point to yours:   git config grenton.interface /path/to/interface.zip\n"
+          "  Or, with none:    git config grenton.interface none")
+    sys.exit(1)
 known = tokens(archive)
 pattern = re.compile(r"(?<![\w])(" + "|".join(re.escape(t) for t in sorted(known, key=len, reverse=True)) + r")(?![\w])")
 hits = []

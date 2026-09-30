@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "suiteVersion": "0.4.3",
-  "specVersion": "0.4.4",
+  "suiteVersion": "0.4.4",
+  "specVersion": "0.4.5",
   "profiles": {
     "mapping": [
       "mapping.interface"
@@ -356,6 +356,11 @@
       "id": "payload.action.attribute",
       "path": "cases/stateless/payload/payload.action.attribute.json",
       "sha256": "9607aa389b27f9705fdf3f014d343d3ecfe8e21d3c1c4daa0be5ce14514c0f40"
+    },
+    {
+      "id": "payload.action.error-unresolved-placeholder",
+      "path": "cases/stateless/payload/payload.action.error-unresolved-placeholder.json",
+      "sha256": "a0d54141397a16c7a2a7d44ae983f8f1a9e84e19f61a3020125f0df63ec315d1"
     },
     {
       "id": "payload.action.method",

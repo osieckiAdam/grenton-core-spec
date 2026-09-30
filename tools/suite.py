@@ -27,8 +27,8 @@ FIXTURES = os.path.join(CONFORMANCE, "fixtures")
 MANIFEST = os.path.join(CONFORMANCE, "manifest.json")
 
 SCHEMA_VERSION = 1
-SUITE_VERSION = "0.4.3"
-SPEC_VERSION = "0.4.4"
+SUITE_VERSION = "0.4.4"
+SPEC_VERSION = "0.4.5"
 
 # operation -> (profile, required input keys, optional input keys)
 OPERATIONS = {
@@ -58,7 +58,7 @@ REQUIREMENTS = {
     "model.widget-tolerance": "§3.6", "devices.mapping": "§6.1, §6.3", "devices.order": "§6.1", "devices.physical-objects": "§6.6",
 }
 
-ERROR_CODES = {"crypto.invalidKeyMaterial", "provisioning.connection"}
+ERROR_CODES = {"crypto.invalidKeyMaterial", "provisioning.connection", "payload.unresolvedPlaceholder"}
 CASE_KEYS = {"schemaVersion", "id", "specRefs", "description", "provenance", "operation", "input", "expect"}
 ID_RE = re.compile(r"^[a-z0-9]+(\.[A-Za-z0-9-]+)+$")
 

@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "payload.action.error-unresolved-placeholder",
+  "specRefs": [
+    "payload.action",
+    "model.action-ref"
+  ],
+  "description": "An action whose value is exactly $value$ must not be sent unchanged: building its payload is an error.",
+  "provenance": "spec §3.3, §8",
+  "operation": "payload.action",
+  "input": {
+    "action": {
+      "event": "CLICK",
+      "cluId": "CLU_501234567",
+      "objectName": "DIM1001",
+      "value": "$value$",
+      "callType": "ATTRIBUTE",
+      "index": "0"
+    }
+  },
+  "expect": {
+    "outcome": "error",
+    "code": "payload.unresolvedPlaceholder"
+  }
+}

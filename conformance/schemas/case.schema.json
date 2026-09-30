@@ -49,7 +49,7 @@
           "properties": { "outcome": { "const": "ok" }, "value": {} } },
         { "type": "object", "additionalProperties": false, "required": ["outcome", "code"],
           "properties": { "outcome": { "const": "error" },
-                          "code": { "enum": ["crypto.invalidKeyMaterial", "provisioning.connection"] } } },
+                          "code": { "enum": ["crypto.invalidKeyMaterial", "provisioning.connection", "payload.unresolvedPlaceholder"] } } },
         { "type": "object", "additionalProperties": false, "required": ["outcome"],
           "properties": { "outcome": { "const": "reject" } } }
       ]

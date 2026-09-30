@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Wersja zestawu** | 0.4.3 (specyfikacja 0.4.3, schemat przypadków 1) |
+| **Wersja zestawu** | 0.4.4 (specyfikacja 0.4.5, schemat przypadków 1) |
 | **Dotyczy** | `spec/grenton-core-design.md` §9 |
 
 Zestaw zgodności to **dane, nie kod**: każdy przypadek to plik JSON w `conformance/cases/`. Port dostarcza cienki runner, który wczytuje przypadki, wywołuje produkcyjne API portu i porównuje obserwację z oczekiwaniem. Dopisanie przypadku raz obejmuje wszystkie porty.
@@ -38,7 +38,7 @@ Zgodność deklaruje się **per profil** — przejście części zestawu nie jes
 - `provenance` — skąd pochodzi oczekiwany wynik. **Oczekiwania nigdy nie są generowane przez testowany port**; źródła: dosłowny tekst specyfikacji, `openssl`, semantyka implementacji referencyjnej (Python).
 - `expect` — dokładnie jedno z:
   - `{"outcome": "ok", "value": …}` — operacja się udała, `value` to projekcja wyniku,
-  - `{"outcome": "error", "code": "…"}` — operacja zgłosiła błąd z taksonomii §8 (`crypto.invalidKeyMaterial`, `provisioning.connection`),
+  - `{"outcome": "error", "code": "…"}` — operacja zgłosiła błąd z taksonomii §8 (`crypto.invalidKeyMaterial`, `provisioning.connection`, `payload.unresolvedPlaceholder`),
   - `{"outcome": "reject"}` — wejście odrzucone bez błędu (parser zwraca „brak wyniku", odbiór cicho porzuca datagram).
 
 Schemat: `conformance/schemas/case.schema.json` (JSON Schema 2020-12). Nieznane pola są błędem.
@@ -66,7 +66,7 @@ Porównanie `ok.value`: strukturalna równość JSON, bez znaczenia kolejności 
 | `wire.request` | `msgId`, `payload` | `frame` | |
 | `wire.response` | `frame` | `cluIp`, `msgId`, `payload`, `isNotification` | `reject` |
 | `payload.register` | `sessionId`, `keys[]` (`{type:variable,name}` / `{type:attribute,objectName,index}`) | `payload` | |
-| `payload.action` | `action` — obiekt ActionRef dokładnie jak w `data.json` | `payload` | `reject` (błąd parsowania, §3.6) |
+| `payload.action` | `action` — obiekt ActionRef dokładnie jak w `data.json` | `payload` | `reject` (błąd parsowania, §3.6); `error payload.unresolvedPlaceholder` (`value` = `$value$`, §3.3) |
 | `payload.report` | `payload` | `sessionId`, `values[]` | `reject` |
 | `value.cast` | `text` | `value` | |
 | `provisioning.url` | `host`, `port`? (domyślnie 9998), `pin` | `url` | `error provisioning.connection` |
@@ -132,7 +132,8 @@ Runner **zawodzi zamknięty** (fail closed). Przebieg jest nieudany, jeśli:
 
 1. brakuje zestawu (np. niezainicjalizowany submodule) — wyraźny komunikat, nie „0 testów",
 2. `manifest.json` nie zgadza się z plikami (brakujący/nadmiarowy przypadek lub fixtura, zła suma SHA-256),
-3. przypadek ma nieznaną operację, nieobsługiwane `schemaVersion` lub nie da się go zdekodować,
+3. przypadek ma nieznaną operację, nieobsługiwane `schemaVersion`, nie da się go zdekodować albo nie spełnia kształtu z §2 (nadmiarowe lub brakujące pola, puste `specRefs`, zły kształt `expect`),
+3a. deklaracja portu wymienia profil, którego manifest nie zna; runner wykonuje wszystkie przypadki zadeklarowanych profili, a przypadki pozostałych profili raportuje jako nieobjęte deklaracją (nie jako sukces),
 4. deklaracja portu wskazuje pominięcie nieistniejącego przypadku albo pominięty przypadek **przechodzi** (nieoczekiwany sukces — usuń pominięcie),
 5. wersja zestawu w deklaracji portu ≠ `suiteVersion` z manifestu.
 
@@ -187,7 +188,7 @@ python3 tools/suite.py manifest   # przebudowa manifestu po dodaniu/zmianie przy
 
 `check` ponownie wylicza oczekiwania tam, gdzie istnieje niezależna wyrocznia: szyfrogramy przez `openssl`, `number.format` przez Pythonowe `round()`, koercje przez wyrażenia implementacji referencyjnej (`value == "ON" or value == True`, `bool(value)`), `mapping.interface` przez `tools/oracles/mapping.py` (napisany ze specyfikacji, nie z portu), a każdą parę `decimal`/`bits` przez parser Pythona. Zgłasza też fixtury, których nie używa żaden przypadek.
 
-## 8. Poza zakresem 0.1.0 — otwarte decyzje
+## 8. Poza zakresem — otwarte decyzje
 
 - **Walidacja `msg_id`:** §5.2 mówi „8 znaków hex", ale odbiór tego nie wymusza. Zestaw nie testuje zniekształconych `msg_id`, dopóki specyfikacja nie rozstrzygnie: ściśle czy liberalnie.
 - **Pusta rejestracja** (`keys = []`): zachowanie niespecyfikowane — brak przypadku.

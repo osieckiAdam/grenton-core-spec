@@ -20,7 +20,7 @@ Polish.
 
 | Port | Suite version | Profiles |
 |---|---|---|
-| [grenton-core-swift](https://github.com/osieckiAdam/grenton-core-swift) | 0.4.3 | `stateless`, `mapping` |
+| [grenton-core-swift](https://github.com/osieckiAdam/grenton-core-swift) | 0.4.4 | `stateless`, `mapping` |
 
 ## Conformance suite
 
@@ -47,9 +47,9 @@ Expected values never come from a port. They come from the spec text,
 Python derivation written from the spec (`tools/oracles/`).
 `tools/suite.py check` re-derives them wherever such an oracle exists.
 
-Version 0.4.3 contains two profiles, 154 cases in total:
+Version 0.4.4 contains two profiles, 155 cases in total:
 
-- `stateless` (148 cases): AES-CBC, frames, payloads, value casting, the
+- `stateless` (149 cases): AES-CBC, frames, payloads, value casting, the
   Object Manager URL and PIN, coercions, number formatting.
 - `mapping` (6 cases on 6 interface fixtures): `data.json` → devices and
   entities, completeness rules, widget-level tolerance, normative order,
