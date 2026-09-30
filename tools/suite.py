@@ -27,8 +27,8 @@ FIXTURES = os.path.join(CONFORMANCE, "fixtures")
 MANIFEST = os.path.join(CONFORMANCE, "manifest.json")
 
 SCHEMA_VERSION = 1
-SUITE_VERSION = "0.5.0"
-SPEC_VERSION = "0.5.0"
+SUITE_VERSION = "0.5.1"
+SPEC_VERSION = "0.5.1"
 
 # operation -> (profile, required input keys, optional input keys)
 OPERATIONS = {
@@ -155,6 +155,7 @@ STEPS = {
     "expectReport": ({"expectReport"}, set()),
     "expectNoReport": ({"expectNoReport"}, set()),
     "expectClosed": ({"expectClosed"}, set()),
+    "fail": ({"fail"}, set()),
 }
 CALLS = {"start", "stop", "ping", "register", "execute"}
 STATES = {"idle", "starting", "ready", "degraded", "stopped"}
@@ -227,8 +228,8 @@ def check_scenario(doc, errors):
                 errors.append(f"{at}: socket {body['socket']} is not bound yet")
             if verb == "respond" and body["msgId"].startswith("$") and body["msgId"] not in captures:
                 errors.append(f"{at}: {body['msgId']} is not captured yet")
-        elif verb == "expectClosed" and step["expectClosed"] not in labels:
-            errors.append(f"{at}: socket {step['expectClosed']} is not bound yet")
+        elif verb in ("expectClosed", "fail") and step[verb] not in labels:
+            errors.append(f"{at}: socket {step[verb]} is not bound yet")
         elif verb == "expectState" and step["expectState"] not in STATES:
             errors.append(f"{at}: unknown state {step['expectState']}")
         elif verb == "advance" and not (isinstance(step["advance"], int) and step["advance"] > 0):
@@ -238,6 +239,74 @@ def check_scenario(doc, errors):
     for label in labels:
         if not (isinstance(label, str) and label.startswith("@")):
             errors.append(f"{where}: socket labels start with @: {label}")
+
+
+SCHEMA_PATH = os.path.join(CONFORMANCE, "schemas", "case.schema.json")
+SCHEMA_KEYWORDS = {"$schema", "$id", "$defs", "$ref", "title", "description", "type", "const", "enum",
+                   "pattern", "minimum", "required", "properties", "additionalProperties", "items",
+                   "minItems", "allOf", "oneOf", "if", "then"}
+
+
+def schema_errors(value, schema, root, path="$"):
+    """The subset of JSON Schema that case.schema.json uses, stdlib only.
+    Yields one message per violation; an unknown keyword is an error, so the
+    schema cannot outgrow this checker unnoticed."""
+    if isinstance(schema, bool):
+        if not schema:
+            yield f"{path}: not allowed"
+        return
+    unknown = set(schema) - SCHEMA_KEYWORDS
+    if unknown:
+        raise ValueError(f"case.schema.json uses {sorted(unknown)}, which tools/suite.py does not check")
+    if "$ref" in schema:
+        name = schema["$ref"].removeprefix("#/$defs/")
+        yield from schema_errors(value, root["$defs"][name], root, path)
+    types = {"object": dict, "array": list, "string": str, "boolean": bool}
+    t = schema.get("type")
+    if isinstance(t, list):
+        if all(any(schema_errors(value, {"type": x}, root, path)) for x in t):
+            yield f"{path}: expected one of {t}"
+            return
+        t = None
+    if t == "integer":
+        if not isinstance(value, int) or isinstance(value, bool):
+            yield f"{path}: expected an integer"
+            return
+    elif t in types and (not isinstance(value, types[t]) or (t != "boolean" and isinstance(value, bool))):
+        yield f"{path}: expected {t}"
+        return
+    if "const" in schema and value != schema["const"]:
+        yield f"{path}: must be {schema['const']!r}"
+    if "enum" in schema and value not in schema["enum"]:
+        yield f"{path}: must be one of {schema['enum']}"
+    if "pattern" in schema and isinstance(value, str) and not re.search(schema["pattern"], value):
+        yield f"{path}: does not match {schema['pattern']}"
+    if "minimum" in schema and isinstance(value, (int, float)) and value < schema["minimum"]:
+        yield f"{path}: must be ≥ {schema['minimum']}"
+    if isinstance(value, dict):
+        for key in schema.get("required", []):
+            if key not in value:
+                yield f"{path}: missing {key}"
+        props = schema.get("properties", {})
+        for key, item in value.items():
+            if key in props:
+                yield from schema_errors(item, props[key], root, f"{path}.{key}")
+            elif schema.get("additionalProperties") is False:
+                yield f"{path}: unexpected {key}"
+    if isinstance(value, list):
+        if len(value) < schema.get("minItems", 0):
+            yield f"{path}: needs at least {schema['minItems']} item(s)"
+        if "items" in schema:
+            for n, item in enumerate(value):
+                yield from schema_errors(item, schema["items"], root, f"{path}[{n}]")
+    for sub in schema.get("allOf", []):
+        yield from schema_errors(value, sub, root, path)
+    if "oneOf" in schema:
+        matching = sum(1 for sub in schema["oneOf"] if not any(schema_errors(value, sub, root, path)))
+        if matching != 1:
+            yield f"{path}: matches {matching} of the oneOf alternatives, needs exactly 1"
+    if "if" in schema and not any(schema_errors(value, schema["if"], root, path)):
+        yield from schema_errors(value, schema.get("then", {}), root, path)
 
 
 def oracle(doc, errors):
@@ -326,6 +395,9 @@ def validate(path, errors):
         return doc
     walk_tagged(doc["input"], f"{rel}:input", errors)
     walk_tagged(exp, f"{rel}:expect", errors)
+    with open(SCHEMA_PATH, encoding="utf-8") as f:
+        schema = json.load(f)
+    errors.extend(f"{rel}: schema: {e}" for e in schema_errors(doc, schema, schema))
     oracle(doc, errors)
     return doc
 

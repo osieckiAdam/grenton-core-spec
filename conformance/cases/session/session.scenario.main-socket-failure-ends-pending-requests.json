@@ -1,0 +1,129 @@
+{
+  "schemaVersion": 1,
+  "id": "session.scenario.main-socket-failure-ends-pending-requests",
+  "specRefs": [
+    "session.lifecycle",
+    "session.correlation",
+    "session.actions"
+  ],
+  "description": "When the main socket fails, pending requests end with connectionClosed and the session is degraded; actions are not connected until the next ping reopens a main socket.",
+  "provenance": "spec §5.3–§5.4 text, conformance.md §4b",
+  "operation": "session.scenario",
+  "input": {
+    "clu": {
+      "id": "CLU_1",
+      "ip": "10.0.0.1",
+      "port": 1234
+    },
+    "responseTimeoutMs": 5000,
+    "steps": [
+      {
+        "call": "start",
+        "as": "start"
+      },
+      {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "checkAlive()"
+        }
+      },
+      {
+        "respond": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "1"
+        }
+      },
+      {
+        "await": "start",
+        "result": null
+      },
+      {
+        "expectState": "ready"
+      },
+      {
+        "call": "execute",
+        "action": {
+          "event": "ON",
+          "cluId": "CLU_1",
+          "objectName": "DOU1001",
+          "index": "0",
+          "value": "1",
+          "callType": "ATTRIBUTE"
+        },
+        "as": "act"
+      },
+      {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$a",
+          "payload": "DOU1001:set(0,\"1\")"
+        }
+      },
+      {
+        "fail": "@main"
+      },
+      {
+        "await": "act",
+        "result": {
+          "error": "session.connectionClosed"
+        }
+      },
+      {
+        "expectState": "degraded"
+      },
+      {
+        "call": "execute",
+        "action": {
+          "event": "ON",
+          "cluId": "CLU_1",
+          "objectName": "DOU1001",
+          "index": "0",
+          "value": "1",
+          "callType": "ATTRIBUTE"
+        },
+        "as": "meanwhile"
+      },
+      {
+        "await": "meanwhile",
+        "result": {
+          "error": "session.notConnected"
+        }
+      },
+      {
+        "call": "ping",
+        "as": "ping"
+      },
+      {
+        "expectSent": {
+          "socket": "@main2",
+          "msgId": "$ka",
+          "payload": "checkAlive()"
+        }
+      },
+      {
+        "respond": {
+          "socket": "@main2",
+          "msgId": "$ka",
+          "payload": "1"
+        }
+      },
+      {
+        "await": "ping",
+        "result": {
+          "ok": true
+        }
+      },
+      {
+        "expectState": "ready"
+      }
+    ]
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "completed": true
+    }
+  }
+}

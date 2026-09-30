@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Wersja zestawu** | 0.5.0 (specyfikacja 0.5.0, schemat przypadków 1) |
+| **Wersja zestawu** | 0.5.1 (specyfikacja 0.5.1, schemat przypadków 1) |
 | **Dotyczy** | `spec/grenton-core-design.md` §9 |
 
 Zestaw zgodności to **dane, nie kod**: każdy przypadek to plik JSON w `conformance/cases/`. Port dostarcza cienki runner, który wczytuje przypadki, wywołuje produkcyjne API portu i porównuje obserwację z oczekiwaniem. Dopisanie przypadku raz obejmuje wszystkie porty.
@@ -134,7 +134,9 @@ Operacja `session.scenario` sprawdza jedną sesję CLU (spec §5.3–§5.4) w ro
 
 **Wirtualny czas.** Zegar sesji należy do runnera i stoi, dopóki krok `advance` go nie przesunie. Timeout odpowiedzi (§5.4.1) upływa wyłącznie przez `advance`.
 
-**Bariera.** Po każdym kroku runner czeka, aż sesja przestanie wykonywać pracę możliwą bez czasu i bez nowych datagramów (w praktyce: aż zaplanowane zadania się wykonają). Dopiero wtedy sprawdza oczekiwania. `expectSent` czeka na datagram najdłużej ustaloną przez runnera chwilę realnego czasu; `expectQuiet` stwierdza, że po barierze nie wysłano nic więcej.
+**Bariera.** Po każdym kroku runner czeka, aż sesja przestanie wykonywać pracę możliwą bez czasu i bez nowych datagramów (w praktyce: aż zaplanowane zadania się wykonają), łącznie z dostarczeniem raportów do strumienia, który runner subskrybuje przed pierwszym krokiem. Dopiero wtedy sprawdza oczekiwania. `expectSent` czeka na datagram najdłużej ustaloną przez runnera chwilę realnego czasu.
+
+**Asercje negatywne.** `expectQuiet` i `expectNoReport` stwierdzają brak zdarzenia, więc po barierze runner obserwuje dodatkowo **okno ciszy: co najmniej 200 ms realnego czasu**, i dopiero wtedy uznaje brak za potwierdzony. To gwarancja probabilistyczna: port, który opóźnia pracę dłużej niż okno bez udziału zegara sesji, może ją przejść. Runner, którego środowisko pozwala wykryć bezczynność deterministycznie (własny executor, jawne opróżnienie kolejek), może to zrobić zamiast okna.
 
 **Przechwytywanie.** `msgId` postaci `$nazwa` przy pierwszym użyciu wiąże się z obserwowaną wartością, przy kolejnych musi być jej równy. Gniazda nazywa się etykietami `@nazwa`: pierwsze użycie wiąże etykietę z gniazdem **innym niż wszystkie już nazwane**, kolejne muszą wskazywać to samo gniazdo. Dzięki temu scenariusz sprawdza, że każdy chunk ma własne gniazdo.
 
@@ -150,13 +152,16 @@ Kroki (każdy obiekt ma dokładnie jeden czasownik):
 | `{"expectQuiet": true}` | po barierze nie wysłano nic ponad już sprawdzone |
 | `{"respond": {"socket": "@s", "msgId": "$m" \| "…", "payload": "…", "upper": bool?}}` | CLU odpowiada na gnieździe `@s` ramką `resp:{clu.ip}:{msgId}:{payload}` (`upper`: `msgId` wielkimi literami) |
 | `{"deliver": {"socket": "@s", "frame": "…", "encrypted": bool}}` | dowolna ramka na gniazdo; `encrypted: false` wysyła bajty, których nie da się odszyfrować |
-| `{"advance": ms}` | przesuwa wirtualny zegar |
+| `{"advance": ms}` | przesuwa wirtualny zegar o `ms` > 0 |
 | `{"expectState": "idle" \| "starting" \| "ready" \| "degraded" \| "stopped"}` | bieżący stan sesji |
 | `{"expectReport": {"keys": [ValueRef…], "values": [wartość otagowana \| {"failed": true}]}}` | następny raport ze strumienia raportów |
 | `{"expectNoReport": true}` | brak nowego raportu po barierze |
-| `{"expectClosed": "@s"}` | gniazdo `@s` zostało zamknięte |
+| `{"expectClosed": "@s"}` | gniazdo `@s` zostało zamknięte przez sesję |
+| `{"fail": "@s"}` | transport zgłasza awarię gniazda `@s`: odbiór na nim się kończy (§5.4.1 pkt 4) |
 
-Kody błędów `execute`: `session.timeout` (§5.4.1 pkt 3), `session.notConnected`, `session.connectionClosed` (§5.4.5), `payload.unresolvedPlaceholder` (§3.3).
+Strukturę kroków opisuje `conformance/schemas/case.schema.json`, a `tools/suite.py check` sprawdza każdy przypadek względem schematu oraz reguły między krokami (etykiety i przechwycenia związane przed użyciem, każde `call` odebrane przez `await`). Runner odrzuca krok, którego nie rozpoznaje, zamiast go pominąć.
+
+Kody błędów `execute`: `session.timeout` (§5.4.1 pkt 3), `session.notConnected` (§5.4.5, brak socketu głównego), `session.connectionClosed` (§5.4.1 pkt 4, §5.4.5), `payload.unresolvedPlaceholder` (§3.3).
 
 ## 5. Obowiązki runnera
 

@@ -1,5 +1,27 @@
 # Changelog
 
+## Spec 0.5.1, suite 0.5.1 — 2026-09-30
+
+Fixes from the review of the `session` profile.
+
+- §5.4.5: `execute` without an open main socket (`idle`, `stopped`, or `degraded` after the socket was lost) fails with `SessionError.notConnected` and sends nothing. A registration cut short by `stop()` ends like a failed chunk. The suite already expected both; the spec text did not say so.
+- §5.4.1 pt 4: a main-socket failure outside `stop()` makes the session `degraded` without a main socket, and the next ping opens a new one.
+- conformance.md §4b:
+  - the barrier includes report delivery to the stream the runner subscribes to before the first step;
+  - `expectQuiet` and `expectNoReport` watch a quiet window of at least 200 ms of real time. The text says plainly that this is a probabilistic guarantee;
+  - new step `fail` (the transport reports a socket failure);
+  - `advance` takes ms > 0;
+  - a runner rejects a step it does not recognise.
+- `tools/suite.py check` validates every case against `case.schema.json` with a stdlib checker for the subset of JSON Schema the file uses. The schema and the cross-step checks no longer disagree (`advance: 0`).
+- Six new scenarios (25 in total):
+  - idempotent start/stop;
+  - start after stop;
+  - register waits for start;
+  - registrations do not interleave;
+  - stop during registration;
+  - main-socket failure.
+- Known gap: the maintenance loops of §5.4.4 (ping every 5 s, re-registration every 45 s) are not covered yet.
+
 ## Spec 0.5.0, suite 0.5.0 — 2026-09-30
 
 - New conformance profile `session` (conformance.md §4b). The operation `session.scenario` runs one CLU session against a CLU played by the runner, step by step, on a virtual clock. It has 19 scenarios covering request/response correlation, keep-alive, sequential chunked registration with sid 0, report routing by socket, lifecycle and recovery, and actions with their error codes.

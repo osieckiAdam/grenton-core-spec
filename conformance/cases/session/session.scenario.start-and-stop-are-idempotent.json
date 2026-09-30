@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "id": "session.scenario.start-and-stop-are-idempotent",
+  "specRefs": [
+    "session.lifecycle"
+  ],
+  "description": "start() on a ready session and stop() on a stopped one do nothing and send nothing.",
+  "provenance": "spec §5.3–§5.4 text, conformance.md §4b",
+  "operation": "session.scenario",
+  "input": {
+    "clu": {
+      "id": "CLU_1",
+      "ip": "10.0.0.1",
+      "port": 1234
+    },
+    "responseTimeoutMs": 5000,
+    "steps": [
+      {
+        "call": "start",
+        "as": "start"
+      },
+      {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "checkAlive()"
+        }
+      },
+      {
+        "respond": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "1"
+        }
+      },
+      {
+        "await": "start",
+        "result": null
+      },
+      {
+        "expectState": "ready"
+      },
+      {
+        "call": "start",
+        "as": "again"
+      },
+      {
+        "await": "again",
+        "result": null
+      },
+      {
+        "expectQuiet": true
+      },
+      {
+        "expectState": "ready"
+      },
+      {
+        "call": "stop",
+        "as": "stop1"
+      },
+      {
+        "await": "stop1",
+        "result": null
+      },
+      {
+        "call": "stop",
+        "as": "stop2"
+      },
+      {
+        "await": "stop2",
+        "result": null
+      },
+      {
+        "expectState": "stopped"
+      },
+      {
+        "expectQuiet": true
+      }
+    ]
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "completed": true
+    }
+  }
+}

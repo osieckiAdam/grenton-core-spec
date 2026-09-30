@@ -186,7 +186,7 @@
           "properties": { "deliver": { "type": "object", "additionalProperties": false, "required": ["socket", "frame", "encrypted"],
             "properties": { "socket": { "$ref": "#/$defs/session.socket" }, "frame": { "type": "string" }, "encrypted": { "type": "boolean" } } } } },
         { "type": "object", "additionalProperties": false, "required": ["advance"],
-          "properties": { "advance": { "type": "integer", "minimum": 0 } } },
+          "properties": { "advance": { "type": "integer", "minimum": 1 } } },
         { "type": "object", "additionalProperties": false, "required": ["expectState"],
           "properties": { "expectState": { "enum": ["idle", "starting", "ready", "degraded", "stopped"] } } },
         { "type": "object", "additionalProperties": false, "required": ["expectReport"],
@@ -195,7 +195,9 @@
         { "type": "object", "additionalProperties": false, "required": ["expectNoReport"],
           "properties": { "expectNoReport": { "const": true } } },
         { "type": "object", "additionalProperties": false, "required": ["expectClosed"],
-          "properties": { "expectClosed": { "$ref": "#/$defs/session.socket" } } }
+          "properties": { "expectClosed": { "$ref": "#/$defs/session.socket" } } },
+        { "type": "object", "additionalProperties": false, "required": ["fail"],
+          "properties": { "fail": { "$ref": "#/$defs/session.socket" } } }
       ]
     }
   }

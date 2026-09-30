@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "id": "session.scenario.start-after-stop-opens-a-new-main-socket",
+  "specRefs": [
+    "session.lifecycle"
+  ],
+  "description": "After stop() the same session may be started again: it opens a new main socket, pings and becomes ready.",
+  "provenance": "spec §5.3–§5.4 text, conformance.md §4b",
+  "operation": "session.scenario",
+  "input": {
+    "clu": {
+      "id": "CLU_1",
+      "ip": "10.0.0.1",
+      "port": 1234
+    },
+    "responseTimeoutMs": 5000,
+    "steps": [
+      {
+        "call": "start",
+        "as": "start"
+      },
+      {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "checkAlive()"
+        }
+      },
+      {
+        "respond": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "1"
+        }
+      },
+      {
+        "await": "start",
+        "result": null
+      },
+      {
+        "expectState": "ready"
+      },
+      {
+        "call": "stop",
+        "as": "stop"
+      },
+      {
+        "await": "stop",
+        "result": null
+      },
+      {
+        "expectClosed": "@main"
+      },
+      {
+        "call": "start",
+        "as": "restart"
+      },
+      {
+        "expectSent": {
+          "socket": "@main2",
+          "msgId": "$ka2",
+          "payload": "checkAlive()"
+        }
+      },
+      {
+        "respond": {
+          "socket": "@main2",
+          "msgId": "$ka2",
+          "payload": "1"
+        }
+      },
+      {
+        "await": "restart",
+        "result": null
+      },
+      {
+        "expectState": "ready"
+      }
+    ]
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "completed": true
+    }
+  }
+}

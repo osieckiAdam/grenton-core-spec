@@ -1,0 +1,130 @@
+{
+  "schemaVersion": 1,
+  "id": "session.scenario.registrations-do-not-interleave",
+  "specRefs": [
+    "session.lifecycle",
+    "session.chunking"
+  ],
+  "description": "Two registrations are serialized: the second one starts only after the first ends, then closes the first one's socket.",
+  "provenance": "spec §5.3–§5.4 text, conformance.md §4b",
+  "operation": "session.scenario",
+  "input": {
+    "clu": {
+      "id": "CLU_1",
+      "ip": "10.0.0.1",
+      "port": 1234
+    },
+    "responseTimeoutMs": 5000,
+    "steps": [
+      {
+        "call": "start",
+        "as": "start"
+      },
+      {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "checkAlive()"
+        }
+      },
+      {
+        "respond": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "1"
+        }
+      },
+      {
+        "await": "start",
+        "result": null
+      },
+      {
+        "expectState": "ready"
+      },
+      {
+        "call": "register",
+        "keys": [
+          {
+            "type": "attribute",
+            "objectName": "OBJ",
+            "index": "0"
+          }
+        ],
+        "as": "r1"
+      },
+      {
+        "expectSent": {
+          "socket": "@first",
+          "msgId": "$m1",
+          "payload": "SYSTEM:clientRegister(0,0,1,{{OBJ,0}})"
+        }
+      },
+      {
+        "call": "register",
+        "keys": [
+          {
+            "type": "attribute",
+            "objectName": "OBJ",
+            "index": "1"
+          }
+        ],
+        "as": "r2"
+      },
+      {
+        "expectQuiet": true
+      },
+      {
+        "respond": {
+          "socket": "@first",
+          "msgId": "$m1",
+          "payload": "clientReport:1:{5}"
+        }
+      },
+      {
+        "await": "r1",
+        "result": {
+          "slots": [
+            {
+              "type": "int",
+              "value": "5"
+            }
+          ]
+        }
+      },
+      {
+        "expectSent": {
+          "socket": "@second",
+          "msgId": "$m2",
+          "payload": "SYSTEM:clientRegister(0,0,1,{{OBJ,1}})"
+        }
+      },
+      {
+        "expectClosed": "@first"
+      },
+      {
+        "respond": {
+          "socket": "@second",
+          "msgId": "$m2",
+          "payload": "clientReport:1:{6}"
+        }
+      },
+      {
+        "await": "r2",
+        "result": {
+          "slots": [
+            {
+              "type": "int",
+              "value": "6"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "completed": true
+    }
+  }
+}
