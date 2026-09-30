@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "number.format.precision-1",
+  "specRefs": [
+    "devices.number-format"
+  ],
+  "description": "Reference format str(round(21.5, 1)) → 21.5.",
+  "provenance": "python3 str(round(x, p)) — reference semantics (spec §10 pt 3)",
+  "operation": "number.format",
+  "input": {
+    "value": {
+      "type": "double",
+      "bits": "4035800000000000",
+      "decimal": "21.5"
+    },
+    "precision": 1
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "text": "21.5"
+    }
+  }
+}

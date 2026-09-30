@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "value.cast.quoted-number-is-double",
+  "specRefs": [
+    "model.cast"
+  ],
+  "description": "castString(\"\\\"21.5\\\"\")",
+  "provenance": "spec §3.1 + §9.2",
+  "operation": "value.cast",
+  "input": {
+    "text": "\"21.5\""
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "value": {
+        "type": "double",
+        "bits": "4035800000000000",
+        "decimal": "21.5"
+      }
+    }
+  }
+}

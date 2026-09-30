@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "payload.action.attribute",
+  "specRefs": [
+    "payload.action"
+  ],
+  "description": "ATTRIBUTE → {objectName}:set({index},\"{value}\").",
+  "provenance": "spec §5.3.4 literal",
+  "operation": "payload.action",
+  "input": {
+    "action": {
+      "event": "ON",
+      "cluId": "CLU_501234567",
+      "objectName": "DOU8272",
+      "value": "1",
+      "callType": "ATTRIBUTE",
+      "index": "0"
+    }
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "payload": "DOU8272:set(0,\"1\")"
+    }
+  }
+}

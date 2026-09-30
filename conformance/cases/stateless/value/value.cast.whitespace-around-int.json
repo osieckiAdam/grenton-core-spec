@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "value.cast.whitespace-around-int",
+  "specRefs": [
+    "model.cast"
+  ],
+  "description": "castString(\"\\t42 \")",
+  "provenance": "spec §3.1 + §9.2",
+  "operation": "value.cast",
+  "input": {
+    "text": "\t42 "
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "value": {
+        "type": "int",
+        "value": "42"
+      }
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "number.format.small-value",
+  "specRefs": [
+    "devices.number-format"
+  ],
+  "description": "Reference format str(round(0.0001, 4)) → 0.0001.",
+  "provenance": "python3 str(round(x, p)) — reference semantics (spec §10 pt 3)",
+  "operation": "number.format",
+  "input": {
+    "value": {
+      "type": "double",
+      "bits": "3f1a36e2eb1c432d",
+      "decimal": "0.0001"
+    },
+    "precision": 4
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "text": "0.0001"
+    }
+  }
+}

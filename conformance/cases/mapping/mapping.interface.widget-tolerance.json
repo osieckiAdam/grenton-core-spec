@@ -1,0 +1,150 @@
+{
+  "schemaVersion": 1,
+  "id": "mapping.interface.widget-tolerance",
+  "specRefs": [
+    "model.widget-tolerance",
+    "devices.mapping",
+    "devices.order",
+    "devices.physical-objects"
+  ],
+  "description": "Widget-level tolerance of §3.6: unknown type, missing type, missing field, unknown enum, bad nested action, ignored extra fields; per-page skip lists.",
+  "provenance": "tools/oracles/mapping.py — independent derivation from spec §3.6, §6.1, §6.3",
+  "operation": "mapping.interface",
+  "input": {
+    "fixture": "fixtures/interfaces/widget-tolerance.json"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "devices": [
+        {
+          "id": "s-extra-fields-ignored",
+          "widgetType": "VALUE_V2",
+          "kind": "sensor",
+          "name": "Temperatura",
+          "page": {
+            "index": 0,
+            "name": "Strona A"
+          },
+          "entities": [
+            {
+              "kind": "sensor",
+              "id": "s-extra-fields-ignored_0",
+              "name": "Temperatura",
+              "state": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "PAN4756",
+                "index": "0"
+              },
+              "sensorKind": "generic",
+              "unit": null,
+              "grentonUnit": "DEGREE",
+              "valueType": "FLOAT",
+              "precision": 1
+            }
+          ]
+        },
+        {
+          "id": "s-valid-switch",
+          "widgetType": "ON_OFF",
+          "kind": "switch",
+          "name": "Dobry",
+          "page": {
+            "index": 0,
+            "name": "Strona A"
+          },
+          "entities": [
+            {
+              "kind": "switch",
+              "id": "s-valid-switch_0",
+              "name": "Dobry",
+              "state": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "DOU1006",
+                "index": "0"
+              },
+              "onAction": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "DOU1006",
+                "event": "ON",
+                "value": "1",
+                "index": "0"
+              },
+              "offAction": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "DOU1006",
+                "event": "OFF",
+                "value": "0",
+                "index": "0"
+              },
+              "onIndication": "ON",
+              "offIndication": "OFF"
+            }
+          ]
+        }
+      ],
+      "physicalObjects": [
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "object",
+            "name": "PAN4756",
+            "index": "0"
+          },
+          "widgets": [
+            {
+              "deviceId": "s-extra-fields-ignored",
+              "widgetType": "VALUE_V2",
+              "name": "Temperatura",
+              "page": {
+                "index": 0,
+                "name": "Strona A"
+              },
+              "entityIds": [
+                "s-extra-fields-ignored_0"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "object",
+            "name": "DOU1006",
+            "index": "0"
+          },
+          "widgets": [
+            {
+              "deviceId": "s-valid-switch",
+              "widgetType": "ON_OFF",
+              "name": "Dobry",
+              "page": {
+                "index": 0,
+                "name": "Strona A"
+              },
+              "entityIds": [
+                "s-valid-switch_0"
+              ]
+            }
+          ]
+        }
+      ],
+      "skippedWidgets": [
+        [
+          "FUTURE_WIDGET_V9",
+          null,
+          "VALUE_V2",
+          "VALUE_V2"
+        ],
+        [
+          "ON_OFF"
+        ],
+        []
+      ]
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "crypto.decrypt.reject-padding-bytes-inconsistent",
+  "specRefs": [
+    "crypto.padding"
+  ],
+  "description": "Every padding byte must equal the padding length.",
+  "provenance": "spec §5.1 (strict PKCS#7) + openssl -nopad",
+  "operation": "crypto.decrypt",
+  "input": {
+    "keyBase64": "AAECAwQFBgcICQoLDA0ODw==",
+    "ivBase64": "EBESExQVFhcYGRobHB0eHw==",
+    "ciphertextHex": "c395bf8e5a5e9a3960807b3762317c63"
+  },
+  "expect": {
+    "outcome": "reject"
+  }
+}

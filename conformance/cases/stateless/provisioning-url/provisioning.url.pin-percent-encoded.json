@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "provisioning.url.pin-percent-encoded",
+  "specRefs": [
+    "provisioning.url"
+  ],
+  "description": "A literal `%` is encoded.",
+  "provenance": "spec §4.1",
+  "operation": "provisioning.url",
+  "input": {
+    "host": "192.168.1.5",
+    "pin": "12%34"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "url": "http://192.168.1.5:9998/api/v1/interface/hash/12%2534"
+    }
+  }
+}

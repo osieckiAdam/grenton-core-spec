@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "payload.report.reject-no-prefix",
+  "specRefs": [
+    "payload.report"
+  ],
+  "description": "Without the clientReport: prefix the payload is rejected.",
+  "provenance": "spec §5.3.2 pt 3",
+  "operation": "payload.report",
+  "input": {
+    "payload": "clientRegister:1:{1}"
+  },
+  "expect": {
+    "outcome": "reject"
+  }
+}

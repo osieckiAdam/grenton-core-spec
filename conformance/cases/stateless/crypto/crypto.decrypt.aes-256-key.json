@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "crypto.decrypt.aes-256-key",
+  "specRefs": [
+    "crypto.aes-cbc",
+    "crypto.padding"
+  ],
+  "description": "Inverse: A 32-byte key selects AES-256-CBC.",
+  "provenance": "openssl enc",
+  "operation": "crypto.decrypt",
+  "input": {
+    "keyBase64": "AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8=",
+    "ivBase64": "EBESExQVFhcYGRobHB0eHw==",
+    "ciphertextHex": "ec16ff7c4999b5315d2525fadf6bfc7b5772dccff37c300b794c3c5f75a86eef"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "plaintextHex": "7265713a3a61616262636364643a636865636b416c6976652829"
+    }
+  }
+}

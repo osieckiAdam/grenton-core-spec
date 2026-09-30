@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "payload.action.reject-attribute-without-index",
+  "specRefs": [
+    "model.action-ref"
+  ],
+  "description": "A non-SCRIPT action without `index` is a parse error.",
+  "provenance": "spec §3.3 + §3.6",
+  "operation": "payload.action",
+  "input": {
+    "action": {
+      "event": "CLICK",
+      "cluId": "CLU_501234567",
+      "objectName": "DOU8272",
+      "value": "1",
+      "callType": "ATTRIBUTE"
+    }
+  },
+  "expect": {
+    "outcome": "reject"
+  }
+}

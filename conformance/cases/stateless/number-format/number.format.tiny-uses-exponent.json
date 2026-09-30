@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "number.format.tiny-uses-exponent",
+  "specRefs": [
+    "devices.number-format"
+  ],
+  "description": "Reference format str(round(1e-05, 5)) → 1e-05.",
+  "provenance": "python3 str(round(x, p)) — reference semantics (spec §10 pt 3)",
+  "operation": "number.format",
+  "input": {
+    "value": {
+      "type": "double",
+      "bits": "3ee4f8b588e368f1",
+      "decimal": "1e-05"
+    },
+    "precision": 5
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "text": "1e-05"
+    }
+  }
+}

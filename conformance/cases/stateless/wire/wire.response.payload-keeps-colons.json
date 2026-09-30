@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "wire.response.payload-keeps-colons",
+  "specRefs": [
+    "wire.response"
+  ],
+  "description": "Only the first three colons split; the payload keeps the rest.",
+  "provenance": "spec §5.2",
+  "operation": "wire.response",
+  "input": {
+    "frame": "resp:192.168.1.10:0f3e9a11:clientReport:1:{21.5,\"ON\"}"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "cluIp": "192.168.1.10",
+      "msgId": "0f3e9a11",
+      "payload": "clientReport:1:{21.5,\"ON\"}",
+      "isNotification": false
+    }
+  }
+}

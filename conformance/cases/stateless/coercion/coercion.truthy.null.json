@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "coercion.truthy.null",
+  "specRefs": [
+    "devices.coercion"
+  ],
+  "description": "truthy: standard truthiness; null is unknown.",
+  "provenance": "spec §6.2",
+  "operation": "coercion.truthy",
+  "input": {
+    "value": {
+      "type": "null"
+    }
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "result": null
+    }
+  }
+}

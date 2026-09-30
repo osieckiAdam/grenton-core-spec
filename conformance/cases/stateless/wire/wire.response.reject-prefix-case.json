@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "wire.response.reject-prefix-case",
+  "specRefs": [
+    "wire.response"
+  ],
+  "description": "The `resp:` prefix is case-sensitive.",
+  "provenance": "spec §5.2",
+  "operation": "wire.response",
+  "input": {
+    "frame": "RESP:192.168.1.10:a1b2c3d4:OK"
+  },
+  "expect": {
+    "outcome": "reject"
+  }
+}

@@ -1,0 +1,782 @@
+{
+  "schemaVersion": 1,
+  "id": "mapping.interface.completeness",
+  "specRefs": [
+    "model.widget-tolerance",
+    "devices.mapping",
+    "devices.order",
+    "devices.physical-objects"
+  ],
+  "description": "Completeness rules of §6.3: skipped components, devices without entities, optional entities, first-action rules; a second page checks device order.",
+  "provenance": "tools/oracles/mapping.py — independent derivation from spec §3.6, §6.1, §6.3",
+  "operation": "mapping.interface",
+  "input": {
+    "fixture": "fixtures/interfaces/completeness.json"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "devices": [
+        {
+          "id": "c-switch-missing-off",
+          "widgetType": "ON_OFF",
+          "kind": "switch",
+          "name": "Pełny / Bez OFF",
+          "page": {
+            "index": 0,
+            "name": "Kompletność"
+          },
+          "entities": [
+            {
+              "kind": "switch",
+              "id": "c-switch-missing-off_0",
+              "name": "Pełny",
+              "state": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "DOU1000",
+                "index": "0"
+              },
+              "onAction": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "DOU1000",
+                "event": "ON",
+                "value": "1",
+                "index": "0"
+              },
+              "offAction": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "DOU1000",
+                "event": "OFF",
+                "value": "0",
+                "index": "0"
+              },
+              "onIndication": "ON",
+              "offIndication": "OFF"
+            }
+          ]
+        },
+        {
+          "id": "c-switch-first-action-wins",
+          "widgetType": "ON_OFF",
+          "kind": "switch",
+          "name": "Dwie akcje ON",
+          "page": {
+            "index": 0,
+            "name": "Kompletność"
+          },
+          "entities": [
+            {
+              "kind": "switch",
+              "id": "c-switch-first-action-wins_3",
+              "name": "Dwie akcje ON",
+              "state": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "DOU1002",
+                "index": "0"
+              },
+              "onAction": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "DOU1002",
+                "event": "ON",
+                "value": "first",
+                "index": "0"
+              },
+              "offAction": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "DOU1002",
+                "event": "OFF",
+                "value": "0",
+                "index": "0"
+              },
+              "onIndication": "ON",
+              "offIndication": "OFF"
+            }
+          ]
+        },
+        {
+          "id": "c-switch-variable-state",
+          "widgetType": "ON_OFF",
+          "kind": "switch",
+          "name": "Zmienna",
+          "page": {
+            "index": 0,
+            "name": "Kompletność"
+          },
+          "entities": [
+            {
+              "kind": "switch",
+              "id": "c-switch-variable-state_0",
+              "name": "Zmienna",
+              "state": {
+                "callType": "VARIABLE",
+                "cluId": "CLU_501234567",
+                "index": "x_a"
+              },
+              "onAction": {
+                "callType": "VARIABLE",
+                "cluId": "CLU_501234567",
+                "objectName": "x_a",
+                "event": "ON",
+                "value": "1",
+                "index": "x_a"
+              },
+              "offAction": {
+                "callType": "VARIABLE",
+                "cluId": "CLU_501234567",
+                "objectName": "x_a",
+                "event": "OFF",
+                "value": "0",
+                "index": "x_a"
+              },
+              "onIndication": "ON",
+              "offIndication": "OFF"
+            }
+          ]
+        },
+        {
+          "id": "c-switch-no-components",
+          "widgetType": "ON_OFF",
+          "kind": "switch",
+          "name": "",
+          "page": {
+            "index": 0,
+            "name": "Kompletność"
+          },
+          "entities": []
+        },
+        {
+          "id": "c-led-missing-saturation",
+          "widgetType": "LED",
+          "kind": "hsbLight",
+          "name": "Taśma LED",
+          "page": {
+            "index": 0,
+            "name": "Kompletność"
+          },
+          "entities": []
+        },
+        {
+          "id": "c-led-slider-without-action",
+          "widgetType": "LED",
+          "kind": "hsbLight",
+          "name": "Taśma LED",
+          "page": {
+            "index": 0,
+            "name": "Kompletność"
+          },
+          "entities": []
+        },
+        {
+          "id": "c-led-button-without-off",
+          "widgetType": "LED",
+          "kind": "hsbLight",
+          "name": "Taśma LED",
+          "page": {
+            "index": 0,
+            "name": "Kompletność"
+          },
+          "entities": []
+        },
+        {
+          "id": "c-contact-without-click",
+          "widgetType": "CONTACT_SENSOR",
+          "kind": "contactSensor",
+          "name": "Drzwi wejściowe",
+          "page": {
+            "index": 0,
+            "name": "Kompletność"
+          },
+          "entities": [
+            {
+              "kind": "contactSensor",
+              "id": "c-contact-without-click_binary_sensor",
+              "name": "Drzwi wejściowe",
+              "state": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "DIN5555",
+                "index": "0"
+              },
+              "reversed": true,
+              "onIndication": "OTWARTE",
+              "offIndication": "ZAMKNIĘTE"
+            }
+          ]
+        },
+        {
+          "id": "c-contact-double-right-click",
+          "widgetType": "CONTACT_SENSOR_DOUBLE",
+          "kind": "contactSensor",
+          "name": "Okno lewe / Okno prawe",
+          "page": {
+            "index": 0,
+            "name": "Kompletność"
+          },
+          "entities": [
+            {
+              "kind": "contactSensor",
+              "id": "c-contact-double-right-click_binary_sensor_left",
+              "name": "Okno lewe",
+              "state": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "DIN6666",
+                "index": "0"
+              },
+              "reversed": false,
+              "onIndication": "OTWARTE",
+              "offIndication": "ZAMKNIĘTE"
+            },
+            {
+              "kind": "contactSensor",
+              "id": "c-contact-double-right-click_binary_sensor_right",
+              "name": "Okno prawe",
+              "state": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "DIN7777",
+                "index": "0"
+              },
+              "reversed": false,
+              "onIndication": "OTWARTE",
+              "offIndication": "ZAMKNIĘTE"
+            },
+            {
+              "kind": "trigger",
+              "id": "c-contact-double-right-click_button_right",
+              "name": "Okno prawe",
+              "action": {
+                "callType": "VARIABLE",
+                "cluId": "CLU_501234567",
+                "objectName": "x_okno_klik",
+                "event": "CLICK",
+                "value": "1",
+                "index": "x_okno_klik"
+              }
+            }
+          ]
+        },
+        {
+          "id": "c-slider-with-click",
+          "widgetType": "SLIDER",
+          "kind": "numberSetting",
+          "name": "Temperatura zadana",
+          "page": {
+            "index": 0,
+            "name": "Kompletność"
+          },
+          "entities": [
+            {
+              "kind": "numberSetting",
+              "id": "c-slider-with-click_slider",
+              "name": "Temperatura zadana",
+              "state": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "THE8888",
+                "index": "0"
+              },
+              "setValueAction": {
+                "callType": "METHOD",
+                "cluId": "CLU_501234567",
+                "objectName": "THE8888",
+                "event": "CLICK",
+                "value": "20",
+                "index": "1"
+              },
+              "min": 16,
+              "max": 28,
+              "precision": 1
+            },
+            {
+              "kind": "trigger",
+              "id": "c-slider-with-click_button",
+              "name": "Temperatura zadana",
+              "action": {
+                "callType": "METHOD",
+                "cluId": "CLU_501234567",
+                "objectName": "THE8888",
+                "event": "CLICK",
+                "value": "1",
+                "index": "2"
+              }
+            }
+          ]
+        },
+        {
+          "id": "c-legacy-shutter-no-components",
+          "widgetType": "ROLLER_SHUTTER",
+          "kind": "cover",
+          "name": "",
+          "page": {
+            "index": 0,
+            "name": "Kompletność"
+          },
+          "entities": []
+        },
+        {
+          "id": "c-legacy-shutter-no-actions",
+          "widgetType": "ROLLER_SHUTTER",
+          "kind": "cover",
+          "name": "Bez akcji",
+          "page": {
+            "index": 0,
+            "name": "Kompletność"
+          },
+          "entities": []
+        },
+        {
+          "id": "c-cover-no-tilt-no-stop",
+          "widgetType": "ROLLER_SHUTTER_V3",
+          "kind": "cover",
+          "name": "Roleta sypialnia",
+          "page": {
+            "index": 0,
+            "name": "Kompletność"
+          },
+          "entities": [
+            {
+              "kind": "cover",
+              "id": "c-cover-no-tilt-no-stop",
+              "name": "Roleta sypialnia",
+              "motionState": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "ROL2020",
+                "index": "0"
+              },
+              "position": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "ROL2020",
+                "index": "1"
+              },
+              "setPositionAction": {
+                "callType": "METHOD",
+                "cluId": "CLU_501234567",
+                "objectName": "ROL2020",
+                "event": "CLICK",
+                "value": "0",
+                "index": "4"
+              },
+              "tilt": null,
+              "stopAction": null
+            }
+          ]
+        },
+        {
+          "id": "c-cover-with-stop",
+          "widgetType": "ROLLER_SHUTTER_V3",
+          "kind": "cover",
+          "name": "Roleta sypialnia",
+          "page": {
+            "index": 0,
+            "name": "Kompletność"
+          },
+          "entities": [
+            {
+              "kind": "cover",
+              "id": "c-cover-with-stop",
+              "name": "Roleta sypialnia",
+              "motionState": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "ROL2020",
+                "index": "0"
+              },
+              "position": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "ROL2020",
+                "index": "1"
+              },
+              "setPositionAction": {
+                "callType": "METHOD",
+                "cluId": "CLU_501234567",
+                "objectName": "ROL2020",
+                "event": "CLICK",
+                "value": "0",
+                "index": "4"
+              },
+              "tilt": {
+                "position": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_501234567",
+                  "objectName": "ROL2020",
+                  "index": "2"
+                },
+                "setAction": {
+                  "callType": "METHOD",
+                  "cluId": "CLU_501234567",
+                  "objectName": "ROL2020",
+                  "event": "CLICK",
+                  "value": "0",
+                  "index": "5"
+                }
+              },
+              "stopAction": {
+                "callType": "METHOD",
+                "cluId": "CLU_501234567",
+                "objectName": "ROL2020",
+                "event": "CLICK",
+                "value": "0",
+                "index": "9"
+              }
+            }
+          ]
+        },
+        {
+          "id": "c-camera-no-components",
+          "widgetType": "CAMERA",
+          "kind": "camera",
+          "name": "",
+          "page": {
+            "index": 0,
+            "name": "Kompletność"
+          },
+          "entities": []
+        },
+        {
+          "id": "c-scene-filtering",
+          "widgetType": "SCENE",
+          "kind": "scene",
+          "name": "Klik bez skryptu / Skrypt na ON / Właściwa",
+          "page": {
+            "index": 0,
+            "name": "Kompletność"
+          },
+          "entities": [
+            {
+              "kind": "sceneTrigger",
+              "id": "c-scene-filtering_2",
+              "name": "Właściwa",
+              "action": {
+                "callType": "SCRIPT",
+                "cluId": "CLU_501234567",
+                "objectName": "scena_ok",
+                "event": "CLICK",
+                "value": ""
+              }
+            }
+          ]
+        },
+        {
+          "id": "w-value",
+          "widgetType": "VALUE_V2",
+          "kind": "sensor",
+          "name": "Temperatura",
+          "page": {
+            "index": 1,
+            "name": "Druga strona"
+          },
+          "entities": [
+            {
+              "kind": "sensor",
+              "id": "w-value_0",
+              "name": "Temperatura",
+              "state": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "PAN4756",
+                "index": "0"
+              },
+              "sensorKind": "generic",
+              "unit": null,
+              "grentonUnit": "DEGREE",
+              "valueType": "FLOAT",
+              "precision": 1
+            }
+          ]
+        }
+      ],
+      "physicalObjects": [
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "object",
+            "name": "DOU1000",
+            "index": "0"
+          },
+          "widgets": [
+            {
+              "deviceId": "c-switch-missing-off",
+              "widgetType": "ON_OFF",
+              "name": "Pełny / Bez OFF",
+              "page": {
+                "index": 0,
+                "name": "Kompletność"
+              },
+              "entityIds": [
+                "c-switch-missing-off_0"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "object",
+            "name": "DOU1002",
+            "index": "0"
+          },
+          "widgets": [
+            {
+              "deviceId": "c-switch-first-action-wins",
+              "widgetType": "ON_OFF",
+              "name": "Dwie akcje ON",
+              "page": {
+                "index": 0,
+                "name": "Kompletność"
+              },
+              "entityIds": [
+                "c-switch-first-action-wins_3"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "variable",
+            "name": "x_a",
+            "index": null
+          },
+          "widgets": [
+            {
+              "deviceId": "c-switch-variable-state",
+              "widgetType": "ON_OFF",
+              "name": "Zmienna",
+              "page": {
+                "index": 0,
+                "name": "Kompletność"
+              },
+              "entityIds": [
+                "c-switch-variable-state_0"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "object",
+            "name": "DIN5555",
+            "index": "0"
+          },
+          "widgets": [
+            {
+              "deviceId": "c-contact-without-click",
+              "widgetType": "CONTACT_SENSOR",
+              "name": "Drzwi wejściowe",
+              "page": {
+                "index": 0,
+                "name": "Kompletność"
+              },
+              "entityIds": [
+                "c-contact-without-click_binary_sensor"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "object",
+            "name": "DIN6666",
+            "index": "0"
+          },
+          "widgets": [
+            {
+              "deviceId": "c-contact-double-right-click",
+              "widgetType": "CONTACT_SENSOR_DOUBLE",
+              "name": "Okno lewe / Okno prawe",
+              "page": {
+                "index": 0,
+                "name": "Kompletność"
+              },
+              "entityIds": [
+                "c-contact-double-right-click_binary_sensor_left"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "object",
+            "name": "DIN7777",
+            "index": "0"
+          },
+          "widgets": [
+            {
+              "deviceId": "c-contact-double-right-click",
+              "widgetType": "CONTACT_SENSOR_DOUBLE",
+              "name": "Okno lewe / Okno prawe",
+              "page": {
+                "index": 0,
+                "name": "Kompletność"
+              },
+              "entityIds": [
+                "c-contact-double-right-click_binary_sensor_right"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "variable",
+            "name": "x_okno_klik",
+            "index": null
+          },
+          "widgets": [
+            {
+              "deviceId": "c-contact-double-right-click",
+              "widgetType": "CONTACT_SENSOR_DOUBLE",
+              "name": "Okno lewe / Okno prawe",
+              "page": {
+                "index": 0,
+                "name": "Kompletność"
+              },
+              "entityIds": [
+                "c-contact-double-right-click_button_right"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "object",
+            "name": "THE8888",
+            "index": "0"
+          },
+          "widgets": [
+            {
+              "deviceId": "c-slider-with-click",
+              "widgetType": "SLIDER",
+              "name": "Temperatura zadana",
+              "page": {
+                "index": 0,
+                "name": "Kompletność"
+              },
+              "entityIds": [
+                "c-slider-with-click_slider"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "object",
+            "name": "THE8888",
+            "index": "2"
+          },
+          "widgets": [
+            {
+              "deviceId": "c-slider-with-click",
+              "widgetType": "SLIDER",
+              "name": "Temperatura zadana",
+              "page": {
+                "index": 0,
+                "name": "Kompletność"
+              },
+              "entityIds": [
+                "c-slider-with-click_button"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "object",
+            "name": "ROL2020",
+            "index": "1"
+          },
+          "widgets": [
+            {
+              "deviceId": "c-cover-no-tilt-no-stop",
+              "widgetType": "ROLLER_SHUTTER_V3",
+              "name": "Roleta sypialnia",
+              "page": {
+                "index": 0,
+                "name": "Kompletność"
+              },
+              "entityIds": [
+                "c-cover-no-tilt-no-stop"
+              ]
+            },
+            {
+              "deviceId": "c-cover-with-stop",
+              "widgetType": "ROLLER_SHUTTER_V3",
+              "name": "Roleta sypialnia",
+              "page": {
+                "index": 0,
+                "name": "Kompletność"
+              },
+              "entityIds": [
+                "c-cover-with-stop"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "script",
+            "name": "scena_ok",
+            "index": null
+          },
+          "widgets": [
+            {
+              "deviceId": "c-scene-filtering",
+              "widgetType": "SCENE",
+              "name": "Klik bez skryptu / Skrypt na ON / Właściwa",
+              "page": {
+                "index": 0,
+                "name": "Kompletność"
+              },
+              "entityIds": [
+                "c-scene-filtering_2"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "object",
+            "name": "PAN4756",
+            "index": "0"
+          },
+          "widgets": [
+            {
+              "deviceId": "w-value",
+              "widgetType": "VALUE_V2",
+              "name": "Temperatura",
+              "page": {
+                "index": 1,
+                "name": "Druga strona"
+              },
+              "entityIds": [
+                "w-value_0"
+              ]
+            }
+          ]
+        }
+      ],
+      "skippedWidgets": [
+        [],
+        []
+      ]
+    }
+  }
+}

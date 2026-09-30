@@ -1,0 +1,795 @@
+{
+  "id": "interface-test-001",
+  "version": 3,
+  "name": "Dom testowy",
+  "icon": "home",
+  "theme": "GRENTON",
+  "encryption": {
+    "key": "AAECAwQFBgcICQoLDA0ODw==",
+    "iv": "EBESExQVFhcYGRobHB0eHw=="
+  },
+  "clus": [
+    {
+      "id": "CLU_501234567",
+      "serialNumber": "501234567",
+      "name": "CLU Parter",
+      "ip": "192.168.1.10",
+      "port": 1234,
+      "connectionType": "LOCAL_ONLY"
+    }
+  ],
+  "pushNotifications": [
+    {
+      "cluId": 501234567,
+      "objectId": "PN_1",
+      "objectType": "PUSH"
+    }
+  ],
+  "pages": [
+    {
+      "name": "SALON",
+      "icon": "home",
+      "isFullscreenWidget": false,
+      "widgets": [
+        {
+          "icon": "temperature",
+          "label": "Temperatura",
+          "id": "sh-thermo-room",
+          "type": "THERMOSTAT_V2",
+          "no_of_fan_speeds": 0,
+          "object": {
+            "maxTemperature": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1001",
+              "index": "11",
+              "callType": "ATTRIBUTE"
+            },
+            "setMaxTemperatureAction": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1001",
+              "index": "11",
+              "event": "CLICK",
+              "value": "$value$",
+              "callType": "ATTRIBUTE"
+            },
+            "currentTemperature": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1001",
+              "index": "14",
+              "callType": "ATTRIBUTE"
+            },
+            "setTargetTemperatureAction": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1001",
+              "index": "3",
+              "event": "CLICK",
+              "value": "$value$",
+              "callType": "ATTRIBUTE"
+            },
+            "setModeAction": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1001",
+              "index": "8",
+              "event": "CLICK",
+              "value": "$value$",
+              "callType": "ATTRIBUTE"
+            },
+            "mode": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1001",
+              "index": "8",
+              "callType": "ATTRIBUTE"
+            },
+            "controlOutValue": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1001",
+              "index": "13",
+              "callType": "ATTRIBUTE"
+            },
+            "setMinTemperatureAction": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1001",
+              "index": "10",
+              "event": "CLICK",
+              "value": "$value$",
+              "callType": "ATTRIBUTE"
+            },
+            "targetTemperature": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1001",
+              "index": "12",
+              "callType": "ATTRIBUTE"
+            },
+            "minTemperature": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1001",
+              "index": "10",
+              "callType": "ATTRIBUTE"
+            },
+            "setScheduleDataAction": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1001",
+              "index": "9",
+              "event": "CLICK",
+              "value": "$value$",
+              "callType": "ATTRIBUTE"
+            },
+            "setStateAction": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1001",
+              "index": "6",
+              "event": "CLICK",
+              "value": "$value$",
+              "callType": "ATTRIBUTE"
+            },
+            "state": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1001",
+              "index": "6",
+              "callType": "ATTRIBUTE"
+            },
+            "scheduleData": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1001",
+              "index": "9",
+              "callType": "ATTRIBUTE"
+            }
+          }
+        },
+        {
+          "type": "VALUE_V2",
+          "id": "sh-thermo-temp",
+          "label": "Temperatura",
+          "icon": "temp",
+          "unit": "DEGREE",
+          "valueType": "FLOAT",
+          "precision": 1,
+          "object": {
+            "value": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1001",
+              "index": "14",
+              "callType": "ATTRIBUTE"
+            }
+          }
+        },
+        {
+          "type": "ROLLER_SHUTTER_V3",
+          "id": "sh-shutter-room",
+          "icon": "shutter",
+          "label": "Roleta",
+          "object": {
+            "state": {
+              "cluId": "CLU_501234567",
+              "objectName": "ROL2020",
+              "index": "0",
+              "callType": "ATTRIBUTE"
+            },
+            "position": {
+              "cluId": "CLU_501234567",
+              "objectName": "ROL2020",
+              "index": "1",
+              "callType": "ATTRIBUTE"
+            },
+            "lamelPosition": {
+              "cluId": "CLU_501234567",
+              "objectName": "ROL2020",
+              "index": "2",
+              "callType": "ATTRIBUTE"
+            },
+            "lamelMoveTimeout": {
+              "cluId": "CLU_501234567",
+              "objectName": "ROL2020",
+              "index": "3",
+              "callType": "ATTRIBUTE"
+            },
+            "setPositionAction": {
+              "event": "CLICK",
+              "cluId": "CLU_501234567",
+              "objectName": "ROL2020",
+              "index": "4",
+              "value": "0",
+              "callType": "METHOD"
+            },
+            "setLamelPositionAction": {
+              "event": "CLICK",
+              "cluId": "CLU_501234567",
+              "objectName": "ROL2020",
+              "index": "5",
+              "value": "0",
+              "callType": "METHOD"
+            },
+            "moveUpAction": {
+              "event": "CLICK",
+              "cluId": "CLU_501234567",
+              "objectName": "ROL2020",
+              "index": "6",
+              "value": "",
+              "callType": "METHOD"
+            },
+            "moveDownAction": {
+              "event": "CLICK",
+              "cluId": "CLU_501234567",
+              "objectName": "ROL2020",
+              "index": "7",
+              "value": "",
+              "callType": "METHOD"
+            },
+            "startAction": {
+              "event": "CLICK",
+              "cluId": "CLU_501234567",
+              "objectName": "ROL2020",
+              "index": "8",
+              "value": "",
+              "callType": "METHOD"
+            },
+            "stopAction": {
+              "event": "CLICK",
+              "cluId": "CLU_501234567",
+              "objectName": "ROL2020",
+              "index": "9",
+              "value": "",
+              "callType": "METHOD"
+            },
+            "setRollerBlockedAction": {
+              "event": "CLICK",
+              "cluId": "CLU_501234567",
+              "objectName": "ROL2020",
+              "index": "10",
+              "value": "0",
+              "callType": "METHOD"
+            }
+          }
+        },
+        {
+          "type": "ON_OFF_DOUBLE",
+          "id": "w-onoff-double",
+          "components": [
+            {
+              "type": "BUTTON_BISTABLE_V2",
+              "label": "Gniazdko A",
+              "rowId": 0,
+              "unit": "UNKNOWN",
+              "state": {
+                "cluId": "CLU_501234567",
+                "objectName": "DOU1111",
+                "index": "0",
+                "callType": "ATTRIBUTE"
+              },
+              "actions": [
+                {
+                  "event": "ON",
+                  "cluId": "CLU_501234567",
+                  "objectName": "DOU1111",
+                  "index": "0",
+                  "value": "1",
+                  "callType": "ATTRIBUTE"
+                },
+                {
+                  "event": "OFF",
+                  "cluId": "CLU_501234567",
+                  "objectName": "DOU1111",
+                  "index": "0",
+                  "value": "0",
+                  "callType": "ATTRIBUTE"
+                }
+              ],
+              "onIndication": "ON",
+              "offIndication": "OFF"
+            },
+            {
+              "type": "BUTTON_BISTABLE_V2",
+              "label": "Gniazdko B",
+              "rowId": 1,
+              "unit": "UNKNOWN",
+              "state": {
+                "cluId": "CLU_501234567",
+                "objectName": "DOU2222",
+                "index": "0",
+                "callType": "ATTRIBUTE"
+              },
+              "actions": [
+                {
+                  "event": "ON",
+                  "cluId": "CLU_501234567",
+                  "objectName": "DOU2222",
+                  "index": "0",
+                  "value": "1",
+                  "callType": "ATTRIBUTE"
+                },
+                {
+                  "event": "OFF",
+                  "cluId": "CLU_501234567",
+                  "objectName": "DOU2222",
+                  "index": "0",
+                  "value": "0",
+                  "callType": "ATTRIBUTE"
+                }
+              ],
+              "onIndication": "ON",
+              "offIndication": "OFF"
+            }
+          ]
+        },
+        {
+          "type": "SCENE",
+          "id": "sh-scene-room",
+          "components": [
+            {
+              "type": "BUTTON_MONOSTABLE",
+              "label": "Wieczorny chill",
+              "rowId": 0,
+              "unit": "UNKNOWN",
+              "actions": [
+                {
+                  "event": "CLICK",
+                  "cluId": "CLU_501234567",
+                  "objectName": "scena_wieczor",
+                  "value": "\"123\"",
+                  "callType": "SCRIPT"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "CAMERA",
+          "id": "sh-camera",
+          "components": [
+            {
+              "type": "CAMERA_STREAM",
+              "label": "Kamera wejście",
+              "rowId": 0,
+              "unit": "UNKNOWN",
+              "image": "cam",
+              "value": "rtsp://192.168.1.20:554/stream1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "OGRZEWANIE",
+      "icon": "home",
+      "isFullscreenWidget": false,
+      "widgets": [
+        {
+          "icon": "temperature",
+          "label": "Salon",
+          "id": "sh-thermo-heating",
+          "type": "THERMOSTAT_V2",
+          "no_of_fan_speeds": 0,
+          "object": {
+            "maxTemperature": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1001",
+              "index": "11",
+              "callType": "ATTRIBUTE"
+            },
+            "setMaxTemperatureAction": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1001",
+              "index": "11",
+              "event": "CLICK",
+              "value": "$value$",
+              "callType": "ATTRIBUTE"
+            },
+            "currentTemperature": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1001",
+              "index": "14",
+              "callType": "ATTRIBUTE"
+            },
+            "setTargetTemperatureAction": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1001",
+              "index": "3",
+              "event": "CLICK",
+              "value": "$value$",
+              "callType": "ATTRIBUTE"
+            },
+            "setModeAction": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1001",
+              "index": "8",
+              "event": "CLICK",
+              "value": "$value$",
+              "callType": "ATTRIBUTE"
+            },
+            "mode": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1001",
+              "index": "8",
+              "callType": "ATTRIBUTE"
+            },
+            "controlOutValue": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1001",
+              "index": "13",
+              "callType": "ATTRIBUTE"
+            },
+            "setMinTemperatureAction": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1001",
+              "index": "10",
+              "event": "CLICK",
+              "value": "$value$",
+              "callType": "ATTRIBUTE"
+            },
+            "targetTemperature": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1001",
+              "index": "12",
+              "callType": "ATTRIBUTE"
+            },
+            "minTemperature": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1001",
+              "index": "10",
+              "callType": "ATTRIBUTE"
+            },
+            "setScheduleDataAction": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1001",
+              "index": "9",
+              "event": "CLICK",
+              "value": "$value$",
+              "callType": "ATTRIBUTE"
+            },
+            "setStateAction": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1001",
+              "index": "6",
+              "event": "CLICK",
+              "value": "$value$",
+              "callType": "ATTRIBUTE"
+            },
+            "state": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1001",
+              "index": "6",
+              "callType": "ATTRIBUTE"
+            },
+            "scheduleData": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1001",
+              "index": "9",
+              "callType": "ATTRIBUTE"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "WSZYSTKO",
+      "icon": "home",
+      "isFullscreenWidget": false,
+      "widgets": [
+        {
+          "type": "ROLLER_SHUTTER_V3",
+          "id": "sh-shutter-all",
+          "icon": "shutter",
+          "label": "Roleta salon",
+          "object": {
+            "state": {
+              "cluId": "CLU_501234567",
+              "objectName": "ROL2020",
+              "index": "0",
+              "callType": "ATTRIBUTE"
+            },
+            "position": {
+              "cluId": "CLU_501234567",
+              "objectName": "ROL2020",
+              "index": "1",
+              "callType": "ATTRIBUTE"
+            },
+            "lamelPosition": {
+              "cluId": "CLU_501234567",
+              "objectName": "ROL2020",
+              "index": "2",
+              "callType": "ATTRIBUTE"
+            },
+            "lamelMoveTimeout": {
+              "cluId": "CLU_501234567",
+              "objectName": "ROL2020",
+              "index": "3",
+              "callType": "ATTRIBUTE"
+            },
+            "setPositionAction": {
+              "event": "CLICK",
+              "cluId": "CLU_501234567",
+              "objectName": "ROL2020",
+              "index": "4",
+              "value": "0",
+              "callType": "METHOD"
+            },
+            "setLamelPositionAction": {
+              "event": "CLICK",
+              "cluId": "CLU_501234567",
+              "objectName": "ROL2020",
+              "index": "5",
+              "value": "0",
+              "callType": "METHOD"
+            },
+            "moveUpAction": {
+              "event": "CLICK",
+              "cluId": "CLU_501234567",
+              "objectName": "ROL2020",
+              "index": "6",
+              "value": "",
+              "callType": "METHOD"
+            },
+            "moveDownAction": {
+              "event": "CLICK",
+              "cluId": "CLU_501234567",
+              "objectName": "ROL2020",
+              "index": "7",
+              "value": "",
+              "callType": "METHOD"
+            },
+            "startAction": {
+              "event": "CLICK",
+              "cluId": "CLU_501234567",
+              "objectName": "ROL2020",
+              "index": "8",
+              "value": "",
+              "callType": "METHOD"
+            },
+            "stopAction": {
+              "event": "CLICK",
+              "cluId": "CLU_501234567",
+              "objectName": "ROL2020",
+              "index": "9",
+              "value": "",
+              "callType": "METHOD"
+            },
+            "setRollerBlockedAction": {
+              "event": "CLICK",
+              "cluId": "CLU_501234567",
+              "objectName": "ROL2020",
+              "index": "10",
+              "value": "0",
+              "callType": "METHOD"
+            }
+          }
+        },
+        {
+          "type": "ON_OFF",
+          "id": "sh-socket-a",
+          "components": [
+            {
+              "type": "BUTTON_BISTABLE",
+              "label": "Gniazdko A osobno",
+              "rowId": 0,
+              "unit": "UNKNOWN",
+              "state": {
+                "cluId": "CLU_501234567",
+                "objectName": "DOU1111",
+                "index": "0",
+                "callType": "ATTRIBUTE"
+              },
+              "actions": [
+                {
+                  "event": "ON",
+                  "cluId": "CLU_501234567",
+                  "objectName": "DOU1111",
+                  "index": "0",
+                  "value": "1",
+                  "callType": "ATTRIBUTE"
+                },
+                {
+                  "event": "OFF",
+                  "cluId": "CLU_501234567",
+                  "objectName": "DOU1111",
+                  "index": "0",
+                  "value": "0",
+                  "callType": "ATTRIBUTE"
+                }
+              ],
+              "onIndication": "ON",
+              "offIndication": "OFF"
+            }
+          ]
+        },
+        {
+          "type": "SCENE",
+          "id": "sh-scene-all",
+          "components": [
+            {
+              "type": "BUTTON_MONOSTABLE",
+              "label": "Wieczorny chill",
+              "rowId": 0,
+              "unit": "UNKNOWN",
+              "actions": [
+                {
+                  "event": "CLICK",
+                  "cluId": "CLU_501234567",
+                  "objectName": "scena_wieczor",
+                  "value": "\"123\"",
+                  "callType": "SCRIPT"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "CONTACT_SENSOR",
+          "id": "sh-contact",
+          "label": "Drzwi wejściowe",
+          "icon": "door",
+          "onIndication": "OTWARTE",
+          "offIndication": "ZAMKNIĘTE",
+          "reverseState": true,
+          "object": {
+            "value": {
+              "cluId": "CLU_501234567",
+              "objectName": "DIN5555",
+              "index": "0",
+              "callType": "ATTRIBUTE"
+            },
+            "clickAction": {
+              "event": "CLICK",
+              "cluId": "CLU_501234567",
+              "objectName": "x_drzwi_klik",
+              "index": "x_drzwi_klik",
+              "value": "1",
+              "callType": "VARIABLE"
+            }
+          }
+        },
+        {
+          "type": "ON_OFF",
+          "id": "sh-onoff-var",
+          "components": [
+            {
+              "type": "BUTTON_BISTABLE",
+              "label": "Lampa sufitowa",
+              "rowId": 0,
+              "unit": "UNKNOWN",
+              "state": {
+                "cluId": "CLU_501234567",
+                "objectName": "DOU8272",
+                "index": "0",
+                "callType": "ATTRIBUTE"
+              },
+              "actions": [
+                {
+                  "event": "ON",
+                  "cluId": "CLU_501234567",
+                  "objectName": "DOU8272",
+                  "index": "0",
+                  "value": "1",
+                  "callType": "ATTRIBUTE"
+                },
+                {
+                  "event": "OFF",
+                  "cluId": "CLU_501234567",
+                  "objectName": "DOU8272",
+                  "index": "0",
+                  "value": "0",
+                  "callType": "ATTRIBUTE"
+                }
+              ],
+              "onIndication": "ON",
+              "offIndication": "OFF"
+            },
+            {
+              "type": "BUTTON_BISTABLE",
+              "label": "Kinkiet",
+              "rowId": 1,
+              "unit": "UNKNOWN",
+              "state": {
+                "cluId": "CLU_501234567",
+                "objectName": "x_kinkiet",
+                "index": "x_kinkiet",
+                "callType": "VARIABLE"
+              },
+              "actions": [
+                {
+                  "event": "ON",
+                  "cluId": "CLU_501234567",
+                  "objectName": "x_kinkiet",
+                  "index": "x_kinkiet",
+                  "value": "1",
+                  "callType": "VARIABLE"
+                },
+                {
+                  "event": "OFF",
+                  "cluId": "CLU_501234567",
+                  "objectName": "x_kinkiet",
+                  "index": "x_kinkiet",
+                  "value": "0",
+                  "callType": "VARIABLE"
+                }
+              ],
+              "onIndication": "ON",
+              "offIndication": "OFF"
+            }
+          ]
+        },
+        {
+          "type": "DIMMER_V2",
+          "id": "sh-led-ch3",
+          "label": "Taśma A",
+          "icon": "bulb",
+          "min": 0,
+          "max": 100,
+          "precision": 0,
+          "object": {
+            "value": {
+              "cluId": "CLU_501234567",
+              "objectName": "LED1001",
+              "index": "3",
+              "callType": "ATTRIBUTE"
+            },
+            "setValueAction": {
+              "event": "CLICK",
+              "cluId": "CLU_501234567",
+              "objectName": "LED1001",
+              "index": "0",
+              "value": "0",
+              "callType": "METHOD"
+            },
+            "onAction": {
+              "event": "ON",
+              "cluId": "CLU_501234567",
+              "objectName": "LED1001",
+              "index": "1",
+              "value": "",
+              "callType": "METHOD"
+            },
+            "offAction": {
+              "event": "OFF",
+              "cluId": "CLU_501234567",
+              "objectName": "LED1001",
+              "index": "2",
+              "value": "",
+              "callType": "METHOD"
+            }
+          }
+        },
+        {
+          "type": "DIMMER_V2",
+          "id": "sh-led-ch4",
+          "label": "Taśma B",
+          "icon": "bulb",
+          "min": 0,
+          "max": 100,
+          "precision": 0,
+          "object": {
+            "value": {
+              "cluId": "CLU_501234567",
+              "objectName": "LED1001",
+              "index": "4",
+              "callType": "ATTRIBUTE"
+            },
+            "setValueAction": {
+              "event": "CLICK",
+              "cluId": "CLU_501234567",
+              "objectName": "LED1001",
+              "index": "0",
+              "value": "0",
+              "callType": "METHOD"
+            },
+            "onAction": {
+              "event": "ON",
+              "cluId": "CLU_501234567",
+              "objectName": "LED1001",
+              "index": "1",
+              "value": "",
+              "callType": "METHOD"
+            },
+            "offAction": {
+              "event": "OFF",
+              "cluId": "CLU_501234567",
+              "objectName": "LED1001",
+              "index": "2",
+              "value": "",
+              "callType": "METHOD"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

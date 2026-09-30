@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "number.format.negative-precision",
+  "specRefs": [
+    "devices.number-format"
+  ],
+  "description": "Reference format str(round(1234.5, -1)) → 1230.0.",
+  "provenance": "python3 str(round(x, p)) — reference semantics (spec §10 pt 3)",
+  "operation": "number.format",
+  "input": {
+    "value": {
+      "type": "double",
+      "bits": "40934a0000000000",
+      "decimal": "1234.5"
+    },
+    "precision": -1
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "text": "1230.0"
+    }
+  }
+}

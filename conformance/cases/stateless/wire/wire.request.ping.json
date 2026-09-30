@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "wire.request.ping",
+  "specRefs": [
+    "wire.request"
+  ],
+  "description": "The empty field after `req` yields a double colon.",
+  "provenance": "spec §5.2 literal",
+  "operation": "wire.request",
+  "input": {
+    "msgId": "a1b2c3d4",
+    "payload": "checkAlive()"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "frame": "req::a1b2c3d4:checkAlive()"
+    }
+  }
+}

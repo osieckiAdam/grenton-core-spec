@@ -1,0 +1,822 @@
+{
+  "schemaVersion": 1,
+  "suiteVersion": "0.4.3",
+  "specVersion": "0.4.4",
+  "profiles": {
+    "mapping": [
+      "mapping.interface"
+    ],
+    "stateless": [
+      "coercion.boolFromOnOff",
+      "coercion.truthy",
+      "crypto.decrypt",
+      "crypto.encrypt",
+      "number.format",
+      "payload.action",
+      "payload.register",
+      "payload.report",
+      "provisioning.url",
+      "value.cast",
+      "wire.request",
+      "wire.response"
+    ]
+  },
+  "cases": [
+    {
+      "id": "coercion.bool-from-on-off.bool-false",
+      "path": "cases/stateless/coercion/coercion.bool-from-on-off.bool-false.json",
+      "sha256": "7806a4fbd17afa365aa1d4f5a64300786b86ad2389d6d0e7b3170a990bc475be"
+    },
+    {
+      "id": "coercion.bool-from-on-off.bool-true",
+      "path": "cases/stateless/coercion/coercion.bool-from-on-off.bool-true.json",
+      "sha256": "c39d649e8888eed825fbbb947c4dc0b36c97014183a54eeca6606ba33a416133"
+    },
+    {
+      "id": "coercion.bool-from-on-off.double-one",
+      "path": "cases/stateless/coercion/coercion.bool-from-on-off.double-one.json",
+      "sha256": "f9e6623e433b619333f24818997bfc1d841f33b4a446047f2c24cc88d616e92e"
+    },
+    {
+      "id": "coercion.bool-from-on-off.double-one-and-a-half",
+      "path": "cases/stateless/coercion/coercion.bool-from-on-off.double-one-and-a-half.json",
+      "sha256": "d67972d58abad724268e27bedb5704ab7aa90f7ee95f15f0a0c832e4e4d26cd6"
+    },
+    {
+      "id": "coercion.bool-from-on-off.int-one",
+      "path": "cases/stateless/coercion/coercion.bool-from-on-off.int-one.json",
+      "sha256": "c5cc206fa8141468f682517c7f7b8e2ac919a8a5900ab5eddafdcab8710a59ab"
+    },
+    {
+      "id": "coercion.bool-from-on-off.int-two",
+      "path": "cases/stateless/coercion/coercion.bool-from-on-off.int-two.json",
+      "sha256": "5af35beb73460ac6cad5ec0b017d8a421ffbd45882e672cde291e34901f97daf"
+    },
+    {
+      "id": "coercion.bool-from-on-off.int-zero",
+      "path": "cases/stateless/coercion/coercion.bool-from-on-off.int-zero.json",
+      "sha256": "1ae87846e377b221acf0550f26da2cda1382a20f7ad8664317dbaf4986590aa0"
+    },
+    {
+      "id": "coercion.bool-from-on-off.null",
+      "path": "cases/stateless/coercion/coercion.bool-from-on-off.null.json",
+      "sha256": "96a4948012eecf802bf8dd904ce524fd1841d83554bfb923f1cae4e35b1e53ab"
+    },
+    {
+      "id": "coercion.bool-from-on-off.string-lowercase-on",
+      "path": "cases/stateless/coercion/coercion.bool-from-on-off.string-lowercase-on.json",
+      "sha256": "657d778bc9829f4a18ae619fa59f787adcfa5375f9a31cf38cc1ab2d35b84b3a"
+    },
+    {
+      "id": "coercion.bool-from-on-off.string-off",
+      "path": "cases/stateless/coercion/coercion.bool-from-on-off.string-off.json",
+      "sha256": "f4a35e0de30c25f65ec0598953e2abde2bbd8a239be9dd829dbf979051f11717"
+    },
+    {
+      "id": "coercion.bool-from-on-off.string-on",
+      "path": "cases/stateless/coercion/coercion.bool-from-on-off.string-on.json",
+      "sha256": "a4e460c8645614e9b3262312f70b8eeab8e13355e4f42f1206e997ebba79978d"
+    },
+    {
+      "id": "coercion.bool-from-on-off.string-one",
+      "path": "cases/stateless/coercion/coercion.bool-from-on-off.string-one.json",
+      "sha256": "3cd3d5d19539458606d229eaae8e1fd8ff8eeacf2c35a3df5f91cd179462b69d"
+    },
+    {
+      "id": "coercion.truthy.bool-false",
+      "path": "cases/stateless/coercion/coercion.truthy.bool-false.json",
+      "sha256": "440e07035b09d789932b9f554ff9da163af5c593e7a8be4bb24fb6c2a0e697e4"
+    },
+    {
+      "id": "coercion.truthy.bool-true",
+      "path": "cases/stateless/coercion/coercion.truthy.bool-true.json",
+      "sha256": "7532ba68f9db7462b514b8e87897780afd04ccb74d5c290be578b4689ced150f"
+    },
+    {
+      "id": "coercion.truthy.double-negative-zero",
+      "path": "cases/stateless/coercion/coercion.truthy.double-negative-zero.json",
+      "sha256": "fb7988e6346711a098b832502261c35a1412f7d13941d89ff2cbbf7b30767d31"
+    },
+    {
+      "id": "coercion.truthy.double-nonzero",
+      "path": "cases/stateless/coercion/coercion.truthy.double-nonzero.json",
+      "sha256": "8020409217f1c42958bfbc11fbe70466871c2164521450af7c17be65daf27bbd"
+    },
+    {
+      "id": "coercion.truthy.double-zero",
+      "path": "cases/stateless/coercion/coercion.truthy.double-zero.json",
+      "sha256": "520360a8299cb44f2b46881bd052529fbb681254b92573f21dd42a9b38e4b537"
+    },
+    {
+      "id": "coercion.truthy.empty-string",
+      "path": "cases/stateless/coercion/coercion.truthy.empty-string.json",
+      "sha256": "f160c8bc9cbf91eba39039137dad62090474c78f4af85e303487a58c99c693a0"
+    },
+    {
+      "id": "coercion.truthy.int-nonzero",
+      "path": "cases/stateless/coercion/coercion.truthy.int-nonzero.json",
+      "sha256": "263291700137d67366409ae58b08948fe6019a0c2f2077bd929d153fa607c69e"
+    },
+    {
+      "id": "coercion.truthy.int-zero",
+      "path": "cases/stateless/coercion/coercion.truthy.int-zero.json",
+      "sha256": "aa5d8939dfcf4196798b92d43c4e41d5c08397d29446e0fdb606e120f79531a5"
+    },
+    {
+      "id": "coercion.truthy.null",
+      "path": "cases/stateless/coercion/coercion.truthy.null.json",
+      "sha256": "93c1bc4e62765a4fb6b21f221640325e39e7289597b3ebf0e0322f618d711ec8"
+    },
+    {
+      "id": "coercion.truthy.string-zero",
+      "path": "cases/stateless/coercion/coercion.truthy.string-zero.json",
+      "sha256": "7d84290fd3b474e586a7906bdd7f7ca538c609d56345ac38a5bfb04c23fc45f0"
+    },
+    {
+      "id": "crypto.decrypt.aes-256-key",
+      "path": "cases/stateless/crypto/crypto.decrypt.aes-256-key.json",
+      "sha256": "f9e4183394f64e18b239e4a90f896dcef1535ef03382bb34a0e66a0be22fb1dc"
+    },
+    {
+      "id": "crypto.decrypt.empty-plaintext",
+      "path": "cases/stateless/crypto/crypto.decrypt.empty-plaintext.json",
+      "sha256": "7599e640ca9a62746700068acc7001d2684be7df5da87d269ef5bbfa727035d2"
+    },
+    {
+      "id": "crypto.decrypt.full-block-plaintext",
+      "path": "cases/stateless/crypto/crypto.decrypt.full-block-plaintext.json",
+      "sha256": "a3e4ebe4cfd7fc08ae31600d616d68743af921c3e865ca7c862f057bdc4a4e94"
+    },
+    {
+      "id": "crypto.decrypt.reject-empty-ciphertext",
+      "path": "cases/stateless/crypto/crypto.decrypt.reject-empty-ciphertext.json",
+      "sha256": "604dcf11eb29e2506017c8d6720d54f443777541636058106d003a730246eeb0"
+    },
+    {
+      "id": "crypto.decrypt.reject-not-block-aligned",
+      "path": "cases/stateless/crypto/crypto.decrypt.reject-not-block-aligned.json",
+      "sha256": "61522601f077138a6b9f4d43758c5ad20ab0f41d1f335ae3b891765c514fa985"
+    },
+    {
+      "id": "crypto.decrypt.reject-padding-byte-too-large",
+      "path": "cases/stateless/crypto/crypto.decrypt.reject-padding-byte-too-large.json",
+      "sha256": "82b1d70fbf898b077d3dd12bf3a419735095becf8ef92485d9ed374a2d555f96"
+    },
+    {
+      "id": "crypto.decrypt.reject-padding-byte-zero",
+      "path": "cases/stateless/crypto/crypto.decrypt.reject-padding-byte-zero.json",
+      "sha256": "8e9ee6e0c32f0c5a06b86f6b34ff2418f0a95df46e72ca2ff97b2aa5782a074d"
+    },
+    {
+      "id": "crypto.decrypt.reject-padding-bytes-inconsistent",
+      "path": "cases/stateless/crypto/crypto.decrypt.reject-padding-bytes-inconsistent.json",
+      "sha256": "3f67b42b14e3fd0b77198719b21b940acee0c22fde9c61956a6d2a08b0515d95"
+    },
+    {
+      "id": "crypto.decrypt.spec-vector-ping",
+      "path": "cases/stateless/crypto/crypto.decrypt.spec-vector-ping.json",
+      "sha256": "560789b9ddbcdf89e23f7d0a24ff55c930090a0805b258cde7b540158f4aca58"
+    },
+    {
+      "id": "crypto.decrypt.spec-vector-register",
+      "path": "cases/stateless/crypto/crypto.decrypt.spec-vector-register.json",
+      "sha256": "e69f3c7ef84e21e4667974d666485ba4d4ad7ce7354977fadfec82b9c75ecd39"
+    },
+    {
+      "id": "crypto.decrypt.spec-vector-report",
+      "path": "cases/stateless/crypto/crypto.decrypt.spec-vector-report.json",
+      "sha256": "6eab0ac54446466e5461b15d7472292fb4629b1a425e0bc5b119b777463f9db5"
+    },
+    {
+      "id": "crypto.decrypt.utf8-plaintext",
+      "path": "cases/stateless/crypto/crypto.decrypt.utf8-plaintext.json",
+      "sha256": "42bff18a97f80b7c2e7d4bea44d240bb21e5b6efaf5a1e9313e2e4f086b98592"
+    },
+    {
+      "id": "crypto.encrypt.aes-256-key",
+      "path": "cases/stateless/crypto/crypto.encrypt.aes-256-key.json",
+      "sha256": "952ada6bf4cc0994b4f1234097aa41ad3590300bde7c82c9e59002115a0e46e5"
+    },
+    {
+      "id": "crypto.encrypt.empty-plaintext",
+      "path": "cases/stateless/crypto/crypto.encrypt.empty-plaintext.json",
+      "sha256": "2050290f2fbb0144745987f8d78a4b8772c779c87c545e375a8e0c8e9ebde98d"
+    },
+    {
+      "id": "crypto.encrypt.error-iv-15-bytes",
+      "path": "cases/stateless/crypto/crypto.encrypt.error-iv-15-bytes.json",
+      "sha256": "4ac64699e5b4106fae110391afc7c82b679289cac97f2c46d138706d544e7909"
+    },
+    {
+      "id": "crypto.encrypt.error-key-15-bytes",
+      "path": "cases/stateless/crypto/crypto.encrypt.error-key-15-bytes.json",
+      "sha256": "f57f84f6fb7d42e72ed487b63724e1898cd67eec2176179f3dfe43370d142cf2"
+    },
+    {
+      "id": "crypto.encrypt.error-key-not-base64",
+      "path": "cases/stateless/crypto/crypto.encrypt.error-key-not-base64.json",
+      "sha256": "a8650d7584511391b77df8d39a7b39cd06265d81b25bab704990807feea58136"
+    },
+    {
+      "id": "crypto.encrypt.full-block-plaintext",
+      "path": "cases/stateless/crypto/crypto.encrypt.full-block-plaintext.json",
+      "sha256": "9b26a9ca44d2f30f3cc2490184a2d913b7f90023067d3f0fda38ee0de48f6afc"
+    },
+    {
+      "id": "crypto.encrypt.spec-vector-ping",
+      "path": "cases/stateless/crypto/crypto.encrypt.spec-vector-ping.json",
+      "sha256": "52028a0921c3d0cc36ad1622a9d8489ae305dc3a000c86f014139cd062082645"
+    },
+    {
+      "id": "crypto.encrypt.spec-vector-register",
+      "path": "cases/stateless/crypto/crypto.encrypt.spec-vector-register.json",
+      "sha256": "a123f55d76a681a76251cbedc5d4331c40d21f88c537daca9d24978f96d2b4df"
+    },
+    {
+      "id": "crypto.encrypt.spec-vector-report",
+      "path": "cases/stateless/crypto/crypto.encrypt.spec-vector-report.json",
+      "sha256": "846685a449754132ac38ece7274b444bc6555a677f1db1ddc388a96ee979604b"
+    },
+    {
+      "id": "crypto.encrypt.utf8-plaintext",
+      "path": "cases/stateless/crypto/crypto.encrypt.utf8-plaintext.json",
+      "sha256": "f21e6763e6019fbdc24e42ceba48ffac3773e8abef47064b411b0715af8b52da"
+    },
+    {
+      "id": "mapping.interface.all-widget-types",
+      "path": "cases/mapping/mapping.interface.all-widget-types.json",
+      "sha256": "977d1bb4e48844867af074c131b7470273412baf1a22a0e6077454a8f871532f"
+    },
+    {
+      "id": "mapping.interface.completeness",
+      "path": "cases/mapping/mapping.interface.completeness.json",
+      "sha256": "1d7f2e10981cd18aa0821bba644fa9bfe20fd059ab55d1f4286bd7403390c3a2"
+    },
+    {
+      "id": "mapping.interface.reject-missing-encryption",
+      "path": "cases/mapping/mapping.interface.reject-missing-encryption.json",
+      "sha256": "456152728a0cb04a59491e84139af8e9d926e92c87852a654a62e12abb047838"
+    },
+    {
+      "id": "mapping.interface.shared-objects",
+      "path": "cases/mapping/mapping.interface.shared-objects.json",
+      "sha256": "19732f8975c77f805571905a9642a2dd8dd231189ad0ce0ddf033b2d30d78cdf"
+    },
+    {
+      "id": "mapping.interface.thermostat-scene-double-header",
+      "path": "cases/mapping/mapping.interface.thermostat-scene-double-header.json",
+      "sha256": "2176e35e35474d014ba81f76b6baf97717e49e186d332cfadbf7f1483d009ec8"
+    },
+    {
+      "id": "mapping.interface.widget-tolerance",
+      "path": "cases/mapping/mapping.interface.widget-tolerance.json",
+      "sha256": "3b4d15ce46357166475581b848bd64d4ca4f3f69fec7aa47cd82a845a77c85f8"
+    },
+    {
+      "id": "number.format.binary-rounding-down",
+      "path": "cases/stateless/number-format/number.format.binary-rounding-down.json",
+      "sha256": "3e247bb5ef861a0fe874ce3373015b140beb630deaced87f280290036b3c37a0"
+    },
+    {
+      "id": "number.format.binary-rounding-up",
+      "path": "cases/stateless/number-format/number.format.binary-rounding-up.json",
+      "sha256": "2dfb368abb963d08bb3fdde2ecb69d29ec96a135e6582a7e534329ae0d3a56b8"
+    },
+    {
+      "id": "number.format.extra-precision-kept-short",
+      "path": "cases/stateless/number-format/number.format.extra-precision-kept-short.json",
+      "sha256": "292f97532681a16af90bac7d51290fb190b47412fd3d95327426c2be610f6df9"
+    },
+    {
+      "id": "number.format.half-even-down",
+      "path": "cases/stateless/number-format/number.format.half-even-down.json",
+      "sha256": "7ba45afa94e99611457a1813ab0f85347459796145a176cc70054de87572eb44"
+    },
+    {
+      "id": "number.format.half-even-two",
+      "path": "cases/stateless/number-format/number.format.half-even-two.json",
+      "sha256": "309d49fff4eecaf8f0d0ee3e6f21fc32d9cc974557dd450961fca68c7a2812ca"
+    },
+    {
+      "id": "number.format.half-even-up",
+      "path": "cases/stateless/number-format/number.format.half-even-up.json",
+      "sha256": "fe7c055a73ed8821ee54f1105dafde2c712ee42bbc870d99c9bce1f7eca21863"
+    },
+    {
+      "id": "number.format.integer-precision-0",
+      "path": "cases/stateless/number-format/number.format.integer-precision-0.json",
+      "sha256": "0ad0648443c7ec171491c84ad8d01c9f4df75164c01fe34cefaca2725359473b"
+    },
+    {
+      "id": "number.format.large-uses-exponent",
+      "path": "cases/stateless/number-format/number.format.large-uses-exponent.json",
+      "sha256": "a87fa575c76efb79cf1b8a027b91b0e331b48733d36df2bd4652f46c6d91963c"
+    },
+    {
+      "id": "number.format.negative-precision",
+      "path": "cases/stateless/number-format/number.format.negative-precision.json",
+      "sha256": "facf20a4a5f014bc79b6060649b7e76adbdad53e17fe41c2fba6526fc331f594"
+    },
+    {
+      "id": "number.format.negative-precision-half-even",
+      "path": "cases/stateless/number-format/number.format.negative-precision-half-even.json",
+      "sha256": "885da8988a7d8c98d71050c5ff8c3ea9275e5c9e7220c87f48f3720651c53ade"
+    },
+    {
+      "id": "number.format.negative-zero",
+      "path": "cases/stateless/number-format/number.format.negative-zero.json",
+      "sha256": "4e6b2fc39d0b0831f69730c9eb1c7c7a07c8c6a676e85ca6f57daa0288f72c72"
+    },
+    {
+      "id": "number.format.precision-1",
+      "path": "cases/stateless/number-format/number.format.precision-1.json",
+      "sha256": "2d148c136e6f9c953dcb02a223937df9250656a09a20ed4b3ff9e03344f5f2e5"
+    },
+    {
+      "id": "number.format.rounds-to-negative-zero",
+      "path": "cases/stateless/number-format/number.format.rounds-to-negative-zero.json",
+      "sha256": "ff699d37d4018a5403bf99c5bfca8405464835da594d68451d49f5d46db63f68"
+    },
+    {
+      "id": "number.format.small-value",
+      "path": "cases/stateless/number-format/number.format.small-value.json",
+      "sha256": "fb812f77a2e8ea8978422091cd7089a28cb6afbf9f3ab79e654569ec7c5b46d4"
+    },
+    {
+      "id": "number.format.sum-artifact",
+      "path": "cases/stateless/number-format/number.format.sum-artifact.json",
+      "sha256": "0518fde1d4fae9e3f10f5081b4c19e80f3cedd7230a43b9323d16f95ac0549cd"
+    },
+    {
+      "id": "number.format.tiny-uses-exponent",
+      "path": "cases/stateless/number-format/number.format.tiny-uses-exponent.json",
+      "sha256": "f8d281d4e0149719f57c39cd3c88667271c81c84a413333060623d8919155c6a"
+    },
+    {
+      "id": "payload.action.attribute",
+      "path": "cases/stateless/payload/payload.action.attribute.json",
+      "sha256": "9607aa389b27f9705fdf3f014d343d3ecfe8e21d3c1c4daa0be5ce14514c0f40"
+    },
+    {
+      "id": "payload.action.method",
+      "path": "cases/stateless/payload/payload.action.method.json",
+      "sha256": "093cfd73d8e090fad650e30918cbaa250a33dbf0438640eb80ec5630fa1693bb"
+    },
+    {
+      "id": "payload.action.reject-attribute-without-index",
+      "path": "cases/stateless/payload/payload.action.reject-attribute-without-index.json",
+      "sha256": "330b791d80994b983b44f3f8c8e16038def79570add8f8caeb84fd35fbe13444"
+    },
+    {
+      "id": "payload.action.reject-unknown-call-type",
+      "path": "cases/stateless/payload/payload.action.reject-unknown-call-type.json",
+      "sha256": "fcd3b2bb334bd859073a3113f2eedd9d2bd237c854055a225b6a4728de034b58"
+    },
+    {
+      "id": "payload.action.script",
+      "path": "cases/stateless/payload/payload.action.script.json",
+      "sha256": "001c85692365b64965282c5fcaa1e1bfd954c2ae40ba87fa771bcd5206bed8a1"
+    },
+    {
+      "id": "payload.action.script-empty",
+      "path": "cases/stateless/payload/payload.action.script-empty.json",
+      "sha256": "0dece35c4ee887d4d6f25ba881de51e592621889983ac2b0f5a3d71dd8933fe4"
+    },
+    {
+      "id": "payload.action.script-number",
+      "path": "cases/stateless/payload/payload.action.script-number.json",
+      "sha256": "c459d4fb26c1b5a7b5ef040d2371f252151fad2c68bdbbaea59e2ff7db688ca4"
+    },
+    {
+      "id": "payload.action.value-verbatim",
+      "path": "cases/stateless/payload/payload.action.value-verbatim.json",
+      "sha256": "221c156e3a28552527c74ce56b3d2275e99c69d04c848d2eff740eb2d25a239f"
+    },
+    {
+      "id": "payload.action.variable",
+      "path": "cases/stateless/payload/payload.action.variable.json",
+      "sha256": "1635dc378ed61d5d2741fee17a13e8d39b48ca92b84d0c6a8a7192288f7ed1ee"
+    },
+    {
+      "id": "payload.register.nonzero-session-id",
+      "path": "cases/stateless/payload/payload.register.nonzero-session-id.json",
+      "sha256": "485497628cc6b76af1100faaad5b51ed40ce203e645712514dd7c8edfdacec41"
+    },
+    {
+      "id": "payload.register.single-attribute",
+      "path": "cases/stateless/payload/payload.register.single-attribute.json",
+      "sha256": "a700877a5a4e16fec0aef938bfa5094bf84365cbee471ed48bc995cfde8b6b70"
+    },
+    {
+      "id": "payload.register.spec-example",
+      "path": "cases/stateless/payload/payload.register.spec-example.json",
+      "sha256": "504a97e744417d3aa7a6e35a133b747c2ea9634a54ff6fd1f14d9f9e0f25e5a4"
+    },
+    {
+      "id": "payload.report.empty-braces",
+      "path": "cases/stateless/report/payload.report.empty-braces.json",
+      "sha256": "e7e825864c9ff1238b3883ee85d7f95e8f13a0a48f6c553fa87d0218304ca476"
+    },
+    {
+      "id": "payload.report.empty-element",
+      "path": "cases/stateless/report/payload.report.empty-element.json",
+      "sha256": "773119e7ac91931dac86de4fc9d02ad6c7e7448c5402a0c5646b432543ca31e1"
+    },
+    {
+      "id": "payload.report.missing-braces",
+      "path": "cases/stateless/report/payload.report.missing-braces.json",
+      "sha256": "2dc6056a3745e6533d4fb8b78cdee995d9146581646a515669b3212327d6f7b6"
+    },
+    {
+      "id": "payload.report.mixed-types",
+      "path": "cases/stateless/report/payload.report.mixed-types.json",
+      "sha256": "7706ae887b26dad56c52bcbb5b47dbee766dee8a5f226aa92ae4052409b528ba"
+    },
+    {
+      "id": "payload.report.notification",
+      "path": "cases/stateless/report/payload.report.notification.json",
+      "sha256": "503326197629eecd1dd60f710cb62ca12f70c0dc379ea4a98347594c5abde58a"
+    },
+    {
+      "id": "payload.report.registration-reply",
+      "path": "cases/stateless/report/payload.report.registration-reply.json",
+      "sha256": "3d88f436f9fe548b066278bd6c54af2b96e889b42d0b38a018759bb0eb6e061d"
+    },
+    {
+      "id": "payload.report.reject-missing-body",
+      "path": "cases/stateless/report/payload.report.reject-missing-body.json",
+      "sha256": "2fbb10ac20789fadc215e4c92062dbc5b4727dcf1d0d35a10a010056659730ba"
+    },
+    {
+      "id": "payload.report.reject-no-prefix",
+      "path": "cases/stateless/report/payload.report.reject-no-prefix.json",
+      "sha256": "c469da41899ab060d5dd3a3e8a16018838f37cff612f1be637c7b7387dfd2e19"
+    },
+    {
+      "id": "payload.report.reject-non-integer-session-id",
+      "path": "cases/stateless/report/payload.report.reject-non-integer-session-id.json",
+      "sha256": "cc33edb2104b8d852a2a9c66272658e2b408dfe47472a64a9eb7a4d10e5b2db0"
+    },
+    {
+      "id": "payload.report.trim-then-unquote",
+      "path": "cases/stateless/report/payload.report.trim-then-unquote.json",
+      "sha256": "ce7d363df2c3c59c78f6a41532388728c781ee6a8920279db908f1ef54c01bfb"
+    },
+    {
+      "id": "provisioning.url.custom-port",
+      "path": "cases/stateless/provisioning-url/provisioning.url.custom-port.json",
+      "sha256": "e1864a9264f2691d47da2564fff360f7ce87e5dfd4f6c1db75a63e6528b1e3fc"
+    },
+    {
+      "id": "provisioning.url.default-port",
+      "path": "cases/stateless/provisioning-url/provisioning.url.default-port.json",
+      "sha256": "3f52073614681c270cdf4096abeafc7717bd3aa976b626f79de64c86cfda55f8"
+    },
+    {
+      "id": "provisioning.url.error-empty-pin",
+      "path": "cases/stateless/provisioning-url/provisioning.url.error-empty-pin.json",
+      "sha256": "8457f1e6a77af55d758bab686b89fc0363a9c93151dc38a0908a85c6a7806aef"
+    },
+    {
+      "id": "provisioning.url.error-port-too-large",
+      "path": "cases/stateless/provisioning-url/provisioning.url.error-port-too-large.json",
+      "sha256": "db28dde6200a26762459e4919ff57c4382c2922cf460792375ce367328540557"
+    },
+    {
+      "id": "provisioning.url.error-port-zero",
+      "path": "cases/stateless/provisioning-url/provisioning.url.error-port-zero.json",
+      "sha256": "1fc9ce6d4585f2898e7ac90b187ee24cc2ddc65c85ad51d201c43cac4bf9fade"
+    },
+    {
+      "id": "provisioning.url.error-whitespace-only-pin",
+      "path": "cases/stateless/provisioning-url/provisioning.url.error-whitespace-only-pin.json",
+      "sha256": "62c2ba1d04387b7497fa532277497d6ffb98fed9f191abfa2bda7526d4508d51"
+    },
+    {
+      "id": "provisioning.url.hostname",
+      "path": "cases/stateless/provisioning-url/provisioning.url.hostname.json",
+      "sha256": "48949706c23c63eed76ce19b680bbcde544cee1191f7dfbcaea1270722648b04"
+    },
+    {
+      "id": "provisioning.url.ipv6-already-bracketed",
+      "path": "cases/stateless/provisioning-url/provisioning.url.ipv6-already-bracketed.json",
+      "sha256": "7e2264b663a63f2b3bfb0558cbff89d9eb836a39d5fa6a21926741d8574e01b9"
+    },
+    {
+      "id": "provisioning.url.ipv6-bracketed",
+      "path": "cases/stateless/provisioning-url/provisioning.url.ipv6-bracketed.json",
+      "sha256": "e025768ff0c3472776ce8a829a96ccc25a9f7400c2448762a4dda636d8e40203"
+    },
+    {
+      "id": "provisioning.url.pin-hash-encoded",
+      "path": "cases/stateless/provisioning-url/provisioning.url.pin-hash-encoded.json",
+      "sha256": "a1c46469969f7a8ab4e1d67293a66aaaef26d4ded48ec6885722e82d0b4ac2c7"
+    },
+    {
+      "id": "provisioning.url.pin-ideographic-space",
+      "path": "cases/stateless/provisioning-url/provisioning.url.pin-ideographic-space.json",
+      "sha256": "dbd8faf9ce3c288dc61ea9cbb933d7dcc573adc90da9a27b636d6cc36e89987c"
+    },
+    {
+      "id": "provisioning.url.pin-non-ascii-encoded",
+      "path": "cases/stateless/provisioning-url/provisioning.url.pin-non-ascii-encoded.json",
+      "sha256": "7a30da536444660b7b75796e819fbf6f3045337d8cd74107954e0ce7d18a2721"
+    },
+    {
+      "id": "provisioning.url.pin-percent-encoded",
+      "path": "cases/stateless/provisioning-url/provisioning.url.pin-percent-encoded.json",
+      "sha256": "940726122fc262034f3dc203d2c60a3267c0bf927cd578c72965cc8c504262c7"
+    },
+    {
+      "id": "provisioning.url.pin-question-mark-encoded",
+      "path": "cases/stateless/provisioning-url/provisioning.url.pin-question-mark-encoded.json",
+      "sha256": "927dc22c0c1326afa7488e28d392006455a7991eef5efe01100fb156103d37be"
+    },
+    {
+      "id": "provisioning.url.pin-slash-encoded",
+      "path": "cases/stateless/provisioning-url/provisioning.url.pin-slash-encoded.json",
+      "sha256": "c19fa2eb48c33f72d480f7812a4ccc892f78573ccf34d36d7eb201d22c5da51f"
+    },
+    {
+      "id": "provisioning.url.pin-space-stripped",
+      "path": "cases/stateless/provisioning-url/provisioning.url.pin-space-stripped.json",
+      "sha256": "0102cf4ec7f077484fd5b5de5b68e5b3300c7144e47f1fa6d57bc32ed33b2850"
+    },
+    {
+      "id": "provisioning.url.pin-surrounding-whitespace",
+      "path": "cases/stateless/provisioning-url/provisioning.url.pin-surrounding-whitespace.json",
+      "sha256": "d3378226099031471bd1c47bed2009f755986888d28601a237b734dd3c05ca99"
+    },
+    {
+      "id": "provisioning.url.pin-tab-and-nbsp",
+      "path": "cases/stateless/provisioning-url/provisioning.url.pin-tab-and-nbsp.json",
+      "sha256": "d810bee23475494dcbcf176ff3855e5154dbe4dd0811db59e178bcc804970e2e"
+    },
+    {
+      "id": "provisioning.url.pin-zero-width-space-kept",
+      "path": "cases/stateless/provisioning-url/provisioning.url.pin-zero-width-space-kept.json",
+      "sha256": "a4365bf4fd21929e63bdc62ac2e776888d0f9e7d203ece02aa34ab3f031a6bc4"
+    },
+    {
+      "id": "value.cast.all-surrounding-quotes-stripped",
+      "path": "cases/stateless/value/value.cast.all-surrounding-quotes-stripped.json",
+      "sha256": "b12b418a93c273d12087a6b8a913c5b88f4fe1e8ded248311a0e933cf0761ba3"
+    },
+    {
+      "id": "value.cast.bare-exponent-is-string",
+      "path": "cases/stateless/value/value.cast.bare-exponent-is-string.json",
+      "sha256": "eb2326d8b43afbc6c7db4eed46b6df88656c993efafc30be58cc59584f3653b8"
+    },
+    {
+      "id": "value.cast.double",
+      "path": "cases/stateless/value/value.cast.double.json",
+      "sha256": "312f6be6e1874742a0178eead867cc5390c1b0f24c4a659c28b566eef69d7780"
+    },
+    {
+      "id": "value.cast.double-exponent",
+      "path": "cases/stateless/value/value.cast.double-exponent.json",
+      "sha256": "1e28eea1b2a05a8c1cf049825edb7bb48b877af02986430198d1417782328807"
+    },
+    {
+      "id": "value.cast.double-leading-dot",
+      "path": "cases/stateless/value/value.cast.double-leading-dot.json",
+      "sha256": "17f8594b1ef876048263fd318eb647017953aa63750f077f84b043925c11b39a"
+    },
+    {
+      "id": "value.cast.double-negative-zero",
+      "path": "cases/stateless/value/value.cast.double-negative-zero.json",
+      "sha256": "2597482fa70bb12cc4d2119221141e28b5984bea4d9beb5bcce88fff973fe92d"
+    },
+    {
+      "id": "value.cast.double-trailing-dot",
+      "path": "cases/stateless/value/value.cast.double-trailing-dot.json",
+      "sha256": "ff45cc1b3440d06a6695b386c528a5910903e69709b8dee45fdf7d5954100450"
+    },
+    {
+      "id": "value.cast.double-upper-exponent-sign",
+      "path": "cases/stateless/value/value.cast.double-upper-exponent-sign.json",
+      "sha256": "f49c1abf2596fb2fed148e449fc2ab3ca11efc7706e90d225c877f5975c8db47"
+    },
+    {
+      "id": "value.cast.empty",
+      "path": "cases/stateless/value/value.cast.empty.json",
+      "sha256": "829c73da7fc20b91d8ff6f82598a99e39d7833bb0990d099857d60b69b21758a"
+    },
+    {
+      "id": "value.cast.empty-quotes",
+      "path": "cases/stateless/value/value.cast.empty-quotes.json",
+      "sha256": "6337e389eaf3371a5c8f77bcc82ffbf6a4029b9ab93f6583c7eb0a7931bd1495"
+    },
+    {
+      "id": "value.cast.false-upper",
+      "path": "cases/stateless/value/value.cast.false-upper.json",
+      "sha256": "55472f2ee47cb897d499fbff3568930d5d52d148c5559afef93c6a68ac1b3950"
+    },
+    {
+      "id": "value.cast.fullwidth-digits-are-string",
+      "path": "cases/stateless/value/value.cast.fullwidth-digits-are-string.json",
+      "sha256": "8d98bcd85533cc9417d41fbf48dc8da0ef82774fb0daad4cd043b13ba390f954"
+    },
+    {
+      "id": "value.cast.hex-is-string",
+      "path": "cases/stateless/value/value.cast.hex-is-string.json",
+      "sha256": "ad4ec1b83b70a5d30b025689033fc929885812aa10957219268ed925848d8e84"
+    },
+    {
+      "id": "value.cast.huge-int-becomes-double",
+      "path": "cases/stateless/value/value.cast.huge-int-becomes-double.json",
+      "sha256": "d04ba22c31a7f0ae486db423014eff3c4cdccb77cd1f9d6c99b46e48e4c379a6"
+    },
+    {
+      "id": "value.cast.inf-is-string",
+      "path": "cases/stateless/value/value.cast.inf-is-string.json",
+      "sha256": "c122a9dbe01b1d82fb0a744b184656a2afbe1d1b8dce61005116606a561465d1"
+    },
+    {
+      "id": "value.cast.int",
+      "path": "cases/stateless/value/value.cast.int.json",
+      "sha256": "196c9777ad2259e2b6f8de20a4277fcc40a29091dc157336266aef8238d308fe"
+    },
+    {
+      "id": "value.cast.int-leading-zeros",
+      "path": "cases/stateless/value/value.cast.int-leading-zeros.json",
+      "sha256": "52592ab0ed2c6af9db1745f25f7fca23ba6044eeb83cc8224bccca06fcfc95ae"
+    },
+    {
+      "id": "value.cast.int64-max",
+      "path": "cases/stateless/value/value.cast.int64-max.json",
+      "sha256": "85cb797266770a6d9e406301e9ba4bd90138c37fdc9e98a5925cdf7c92302503"
+    },
+    {
+      "id": "value.cast.int64-min",
+      "path": "cases/stateless/value/value.cast.int64-min.json",
+      "sha256": "87b024eb6f28e56aa1734cfa1870ebf736fda64bbf494feaccb25e1ec30cc6f1"
+    },
+    {
+      "id": "value.cast.int64-overflow-becomes-double",
+      "path": "cases/stateless/value/value.cast.int64-overflow-becomes-double.json",
+      "sha256": "dc4a488e7f9a61dfdb55fdc162fc53597808430ec7bda6217f19e5b7a8222335"
+    },
+    {
+      "id": "value.cast.lone-dot-is-string",
+      "path": "cases/stateless/value/value.cast.lone-dot-is-string.json",
+      "sha256": "771fca133760201daf422a94d26399a8e91c8f0d5385b36705d27481dac02e44"
+    },
+    {
+      "id": "value.cast.nan-is-string",
+      "path": "cases/stateless/value/value.cast.nan-is-string.json",
+      "sha256": "b9120195ed33077e5d8c0e570d8c1351de045e05a13f76bd9495fe0905c99ea2"
+    },
+    {
+      "id": "value.cast.negative-int",
+      "path": "cases/stateless/value/value.cast.negative-int.json",
+      "sha256": "f98a50392e5cad4d60e6314f738fd466f512321e218e843f70867884a44b16f4"
+    },
+    {
+      "id": "value.cast.negative-zero-int",
+      "path": "cases/stateless/value/value.cast.negative-zero-int.json",
+      "sha256": "09e55a034767622702d7ee720af5ba1785deba377361e2f3e1363fc1e43deada"
+    },
+    {
+      "id": "value.cast.nil-lower",
+      "path": "cases/stateless/value/value.cast.nil-lower.json",
+      "sha256": "cd7663e88a28d7f8b93dd4b9d0f027ca3c9f773a98bca2e50e1b08f3f9851284"
+    },
+    {
+      "id": "value.cast.nil-mixed",
+      "path": "cases/stateless/value/value.cast.nil-mixed.json",
+      "sha256": "1ad65f48e19c603a0f70e96fe86d3093111b14226b32f2ca12a0144768160376"
+    },
+    {
+      "id": "value.cast.nil-upper",
+      "path": "cases/stateless/value/value.cast.nil-upper.json",
+      "sha256": "d5eabd4c1d3f7d3e9a2578ccaf61c38caf2fd3b6a61e99386cc630780ac32cda"
+    },
+    {
+      "id": "value.cast.overflowing-double-is-string",
+      "path": "cases/stateless/value/value.cast.overflowing-double-is-string.json",
+      "sha256": "8ef80e04a49be63aa3966f1c19ea844d6476365a8db070b492ac0e3a8f1d7f5e"
+    },
+    {
+      "id": "value.cast.plus-sign-is-string",
+      "path": "cases/stateless/value/value.cast.plus-sign-is-string.json",
+      "sha256": "c7c66e54c82656daa2ab2c1a60b674fc0f6b409fc7f0028f87b29b19f6f5b3b1"
+    },
+    {
+      "id": "value.cast.quoted-number-is-double",
+      "path": "cases/stateless/value/value.cast.quoted-number-is-double.json",
+      "sha256": "a73a142bb22bb24bb388d3bb8c724555375dd66692d187741ec8e3959958428a"
+    },
+    {
+      "id": "value.cast.quoted-string",
+      "path": "cases/stateless/value/value.cast.quoted-string.json",
+      "sha256": "9b136f48dce5b3fb7e57ff2b187d9822404e013ae4a392f0024395b7b64ec462"
+    },
+    {
+      "id": "value.cast.true",
+      "path": "cases/stateless/value/value.cast.true.json",
+      "sha256": "cf038490ac286d379aa53017bfa2d03eb215d2ed1aa36379ddbc35d06da3e10a"
+    },
+    {
+      "id": "value.cast.underscore-is-string",
+      "path": "cases/stateless/value/value.cast.underscore-is-string.json",
+      "sha256": "c93085629c2d24f3c5a2ea0bfd6749cb2ca2595f8e7a16ccb86c2b4da64ffabe"
+    },
+    {
+      "id": "value.cast.whitespace-around-int",
+      "path": "cases/stateless/value/value.cast.whitespace-around-int.json",
+      "sha256": "193e6400bf1e94947ddd482be9ba1b5a273c8b9f46fe655e8e72d0a9ca88a16f"
+    },
+    {
+      "id": "value.cast.whitespace-trimmed",
+      "path": "cases/stateless/value/value.cast.whitespace-trimmed.json",
+      "sha256": "4fd357fe5e77209ec9c54772aedd303710608509f4a67f2464f316982e03def9"
+    },
+    {
+      "id": "wire.request.msg-id-lowercased",
+      "path": "cases/stateless/wire/wire.request.msg-id-lowercased.json",
+      "sha256": "d8d365d8fe0ffc60d068e5585f13329d8679a2cd11223d4f5b801793c5812019"
+    },
+    {
+      "id": "wire.request.payload-with-colons",
+      "path": "cases/stateless/wire/wire.request.payload-with-colons.json",
+      "sha256": "031c58a3c71fccd9bd509a1092886834ab4c75ff132a6b44587a3053cd3a7514"
+    },
+    {
+      "id": "wire.request.ping",
+      "path": "cases/stateless/wire/wire.request.ping.json",
+      "sha256": "ea94dcf0a2b59647111acf076953a3f9dcd76879b69062b630bff39decb768c3"
+    },
+    {
+      "id": "wire.response.empty-payload",
+      "path": "cases/stateless/wire/wire.response.empty-payload.json",
+      "sha256": "d9d45d1585dad69dac9c0fb5081c851af2db51efd7d32015f1ccd6cabc156506"
+    },
+    {
+      "id": "wire.response.msg-id-lowercased",
+      "path": "cases/stateless/wire/wire.response.msg-id-lowercased.json",
+      "sha256": "e3a46cff6bf97ee0bdbf2b216dd68e953588c68ae0f3977d85d07ce6bfdcd4b8"
+    },
+    {
+      "id": "wire.response.notification",
+      "path": "cases/stateless/wire/wire.response.notification.json",
+      "sha256": "cd687b2f5c38b3b64c3258c8e58c7e970dca75da6c5a09bfead57fa83ecfc5fb"
+    },
+    {
+      "id": "wire.response.payload-keeps-colons",
+      "path": "cases/stateless/wire/wire.response.payload-keeps-colons.json",
+      "sha256": "348ea7ec2b821cfcb5159b24ca87da851a2908d090f3e90e0f2cf70a2742bdca"
+    },
+    {
+      "id": "wire.response.reject-leading-garbage",
+      "path": "cases/stateless/wire/wire.response.reject-leading-garbage.json",
+      "sha256": "be52ac782d5c5bcc1a92aff45ef46f8010b1b04da55f824e9c59a5ff61cdb053"
+    },
+    {
+      "id": "wire.response.reject-prefix-case",
+      "path": "cases/stateless/wire/wire.response.reject-prefix-case.json",
+      "sha256": "15da9efc64573836bb53866129057e9971446981e41e84de722f6f51c59178b1"
+    },
+    {
+      "id": "wire.response.reject-request-frame",
+      "path": "cases/stateless/wire/wire.response.reject-request-frame.json",
+      "sha256": "87232069793a9332946fcc0cd88d74f682f8a77adeef3d429060fbe788bc2660"
+    },
+    {
+      "id": "wire.response.reject-three-parts",
+      "path": "cases/stateless/wire/wire.response.reject-three-parts.json",
+      "sha256": "c40b75a4f3af57308173ab6f16a5e761a37c34dae497c264e60ba3c6ee4c1ae7"
+    },
+    {
+      "id": "wire.response.reply",
+      "path": "cases/stateless/wire/wire.response.reply.json",
+      "sha256": "e1c60a22e4c17454768ea102b69fd90c1b6fa8a14130d0e134d5285d3d9cf918"
+    }
+  ],
+  "fixtures": [
+    {
+      "path": "fixtures/interfaces/all-widget-types.json",
+      "sha256": "c8cecd1332d7d9fefb0bcd7ea3244ca85e7c5da04a43ae7f58fdcec9fcc8abbb"
+    },
+    {
+      "path": "fixtures/interfaces/completeness.json",
+      "sha256": "a32b38af9ca4ffdfb189bae658004491cf53f1abb11cbb633b538628fc5a3ee2"
+    },
+    {
+      "path": "fixtures/interfaces/missing-encryption.json",
+      "sha256": "53c22613e1770e3b7015cdefeeff8c01404718b3761495c15304b88d1116527e"
+    },
+    {
+      "path": "fixtures/interfaces/shared-objects.json",
+      "sha256": "4b0b13fc703bdaf63f474c006efa70751e9203cf5309b12b8b9904ac2da12d30"
+    },
+    {
+      "path": "fixtures/interfaces/thermostat-scene-double-header.json",
+      "sha256": "2cdaadf025dd246513f03b01440bf8b74a89d91cef14b20457a7eb4cce0acbf3"
+    },
+    {
+      "path": "fixtures/interfaces/widget-tolerance.json",
+      "sha256": "002d8b7fafa05fa3be220334275fc8b5211f2ff6d4f99720d6400c5b8af29550"
+    }
+  ]
+}

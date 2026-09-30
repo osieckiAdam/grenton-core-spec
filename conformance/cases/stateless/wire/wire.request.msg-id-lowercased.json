@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "wire.request.msg-id-lowercased",
+  "specRefs": [
+    "wire.request",
+    "wire.msg-id-case"
+  ],
+  "description": "msg_id is normalized to lowercase when sending.",
+  "provenance": "spec §5.2",
+  "operation": "wire.request",
+  "input": {
+    "msgId": "A1B2C3D4",
+    "payload": "checkAlive()"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "frame": "req::a1b2c3d4:checkAlive()"
+    }
+  }
+}

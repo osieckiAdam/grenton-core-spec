@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "number.format.integer-precision-0",
+  "specRefs": [
+    "devices.number-format"
+  ],
+  "description": "Reference format str(round(50.0, 0)) → 50.0.",
+  "provenance": "python3 str(round(x, p)) — reference semantics (spec §10 pt 3)",
+  "operation": "number.format",
+  "input": {
+    "value": {
+      "type": "double",
+      "bits": "4049000000000000",
+      "decimal": "50.0"
+    },
+    "precision": 0
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "text": "50.0"
+    }
+  }
+}

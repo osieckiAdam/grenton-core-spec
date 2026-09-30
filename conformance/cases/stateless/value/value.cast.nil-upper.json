@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "value.cast.nil-upper",
+  "specRefs": [
+    "model.cast"
+  ],
+  "description": "castString(\"NIL\")",
+  "provenance": "spec §3.1 + §9.2",
+  "operation": "value.cast",
+  "input": {
+    "text": "NIL"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "value": {
+        "type": "null"
+      }
+    }
+  }
+}

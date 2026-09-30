@@ -1,0 +1,1343 @@
+{
+  "schemaVersion": 1,
+  "id": "mapping.interface.all-widget-types",
+  "specRefs": [
+    "model.widget-tolerance",
+    "devices.mapping",
+    "devices.order",
+    "devices.physical-objects"
+  ],
+  "description": "Every supported widget type once, one unknown type, two widgets that fail decoding.",
+  "provenance": "tools/oracles/mapping.py — independent derivation from spec §3.6, §6.1, §6.3",
+  "operation": "mapping.interface",
+  "input": {
+    "fixture": "fixtures/interfaces/all-widget-types.json"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "devices": [
+        {
+          "id": "w-value",
+          "widgetType": "VALUE_V2",
+          "kind": "sensor",
+          "name": "Temperatura",
+          "page": {
+            "index": 0,
+            "name": "Salon"
+          },
+          "entities": [
+            {
+              "kind": "sensor",
+              "id": "w-value_0",
+              "name": "Temperatura",
+              "state": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "PAN4756",
+                "index": "0"
+              },
+              "sensorKind": "generic",
+              "unit": null,
+              "grentonUnit": "DEGREE",
+              "valueType": "FLOAT",
+              "precision": 1
+            }
+          ]
+        },
+        {
+          "id": "w-value-double",
+          "widgetType": "VALUE_DOUBLE",
+          "kind": "sensor",
+          "name": "Temperatura / Wilgotność",
+          "page": {
+            "index": 0,
+            "name": "Salon"
+          },
+          "entities": [
+            {
+              "kind": "sensor",
+              "id": "w-value-double_0",
+              "name": "Temperatura",
+              "state": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "PAN4756",
+                "index": "0"
+              },
+              "sensorKind": "generic",
+              "unit": null,
+              "grentonUnit": "DEGREE",
+              "valueType": "FLOAT",
+              "precision": 1
+            },
+            {
+              "kind": "sensor",
+              "id": "w-value-double_1",
+              "name": "Wilgotność",
+              "state": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "PAN4756",
+                "index": "1"
+              },
+              "sensorKind": "generic",
+              "unit": null,
+              "grentonUnit": "PERCENT",
+              "valueType": "FLOAT",
+              "precision": 0
+            }
+          ]
+        },
+        {
+          "id": "w-onoff",
+          "widgetType": "ON_OFF",
+          "kind": "switch",
+          "name": "Lampa sufitowa / Kinkiet",
+          "page": {
+            "index": 0,
+            "name": "Salon"
+          },
+          "entities": [
+            {
+              "kind": "switch",
+              "id": "w-onoff_0",
+              "name": "Lampa sufitowa",
+              "state": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "DOU8272",
+                "index": "0"
+              },
+              "onAction": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "DOU8272",
+                "event": "ON",
+                "value": "1",
+                "index": "0"
+              },
+              "offAction": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "DOU8272",
+                "event": "OFF",
+                "value": "0",
+                "index": "0"
+              },
+              "onIndication": "ON",
+              "offIndication": "OFF"
+            },
+            {
+              "kind": "switch",
+              "id": "w-onoff_1",
+              "name": "Kinkiet",
+              "state": {
+                "callType": "VARIABLE",
+                "cluId": "CLU_501234567",
+                "index": "x_kinkiet"
+              },
+              "onAction": {
+                "callType": "VARIABLE",
+                "cluId": "CLU_501234567",
+                "objectName": "x_kinkiet",
+                "event": "ON",
+                "value": "1",
+                "index": "x_kinkiet"
+              },
+              "offAction": {
+                "callType": "VARIABLE",
+                "cluId": "CLU_501234567",
+                "objectName": "x_kinkiet",
+                "event": "OFF",
+                "value": "0",
+                "index": "x_kinkiet"
+              },
+              "onIndication": "ON",
+              "offIndication": "OFF"
+            }
+          ]
+        },
+        {
+          "id": "w-onoff-double",
+          "widgetType": "ON_OFF_DOUBLE",
+          "kind": "switch",
+          "name": "Gniazdko A / Gniazdko B",
+          "page": {
+            "index": 0,
+            "name": "Salon"
+          },
+          "entities": [
+            {
+              "kind": "switch",
+              "id": "w-onoff-double_0",
+              "name": "Gniazdko A",
+              "state": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "DOU1111",
+                "index": "0"
+              },
+              "onAction": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "DOU1111",
+                "event": "ON",
+                "value": "1",
+                "index": "0"
+              },
+              "offAction": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "DOU1111",
+                "event": "OFF",
+                "value": "0",
+                "index": "0"
+              },
+              "onIndication": "ON",
+              "offIndication": "OFF"
+            },
+            {
+              "kind": "switch",
+              "id": "w-onoff-double_1",
+              "name": "Gniazdko B",
+              "state": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "DOU2222",
+                "index": "0"
+              },
+              "onAction": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "DOU2222",
+                "event": "ON",
+                "value": "1",
+                "index": "0"
+              },
+              "offAction": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "DOU2222",
+                "event": "OFF",
+                "value": "0",
+                "index": "0"
+              },
+              "onIndication": "ON",
+              "offIndication": "OFF"
+            }
+          ]
+        },
+        {
+          "id": "w-dimmer",
+          "widgetType": "DIMMER_V2",
+          "kind": "dimmableLight",
+          "name": "Ściemniacz",
+          "page": {
+            "index": 0,
+            "name": "Salon"
+          },
+          "entities": [
+            {
+              "kind": "dimmableLight",
+              "id": "w-dimmer_0",
+              "name": "Ściemniacz",
+              "state": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "DIM3333",
+                "index": "0"
+              },
+              "min": 0,
+              "max": 100,
+              "precision": 0,
+              "onAction": {
+                "callType": "METHOD",
+                "cluId": "CLU_501234567",
+                "objectName": "DIM3333",
+                "event": "ON",
+                "value": "",
+                "index": "1"
+              },
+              "offAction": {
+                "callType": "METHOD",
+                "cluId": "CLU_501234567",
+                "objectName": "DIM3333",
+                "event": "OFF",
+                "value": "",
+                "index": "2"
+              },
+              "setValueAction": {
+                "callType": "METHOD",
+                "cluId": "CLU_501234567",
+                "objectName": "DIM3333",
+                "event": "CLICK",
+                "value": "0",
+                "index": "0"
+              }
+            }
+          ]
+        },
+        {
+          "id": "w-led",
+          "widgetType": "LED",
+          "kind": "hsbLight",
+          "name": "Taśma LED",
+          "page": {
+            "index": 0,
+            "name": "Salon"
+          },
+          "entities": [
+            {
+              "kind": "hsbLight",
+              "id": "w-led_0",
+              "name": "Taśma LED",
+              "powerState": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "LED4444",
+                "index": "0"
+              },
+              "onAction": {
+                "callType": "METHOD",
+                "cluId": "CLU_501234567",
+                "objectName": "LED4444",
+                "event": "ON",
+                "value": "",
+                "index": "1"
+              },
+              "offAction": {
+                "callType": "METHOD",
+                "cluId": "CLU_501234567",
+                "objectName": "LED4444",
+                "event": "OFF",
+                "value": "",
+                "index": "2"
+              },
+              "hue": {
+                "state": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_501234567",
+                  "objectName": "LED4444",
+                  "index": "3"
+                },
+                "setAction": {
+                  "callType": "METHOD",
+                  "cluId": "CLU_501234567",
+                  "objectName": "LED4444",
+                  "event": "CLICK",
+                  "value": "0",
+                  "index": "4"
+                },
+                "range": {
+                  "min": 0,
+                  "max": 360
+                }
+              },
+              "saturation": {
+                "state": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_501234567",
+                  "objectName": "LED4444",
+                  "index": "5"
+                },
+                "setAction": {
+                  "callType": "METHOD",
+                  "cluId": "CLU_501234567",
+                  "objectName": "LED4444",
+                  "event": "CLICK",
+                  "value": "0",
+                  "index": "6"
+                },
+                "range": {
+                  "min": 0,
+                  "max": 100
+                }
+              },
+              "brightness": {
+                "state": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_501234567",
+                  "objectName": "LED4444",
+                  "index": "7"
+                },
+                "setAction": {
+                  "callType": "METHOD",
+                  "cluId": "CLU_501234567",
+                  "objectName": "LED4444",
+                  "event": "CLICK",
+                  "value": "0",
+                  "index": "8"
+                },
+                "range": {
+                  "min": 0,
+                  "max": 255
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "w-contact",
+          "widgetType": "CONTACT_SENSOR",
+          "kind": "contactSensor",
+          "name": "Drzwi wejściowe",
+          "page": {
+            "index": 0,
+            "name": "Salon"
+          },
+          "entities": [
+            {
+              "kind": "contactSensor",
+              "id": "w-contact_binary_sensor",
+              "name": "Drzwi wejściowe",
+              "state": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "DIN5555",
+                "index": "0"
+              },
+              "reversed": true,
+              "onIndication": "OTWARTE",
+              "offIndication": "ZAMKNIĘTE"
+            },
+            {
+              "kind": "trigger",
+              "id": "w-contact_button",
+              "name": "Drzwi wejściowe",
+              "action": {
+                "callType": "VARIABLE",
+                "cluId": "CLU_501234567",
+                "objectName": "x_drzwi_klik",
+                "event": "CLICK",
+                "value": "1",
+                "index": "x_drzwi_klik"
+              }
+            }
+          ]
+        },
+        {
+          "id": "w-contact-double",
+          "widgetType": "CONTACT_SENSOR_DOUBLE",
+          "kind": "contactSensor",
+          "name": "Okno lewe / Okno prawe",
+          "page": {
+            "index": 0,
+            "name": "Salon"
+          },
+          "entities": [
+            {
+              "kind": "contactSensor",
+              "id": "w-contact-double_binary_sensor_left",
+              "name": "Okno lewe",
+              "state": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "DIN6666",
+                "index": "0"
+              },
+              "reversed": false,
+              "onIndication": "OTWARTE",
+              "offIndication": "ZAMKNIĘTE"
+            },
+            {
+              "kind": "trigger",
+              "id": "w-contact-double_button_left",
+              "name": "Okno lewe",
+              "action": {
+                "callType": "VARIABLE",
+                "cluId": "CLU_501234567",
+                "objectName": "x_okno_klik",
+                "event": "CLICK",
+                "value": "1",
+                "index": "x_okno_klik"
+              }
+            },
+            {
+              "kind": "contactSensor",
+              "id": "w-contact-double_binary_sensor_right",
+              "name": "Okno prawe",
+              "state": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "DIN7777",
+                "index": "0"
+              },
+              "reversed": false,
+              "onIndication": "OTWARTE",
+              "offIndication": "ZAMKNIĘTE"
+            }
+          ]
+        },
+        {
+          "id": "w-slider",
+          "widgetType": "SLIDER",
+          "kind": "numberSetting",
+          "name": "Temperatura zadana",
+          "page": {
+            "index": 0,
+            "name": "Salon"
+          },
+          "entities": [
+            {
+              "kind": "numberSetting",
+              "id": "w-slider_slider",
+              "name": "Temperatura zadana",
+              "state": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "THE8888",
+                "index": "0"
+              },
+              "setValueAction": {
+                "callType": "METHOD",
+                "cluId": "CLU_501234567",
+                "objectName": "THE8888",
+                "event": "CLICK",
+                "value": "20",
+                "index": "1"
+              },
+              "min": 16,
+              "max": 28,
+              "precision": 1
+            }
+          ]
+        },
+        {
+          "id": "w-multi",
+          "widgetType": "MULTISENSOR",
+          "kind": "multisensor",
+          "name": "Czujnik salon",
+          "page": {
+            "index": 0,
+            "name": "Salon"
+          },
+          "entities": [
+            {
+              "kind": "sensor",
+              "id": "w-multi_air_co2",
+              "name": "Czujnik salon",
+              "state": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "PAN9999",
+                "index": "0"
+              },
+              "sensorKind": "co2",
+              "unit": "ppm",
+              "grentonUnit": null,
+              "valueType": null,
+              "precision": null
+            },
+            {
+              "kind": "sensor",
+              "id": "w-multi_sound",
+              "name": "Czujnik salon",
+              "state": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "PAN9999",
+                "index": "1"
+              },
+              "sensorKind": "soundPressure",
+              "unit": "dB",
+              "grentonUnit": null,
+              "valueType": null,
+              "precision": null
+            },
+            {
+              "kind": "sensor",
+              "id": "w-multi_air_voc",
+              "name": "Czujnik salon",
+              "state": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "PAN9999",
+                "index": "2"
+              },
+              "sensorKind": "voc",
+              "unit": "ppb",
+              "grentonUnit": null,
+              "valueType": null,
+              "precision": null
+            },
+            {
+              "kind": "sensor",
+              "id": "w-multi_light",
+              "name": "Czujnik salon",
+              "state": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "PAN9999",
+                "index": "3"
+              },
+              "sensorKind": "illuminance",
+              "unit": "lx",
+              "grentonUnit": null,
+              "valueType": null,
+              "precision": null
+            },
+            {
+              "kind": "sensor",
+              "id": "w-multi_pressure",
+              "name": "Czujnik salon",
+              "state": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "PAN9999",
+                "index": "4"
+              },
+              "sensorKind": "pressure",
+              "unit": "hPa",
+              "grentonUnit": null,
+              "valueType": null,
+              "precision": null
+            },
+            {
+              "kind": "sensor",
+              "id": "w-multi_humidity",
+              "name": "Czujnik salon",
+              "state": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "PAN9999",
+                "index": "5"
+              },
+              "sensorKind": "humidity",
+              "unit": "%",
+              "grentonUnit": null,
+              "valueType": null,
+              "precision": null
+            },
+            {
+              "kind": "sensor",
+              "id": "w-multi_temperature",
+              "name": "Czujnik salon",
+              "state": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "PAN9999",
+                "index": "6"
+              },
+              "sensorKind": "temperature",
+              "unit": "°C",
+              "grentonUnit": null,
+              "valueType": null,
+              "precision": null
+            }
+          ]
+        },
+        {
+          "id": "w-rs-legacy",
+          "widgetType": "ROLLER_SHUTTER",
+          "kind": "cover",
+          "name": "Roleta taras",
+          "page": {
+            "index": 0,
+            "name": "Salon"
+          },
+          "entities": [
+            {
+              "kind": "stateSensor",
+              "id": "w-rs-legacy_sensor",
+              "name": "Roleta taras",
+              "state": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "ROL1010",
+                "index": "0"
+              }
+            },
+            {
+              "kind": "trigger",
+              "id": "w-rs-legacy_button",
+              "name": "Roleta taras",
+              "action": {
+                "callType": "METHOD",
+                "cluId": "CLU_501234567",
+                "objectName": "ROL1010",
+                "event": "CLICK",
+                "value": "",
+                "index": "1"
+              }
+            }
+          ]
+        },
+        {
+          "id": "w-rs3",
+          "widgetType": "ROLLER_SHUTTER_V3",
+          "kind": "cover",
+          "name": "Roleta sypialnia",
+          "page": {
+            "index": 0,
+            "name": "Salon"
+          },
+          "entities": [
+            {
+              "kind": "cover",
+              "id": "w-rs3",
+              "name": "Roleta sypialnia",
+              "motionState": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "ROL2020",
+                "index": "0"
+              },
+              "position": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "ROL2020",
+                "index": "1"
+              },
+              "setPositionAction": {
+                "callType": "METHOD",
+                "cluId": "CLU_501234567",
+                "objectName": "ROL2020",
+                "event": "CLICK",
+                "value": "0",
+                "index": "4"
+              },
+              "tilt": {
+                "position": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_501234567",
+                  "objectName": "ROL2020",
+                  "index": "2"
+                },
+                "setAction": {
+                  "callType": "METHOD",
+                  "cluId": "CLU_501234567",
+                  "objectName": "ROL2020",
+                  "event": "CLICK",
+                  "value": "0",
+                  "index": "5"
+                }
+              },
+              "stopAction": {
+                "callType": "METHOD",
+                "cluId": "CLU_501234567",
+                "objectName": "ROL2020",
+                "event": "CLICK",
+                "value": "",
+                "index": "9"
+              }
+            }
+          ]
+        },
+        {
+          "id": "w-camera",
+          "widgetType": "CAMERA",
+          "kind": "camera",
+          "name": "Kamera wejście",
+          "page": {
+            "index": 0,
+            "name": "Salon"
+          },
+          "entities": [
+            {
+              "kind": "camera",
+              "id": "w-camera_0",
+              "name": "Kamera wejście",
+              "streamUrl": "rtsp://192.168.1.20:554/stream1"
+            }
+          ]
+        },
+        {
+          "id": "w-scene",
+          "widgetType": "SCENE",
+          "kind": "scene",
+          "name": "Wieczorny chill",
+          "page": {
+            "index": 0,
+            "name": "Salon"
+          },
+          "entities": [
+            {
+              "kind": "sceneTrigger",
+              "id": "w-scene_0",
+              "name": "Wieczorny chill",
+              "action": {
+                "callType": "SCRIPT",
+                "cluId": "CLU_501234567",
+                "objectName": "scena_wieczor",
+                "event": "CLICK",
+                "value": "\"123\""
+              }
+            }
+          ]
+        }
+      ],
+      "physicalObjects": [
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "object",
+            "name": "PAN4756",
+            "index": "0"
+          },
+          "widgets": [
+            {
+              "deviceId": "w-value",
+              "widgetType": "VALUE_V2",
+              "name": "Temperatura",
+              "page": {
+                "index": 0,
+                "name": "Salon"
+              },
+              "entityIds": [
+                "w-value_0"
+              ]
+            },
+            {
+              "deviceId": "w-value-double",
+              "widgetType": "VALUE_DOUBLE",
+              "name": "Temperatura / Wilgotność",
+              "page": {
+                "index": 0,
+                "name": "Salon"
+              },
+              "entityIds": [
+                "w-value-double_0"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "object",
+            "name": "PAN4756",
+            "index": "1"
+          },
+          "widgets": [
+            {
+              "deviceId": "w-value-double",
+              "widgetType": "VALUE_DOUBLE",
+              "name": "Temperatura / Wilgotność",
+              "page": {
+                "index": 0,
+                "name": "Salon"
+              },
+              "entityIds": [
+                "w-value-double_1"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "object",
+            "name": "DOU8272",
+            "index": "0"
+          },
+          "widgets": [
+            {
+              "deviceId": "w-onoff",
+              "widgetType": "ON_OFF",
+              "name": "Lampa sufitowa / Kinkiet",
+              "page": {
+                "index": 0,
+                "name": "Salon"
+              },
+              "entityIds": [
+                "w-onoff_0"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "variable",
+            "name": "x_kinkiet",
+            "index": null
+          },
+          "widgets": [
+            {
+              "deviceId": "w-onoff",
+              "widgetType": "ON_OFF",
+              "name": "Lampa sufitowa / Kinkiet",
+              "page": {
+                "index": 0,
+                "name": "Salon"
+              },
+              "entityIds": [
+                "w-onoff_1"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "object",
+            "name": "DOU1111",
+            "index": "0"
+          },
+          "widgets": [
+            {
+              "deviceId": "w-onoff-double",
+              "widgetType": "ON_OFF_DOUBLE",
+              "name": "Gniazdko A / Gniazdko B",
+              "page": {
+                "index": 0,
+                "name": "Salon"
+              },
+              "entityIds": [
+                "w-onoff-double_0"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "object",
+            "name": "DOU2222",
+            "index": "0"
+          },
+          "widgets": [
+            {
+              "deviceId": "w-onoff-double",
+              "widgetType": "ON_OFF_DOUBLE",
+              "name": "Gniazdko A / Gniazdko B",
+              "page": {
+                "index": 0,
+                "name": "Salon"
+              },
+              "entityIds": [
+                "w-onoff-double_1"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "object",
+            "name": "DIM3333",
+            "index": "0"
+          },
+          "widgets": [
+            {
+              "deviceId": "w-dimmer",
+              "widgetType": "DIMMER_V2",
+              "name": "Ściemniacz",
+              "page": {
+                "index": 0,
+                "name": "Salon"
+              },
+              "entityIds": [
+                "w-dimmer_0"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "object",
+            "name": "LED4444",
+            "index": "0"
+          },
+          "widgets": [
+            {
+              "deviceId": "w-led",
+              "widgetType": "LED",
+              "name": "Taśma LED",
+              "page": {
+                "index": 0,
+                "name": "Salon"
+              },
+              "entityIds": [
+                "w-led_0"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "object",
+            "name": "DIN5555",
+            "index": "0"
+          },
+          "widgets": [
+            {
+              "deviceId": "w-contact",
+              "widgetType": "CONTACT_SENSOR",
+              "name": "Drzwi wejściowe",
+              "page": {
+                "index": 0,
+                "name": "Salon"
+              },
+              "entityIds": [
+                "w-contact_binary_sensor"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "variable",
+            "name": "x_drzwi_klik",
+            "index": null
+          },
+          "widgets": [
+            {
+              "deviceId": "w-contact",
+              "widgetType": "CONTACT_SENSOR",
+              "name": "Drzwi wejściowe",
+              "page": {
+                "index": 0,
+                "name": "Salon"
+              },
+              "entityIds": [
+                "w-contact_button"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "object",
+            "name": "DIN6666",
+            "index": "0"
+          },
+          "widgets": [
+            {
+              "deviceId": "w-contact-double",
+              "widgetType": "CONTACT_SENSOR_DOUBLE",
+              "name": "Okno lewe / Okno prawe",
+              "page": {
+                "index": 0,
+                "name": "Salon"
+              },
+              "entityIds": [
+                "w-contact-double_binary_sensor_left"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "variable",
+            "name": "x_okno_klik",
+            "index": null
+          },
+          "widgets": [
+            {
+              "deviceId": "w-contact-double",
+              "widgetType": "CONTACT_SENSOR_DOUBLE",
+              "name": "Okno lewe / Okno prawe",
+              "page": {
+                "index": 0,
+                "name": "Salon"
+              },
+              "entityIds": [
+                "w-contact-double_button_left"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "object",
+            "name": "DIN7777",
+            "index": "0"
+          },
+          "widgets": [
+            {
+              "deviceId": "w-contact-double",
+              "widgetType": "CONTACT_SENSOR_DOUBLE",
+              "name": "Okno lewe / Okno prawe",
+              "page": {
+                "index": 0,
+                "name": "Salon"
+              },
+              "entityIds": [
+                "w-contact-double_binary_sensor_right"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "object",
+            "name": "THE8888",
+            "index": "0"
+          },
+          "widgets": [
+            {
+              "deviceId": "w-slider",
+              "widgetType": "SLIDER",
+              "name": "Temperatura zadana",
+              "page": {
+                "index": 0,
+                "name": "Salon"
+              },
+              "entityIds": [
+                "w-slider_slider"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "object",
+            "name": "PAN9999",
+            "index": "0"
+          },
+          "widgets": [
+            {
+              "deviceId": "w-multi",
+              "widgetType": "MULTISENSOR",
+              "name": "Czujnik salon",
+              "page": {
+                "index": 0,
+                "name": "Salon"
+              },
+              "entityIds": [
+                "w-multi_air_co2"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "object",
+            "name": "PAN9999",
+            "index": "1"
+          },
+          "widgets": [
+            {
+              "deviceId": "w-multi",
+              "widgetType": "MULTISENSOR",
+              "name": "Czujnik salon",
+              "page": {
+                "index": 0,
+                "name": "Salon"
+              },
+              "entityIds": [
+                "w-multi_sound"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "object",
+            "name": "PAN9999",
+            "index": "2"
+          },
+          "widgets": [
+            {
+              "deviceId": "w-multi",
+              "widgetType": "MULTISENSOR",
+              "name": "Czujnik salon",
+              "page": {
+                "index": 0,
+                "name": "Salon"
+              },
+              "entityIds": [
+                "w-multi_air_voc"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "object",
+            "name": "PAN9999",
+            "index": "3"
+          },
+          "widgets": [
+            {
+              "deviceId": "w-multi",
+              "widgetType": "MULTISENSOR",
+              "name": "Czujnik salon",
+              "page": {
+                "index": 0,
+                "name": "Salon"
+              },
+              "entityIds": [
+                "w-multi_light"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "object",
+            "name": "PAN9999",
+            "index": "4"
+          },
+          "widgets": [
+            {
+              "deviceId": "w-multi",
+              "widgetType": "MULTISENSOR",
+              "name": "Czujnik salon",
+              "page": {
+                "index": 0,
+                "name": "Salon"
+              },
+              "entityIds": [
+                "w-multi_pressure"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "object",
+            "name": "PAN9999",
+            "index": "5"
+          },
+          "widgets": [
+            {
+              "deviceId": "w-multi",
+              "widgetType": "MULTISENSOR",
+              "name": "Czujnik salon",
+              "page": {
+                "index": 0,
+                "name": "Salon"
+              },
+              "entityIds": [
+                "w-multi_humidity"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "object",
+            "name": "PAN9999",
+            "index": "6"
+          },
+          "widgets": [
+            {
+              "deviceId": "w-multi",
+              "widgetType": "MULTISENSOR",
+              "name": "Czujnik salon",
+              "page": {
+                "index": 0,
+                "name": "Salon"
+              },
+              "entityIds": [
+                "w-multi_temperature"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "object",
+            "name": "ROL1010",
+            "index": "0"
+          },
+          "widgets": [
+            {
+              "deviceId": "w-rs-legacy",
+              "widgetType": "ROLLER_SHUTTER",
+              "name": "Roleta taras",
+              "page": {
+                "index": 0,
+                "name": "Salon"
+              },
+              "entityIds": [
+                "w-rs-legacy_sensor"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "object",
+            "name": "ROL1010",
+            "index": "1"
+          },
+          "widgets": [
+            {
+              "deviceId": "w-rs-legacy",
+              "widgetType": "ROLLER_SHUTTER",
+              "name": "Roleta taras",
+              "page": {
+                "index": 0,
+                "name": "Salon"
+              },
+              "entityIds": [
+                "w-rs-legacy_button"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "object",
+            "name": "ROL2020",
+            "index": "1"
+          },
+          "widgets": [
+            {
+              "deviceId": "w-rs3",
+              "widgetType": "ROLLER_SHUTTER_V3",
+              "name": "Roleta sypialnia",
+              "page": {
+                "index": 0,
+                "name": "Salon"
+              },
+              "entityIds": [
+                "w-rs3"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "script",
+            "name": "scena_wieczor",
+            "index": null
+          },
+          "widgets": [
+            {
+              "deviceId": "w-scene",
+              "widgetType": "SCENE",
+              "name": "Wieczorny chill",
+              "page": {
+                "index": 0,
+                "name": "Salon"
+              },
+              "entityIds": [
+                "w-scene_0"
+              ]
+            }
+          ]
+        }
+      ],
+      "skippedWidgets": [
+        [
+          "FANCY_NEW_WIDGET",
+          "ON_OFF",
+          "ON_OFF"
+        ]
+      ]
+    }
+  }
+}

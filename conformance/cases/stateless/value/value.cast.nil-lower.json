@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "value.cast.nil-lower",
+  "specRefs": [
+    "model.cast"
+  ],
+  "description": "castString(\"nil\")",
+  "provenance": "spec §3.1 + §9.2",
+  "operation": "value.cast",
+  "input": {
+    "text": "nil"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "value": {
+        "type": "null"
+      }
+    }
+  }
+}

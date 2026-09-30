@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "number.format.negative-precision-half-even",
+  "specRefs": [
+    "devices.number-format"
+  ],
+  "description": "Reference format str(round(1250.0, -2)) → 1200.0.",
+  "provenance": "python3 str(round(x, p)) — reference semantics (spec §10 pt 3)",
+  "operation": "number.format",
+  "input": {
+    "value": {
+      "type": "double",
+      "bits": "4093880000000000",
+      "decimal": "1250.0"
+    },
+    "precision": -2
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "text": "1200.0"
+    }
+  }
+}

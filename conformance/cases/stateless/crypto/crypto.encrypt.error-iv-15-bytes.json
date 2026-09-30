@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "crypto.encrypt.error-iv-15-bytes",
+  "specRefs": [
+    "crypto.key-material"
+  ],
+  "description": "The IV must be exactly 16 bytes.",
+  "provenance": "spec §5.1",
+  "operation": "crypto.encrypt",
+  "input": {
+    "keyBase64": "AAECAwQFBgcICQoLDA0ODw==",
+    "ivBase64": "AAAAAAAAAAAAAAAAAAAA",
+    "plaintextHex": "78"
+  },
+  "expect": {
+    "outcome": "error",
+    "code": "crypto.invalidKeyMaterial"
+  }
+}

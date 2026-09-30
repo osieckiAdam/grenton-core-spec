@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "value.cast.whitespace-trimmed",
+  "specRefs": [
+    "model.cast"
+  ],
+  "description": "castString(\" tekst \")",
+  "provenance": "spec §3.1 + §9.2",
+  "operation": "value.cast",
+  "input": {
+    "text": " tekst "
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "value": {
+        "type": "string",
+        "value": "tekst"
+      }
+    }
+  }
+}

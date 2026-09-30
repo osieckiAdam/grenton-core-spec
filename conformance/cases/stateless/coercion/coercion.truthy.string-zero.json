@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "coercion.truthy.string-zero",
+  "specRefs": [
+    "devices.coercion"
+  ],
+  "description": "truthy: standard truthiness; null is unknown.",
+  "provenance": "spec §6.2",
+  "operation": "coercion.truthy",
+  "input": {
+    "value": {
+      "type": "string",
+      "value": "0"
+    }
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "result": true
+    }
+  }
+}

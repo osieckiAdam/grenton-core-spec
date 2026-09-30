@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "value.cast.true",
+  "specRefs": [
+    "model.cast"
+  ],
+  "description": "castString(\"true\")",
+  "provenance": "spec §3.1 + §9.2",
+  "operation": "value.cast",
+  "input": {
+    "text": "true"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "value": {
+        "type": "bool",
+        "value": true
+      }
+    }
+  }
+}

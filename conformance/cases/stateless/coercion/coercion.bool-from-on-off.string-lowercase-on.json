@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "coercion.bool-from-on-off.string-lowercase-on",
+  "specRefs": [
+    "devices.coercion"
+  ],
+  "description": "boolFromOnOff: on for \"ON\", true or the number 1; null is unknown.",
+  "provenance": "reference bistable_switch.py: value == \"ON\" or value == True (Python: 1 == True, 1.0 == True)",
+  "operation": "coercion.boolFromOnOff",
+  "input": {
+    "value": {
+      "type": "string",
+      "value": "on"
+    }
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "result": false
+    }
+  }
+}

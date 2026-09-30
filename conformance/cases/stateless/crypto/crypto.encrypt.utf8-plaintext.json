@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "crypto.encrypt.utf8-plaintext",
+  "specRefs": [
+    "crypto.aes-cbc",
+    "crypto.padding"
+  ],
+  "description": "Multi-byte UTF-8 is encrypted as raw bytes.",
+  "provenance": "openssl enc",
+  "operation": "crypto.encrypt",
+  "input": {
+    "keyBase64": "AAECAwQFBgcICQoLDA0ODw==",
+    "ivBase64": "EBESExQVFhcYGRobHB0eHw==",
+    "plaintextHex": "7265713a3a31313232333334343a7365745661722822c581617a69656e6b61222c22c5bcc3b3c582772229"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "ciphertextHex": "3206e535ad72ab4aa2539e2fe62342ba1503c21756eed8864e6beb9dc97008767c921416c9c8d3aadf793262748f0226"
+    }
+  }
+}

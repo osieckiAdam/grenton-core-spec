@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "provisioning.url.pin-space-stripped",
+  "specRefs": [
+    "provisioning.pin"
+  ],
+  "description": "The grouping space OM displays is removed.",
+  "provenance": "spec §4.1",
+  "operation": "provisioning.url",
+  "input": {
+    "host": "192.168.1.5",
+    "pin": "149 853"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "url": "http://192.168.1.5:9998/api/v1/interface/hash/149853"
+    }
+  }
+}

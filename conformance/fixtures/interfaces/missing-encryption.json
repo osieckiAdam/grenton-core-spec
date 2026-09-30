@@ -1,0 +1,50 @@
+{
+  "id": "interface-test-001",
+  "version": 3,
+  "name": "Dom testowy",
+  "icon": "home",
+  "theme": "GRENTON",
+  "clus": [
+    {
+      "id": "CLU_501234567",
+      "serialNumber": "501234567",
+      "name": "CLU Parter",
+      "ip": "192.168.1.10",
+      "port": 1234,
+      "connectionType": "LOCAL_ONLY"
+    }
+  ],
+  "pushNotifications": [
+    {
+      "cluId": 501234567,
+      "objectId": "PN_1",
+      "objectType": "PUSH"
+    }
+  ],
+  "pages": [
+    {
+      "name": "Salon",
+      "icon": "home",
+      "isFullscreenWidget": false,
+      "widgets": [
+        {
+          "type": "VALUE_V2",
+          "id": "w-value",
+          "label": "Temperatura",
+          "icon": "temp",
+          "unit": "DEGREE",
+          "valueType": "FLOAT",
+          "precision": 1,
+          "object": {
+            "value": {
+              "cluId": "CLU_501234567",
+              "objectName": "PAN4756",
+              "index": "0",
+              "callType": "ATTRIBUTE"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

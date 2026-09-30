@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "coercion.bool-from-on-off.int-two",
+  "specRefs": [
+    "devices.coercion"
+  ],
+  "description": "Only the number 1 equals true; 2 is off.",
+  "provenance": "reference bistable_switch.py: value == \"ON\" or value == True (Python: 1 == True, 1.0 == True)",
+  "operation": "coercion.boolFromOnOff",
+  "input": {
+    "value": {
+      "type": "int",
+      "value": "2"
+    }
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "result": false
+    }
+  }
+}

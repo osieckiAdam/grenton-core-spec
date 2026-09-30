@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "coercion.bool-from-on-off.int-zero",
+  "specRefs": [
+    "devices.coercion"
+  ],
+  "description": "The number 0: off.",
+  "provenance": "reference bistable_switch.py: value == \"ON\" or value == True (Python: 1 == True, 1.0 == True)",
+  "operation": "coercion.boolFromOnOff",
+  "input": {
+    "value": {
+      "type": "int",
+      "value": "0"
+    }
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "result": false
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "payload.action.script-number",
+  "specRefs": [
+    "payload.action"
+  ],
+  "description": "SCRIPT with a numeric Lua argument.",
+  "provenance": "spec §5.3.4 literal",
+  "operation": "payload.action",
+  "input": {
+    "action": {
+      "event": "CLICK",
+      "cluId": "CLU_501234567",
+      "objectName": "setLevel",
+      "value": "42",
+      "callType": "SCRIPT"
+    }
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "payload": "setLevel(42)"
+    }
+  }
+}

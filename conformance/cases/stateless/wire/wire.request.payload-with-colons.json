@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "wire.request.payload-with-colons",
+  "specRefs": [
+    "wire.request"
+  ],
+  "description": "The payload is appended verbatim, colons included.",
+  "provenance": "spec §5.3.4 literal",
+  "operation": "wire.request",
+  "input": {
+    "msgId": "7c2d91aa",
+    "payload": "DOU8272:set(0,\"1\")"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "frame": "req::7c2d91aa:DOU8272:set(0,\"1\")"
+    }
+  }
+}

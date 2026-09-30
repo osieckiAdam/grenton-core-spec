@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/osieckiAdam/grenton-core-spec/conformance/schemas/case.schema.json",
+  "title": "Grenton Core conformance case",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "id", "specRefs", "description", "provenance", "operation", "input", "expect"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "id": { "type": "string", "pattern": "^[a-z0-9]+(\\.[A-Za-z0-9-]+)+$" },
+    "specRefs": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+    "description": { "type": "string" },
+    "provenance": { "type": "string" },
+    "operation": { "type": "string" },
+    "input": { "type": "object" },
+    "expect": { "$ref": "#/$defs/expect" }
+  },
+  "allOf": [
+    { "if": { "properties": { "operation": { "const": "crypto.encrypt" } } },
+      "then": { "properties": { "input": { "$ref": "#/$defs/input.crypto.encrypt" } } } },
+    { "if": { "properties": { "operation": { "const": "crypto.decrypt" } } },
+      "then": { "properties": { "input": { "$ref": "#/$defs/input.crypto.decrypt" } } } },
+    { "if": { "properties": { "operation": { "const": "wire.request" } } },
+      "then": { "properties": { "input": { "$ref": "#/$defs/input.wire.request" } } } },
+    { "if": { "properties": { "operation": { "const": "wire.response" } } },
+      "then": { "properties": { "input": { "$ref": "#/$defs/input.wire.response" } } } },
+    { "if": { "properties": { "operation": { "const": "payload.register" } } },
+      "then": { "properties": { "input": { "$ref": "#/$defs/input.payload.register" } } } },
+    { "if": { "properties": { "operation": { "const": "payload.action" } } },
+      "then": { "properties": { "input": { "$ref": "#/$defs/input.payload.action" } } } },
+    { "if": { "properties": { "operation": { "const": "payload.report" } } },
+      "then": { "properties": { "input": { "$ref": "#/$defs/input.payload.report" } } } },
+    { "if": { "properties": { "operation": { "const": "value.cast" } } },
+      "then": { "properties": { "input": { "$ref": "#/$defs/input.value.cast" } } } },
+    { "if": { "properties": { "operation": { "const": "provisioning.url" } } },
+      "then": { "properties": { "input": { "$ref": "#/$defs/input.provisioning.url" } } } },
+    { "if": { "properties": { "operation": { "enum": ["coercion.boolFromOnOff", "coercion.truthy"] } } },
+      "then": { "properties": { "input": { "$ref": "#/$defs/input.coercion" } } } },
+    { "if": { "properties": { "operation": { "const": "number.format" } } },
+      "then": { "properties": { "input": { "$ref": "#/$defs/input.number.format" } } } },
+    { "if": { "properties": { "operation": { "const": "mapping.interface" } } },
+      "then": { "properties": { "input": { "$ref": "#/$defs/input.mapping.interface" } } } }
+  ],
+  "$defs": {
+    "hex": { "type": "string", "pattern": "^([0-9a-f]{2})*$" },
+    "expect": {
+      "oneOf": [
+        { "type": "object", "additionalProperties": false, "required": ["outcome", "value"],
+          "properties": { "outcome": { "const": "ok" }, "value": {} } },
+        { "type": "object", "additionalProperties": false, "required": ["outcome", "code"],
+          "properties": { "outcome": { "const": "error" },
+                          "code": { "enum": ["crypto.invalidKeyMaterial", "provisioning.connection"] } } },
+        { "type": "object", "additionalProperties": false, "required": ["outcome"],
+          "properties": { "outcome": { "const": "reject" } } }
+      ]
+    },
+    "value": {
+      "description": "Tagged GrentonValue. int is a decimal string (Int64 exceeds JS numbers); double is its IEEE-754 binary64 bit pattern, with `decimal` informative only.",
+      "oneOf": [
+        { "type": "object", "additionalProperties": false, "required": ["type"],
+          "properties": { "type": { "const": "null" } } },
+        { "type": "object", "additionalProperties": false, "required": ["type", "value"],
+          "properties": { "type": { "const": "bool" }, "value": { "type": "boolean" } } },
+        { "type": "object", "additionalProperties": false, "required": ["type", "value"],
+          "properties": { "type": { "const": "int" }, "value": { "type": "string", "pattern": "^-?[0-9]+$" } } },
+        { "type": "object", "additionalProperties": false, "required": ["type", "value"],
+          "properties": { "type": { "const": "string" }, "value": { "type": "string" } } },
+        { "type": "object", "additionalProperties": false, "required": ["type", "bits", "decimal"],
+          "properties": { "type": { "const": "double" }, "bits": { "type": "string", "pattern": "^[0-9a-f]{16}$" },
+                          "decimal": { "type": "string" } } }
+      ]
+    },
+    "keyMaterial": {
+      "type": "object",
+      "required": ["keyBase64", "ivBase64"],
+      "properties": { "keyBase64": { "type": "string" }, "ivBase64": { "type": "string" } }
+    },
+    "input.crypto.encrypt": {
+      "allOf": [{ "$ref": "#/$defs/keyMaterial" }],
+      "required": ["plaintextHex"],
+      "properties": { "keyBase64": true, "ivBase64": true, "plaintextHex": { "$ref": "#/$defs/hex" } },
+      "additionalProperties": false
+    },
+    "input.crypto.decrypt": {
+      "allOf": [{ "$ref": "#/$defs/keyMaterial" }],
+      "required": ["ciphertextHex"],
+      "properties": { "keyBase64": true, "ivBase64": true, "ciphertextHex": { "$ref": "#/$defs/hex" } },
+      "additionalProperties": false
+    },
+    "input.wire.request": {
+      "type": "object", "additionalProperties": false, "required": ["msgId", "payload"],
+      "properties": { "msgId": { "type": "string" }, "payload": { "type": "string" } }
+    },
+    "input.wire.response": {
+      "type": "object", "additionalProperties": false, "required": ["frame"],
+      "properties": { "frame": { "type": "string" } }
+    },
+    "input.payload.register": {
+      "type": "object", "additionalProperties": false, "required": ["sessionId", "keys"],
+      "properties": {
+        "sessionId": { "type": "integer" },
+        "keys": {
+          "type": "array", "minItems": 1,
+          "items": {
+            "oneOf": [
+              { "type": "object", "additionalProperties": false, "required": ["type", "name"],
+                "properties": { "type": { "const": "variable" }, "name": { "type": "string" } } },
+              { "type": "object", "additionalProperties": false, "required": ["type", "objectName", "index"],
+                "properties": { "type": { "const": "attribute" }, "objectName": { "type": "string" },
+                                "index": { "type": "string" } } }
+            ]
+          }
+        }
+      }
+    },
+    "input.payload.action": {
+      "type": "object", "additionalProperties": false, "required": ["action"],
+      "properties": { "action": { "type": "object", "description": "An ActionRef exactly as it appears in data.json (spec §3.3)." } }
+    },
+    "input.payload.report": {
+      "type": "object", "additionalProperties": false, "required": ["payload"],
+      "properties": { "payload": { "type": "string" } }
+    },
+    "input.value.cast": {
+      "type": "object", "additionalProperties": false, "required": ["text"],
+      "properties": { "text": { "type": "string" } }
+    },
+    "input.provisioning.url": {
+      "type": "object", "additionalProperties": false, "required": ["host", "pin"],
+      "properties": { "host": { "type": "string" }, "port": { "type": "integer" }, "pin": { "type": "string" } }
+    },
+    "input.coercion": {
+      "type": "object", "additionalProperties": false, "required": ["value"],
+      "properties": { "value": { "$ref": "#/$defs/value" } }
+    },
+    "input.mapping.interface": {
+      "type": "object", "additionalProperties": false, "required": ["fixture"],
+      "properties": { "fixture": { "type": "string", "pattern": "^fixtures/.+\\.json$" } }
+    },
+    "input.number.format": {
+      "type": "object", "additionalProperties": false, "required": ["value", "precision"],
+      "properties": {
+        "value": { "allOf": [{ "$ref": "#/$defs/value" }], "properties": { "type": { "const": "double" } } },
+        "precision": { "type": "integer" }
+      }
+    }
+  }
+}

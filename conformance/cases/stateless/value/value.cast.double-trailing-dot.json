@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "value.cast.double-trailing-dot",
+  "specRefs": [
+    "model.cast"
+  ],
+  "description": "castString(\"1.\")",
+  "provenance": "spec §3.1 + §9.2",
+  "operation": "value.cast",
+  "input": {
+    "text": "1."
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "value": {
+        "type": "double",
+        "bits": "3ff0000000000000",
+        "decimal": "1.0"
+      }
+    }
+  }
+}

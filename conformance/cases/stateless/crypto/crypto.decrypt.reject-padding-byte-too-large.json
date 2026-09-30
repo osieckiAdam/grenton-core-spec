@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "crypto.decrypt.reject-padding-byte-too-large",
+  "specRefs": [
+    "crypto.padding"
+  ],
+  "description": "Padding length 17 (> block size) is invalid.",
+  "provenance": "spec §5.1 (strict PKCS#7) + openssl -nopad",
+  "operation": "crypto.decrypt",
+  "input": {
+    "keyBase64": "AAECAwQFBgcICQoLDA0ODw==",
+    "ivBase64": "EBESExQVFhcYGRobHB0eHw==",
+    "ciphertextHex": "6b6c1a22683ad2256be95f06fac03a7d"
+  },
+  "expect": {
+    "outcome": "reject"
+  }
+}

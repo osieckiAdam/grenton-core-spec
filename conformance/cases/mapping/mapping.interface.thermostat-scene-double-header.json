@@ -1,0 +1,426 @@
+{
+  "schemaVersion": 1,
+  "id": "mapping.interface.thermostat-scene-double-header",
+  "specRefs": [
+    "model.widget-tolerance",
+    "devices.mapping",
+    "devices.order",
+    "devices.physical-objects"
+  ],
+  "description": "THERMOSTAT_V2 (full, minimal, mode state without setter, missing required setter), SCENE_DOUBLE with repeated rowId, HEADER as layout, EVENT_SCHEDULER still unsupported.",
+  "provenance": "tools/oracles/mapping.py — independent derivation from spec §3.5, §6.3.10, §6.3.12; widget shapes modelled on a live Object Manager export",
+  "operation": "mapping.interface",
+  "input": {
+    "fixture": "fixtures/interfaces/thermostat-scene-double-header.json"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "devices": [
+        {
+          "id": "t-full",
+          "widgetType": "THERMOSTAT_V2",
+          "kind": "thermostat",
+          "name": "Kotłownia",
+          "page": {
+            "index": 0,
+            "name": "Ogrzewanie"
+          },
+          "entities": [
+            {
+              "kind": "thermostat",
+              "id": "t-full_0",
+              "name": "Kotłownia",
+              "currentTemperature": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "THE1001",
+                "index": "14"
+              },
+              "targetTemperature": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "THE1001",
+                "index": "12"
+              },
+              "setTargetTemperatureAction": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "THE1001",
+                "event": "CLICK",
+                "value": "$value$",
+                "index": "3"
+              },
+              "minTemperature": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "THE1001",
+                "index": "10"
+              },
+              "maxTemperature": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "THE1001",
+                "index": "11"
+              },
+              "mode": {
+                "state": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_501234567",
+                  "objectName": "THE1001",
+                  "index": "8"
+                },
+                "setAction": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_501234567",
+                  "objectName": "THE1001",
+                  "event": "CLICK",
+                  "value": "$value$",
+                  "index": "8"
+                }
+              },
+              "power": {
+                "state": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_501234567",
+                  "objectName": "THE1001",
+                  "index": "6"
+                },
+                "setAction": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_501234567",
+                  "objectName": "THE1001",
+                  "event": "CLICK",
+                  "value": "$value$",
+                  "index": "6"
+                }
+              },
+              "output": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "THE1001",
+                "index": "13"
+              }
+            }
+          ]
+        },
+        {
+          "id": "t-minimal",
+          "widgetType": "THERMOSTAT_V2",
+          "kind": "thermostat",
+          "name": "Łazienka",
+          "page": {
+            "index": 0,
+            "name": "Ogrzewanie"
+          },
+          "entities": [
+            {
+              "kind": "thermostat",
+              "id": "t-minimal_0",
+              "name": "Łazienka",
+              "currentTemperature": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "THE1002",
+                "index": "14"
+              },
+              "targetTemperature": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "THE1002",
+                "index": "12"
+              },
+              "setTargetTemperatureAction": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "THE1002",
+                "event": "CLICK",
+                "value": "$value$",
+                "index": "3"
+              },
+              "minTemperature": null,
+              "maxTemperature": null,
+              "mode": null,
+              "power": null,
+              "output": null
+            }
+          ]
+        },
+        {
+          "id": "t-mode-without-setter",
+          "widgetType": "THERMOSTAT_V2",
+          "kind": "thermostat",
+          "name": "Salon",
+          "page": {
+            "index": 0,
+            "name": "Ogrzewanie"
+          },
+          "entities": [
+            {
+              "kind": "thermostat",
+              "id": "t-mode-without-setter_0",
+              "name": "Salon",
+              "currentTemperature": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "THE1003",
+                "index": "14"
+              },
+              "targetTemperature": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "THE1003",
+                "index": "12"
+              },
+              "setTargetTemperatureAction": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "THE1003",
+                "event": "CLICK",
+                "value": "$value$",
+                "index": "3"
+              },
+              "minTemperature": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "THE1003",
+                "index": "10"
+              },
+              "maxTemperature": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "THE1003",
+                "index": "11"
+              },
+              "mode": null,
+              "power": {
+                "state": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_501234567",
+                  "objectName": "THE1003",
+                  "index": "6"
+                },
+                "setAction": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_501234567",
+                  "objectName": "THE1003",
+                  "event": "CLICK",
+                  "value": "$value$",
+                  "index": "6"
+                }
+              },
+              "output": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "THE1003",
+                "index": "13"
+              }
+            }
+          ]
+        },
+        {
+          "id": "sd-gate",
+          "widgetType": "SCENE_DOUBLE",
+          "kind": "scene",
+          "name": "Start / STOP",
+          "page": {
+            "index": 1,
+            "name": "Brama"
+          },
+          "entities": [
+            {
+              "kind": "sceneTrigger",
+              "id": "sd-gate_0",
+              "name": "Start",
+              "action": {
+                "callType": "SCRIPT",
+                "cluId": "CLU_501234567",
+                "objectName": "SCENA_A",
+                "event": "CLICK",
+                "value": ""
+              }
+            },
+            {
+              "kind": "sceneTrigger",
+              "id": "sd-gate_1",
+              "name": "STOP",
+              "action": {
+                "callType": "SCRIPT",
+                "cluId": "CLU_501234567",
+                "objectName": "SCENA_A_STOP",
+                "event": "CLICK",
+                "value": "\"x\""
+              }
+            }
+          ]
+        },
+        {
+          "id": "sd-first-not-script",
+          "widgetType": "SCENE_DOUBLE",
+          "kind": "scene",
+          "name": "Nie skrypt / Skrypt",
+          "page": {
+            "index": 1,
+            "name": "Brama"
+          },
+          "entities": [
+            {
+              "kind": "sceneTrigger",
+              "id": "sd-first-not-script_1",
+              "name": "Skrypt",
+              "action": {
+                "callType": "SCRIPT",
+                "cluId": "CLU_501234567",
+                "objectName": "SCENA",
+                "event": "CLICK",
+                "value": ""
+              }
+            }
+          ]
+        }
+      ],
+      "physicalObjects": [
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "object",
+            "name": "THE1001",
+            "index": "14"
+          },
+          "widgets": [
+            {
+              "deviceId": "t-full",
+              "widgetType": "THERMOSTAT_V2",
+              "name": "Kotłownia",
+              "page": {
+                "index": 0,
+                "name": "Ogrzewanie"
+              },
+              "entityIds": [
+                "t-full_0"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "object",
+            "name": "THE1002",
+            "index": "14"
+          },
+          "widgets": [
+            {
+              "deviceId": "t-minimal",
+              "widgetType": "THERMOSTAT_V2",
+              "name": "Łazienka",
+              "page": {
+                "index": 0,
+                "name": "Ogrzewanie"
+              },
+              "entityIds": [
+                "t-minimal_0"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "object",
+            "name": "THE1003",
+            "index": "14"
+          },
+          "widgets": [
+            {
+              "deviceId": "t-mode-without-setter",
+              "widgetType": "THERMOSTAT_V2",
+              "name": "Salon",
+              "page": {
+                "index": 0,
+                "name": "Ogrzewanie"
+              },
+              "entityIds": [
+                "t-mode-without-setter_0"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "script",
+            "name": "SCENA_A",
+            "index": null
+          },
+          "widgets": [
+            {
+              "deviceId": "sd-gate",
+              "widgetType": "SCENE_DOUBLE",
+              "name": "Start / STOP",
+              "page": {
+                "index": 1,
+                "name": "Brama"
+              },
+              "entityIds": [
+                "sd-gate_0"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "script",
+            "name": "SCENA_A_STOP",
+            "index": null
+          },
+          "widgets": [
+            {
+              "deviceId": "sd-gate",
+              "widgetType": "SCENE_DOUBLE",
+              "name": "Start / STOP",
+              "page": {
+                "index": 1,
+                "name": "Brama"
+              },
+              "entityIds": [
+                "sd-gate_1"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "script",
+            "name": "SCENA",
+            "index": null
+          },
+          "widgets": [
+            {
+              "deviceId": "sd-first-not-script",
+              "widgetType": "SCENE_DOUBLE",
+              "name": "Nie skrypt / Skrypt",
+              "page": {
+                "index": 1,
+                "name": "Brama"
+              },
+              "entityIds": [
+                "sd-first-not-script_1"
+              ]
+            }
+          ]
+        }
+      ],
+      "skippedWidgets": [
+        [
+          "THERMOSTAT_V2"
+        ],
+        [
+          "EVENT_SCHEDULER"
+        ]
+      ]
+    }
+  }
+}

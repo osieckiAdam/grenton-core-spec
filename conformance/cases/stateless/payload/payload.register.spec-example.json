@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "payload.register.spec-example",
+  "specRefs": [
+    "payload.register"
+  ],
+  "description": "The §5.3.5 exchange: one variable and one attribute key, sid 0.",
+  "provenance": "spec §5.3.2 + §5.3.5",
+  "operation": "payload.register",
+  "input": {
+    "sessionId": 0,
+    "keys": [
+      {
+        "type": "variable",
+        "name": "AnalogIn1"
+      },
+      {
+        "type": "attribute",
+        "objectName": "DOU8272",
+        "index": "0"
+      }
+    ]
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "payload": "SYSTEM:clientRegister(0,0,1,{\"AnalogIn1\",{DOU8272,0}})"
+    }
+  }
+}

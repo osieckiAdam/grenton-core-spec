@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "coercion.bool-from-on-off.string-one",
+  "specRefs": [
+    "devices.coercion"
+  ],
+  "description": "The string \"1\" is neither \"ON\" nor equal to true: off.",
+  "provenance": "reference bistable_switch.py: value == \"ON\" or value == True (Python: 1 == True, 1.0 == True)",
+  "operation": "coercion.boolFromOnOff",
+  "input": {
+    "value": {
+      "type": "string",
+      "value": "1"
+    }
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "result": false
+    }
+  }
+}

@@ -1,0 +1,1040 @@
+{
+  "schemaVersion": 1,
+  "id": "mapping.interface.shared-objects",
+  "specRefs": [
+    "devices.physical-objects",
+    "devices.mapping",
+    "devices.order"
+  ],
+  "description": "One CLU object shown by several widgets on several pages under different names: thermostat on two pages plus a sensor on its temperature, a shutter on two pages, a double relay overlapping a single one, a scene on two pages, a variable-backed switch, a contact whose button drives a variable, a camera (not grouped). Two dimmers on different channels of one LED module stay separate objects.",
+  "provenance": "tools/oracles/mapping.py — independent derivation from spec §6.6; duplication pattern observed in a live Object Manager export",
+  "operation": "mapping.interface",
+  "input": {
+    "fixture": "fixtures/interfaces/shared-objects.json"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "devices": [
+        {
+          "id": "sh-thermo-room",
+          "widgetType": "THERMOSTAT_V2",
+          "kind": "thermostat",
+          "name": "Temperatura",
+          "page": {
+            "index": 0,
+            "name": "SALON"
+          },
+          "entities": [
+            {
+              "kind": "thermostat",
+              "id": "sh-thermo-room_0",
+              "name": "Temperatura",
+              "currentTemperature": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "THE1001",
+                "index": "14"
+              },
+              "targetTemperature": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "THE1001",
+                "index": "12"
+              },
+              "setTargetTemperatureAction": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "THE1001",
+                "event": "CLICK",
+                "value": "$value$",
+                "index": "3"
+              },
+              "minTemperature": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "THE1001",
+                "index": "10"
+              },
+              "maxTemperature": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "THE1001",
+                "index": "11"
+              },
+              "mode": {
+                "state": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_501234567",
+                  "objectName": "THE1001",
+                  "index": "8"
+                },
+                "setAction": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_501234567",
+                  "objectName": "THE1001",
+                  "event": "CLICK",
+                  "value": "$value$",
+                  "index": "8"
+                }
+              },
+              "power": {
+                "state": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_501234567",
+                  "objectName": "THE1001",
+                  "index": "6"
+                },
+                "setAction": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_501234567",
+                  "objectName": "THE1001",
+                  "event": "CLICK",
+                  "value": "$value$",
+                  "index": "6"
+                }
+              },
+              "output": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "THE1001",
+                "index": "13"
+              }
+            }
+          ]
+        },
+        {
+          "id": "sh-thermo-temp",
+          "widgetType": "VALUE_V2",
+          "kind": "sensor",
+          "name": "Temperatura",
+          "page": {
+            "index": 0,
+            "name": "SALON"
+          },
+          "entities": [
+            {
+              "kind": "sensor",
+              "id": "sh-thermo-temp_0",
+              "name": "Temperatura",
+              "state": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "THE1001",
+                "index": "14"
+              },
+              "sensorKind": "generic",
+              "unit": null,
+              "grentonUnit": "DEGREE",
+              "valueType": "FLOAT",
+              "precision": 1
+            }
+          ]
+        },
+        {
+          "id": "sh-shutter-room",
+          "widgetType": "ROLLER_SHUTTER_V3",
+          "kind": "cover",
+          "name": "Roleta",
+          "page": {
+            "index": 0,
+            "name": "SALON"
+          },
+          "entities": [
+            {
+              "kind": "cover",
+              "id": "sh-shutter-room",
+              "name": "Roleta",
+              "motionState": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "ROL2020",
+                "index": "0"
+              },
+              "position": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "ROL2020",
+                "index": "1"
+              },
+              "setPositionAction": {
+                "callType": "METHOD",
+                "cluId": "CLU_501234567",
+                "objectName": "ROL2020",
+                "event": "CLICK",
+                "value": "0",
+                "index": "4"
+              },
+              "tilt": {
+                "position": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_501234567",
+                  "objectName": "ROL2020",
+                  "index": "2"
+                },
+                "setAction": {
+                  "callType": "METHOD",
+                  "cluId": "CLU_501234567",
+                  "objectName": "ROL2020",
+                  "event": "CLICK",
+                  "value": "0",
+                  "index": "5"
+                }
+              },
+              "stopAction": {
+                "callType": "METHOD",
+                "cluId": "CLU_501234567",
+                "objectName": "ROL2020",
+                "event": "CLICK",
+                "value": "",
+                "index": "9"
+              }
+            }
+          ]
+        },
+        {
+          "id": "w-onoff-double",
+          "widgetType": "ON_OFF_DOUBLE",
+          "kind": "switch",
+          "name": "Gniazdko A / Gniazdko B",
+          "page": {
+            "index": 0,
+            "name": "SALON"
+          },
+          "entities": [
+            {
+              "kind": "switch",
+              "id": "w-onoff-double_0",
+              "name": "Gniazdko A",
+              "state": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "DOU1111",
+                "index": "0"
+              },
+              "onAction": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "DOU1111",
+                "event": "ON",
+                "value": "1",
+                "index": "0"
+              },
+              "offAction": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "DOU1111",
+                "event": "OFF",
+                "value": "0",
+                "index": "0"
+              },
+              "onIndication": "ON",
+              "offIndication": "OFF"
+            },
+            {
+              "kind": "switch",
+              "id": "w-onoff-double_1",
+              "name": "Gniazdko B",
+              "state": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "DOU2222",
+                "index": "0"
+              },
+              "onAction": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "DOU2222",
+                "event": "ON",
+                "value": "1",
+                "index": "0"
+              },
+              "offAction": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "DOU2222",
+                "event": "OFF",
+                "value": "0",
+                "index": "0"
+              },
+              "onIndication": "ON",
+              "offIndication": "OFF"
+            }
+          ]
+        },
+        {
+          "id": "sh-scene-room",
+          "widgetType": "SCENE",
+          "kind": "scene",
+          "name": "Wieczorny chill",
+          "page": {
+            "index": 0,
+            "name": "SALON"
+          },
+          "entities": [
+            {
+              "kind": "sceneTrigger",
+              "id": "sh-scene-room_0",
+              "name": "Wieczorny chill",
+              "action": {
+                "callType": "SCRIPT",
+                "cluId": "CLU_501234567",
+                "objectName": "scena_wieczor",
+                "event": "CLICK",
+                "value": "\"123\""
+              }
+            }
+          ]
+        },
+        {
+          "id": "sh-camera",
+          "widgetType": "CAMERA",
+          "kind": "camera",
+          "name": "Kamera wejście",
+          "page": {
+            "index": 0,
+            "name": "SALON"
+          },
+          "entities": [
+            {
+              "kind": "camera",
+              "id": "sh-camera_0",
+              "name": "Kamera wejście",
+              "streamUrl": "rtsp://192.168.1.20:554/stream1"
+            }
+          ]
+        },
+        {
+          "id": "sh-thermo-heating",
+          "widgetType": "THERMOSTAT_V2",
+          "kind": "thermostat",
+          "name": "Salon",
+          "page": {
+            "index": 1,
+            "name": "OGRZEWANIE"
+          },
+          "entities": [
+            {
+              "kind": "thermostat",
+              "id": "sh-thermo-heating_0",
+              "name": "Salon",
+              "currentTemperature": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "THE1001",
+                "index": "14"
+              },
+              "targetTemperature": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "THE1001",
+                "index": "12"
+              },
+              "setTargetTemperatureAction": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "THE1001",
+                "event": "CLICK",
+                "value": "$value$",
+                "index": "3"
+              },
+              "minTemperature": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "THE1001",
+                "index": "10"
+              },
+              "maxTemperature": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "THE1001",
+                "index": "11"
+              },
+              "mode": {
+                "state": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_501234567",
+                  "objectName": "THE1001",
+                  "index": "8"
+                },
+                "setAction": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_501234567",
+                  "objectName": "THE1001",
+                  "event": "CLICK",
+                  "value": "$value$",
+                  "index": "8"
+                }
+              },
+              "power": {
+                "state": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_501234567",
+                  "objectName": "THE1001",
+                  "index": "6"
+                },
+                "setAction": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_501234567",
+                  "objectName": "THE1001",
+                  "event": "CLICK",
+                  "value": "$value$",
+                  "index": "6"
+                }
+              },
+              "output": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "THE1001",
+                "index": "13"
+              }
+            }
+          ]
+        },
+        {
+          "id": "sh-shutter-all",
+          "widgetType": "ROLLER_SHUTTER_V3",
+          "kind": "cover",
+          "name": "Roleta salon",
+          "page": {
+            "index": 2,
+            "name": "WSZYSTKO"
+          },
+          "entities": [
+            {
+              "kind": "cover",
+              "id": "sh-shutter-all",
+              "name": "Roleta salon",
+              "motionState": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "ROL2020",
+                "index": "0"
+              },
+              "position": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "ROL2020",
+                "index": "1"
+              },
+              "setPositionAction": {
+                "callType": "METHOD",
+                "cluId": "CLU_501234567",
+                "objectName": "ROL2020",
+                "event": "CLICK",
+                "value": "0",
+                "index": "4"
+              },
+              "tilt": {
+                "position": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_501234567",
+                  "objectName": "ROL2020",
+                  "index": "2"
+                },
+                "setAction": {
+                  "callType": "METHOD",
+                  "cluId": "CLU_501234567",
+                  "objectName": "ROL2020",
+                  "event": "CLICK",
+                  "value": "0",
+                  "index": "5"
+                }
+              },
+              "stopAction": {
+                "callType": "METHOD",
+                "cluId": "CLU_501234567",
+                "objectName": "ROL2020",
+                "event": "CLICK",
+                "value": "",
+                "index": "9"
+              }
+            }
+          ]
+        },
+        {
+          "id": "sh-socket-a",
+          "widgetType": "ON_OFF",
+          "kind": "switch",
+          "name": "Gniazdko A osobno",
+          "page": {
+            "index": 2,
+            "name": "WSZYSTKO"
+          },
+          "entities": [
+            {
+              "kind": "switch",
+              "id": "sh-socket-a_0",
+              "name": "Gniazdko A osobno",
+              "state": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "DOU1111",
+                "index": "0"
+              },
+              "onAction": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "DOU1111",
+                "event": "ON",
+                "value": "1",
+                "index": "0"
+              },
+              "offAction": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "DOU1111",
+                "event": "OFF",
+                "value": "0",
+                "index": "0"
+              },
+              "onIndication": "ON",
+              "offIndication": "OFF"
+            }
+          ]
+        },
+        {
+          "id": "sh-scene-all",
+          "widgetType": "SCENE",
+          "kind": "scene",
+          "name": "Wieczorny chill",
+          "page": {
+            "index": 2,
+            "name": "WSZYSTKO"
+          },
+          "entities": [
+            {
+              "kind": "sceneTrigger",
+              "id": "sh-scene-all_0",
+              "name": "Wieczorny chill",
+              "action": {
+                "callType": "SCRIPT",
+                "cluId": "CLU_501234567",
+                "objectName": "scena_wieczor",
+                "event": "CLICK",
+                "value": "\"123\""
+              }
+            }
+          ]
+        },
+        {
+          "id": "sh-contact",
+          "widgetType": "CONTACT_SENSOR",
+          "kind": "contactSensor",
+          "name": "Drzwi wejściowe",
+          "page": {
+            "index": 2,
+            "name": "WSZYSTKO"
+          },
+          "entities": [
+            {
+              "kind": "contactSensor",
+              "id": "sh-contact_binary_sensor",
+              "name": "Drzwi wejściowe",
+              "state": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "DIN5555",
+                "index": "0"
+              },
+              "reversed": true,
+              "onIndication": "OTWARTE",
+              "offIndication": "ZAMKNIĘTE"
+            },
+            {
+              "kind": "trigger",
+              "id": "sh-contact_button",
+              "name": "Drzwi wejściowe",
+              "action": {
+                "callType": "VARIABLE",
+                "cluId": "CLU_501234567",
+                "objectName": "x_drzwi_klik",
+                "event": "CLICK",
+                "value": "1",
+                "index": "x_drzwi_klik"
+              }
+            }
+          ]
+        },
+        {
+          "id": "sh-onoff-var",
+          "widgetType": "ON_OFF",
+          "kind": "switch",
+          "name": "Lampa sufitowa / Kinkiet",
+          "page": {
+            "index": 2,
+            "name": "WSZYSTKO"
+          },
+          "entities": [
+            {
+              "kind": "switch",
+              "id": "sh-onoff-var_0",
+              "name": "Lampa sufitowa",
+              "state": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "DOU8272",
+                "index": "0"
+              },
+              "onAction": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "DOU8272",
+                "event": "ON",
+                "value": "1",
+                "index": "0"
+              },
+              "offAction": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "DOU8272",
+                "event": "OFF",
+                "value": "0",
+                "index": "0"
+              },
+              "onIndication": "ON",
+              "offIndication": "OFF"
+            },
+            {
+              "kind": "switch",
+              "id": "sh-onoff-var_1",
+              "name": "Kinkiet",
+              "state": {
+                "callType": "VARIABLE",
+                "cluId": "CLU_501234567",
+                "index": "x_kinkiet"
+              },
+              "onAction": {
+                "callType": "VARIABLE",
+                "cluId": "CLU_501234567",
+                "objectName": "x_kinkiet",
+                "event": "ON",
+                "value": "1",
+                "index": "x_kinkiet"
+              },
+              "offAction": {
+                "callType": "VARIABLE",
+                "cluId": "CLU_501234567",
+                "objectName": "x_kinkiet",
+                "event": "OFF",
+                "value": "0",
+                "index": "x_kinkiet"
+              },
+              "onIndication": "ON",
+              "offIndication": "OFF"
+            }
+          ]
+        },
+        {
+          "id": "sh-led-ch3",
+          "widgetType": "DIMMER_V2",
+          "kind": "dimmableLight",
+          "name": "Taśma A",
+          "page": {
+            "index": 2,
+            "name": "WSZYSTKO"
+          },
+          "entities": [
+            {
+              "kind": "dimmableLight",
+              "id": "sh-led-ch3_0",
+              "name": "Taśma A",
+              "state": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "LED1001",
+                "index": "3"
+              },
+              "min": 0,
+              "max": 100,
+              "precision": 0,
+              "onAction": {
+                "callType": "METHOD",
+                "cluId": "CLU_501234567",
+                "objectName": "LED1001",
+                "event": "ON",
+                "value": "",
+                "index": "1"
+              },
+              "offAction": {
+                "callType": "METHOD",
+                "cluId": "CLU_501234567",
+                "objectName": "LED1001",
+                "event": "OFF",
+                "value": "",
+                "index": "2"
+              },
+              "setValueAction": {
+                "callType": "METHOD",
+                "cluId": "CLU_501234567",
+                "objectName": "LED1001",
+                "event": "CLICK",
+                "value": "0",
+                "index": "0"
+              }
+            }
+          ]
+        },
+        {
+          "id": "sh-led-ch4",
+          "widgetType": "DIMMER_V2",
+          "kind": "dimmableLight",
+          "name": "Taśma B",
+          "page": {
+            "index": 2,
+            "name": "WSZYSTKO"
+          },
+          "entities": [
+            {
+              "kind": "dimmableLight",
+              "id": "sh-led-ch4_0",
+              "name": "Taśma B",
+              "state": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "LED1001",
+                "index": "4"
+              },
+              "min": 0,
+              "max": 100,
+              "precision": 0,
+              "onAction": {
+                "callType": "METHOD",
+                "cluId": "CLU_501234567",
+                "objectName": "LED1001",
+                "event": "ON",
+                "value": "",
+                "index": "1"
+              },
+              "offAction": {
+                "callType": "METHOD",
+                "cluId": "CLU_501234567",
+                "objectName": "LED1001",
+                "event": "OFF",
+                "value": "",
+                "index": "2"
+              },
+              "setValueAction": {
+                "callType": "METHOD",
+                "cluId": "CLU_501234567",
+                "objectName": "LED1001",
+                "event": "CLICK",
+                "value": "0",
+                "index": "0"
+              }
+            }
+          ]
+        }
+      ],
+      "physicalObjects": [
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "object",
+            "name": "THE1001",
+            "index": "14"
+          },
+          "widgets": [
+            {
+              "deviceId": "sh-thermo-room",
+              "widgetType": "THERMOSTAT_V2",
+              "name": "Temperatura",
+              "page": {
+                "index": 0,
+                "name": "SALON"
+              },
+              "entityIds": [
+                "sh-thermo-room_0"
+              ]
+            },
+            {
+              "deviceId": "sh-thermo-temp",
+              "widgetType": "VALUE_V2",
+              "name": "Temperatura",
+              "page": {
+                "index": 0,
+                "name": "SALON"
+              },
+              "entityIds": [
+                "sh-thermo-temp_0"
+              ]
+            },
+            {
+              "deviceId": "sh-thermo-heating",
+              "widgetType": "THERMOSTAT_V2",
+              "name": "Salon",
+              "page": {
+                "index": 1,
+                "name": "OGRZEWANIE"
+              },
+              "entityIds": [
+                "sh-thermo-heating_0"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "object",
+            "name": "ROL2020",
+            "index": "1"
+          },
+          "widgets": [
+            {
+              "deviceId": "sh-shutter-room",
+              "widgetType": "ROLLER_SHUTTER_V3",
+              "name": "Roleta",
+              "page": {
+                "index": 0,
+                "name": "SALON"
+              },
+              "entityIds": [
+                "sh-shutter-room"
+              ]
+            },
+            {
+              "deviceId": "sh-shutter-all",
+              "widgetType": "ROLLER_SHUTTER_V3",
+              "name": "Roleta salon",
+              "page": {
+                "index": 2,
+                "name": "WSZYSTKO"
+              },
+              "entityIds": [
+                "sh-shutter-all"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "object",
+            "name": "DOU1111",
+            "index": "0"
+          },
+          "widgets": [
+            {
+              "deviceId": "w-onoff-double",
+              "widgetType": "ON_OFF_DOUBLE",
+              "name": "Gniazdko A / Gniazdko B",
+              "page": {
+                "index": 0,
+                "name": "SALON"
+              },
+              "entityIds": [
+                "w-onoff-double_0"
+              ]
+            },
+            {
+              "deviceId": "sh-socket-a",
+              "widgetType": "ON_OFF",
+              "name": "Gniazdko A osobno",
+              "page": {
+                "index": 2,
+                "name": "WSZYSTKO"
+              },
+              "entityIds": [
+                "sh-socket-a_0"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "object",
+            "name": "DOU2222",
+            "index": "0"
+          },
+          "widgets": [
+            {
+              "deviceId": "w-onoff-double",
+              "widgetType": "ON_OFF_DOUBLE",
+              "name": "Gniazdko A / Gniazdko B",
+              "page": {
+                "index": 0,
+                "name": "SALON"
+              },
+              "entityIds": [
+                "w-onoff-double_1"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "script",
+            "name": "scena_wieczor",
+            "index": null
+          },
+          "widgets": [
+            {
+              "deviceId": "sh-scene-room",
+              "widgetType": "SCENE",
+              "name": "Wieczorny chill",
+              "page": {
+                "index": 0,
+                "name": "SALON"
+              },
+              "entityIds": [
+                "sh-scene-room_0"
+              ]
+            },
+            {
+              "deviceId": "sh-scene-all",
+              "widgetType": "SCENE",
+              "name": "Wieczorny chill",
+              "page": {
+                "index": 2,
+                "name": "WSZYSTKO"
+              },
+              "entityIds": [
+                "sh-scene-all_0"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "object",
+            "name": "DIN5555",
+            "index": "0"
+          },
+          "widgets": [
+            {
+              "deviceId": "sh-contact",
+              "widgetType": "CONTACT_SENSOR",
+              "name": "Drzwi wejściowe",
+              "page": {
+                "index": 2,
+                "name": "WSZYSTKO"
+              },
+              "entityIds": [
+                "sh-contact_binary_sensor"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "variable",
+            "name": "x_drzwi_klik",
+            "index": null
+          },
+          "widgets": [
+            {
+              "deviceId": "sh-contact",
+              "widgetType": "CONTACT_SENSOR",
+              "name": "Drzwi wejściowe",
+              "page": {
+                "index": 2,
+                "name": "WSZYSTKO"
+              },
+              "entityIds": [
+                "sh-contact_button"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "object",
+            "name": "DOU8272",
+            "index": "0"
+          },
+          "widgets": [
+            {
+              "deviceId": "sh-onoff-var",
+              "widgetType": "ON_OFF",
+              "name": "Lampa sufitowa / Kinkiet",
+              "page": {
+                "index": 2,
+                "name": "WSZYSTKO"
+              },
+              "entityIds": [
+                "sh-onoff-var_0"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "variable",
+            "name": "x_kinkiet",
+            "index": null
+          },
+          "widgets": [
+            {
+              "deviceId": "sh-onoff-var",
+              "widgetType": "ON_OFF",
+              "name": "Lampa sufitowa / Kinkiet",
+              "page": {
+                "index": 2,
+                "name": "WSZYSTKO"
+              },
+              "entityIds": [
+                "sh-onoff-var_1"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "object",
+            "name": "LED1001",
+            "index": "3"
+          },
+          "widgets": [
+            {
+              "deviceId": "sh-led-ch3",
+              "widgetType": "DIMMER_V2",
+              "name": "Taśma A",
+              "page": {
+                "index": 2,
+                "name": "WSZYSTKO"
+              },
+              "entityIds": [
+                "sh-led-ch3_0"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "object",
+            "name": "LED1001",
+            "index": "4"
+          },
+          "widgets": [
+            {
+              "deviceId": "sh-led-ch4",
+              "widgetType": "DIMMER_V2",
+              "name": "Taśma B",
+              "page": {
+                "index": 2,
+                "name": "WSZYSTKO"
+              },
+              "entityIds": [
+                "sh-led-ch4_0"
+              ]
+            }
+          ]
+        }
+      ],
+      "skippedWidgets": [
+        [],
+        [],
+        []
+      ]
+    }
+  }
+}

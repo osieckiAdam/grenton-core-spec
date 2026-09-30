@@ -1,0 +1,874 @@
+{
+  "id": "interface-test-001",
+  "version": 3,
+  "name": "Dom testowy",
+  "icon": "home",
+  "theme": "GRENTON",
+  "encryption": {
+    "key": "AAECAwQFBgcICQoLDA0ODw==",
+    "iv": "EBESExQVFhcYGRobHB0eHw=="
+  },
+  "clus": [
+    {
+      "id": "CLU_501234567",
+      "serialNumber": "501234567",
+      "name": "CLU Parter",
+      "ip": "192.168.1.10",
+      "port": 1234,
+      "connectionType": "LOCAL_ONLY"
+    }
+  ],
+  "pushNotifications": [
+    {
+      "cluId": 501234567,
+      "objectId": "PN_1",
+      "objectType": "PUSH"
+    }
+  ],
+  "pages": [
+    {
+      "name": "Kompletność",
+      "icon": "home",
+      "isFullscreenWidget": false,
+      "widgets": [
+        {
+          "type": "ON_OFF",
+          "id": "c-switch-missing-off",
+          "components": [
+            {
+              "type": "BUTTON_BISTABLE",
+              "label": "Pełny",
+              "rowId": 0,
+              "unit": "UNKNOWN",
+              "state": {
+                "cluId": "CLU_501234567",
+                "objectName": "DOU1000",
+                "index": "0",
+                "callType": "ATTRIBUTE"
+              },
+              "actions": [
+                {
+                  "event": "ON",
+                  "cluId": "CLU_501234567",
+                  "objectName": "DOU1000",
+                  "value": "1",
+                  "callType": "ATTRIBUTE",
+                  "index": "0"
+                },
+                {
+                  "event": "OFF",
+                  "cluId": "CLU_501234567",
+                  "objectName": "DOU1000",
+                  "value": "0",
+                  "callType": "ATTRIBUTE",
+                  "index": "0"
+                }
+              ],
+              "onIndication": "ON",
+              "offIndication": "OFF"
+            },
+            {
+              "type": "BUTTON_BISTABLE",
+              "label": "Bez OFF",
+              "rowId": 1,
+              "unit": "UNKNOWN",
+              "state": {
+                "cluId": "CLU_501234567",
+                "objectName": "DOU1001",
+                "index": "0",
+                "callType": "ATTRIBUTE"
+              },
+              "actions": [
+                {
+                  "event": "ON",
+                  "cluId": "CLU_501234567",
+                  "objectName": "DOU1001",
+                  "value": "1",
+                  "callType": "ATTRIBUTE",
+                  "index": "0"
+                }
+              ],
+              "onIndication": "ON",
+              "offIndication": "OFF"
+            }
+          ]
+        },
+        {
+          "type": "ON_OFF",
+          "id": "c-switch-first-action-wins",
+          "components": [
+            {
+              "type": "BUTTON_BISTABLE",
+              "label": "Dwie akcje ON",
+              "rowId": 3,
+              "unit": "UNKNOWN",
+              "state": {
+                "cluId": "CLU_501234567",
+                "objectName": "DOU1002",
+                "index": "0",
+                "callType": "ATTRIBUTE"
+              },
+              "actions": [
+                {
+                  "event": "CLICK",
+                  "cluId": "CLU_501234567",
+                  "objectName": "DOU1002",
+                  "value": "x",
+                  "callType": "ATTRIBUTE",
+                  "index": "9"
+                },
+                {
+                  "event": "ON",
+                  "cluId": "CLU_501234567",
+                  "objectName": "DOU1002",
+                  "value": "first",
+                  "callType": "ATTRIBUTE",
+                  "index": "0"
+                },
+                {
+                  "event": "ON",
+                  "cluId": "CLU_501234567",
+                  "objectName": "DOU1002",
+                  "value": "second",
+                  "callType": "ATTRIBUTE",
+                  "index": "0"
+                },
+                {
+                  "event": "OFF",
+                  "cluId": "CLU_501234567",
+                  "objectName": "DOU1002",
+                  "value": "0",
+                  "callType": "ATTRIBUTE",
+                  "index": "0"
+                }
+              ],
+              "onIndication": "ON",
+              "offIndication": "OFF"
+            }
+          ]
+        },
+        {
+          "type": "ON_OFF",
+          "id": "c-switch-variable-state",
+          "components": [
+            {
+              "type": "BUTTON_BISTABLE",
+              "label": "Zmienna",
+              "rowId": 0,
+              "unit": "UNKNOWN",
+              "state": {
+                "cluId": "CLU_501234567",
+                "objectName": "x_a",
+                "index": "x_a",
+                "callType": "VARIABLE"
+              },
+              "actions": [
+                {
+                  "event": "ON",
+                  "cluId": "CLU_501234567",
+                  "objectName": "x_a",
+                  "value": "1",
+                  "callType": "VARIABLE",
+                  "index": "x_a"
+                },
+                {
+                  "event": "OFF",
+                  "cluId": "CLU_501234567",
+                  "objectName": "x_a",
+                  "value": "0",
+                  "callType": "VARIABLE",
+                  "index": "x_a"
+                }
+              ],
+              "onIndication": "ON",
+              "offIndication": "OFF"
+            }
+          ]
+        },
+        {
+          "type": "ON_OFF",
+          "id": "c-switch-no-components",
+          "components": []
+        },
+        {
+          "type": "LED",
+          "id": "c-led-missing-saturation",
+          "components": [
+            {
+              "type": "BUTTON_BISTABLE",
+              "label": "Taśma LED",
+              "rowId": 0,
+              "unit": "UNKNOWN",
+              "image": "led",
+              "state": {
+                "cluId": "CLU_501234567",
+                "objectName": "LED4444",
+                "index": "0",
+                "callType": "ATTRIBUTE"
+              },
+              "actions": [
+                {
+                  "event": "ON",
+                  "cluId": "CLU_501234567",
+                  "objectName": "LED4444",
+                  "index": "1",
+                  "value": "",
+                  "callType": "METHOD"
+                },
+                {
+                  "event": "OFF",
+                  "cluId": "CLU_501234567",
+                  "objectName": "LED4444",
+                  "index": "2",
+                  "value": "",
+                  "callType": "METHOD"
+                }
+              ],
+              "onIndication": "ON",
+              "offIndication": "OFF"
+            },
+            {
+              "type": "SLIDER_HUE",
+              "label": "Barwa",
+              "rowId": 1,
+              "unit": "DEGREE",
+              "range": {
+                "min": 0,
+                "max": 360
+              },
+              "state": {
+                "cluId": "CLU_501234567",
+                "objectName": "LED4444",
+                "index": "3",
+                "callType": "ATTRIBUTE"
+              },
+              "actions": [
+                {
+                  "event": "CLICK",
+                  "cluId": "CLU_501234567",
+                  "objectName": "LED4444",
+                  "index": "4",
+                  "value": "0",
+                  "callType": "METHOD"
+                }
+              ]
+            },
+            {
+              "type": "SLIDER_BRIGHTNESS",
+              "label": "Jasność",
+              "rowId": 3,
+              "unit": "PERCENT",
+              "range": {
+                "min": 0,
+                "max": 255
+              },
+              "state": {
+                "cluId": "CLU_501234567",
+                "objectName": "LED4444",
+                "index": "7",
+                "callType": "ATTRIBUTE"
+              },
+              "actions": [
+                {
+                  "event": "CLICK",
+                  "cluId": "CLU_501234567",
+                  "objectName": "LED4444",
+                  "index": "8",
+                  "value": "0",
+                  "callType": "METHOD"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "LED",
+          "id": "c-led-slider-without-action",
+          "components": [
+            {
+              "type": "BUTTON_BISTABLE",
+              "label": "Taśma LED",
+              "rowId": 0,
+              "unit": "UNKNOWN",
+              "image": "led",
+              "state": {
+                "cluId": "CLU_501234567",
+                "objectName": "LED4444",
+                "index": "0",
+                "callType": "ATTRIBUTE"
+              },
+              "actions": [
+                {
+                  "event": "ON",
+                  "cluId": "CLU_501234567",
+                  "objectName": "LED4444",
+                  "index": "1",
+                  "value": "",
+                  "callType": "METHOD"
+                },
+                {
+                  "event": "OFF",
+                  "cluId": "CLU_501234567",
+                  "objectName": "LED4444",
+                  "index": "2",
+                  "value": "",
+                  "callType": "METHOD"
+                }
+              ],
+              "onIndication": "ON",
+              "offIndication": "OFF"
+            },
+            {
+              "type": "SLIDER_HUE",
+              "label": "Barwa",
+              "rowId": 1,
+              "unit": "DEGREE",
+              "range": {
+                "min": 0,
+                "max": 360
+              },
+              "state": {
+                "cluId": "CLU_501234567",
+                "objectName": "LED4444",
+                "index": "3",
+                "callType": "ATTRIBUTE"
+              },
+              "actions": [
+                {
+                  "event": "CLICK",
+                  "cluId": "CLU_501234567",
+                  "objectName": "LED4444",
+                  "index": "4",
+                  "value": "0",
+                  "callType": "METHOD"
+                }
+              ]
+            },
+            {
+              "type": "SLIDER_SATURATION",
+              "label": "Nasycenie",
+              "rowId": 2,
+              "unit": "PERCENT",
+              "range": {
+                "min": 0,
+                "max": 100
+              },
+              "state": {
+                "cluId": "CLU_501234567",
+                "objectName": "LED4444",
+                "index": "5",
+                "callType": "ATTRIBUTE"
+              },
+              "actions": []
+            },
+            {
+              "type": "SLIDER_BRIGHTNESS",
+              "label": "Jasność",
+              "rowId": 3,
+              "unit": "PERCENT",
+              "range": {
+                "min": 0,
+                "max": 255
+              },
+              "state": {
+                "cluId": "CLU_501234567",
+                "objectName": "LED4444",
+                "index": "7",
+                "callType": "ATTRIBUTE"
+              },
+              "actions": [
+                {
+                  "event": "CLICK",
+                  "cluId": "CLU_501234567",
+                  "objectName": "LED4444",
+                  "index": "8",
+                  "value": "0",
+                  "callType": "METHOD"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "LED",
+          "id": "c-led-button-without-off",
+          "components": [
+            {
+              "type": "BUTTON_BISTABLE",
+              "label": "Taśma LED",
+              "rowId": 0,
+              "unit": "UNKNOWN",
+              "image": "led",
+              "state": {
+                "cluId": "CLU_501234567",
+                "objectName": "LED4444",
+                "index": "0",
+                "callType": "ATTRIBUTE"
+              },
+              "actions": [
+                {
+                  "event": "ON",
+                  "cluId": "CLU_501234567",
+                  "objectName": "LED4444",
+                  "index": "1",
+                  "value": "",
+                  "callType": "METHOD"
+                }
+              ],
+              "onIndication": "ON",
+              "offIndication": "OFF"
+            },
+            {
+              "type": "SLIDER_HUE",
+              "label": "Barwa",
+              "rowId": 1,
+              "unit": "DEGREE",
+              "range": {
+                "min": 0,
+                "max": 360
+              },
+              "state": {
+                "cluId": "CLU_501234567",
+                "objectName": "LED4444",
+                "index": "3",
+                "callType": "ATTRIBUTE"
+              },
+              "actions": [
+                {
+                  "event": "CLICK",
+                  "cluId": "CLU_501234567",
+                  "objectName": "LED4444",
+                  "index": "4",
+                  "value": "0",
+                  "callType": "METHOD"
+                }
+              ]
+            },
+            {
+              "type": "SLIDER_SATURATION",
+              "label": "Nasycenie",
+              "rowId": 2,
+              "unit": "PERCENT",
+              "range": {
+                "min": 0,
+                "max": 100
+              },
+              "state": {
+                "cluId": "CLU_501234567",
+                "objectName": "LED4444",
+                "index": "5",
+                "callType": "ATTRIBUTE"
+              },
+              "actions": [
+                {
+                  "event": "CLICK",
+                  "cluId": "CLU_501234567",
+                  "objectName": "LED4444",
+                  "index": "6",
+                  "value": "0",
+                  "callType": "METHOD"
+                }
+              ]
+            },
+            {
+              "type": "SLIDER_BRIGHTNESS",
+              "label": "Jasność",
+              "rowId": 3,
+              "unit": "PERCENT",
+              "range": {
+                "min": 0,
+                "max": 255
+              },
+              "state": {
+                "cluId": "CLU_501234567",
+                "objectName": "LED4444",
+                "index": "7",
+                "callType": "ATTRIBUTE"
+              },
+              "actions": [
+                {
+                  "event": "CLICK",
+                  "cluId": "CLU_501234567",
+                  "objectName": "LED4444",
+                  "index": "8",
+                  "value": "0",
+                  "callType": "METHOD"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "CONTACT_SENSOR",
+          "id": "c-contact-without-click",
+          "label": "Drzwi wejściowe",
+          "icon": "door",
+          "onIndication": "OTWARTE",
+          "offIndication": "ZAMKNIĘTE",
+          "reverseState": true,
+          "object": {
+            "value": {
+              "cluId": "CLU_501234567",
+              "objectName": "DIN5555",
+              "index": "0",
+              "callType": "ATTRIBUTE"
+            }
+          }
+        },
+        {
+          "type": "CONTACT_SENSOR_DOUBLE",
+          "id": "c-contact-double-right-click",
+          "componentLeft": {
+            "label": "Okno lewe",
+            "icon": "window",
+            "onIndication": "OTWARTE",
+            "offIndication": "ZAMKNIĘTE",
+            "reverseState": false,
+            "object": {
+              "value": {
+                "cluId": "CLU_501234567",
+                "objectName": "DIN6666",
+                "index": "0",
+                "callType": "ATTRIBUTE"
+              }
+            }
+          },
+          "componentRight": {
+            "label": "Okno prawe",
+            "icon": "window",
+            "onIndication": "OTWARTE",
+            "offIndication": "ZAMKNIĘTE",
+            "reverseState": false,
+            "object": {
+              "value": {
+                "cluId": "CLU_501234567",
+                "objectName": "DIN7777",
+                "index": "0",
+                "callType": "ATTRIBUTE"
+              },
+              "clickAction": {
+                "event": "CLICK",
+                "cluId": "CLU_501234567",
+                "objectName": "x_okno_klik",
+                "index": "x_okno_klik",
+                "value": "1",
+                "callType": "VARIABLE"
+              }
+            }
+          }
+        },
+        {
+          "type": "SLIDER",
+          "id": "c-slider-with-click",
+          "label": "Temperatura zadana",
+          "icon": "thermostat",
+          "unit": "DEGREE",
+          "min": 16,
+          "max": 28,
+          "precision": 1,
+          "object": {
+            "value": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE8888",
+              "index": "0",
+              "callType": "ATTRIBUTE"
+            },
+            "setValueAction": {
+              "event": "CLICK",
+              "cluId": "CLU_501234567",
+              "objectName": "THE8888",
+              "index": "1",
+              "value": "20",
+              "callType": "METHOD"
+            },
+            "clickAction": {
+              "event": "CLICK",
+              "cluId": "CLU_501234567",
+              "objectName": "THE8888",
+              "value": "1",
+              "callType": "METHOD",
+              "index": "2"
+            }
+          }
+        },
+        {
+          "type": "ROLLER_SHUTTER",
+          "id": "c-legacy-shutter-no-components",
+          "components": []
+        },
+        {
+          "type": "ROLLER_SHUTTER",
+          "id": "c-legacy-shutter-no-actions",
+          "components": [
+            {
+              "type": "BUTTON_BISTABLE",
+              "label": "Bez akcji",
+              "rowId": 0,
+              "unit": "UNKNOWN",
+              "image": "shutter",
+              "state": {
+                "cluId": "CLU_501234567",
+                "objectName": "ROL3030",
+                "index": "0",
+                "callType": "ATTRIBUTE"
+              },
+              "indication": "UP_DOWN",
+              "actions": []
+            }
+          ]
+        },
+        {
+          "type": "ROLLER_SHUTTER_V3",
+          "id": "c-cover-no-tilt-no-stop",
+          "icon": "shutter",
+          "label": "Roleta sypialnia",
+          "object": {
+            "state": {
+              "cluId": "CLU_501234567",
+              "objectName": "ROL2020",
+              "index": "0",
+              "callType": "ATTRIBUTE"
+            },
+            "position": {
+              "cluId": "CLU_501234567",
+              "objectName": "ROL2020",
+              "index": "1",
+              "callType": "ATTRIBUTE"
+            },
+            "lamelPosition": {
+              "cluId": "CLU_501234567",
+              "objectName": "ROL2020",
+              "index": "2",
+              "callType": "ATTRIBUTE"
+            },
+            "setPositionAction": {
+              "event": "CLICK",
+              "cluId": "CLU_501234567",
+              "objectName": "ROL2020",
+              "index": "4",
+              "value": "0",
+              "callType": "METHOD"
+            },
+            "setLamelPositionAction": {
+              "event": "CLICK",
+              "cluId": "CLU_501234567",
+              "objectName": "ROL2020",
+              "index": "5",
+              "value": "0",
+              "callType": "METHOD"
+            },
+            "moveUpAction": {
+              "event": "CLICK",
+              "cluId": "CLU_501234567",
+              "objectName": "ROL2020",
+              "index": "6",
+              "value": "",
+              "callType": "METHOD"
+            },
+            "moveDownAction": {
+              "event": "CLICK",
+              "cluId": "CLU_501234567",
+              "objectName": "ROL2020",
+              "index": "7",
+              "value": "",
+              "callType": "METHOD"
+            },
+            "startAction": {
+              "event": "CLICK",
+              "cluId": "CLU_501234567",
+              "objectName": "ROL2020",
+              "index": "8",
+              "value": "",
+              "callType": "METHOD"
+            },
+            "setRollerBlockedAction": {
+              "event": "CLICK",
+              "cluId": "CLU_501234567",
+              "objectName": "ROL2020",
+              "index": "10",
+              "value": "0",
+              "callType": "METHOD"
+            }
+          }
+        },
+        {
+          "type": "ROLLER_SHUTTER_V3",
+          "id": "c-cover-with-stop",
+          "icon": "shutter",
+          "label": "Roleta sypialnia",
+          "object": {
+            "state": {
+              "cluId": "CLU_501234567",
+              "objectName": "ROL2020",
+              "index": "0",
+              "callType": "ATTRIBUTE"
+            },
+            "position": {
+              "cluId": "CLU_501234567",
+              "objectName": "ROL2020",
+              "index": "1",
+              "callType": "ATTRIBUTE"
+            },
+            "lamelPosition": {
+              "cluId": "CLU_501234567",
+              "objectName": "ROL2020",
+              "index": "2",
+              "callType": "ATTRIBUTE"
+            },
+            "lamelMoveTimeout": {
+              "cluId": "CLU_501234567",
+              "objectName": "ROL2020",
+              "index": "3",
+              "callType": "ATTRIBUTE"
+            },
+            "setPositionAction": {
+              "event": "CLICK",
+              "cluId": "CLU_501234567",
+              "objectName": "ROL2020",
+              "index": "4",
+              "value": "0",
+              "callType": "METHOD"
+            },
+            "setLamelPositionAction": {
+              "event": "CLICK",
+              "cluId": "CLU_501234567",
+              "objectName": "ROL2020",
+              "index": "5",
+              "value": "0",
+              "callType": "METHOD"
+            },
+            "moveUpAction": {
+              "event": "CLICK",
+              "cluId": "CLU_501234567",
+              "objectName": "ROL2020",
+              "index": "6",
+              "value": "",
+              "callType": "METHOD"
+            },
+            "moveDownAction": {
+              "event": "CLICK",
+              "cluId": "CLU_501234567",
+              "objectName": "ROL2020",
+              "index": "7",
+              "value": "",
+              "callType": "METHOD"
+            },
+            "startAction": {
+              "event": "CLICK",
+              "cluId": "CLU_501234567",
+              "objectName": "ROL2020",
+              "index": "8",
+              "value": "",
+              "callType": "METHOD"
+            },
+            "stopAction": {
+              "event": "CLICK",
+              "cluId": "CLU_501234567",
+              "objectName": "ROL2020",
+              "value": "0",
+              "callType": "METHOD",
+              "index": "9"
+            },
+            "setRollerBlockedAction": {
+              "event": "CLICK",
+              "cluId": "CLU_501234567",
+              "objectName": "ROL2020",
+              "index": "10",
+              "value": "0",
+              "callType": "METHOD"
+            }
+          }
+        },
+        {
+          "type": "CAMERA",
+          "id": "c-camera-no-components",
+          "components": []
+        },
+        {
+          "type": "SCENE",
+          "id": "c-scene-filtering",
+          "components": [
+            {
+              "type": "BUTTON_MONOSTABLE",
+              "label": "Klik bez skryptu",
+              "rowId": 0,
+              "unit": "UNKNOWN",
+              "actions": [
+                {
+                  "event": "CLICK",
+                  "cluId": "CLU_501234567",
+                  "objectName": "DOU1003",
+                  "value": "1",
+                  "callType": "ATTRIBUTE",
+                  "index": "0"
+                }
+              ]
+            },
+            {
+              "type": "BUTTON_MONOSTABLE",
+              "label": "Skrypt na ON",
+              "rowId": 1,
+              "unit": "UNKNOWN",
+              "actions": [
+                {
+                  "event": "ON",
+                  "cluId": "CLU_501234567",
+                  "objectName": "scena_on",
+                  "value": "",
+                  "callType": "SCRIPT"
+                }
+              ]
+            },
+            {
+              "type": "BUTTON_MONOSTABLE",
+              "label": "Właściwa",
+              "rowId": 2,
+              "unit": "UNKNOWN",
+              "actions": [
+                {
+                  "event": "CLICK",
+                  "cluId": "CLU_501234567",
+                  "objectName": "DOU1004",
+                  "value": "1",
+                  "callType": "ATTRIBUTE",
+                  "index": "0"
+                },
+                {
+                  "event": "CLICK",
+                  "cluId": "CLU_501234567",
+                  "objectName": "scena_ok",
+                  "value": "",
+                  "callType": "SCRIPT"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Druga strona",
+      "icon": "home",
+      "isFullscreenWidget": false,
+      "widgets": [
+        {
+          "type": "VALUE_V2",
+          "id": "w-value",
+          "label": "Temperatura",
+          "icon": "temp",
+          "unit": "DEGREE",
+          "valueType": "FLOAT",
+          "precision": 1,
+          "object": {
+            "value": {
+              "cluId": "CLU_501234567",
+              "objectName": "PAN4756",
+              "index": "0",
+              "callType": "ATTRIBUTE"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

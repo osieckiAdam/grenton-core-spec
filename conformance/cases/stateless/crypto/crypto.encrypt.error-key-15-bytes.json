@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "crypto.encrypt.error-key-15-bytes",
+  "specRefs": [
+    "crypto.key-material"
+  ],
+  "description": "A 15-byte key is not AES key material.",
+  "provenance": "spec §5.1",
+  "operation": "crypto.encrypt",
+  "input": {
+    "keyBase64": "AAAAAAAAAAAAAAAAAAAA",
+    "ivBase64": "EBESExQVFhcYGRobHB0eHw==",
+    "plaintextHex": "78"
+  },
+  "expect": {
+    "outcome": "error",
+    "code": "crypto.invalidKeyMaterial"
+  }
+}

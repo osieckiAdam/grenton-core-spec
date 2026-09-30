@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "crypto.encrypt.spec-vector-ping",
+  "specRefs": [
+    "crypto.aes-cbc"
+  ],
+  "description": "Spec §9.1 golden vector (ping), re-verified with openssl.",
+  "provenance": "spec §9.1 + openssl",
+  "operation": "crypto.encrypt",
+  "input": {
+    "keyBase64": "AAECAwQFBgcICQoLDA0ODw==",
+    "ivBase64": "EBESExQVFhcYGRobHB0eHw==",
+    "plaintextHex": "7265713a3a61616262636364643a636865636b416c6976652829"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "ciphertextHex": "5eab3361763eb47aecf01654656faa9b4e31ef685544739464c5291048d6ab60"
+    }
+  }
+}

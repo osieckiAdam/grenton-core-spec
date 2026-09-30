@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "wire.response.msg-id-lowercased",
+  "specRefs": [
+    "wire.response",
+    "wire.msg-id-case"
+  ],
+  "description": "An uppercase msg_id from the CLU is normalized to lowercase.",
+  "provenance": "spec §5.2",
+  "operation": "wire.response",
+  "input": {
+    "frame": "resp:192.168.1.10:A1B2C3D4:OK"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "cluIp": "192.168.1.10",
+      "msgId": "a1b2c3d4",
+      "payload": "OK",
+      "isNotification": false
+    }
+  }
+}

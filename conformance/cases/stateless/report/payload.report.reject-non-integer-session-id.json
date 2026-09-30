@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "payload.report.reject-non-integer-session-id",
+  "specRefs": [
+    "payload.report"
+  ],
+  "description": "A non-integer session id is rejected.",
+  "provenance": "spec §5.3.2 pt 3",
+  "operation": "payload.report",
+  "input": {
+    "payload": "clientReport:x:{1}"
+  },
+  "expect": {
+    "outcome": "reject"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "crypto.encrypt.spec-vector-register",
+  "specRefs": [
+    "crypto.aes-cbc"
+  ],
+  "description": "Spec §9.1 golden vector (register), re-verified with openssl.",
+  "provenance": "spec §9.1 + openssl",
+  "operation": "crypto.encrypt",
+  "input": {
+    "keyBase64": "AAECAwQFBgcICQoLDA0ODw==",
+    "ivBase64": "EBESExQVFhcYGRobHB0eHw==",
+    "plaintextHex": "7265713a3a30663365396131313a53595354454d3a636c69656e74526567697374657228302c31323334352c312c7b22416e616c6f67496e31222c7b444f55383237322c307d7d29"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "ciphertextHex": "32a53db2c8eb9ad8e14bd127c466c22f3ed8932f5614c2a355d3e57fee6e5aec934236153383944a680ec2c811803421df6a81a75c9be4370bfe85a669b47ffdb62893c77bc792803ca88917ac3fa61a"
+    }
+  }
+}

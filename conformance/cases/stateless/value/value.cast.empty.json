@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "value.cast.empty",
+  "specRefs": [
+    "model.cast"
+  ],
+  "description": "castString(\"\")",
+  "provenance": "spec §3.1 + §9.2",
+  "operation": "value.cast",
+  "input": {
+    "text": ""
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "value": {
+        "type": "string",
+        "value": ""
+      }
+    }
+  }
+}

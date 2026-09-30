@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "crypto.decrypt.spec-vector-report",
+  "specRefs": [
+    "crypto.aes-cbc",
+    "crypto.padding"
+  ],
+  "description": "Inverse of the spec §9.1 golden vector (report).",
+  "provenance": "spec §9.1 + openssl",
+  "operation": "crypto.decrypt",
+  "input": {
+    "keyBase64": "AAECAwQFBgcICQoLDA0ODw==",
+    "ivBase64": "EBESExQVFhcYGRobHB0eHw==",
+    "ciphertextHex": "9d53460871ebf060f96fe81c68fcd85ff81ed07fad264a4106ddeeb511329c8cafed3face4e8a334d20e5b307ddf62cb2ab676e0e1a0527242489ba39349b644"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "plaintextHex": "726573703a3139322e3136382e312e31303a30303030303030303a636c69656e745265706f72743a303a7b32312e352c224f4e227d"
+    }
+  }
+}

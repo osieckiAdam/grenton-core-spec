@@ -1,0 +1,491 @@
+{
+  "id": "interface-test-001",
+  "version": 3,
+  "name": "Dom testowy",
+  "icon": "home",
+  "theme": "GRENTON",
+  "encryption": {
+    "key": "AAECAwQFBgcICQoLDA0ODw==",
+    "iv": "EBESExQVFhcYGRobHB0eHw=="
+  },
+  "clus": [
+    {
+      "id": "CLU_501234567",
+      "serialNumber": "501234567",
+      "name": "CLU Parter",
+      "ip": "192.168.1.10",
+      "port": 1234,
+      "connectionType": "LOCAL_ONLY"
+    }
+  ],
+  "pushNotifications": [
+    {
+      "cluId": 501234567,
+      "objectId": "PN_1",
+      "objectType": "PUSH"
+    }
+  ],
+  "pages": [
+    {
+      "name": "Ogrzewanie",
+      "icon": "home",
+      "isFullscreenWidget": false,
+      "widgets": [
+        {
+          "components": [
+            {
+              "unit": "UNKNOWN",
+              "label": "SEKCJA",
+              "type": "HEADER",
+              "rowId": 0
+            }
+          ],
+          "id": "h-1",
+          "type": "HEADER"
+        },
+        {
+          "icon": "temperature",
+          "label": "Kotłownia",
+          "id": "t-full",
+          "type": "THERMOSTAT_V2",
+          "no_of_fan_speeds": 0,
+          "object": {
+            "maxTemperature": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1001",
+              "index": "11",
+              "callType": "ATTRIBUTE"
+            },
+            "setMaxTemperatureAction": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1001",
+              "index": "11",
+              "event": "CLICK",
+              "value": "$value$",
+              "callType": "ATTRIBUTE"
+            },
+            "currentTemperature": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1001",
+              "index": "14",
+              "callType": "ATTRIBUTE"
+            },
+            "setTargetTemperatureAction": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1001",
+              "index": "3",
+              "event": "CLICK",
+              "value": "$value$",
+              "callType": "ATTRIBUTE"
+            },
+            "setModeAction": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1001",
+              "index": "8",
+              "event": "CLICK",
+              "value": "$value$",
+              "callType": "ATTRIBUTE"
+            },
+            "mode": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1001",
+              "index": "8",
+              "callType": "ATTRIBUTE"
+            },
+            "controlOutValue": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1001",
+              "index": "13",
+              "callType": "ATTRIBUTE"
+            },
+            "setMinTemperatureAction": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1001",
+              "index": "10",
+              "event": "CLICK",
+              "value": "$value$",
+              "callType": "ATTRIBUTE"
+            },
+            "targetTemperature": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1001",
+              "index": "12",
+              "callType": "ATTRIBUTE"
+            },
+            "minTemperature": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1001",
+              "index": "10",
+              "callType": "ATTRIBUTE"
+            },
+            "setScheduleDataAction": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1001",
+              "index": "9",
+              "event": "CLICK",
+              "value": "$value$",
+              "callType": "ATTRIBUTE"
+            },
+            "setStateAction": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1001",
+              "index": "6",
+              "event": "CLICK",
+              "value": "$value$",
+              "callType": "ATTRIBUTE"
+            },
+            "state": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1001",
+              "index": "6",
+              "callType": "ATTRIBUTE"
+            },
+            "scheduleData": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1001",
+              "index": "9",
+              "callType": "ATTRIBUTE"
+            }
+          }
+        },
+        {
+          "label": "Łazienka",
+          "id": "t-minimal",
+          "type": "THERMOSTAT_V2",
+          "object": {
+            "currentTemperature": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1002",
+              "index": "14",
+              "callType": "ATTRIBUTE"
+            },
+            "setTargetTemperatureAction": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1002",
+              "index": "3",
+              "event": "CLICK",
+              "value": "$value$",
+              "callType": "ATTRIBUTE"
+            },
+            "targetTemperature": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1002",
+              "index": "12",
+              "callType": "ATTRIBUTE"
+            }
+          }
+        },
+        {
+          "label": "Salon",
+          "id": "t-mode-without-setter",
+          "type": "THERMOSTAT_V2",
+          "icon": "temperature",
+          "object": {
+            "maxTemperature": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1003",
+              "index": "11",
+              "callType": "ATTRIBUTE"
+            },
+            "setMaxTemperatureAction": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1003",
+              "index": "11",
+              "event": "CLICK",
+              "value": "$value$",
+              "callType": "ATTRIBUTE"
+            },
+            "currentTemperature": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1003",
+              "index": "14",
+              "callType": "ATTRIBUTE"
+            },
+            "setTargetTemperatureAction": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1003",
+              "index": "3",
+              "event": "CLICK",
+              "value": "$value$",
+              "callType": "ATTRIBUTE"
+            },
+            "mode": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1003",
+              "index": "8",
+              "callType": "ATTRIBUTE"
+            },
+            "controlOutValue": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1003",
+              "index": "13",
+              "callType": "ATTRIBUTE"
+            },
+            "setMinTemperatureAction": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1003",
+              "index": "10",
+              "event": "CLICK",
+              "value": "$value$",
+              "callType": "ATTRIBUTE"
+            },
+            "targetTemperature": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1003",
+              "index": "12",
+              "callType": "ATTRIBUTE"
+            },
+            "minTemperature": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1003",
+              "index": "10",
+              "callType": "ATTRIBUTE"
+            },
+            "setScheduleDataAction": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1003",
+              "index": "9",
+              "event": "CLICK",
+              "value": "$value$",
+              "callType": "ATTRIBUTE"
+            },
+            "setStateAction": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1003",
+              "index": "6",
+              "event": "CLICK",
+              "value": "$value$",
+              "callType": "ATTRIBUTE"
+            },
+            "state": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1003",
+              "index": "6",
+              "callType": "ATTRIBUTE"
+            },
+            "scheduleData": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1003",
+              "index": "9",
+              "callType": "ATTRIBUTE"
+            }
+          }
+        },
+        {
+          "label": "Bez nastawy",
+          "id": "t-missing-setter",
+          "type": "THERMOSTAT_V2",
+          "object": {
+            "maxTemperature": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1004",
+              "index": "11",
+              "callType": "ATTRIBUTE"
+            },
+            "setMaxTemperatureAction": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1004",
+              "index": "11",
+              "event": "CLICK",
+              "value": "$value$",
+              "callType": "ATTRIBUTE"
+            },
+            "currentTemperature": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1004",
+              "index": "14",
+              "callType": "ATTRIBUTE"
+            },
+            "setModeAction": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1004",
+              "index": "8",
+              "event": "CLICK",
+              "value": "$value$",
+              "callType": "ATTRIBUTE"
+            },
+            "mode": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1004",
+              "index": "8",
+              "callType": "ATTRIBUTE"
+            },
+            "controlOutValue": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1004",
+              "index": "13",
+              "callType": "ATTRIBUTE"
+            },
+            "setMinTemperatureAction": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1004",
+              "index": "10",
+              "event": "CLICK",
+              "value": "$value$",
+              "callType": "ATTRIBUTE"
+            },
+            "targetTemperature": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1004",
+              "index": "12",
+              "callType": "ATTRIBUTE"
+            },
+            "minTemperature": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1004",
+              "index": "10",
+              "callType": "ATTRIBUTE"
+            },
+            "setScheduleDataAction": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1004",
+              "index": "9",
+              "event": "CLICK",
+              "value": "$value$",
+              "callType": "ATTRIBUTE"
+            },
+            "setStateAction": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1004",
+              "index": "6",
+              "event": "CLICK",
+              "value": "$value$",
+              "callType": "ATTRIBUTE"
+            },
+            "state": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1004",
+              "index": "6",
+              "callType": "ATTRIBUTE"
+            },
+            "scheduleData": {
+              "cluId": "CLU_501234567",
+              "objectName": "THE1004",
+              "index": "9",
+              "callType": "ATTRIBUTE"
+            }
+          },
+          "x-conformance-expect-skip": true
+        }
+      ]
+    },
+    {
+      "name": "Brama",
+      "icon": "home",
+      "isFullscreenWidget": false,
+      "widgets": [
+        {
+          "components": [
+            {
+              "unit": "UNKNOWN",
+              "label": "SEKCJA",
+              "type": "HEADER",
+              "rowId": 0
+            }
+          ],
+          "id": "h-2",
+          "type": "HEADER"
+        },
+        {
+          "type": "SCENE_DOUBLE",
+          "id": "sd-gate",
+          "background": {
+            "color": "BLUE",
+            "name": "icon_1"
+          },
+          "components": [
+            {
+              "type": "BUTTON_MONOSTABLE",
+              "label": "Start",
+              "rowId": 0,
+              "unit": "UNKNOWN",
+              "actions": [
+                {
+                  "cluId": "CLU_501234567",
+                  "objectName": "SCENA_A",
+                  "event": "CLICK",
+                  "value": "",
+                  "callType": "SCRIPT"
+                }
+              ]
+            },
+            {
+              "type": "BUTTON_MONOSTABLE",
+              "label": "STOP",
+              "rowId": 0,
+              "unit": "UNKNOWN",
+              "actions": [
+                {
+                  "cluId": "CLU_501234567",
+                  "objectName": "SCENA_A_STOP",
+                  "event": "CLICK",
+                  "value": "\"x\"",
+                  "callType": "SCRIPT"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "SCENE_DOUBLE",
+          "id": "sd-first-not-script",
+          "components": [
+            {
+              "type": "BUTTON_MONOSTABLE",
+              "label": "Nie skrypt",
+              "rowId": 0,
+              "unit": "UNKNOWN",
+              "actions": [
+                {
+                  "cluId": "CLU_501234567",
+                  "objectName": "DOU1",
+                  "index": "0",
+                  "event": "CLICK",
+                  "value": "1",
+                  "callType": "ATTRIBUTE"
+                }
+              ]
+            },
+            {
+              "type": "BUTTON_MONOSTABLE",
+              "label": "Skrypt",
+              "rowId": 0,
+              "unit": "UNKNOWN",
+              "actions": [
+                {
+                  "cluId": "CLU_501234567",
+                  "objectName": "SCENA",
+                  "event": "CLICK",
+                  "value": "",
+                  "callType": "SCRIPT"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "icon": "scheduler",
+          "label": "Harmonogram",
+          "id": "es-1",
+          "type": "EVENT_SCHEDULER",
+          "object": {
+            "state": {
+              "cluId": "CLU_501234567",
+              "objectName": "EVE1",
+              "index": "5",
+              "callType": "ATTRIBUTE"
+            },
+            "startAction": {
+              "cluId": "CLU_501234567",
+              "objectName": "EVE1",
+              "index": "0",
+              "event": "CLICK",
+              "value": "",
+              "callType": "METHOD"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

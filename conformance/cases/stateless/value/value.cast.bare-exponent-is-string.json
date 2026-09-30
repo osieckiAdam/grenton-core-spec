@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "value.cast.bare-exponent-is-string",
+  "specRefs": [
+    "model.cast"
+  ],
+  "description": "castString(\"e5\")",
+  "provenance": "spec §3.1 + §9.2",
+  "operation": "value.cast",
+  "input": {
+    "text": "e5"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "value": {
+        "type": "string",
+        "value": "e5"
+      }
+    }
+  }
+}

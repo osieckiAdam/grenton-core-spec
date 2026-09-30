@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "value.cast.huge-int-becomes-double",
+  "specRefs": [
+    "model.cast"
+  ],
+  "description": "castString(\"123456789012345678901234567890\")",
+  "provenance": "spec §3.1 + §9.2",
+  "operation": "value.cast",
+  "input": {
+    "text": "123456789012345678901234567890"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "value": {
+        "type": "double",
+        "bits": "45f8ee90ff6c373e",
+        "decimal": "1.2345678901234568e+29"
+      }
+    }
+  }
+}

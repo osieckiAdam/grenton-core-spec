@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "coercion.bool-from-on-off.double-one-and-a-half",
+  "specRefs": [
+    "devices.coercion"
+  ],
+  "description": "1.5 does not equal true: off.",
+  "provenance": "reference bistable_switch.py: value == \"ON\" or value == True (Python: 1 == True, 1.0 == True)",
+  "operation": "coercion.boolFromOnOff",
+  "input": {
+    "value": {
+      "type": "double",
+      "bits": "3ff8000000000000",
+      "decimal": "1.5"
+    }
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "result": false
+    }
+  }
+}

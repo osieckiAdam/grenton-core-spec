@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "provisioning.url.ipv6-bracketed",
+  "specRefs": [
+    "provisioning.url"
+  ],
+  "description": "A bare IPv6 literal is bracketed.",
+  "provenance": "spec §4.1",
+  "operation": "provisioning.url",
+  "input": {
+    "host": "fe80::1",
+    "pin": "1234"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "url": "http://[fe80::1]:9998/api/v1/interface/hash/1234"
+    }
+  }
+}

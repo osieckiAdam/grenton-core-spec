@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "value.cast.plus-sign-is-string",
+  "specRefs": [
+    "model.cast"
+  ],
+  "description": "castString(\"+5\")",
+  "provenance": "spec §3.1 + §9.2",
+  "operation": "value.cast",
+  "input": {
+    "text": "+5"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "value": {
+        "type": "string",
+        "value": "+5"
+      }
+    }
+  }
+}

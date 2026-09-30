@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "wire.response.empty-payload",
+  "specRefs": [
+    "wire.response"
+  ],
+  "description": "A trailing colon gives an empty payload, still four parts.",
+  "provenance": "spec §5.2",
+  "operation": "wire.response",
+  "input": {
+    "frame": "resp:192.168.1.10:a1b2c3d4:"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "cluIp": "192.168.1.10",
+      "msgId": "a1b2c3d4",
+      "payload": "",
+      "isNotification": false
+    }
+  }
+}

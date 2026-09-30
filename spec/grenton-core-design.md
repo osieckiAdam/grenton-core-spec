@@ -1,0 +1,782 @@
+# Grenton Core — projekt techniczny biblioteki przenośnej
+
+| | |
+|---|---|
+| **Status** | Projekt (do implementacji) |
+| **Wersja** | 0.4.4 |
+| **Data** | 2026-09-30 |
+| **Implementacja referencyjna** | `homeassistant-grenton` (Python, integracja Home Assistant) |
+| **Przeznaczenie** | Specyfikacja niezależna od języka — podstawa dla portów (pierwszy: Swift) |
+| **Zestaw zgodności** | `conformance/` + kontrakt w [`conformance.md`](conformance.md) |
+
+Ten dokument specyfikuje **Grenton Core**: przenośną bibliotekę implementującą protokół „interfejsu mobilnego" systemu Grenton — od pobrania konfiguracji z Object Managera, przez szyfrowaną komunikację UDP z kontrolerami CLU, po kanoniczny model urządzeń. Dokument jest agnostyczny technologicznie: opisuje typy, algorytmy, formaty przewodowe i kontrakty, a nie składnię konkretnego języka. Wszystkie fakty protokołowe pochodzą z implementacji referencyjnej (reverse-engineering zachowania aplikacji myGrenton); tam, gdzie Core celowo odchodzi od implementacji referencyjnej, odstępstwo oznaczono symbolem **Δ**.
+
+---
+
+## 1. Cel i zakres
+
+### 1.1 Co biblioteka robi
+
+1. **Provisioning** — pobiera i parsuje definicję interfejsu mobilnego z Grenton Object Managera (HTTP + ZIP + JSON).
+2. **Runtime** — utrzymuje szyfrowane sesje UDP z kontrolerami CLU: keep-alive, subskrypcje zmian stanu, wykonywanie akcji.
+3. **Model kanoniczny urządzeń** — mapuje widgety interfejsu na urządzenia o znormalizowanym stanie i intencjach (włącz, ustaw jasność, ustaw pozycję…), tak aby adaptery platformowe były cienkie.
+
+### 1.2 Czego biblioteka nie robi
+
+- Nie zawiera encji/komponentów żadnej platformy (Home Assistant, HomeKit, SwiftUI…).
+- Nie zawiera UI ani flow konfiguracyjnych.
+- Nie persystuje niczego — konfiguracja wchodzi jako wartość, ustawienia użytkownika (device class, jednostki) są nieprzezroczystymi metadanymi adaptera (§6.4).
+- Nie obsługuje trybu chmurowego Grentona (pole `connectionType` jest parsowane, ale Runtime zawsze łączy się lokalnie po UDP).
+- Nie obsługuje push notifications (`pushNotifications` w JSON — parsowane, nieużywane).
+
+### 1.3 Kontekst systemowy
+
+```
+┌──────────────────┐   HTTP (ZIP z JSON)   ┌─────────────────────┐
+│ Object Manager   │◄──────────────────────│ Provisioning        │
+│ (PC, LAN, :9998) │   raz, przy setupie   │                     │
+└──────────────────┘                       │   G r e n t o n     │
+┌──────────────────┐   UDP + AES-CBC       │      C o r e        │
+│ CLU #1..N        │◄─────────────────────►│                     │
+│ (LAN, port z cfg)│   ciągle, runtime     │ Runtime + Devices   │
+└──────────────────┘                       └─────────┬───────────┘
+                                                     │ kanoniczne urządzenia,
+                                                     │ zdarzenia stanu, intencje
+                                           ┌─────────▼───────────┐
+                                           │ Adapter platformowy │
+                                           │ (HA / Swift / …)    │
+                                           └─────────────────────┘
+```
+
+Object Manager jest potrzebny **wyłącznie w fazie provisioningu** i musi być wtedy uruchomiony w tej samej sieci. Cały runtime rozmawia bezpośrednio z CLU.
+
+---
+
+## 2. Architektura modułów
+
+Jedna biblioteka, cztery moduły o wymuszonych granicach zależności:
+
+```
+Provisioning ──► Model ◄── Runtime ◄── Devices
+   (opcjonalny)   (czyste typy, zero I/O)
+```
+
+| Moduł | Odpowiedzialność | Zależności | I/O |
+|---|---|---|---|
+| **Model** | Typy DTO interfejsu, typy domenowe (CLU, ValueRef, ActionRef), `GrentonValue`, parsowanie/casting | brak | brak |
+| **Provisioning** | Klient Object Managera: HTTP GET → ZIP → JSON → `MobileInterface` | Model | HTTP |
+| **Runtime** | Szyfr, format ramek, katalog wiadomości, sesje CLU (sockety, chunking, pętle), magazyn stanu | Model | UDP |
+| **Devices** | Mapowanie widget→urządzenie, normalizacja stanu, intencje, zdarzenia | Model, Runtime | brak (przez Runtime) |
+
+Zasady:
+
+- **Runtime przyjmuje sparsowany `MobileInterface` jako wejście** i nie wie, skąd pochodzi. Provisioning jest jednym z możliwych źródeł (inne: plik, backend aplikacji, QR).
+- Wszystkie efekty uboczne (sieć, czas, losowość, logi) wchodzą przez **kontrakt portu** (§7) — interfejsy implementowane per platforma. Dzięki temu logika jest testowalna deterministycznie.
+- Nazwy API w tym dokumencie (np. `CluSession`, `StateStore`, `GrentonValue`) są **nazwami referencyjnymi na potrzeby specyfikacji i testów zgodności** — wiążąca jest semantyka i zachowanie, nie brzmienie nazw; port może użyć nazw idiomatycznych dla swojego języka, dokumentując mapowanie.
+
+---
+
+## 3. Moduł Model
+
+### 3.1 `GrentonValue` — typ wartości
+
+Wartości w systemie Grenton są dynamicznie typowane. Kanoniczny typ sumy:
+
+```
+GrentonValue = string | bool | int | double | null
+```
+
+**Algorytm castowania stringa przewodowego** (`castString(s) -> GrentonValue`), stosowany do wartości z `clientReport` — kolejność jest znacząca:
+
+1. Obetnij białe znaki z obu stron; następnie obetnij **wszystkie** wiodące i końcowe cudzysłowy `"` (jak Pythonowe `strip('"')`: `""ON""` → `ON`).
+2. Jeżeli wynik, bez rozróżniania wielkości liter, to `nil` → `null`.
+3. Jeżeli `true` → `true`; jeżeli `false` → `false` (bez rozróżniania wielkości liter).
+4. Jeżeli pasuje do gramatyki `^-?[0-9]+$` **i mieści się w Int64** → `int` (64-bit ze znakiem); przy przepełnieniu Int64 → spróbuj jako `double`.
+5. Jeżeli pasuje do gramatyki `^-?([0-9]+\.[0-9]*|\.[0-9]+|[0-9]+)([eE][+-]?[0-9]+)?$` **z wymaganą kropką lub wykładnikiem** (czysta postać całkowita złapana w pkt. 4) i daje wartość skończoną → `double`. Zakazane: `inf`, `nan`, postać szesnastkowa, separatory (`_`).
+6. W przeciwnym razie → `string` (już bez cudzysłowów).
+
+**Δ** Implementacja referencyjna używa `int()`/`float()` Pythona (dowolna precyzja int, akceptacja `1_0`, `inf`). Core specyfikuje ścisłą gramatykę ASCII z pkt. 4–5 i szerokość Int64; porty nie mogą dziedziczyć liberalności parsera języka.
+
+### 3.2 Referencje stanu — `ValueRef`
+
+Referencja mówi, *skąd* czytać wartość na danym CLU. JSON:
+
+```json
+{ "cluId": "CLU_501234567", "objectName": "DOU8272", "index": "0", "callType": "ATTRIBUTE" }
+```
+
+| `callType` | Znaczenie | Klucz subskrypcji na drucie (§5.3.2) |
+|---|---|---|
+| `VARIABLE` | zmienna globalna CLU; `index` to jej nazwa | `"{index}"` (w cudzysłowach) |
+| `ATTRIBUTE` | cecha obiektu; `objectName` + numer cechy `index` | `{{objectName},{index}}` |
+
+Kanoniczne typy: `ValueRef.variable(cluId, name)` i `ValueRef.attribute(cluId, objectName, index)`. Pole `objectName` występuje w JSON także dla `VARIABLE` (ignorowane logicznie, ale parsowane).
+
+### 3.3 Akcje — `ActionRef`
+
+Akcja mówi, *co* wysłać do CLU. JSON:
+
+```json
+{ "cluId": "...", "objectName": "DOU8272", "index": "0", "value": "1",
+  "event": "ON", "callType": "ATTRIBUTE" }
+```
+
+- `event ∈ {CLICK, ON, OFF}` — rola akcji w widgecie (po którym zdarzeniu UI ją wywołać).
+- `callType ∈ {VARIABLE, ATTRIBUTE, METHOD, SCRIPT}` — wariant wykonania; `SCRIPT` **nie ma** pola `index`.
+- `value` — argument; dla suwaków nadpisywany w locie wartością wybraną przez użytkownika, dla scen może być nadpisany parametrem (§6.3.10).
+- **Placeholder `$value$`:** Object Manager eksportuje akcje ustawiające (np. `setValueAction` ściemniacza, `setPositionAction` rolety, wszystkie `set*Action` termostatu) z `value` równym dokładnie `$value$`. Intencja, która nadpisuje wartość, **zastępuje całe `value`** — dla `$value$` wynik jest ten sam co podstawienie. Akcja z `$value$` nie może zostać wykonana bez nadpisania (wysłałaby do CLU dosłowny tekst); w katalogu §6.3 każda taka akcja jest używana wyłącznie przez intencję z wartością.
+
+Payloady przewodowe akcji — patrz §5.3.4.
+
+### 3.4 Schemat interfejsu mobilnego (`data.json`)
+
+Korzeń:
+
+| Pole | Typ | Uwagi |
+|---|---|---|
+| `id` | string | unikalny identyfikator interfejsu (tożsamość konfiguracji) |
+| `version` | int | wersja interfejsu |
+| `name`, `icon` | string | metadane prezentacyjne |
+| `theme` | enum | `GRENTON`, `RED`, … (15 wartości; prezentacyjne) |
+| `encryption` | obiekt | `{ "key": <base64>, "iv": <base64> }` — wspólne dla wszystkich CLU interfejsu |
+| `clus` | tablica | patrz niżej |
+| `pages` | tablica | strony UI z widgetami |
+| `pushNotifications` | tablica | `{cluId:int, objectId, objectType}` — parsowane, nieużywane |
+
+CLU:
+
+| Pole | Typ |
+|---|---|
+| `id` | string (np. `CLU_501234567`) |
+| `serialNumber` | string |
+| `name` | string |
+| `ip` | string |
+| `port` | int (port UDP protokołu CLU) |
+| `connectionType` | enum: `LOCAL_ONLY`, `CLOUD_CAPABLE`, `CLOUD` |
+
+Strona (`page`): `name`, `icon`, `isFullscreenWidget: bool`, `widgets: []`.
+
+### 3.5 Katalog widgetów
+
+Każdy widget ma `id: string` i dyskryminator `type`. 16 obsługiwanych typów (plus `HEADER`, poniżej):
+
+| `type` | Kluczowe pola |
+|---|---|
+| `VALUE_V2` | `label`, `icon`, `unit`, `valueType` (`STRING\|FLOAT\|INTEGER`), `precision:int`, `object.value: ValueRef` |
+| `VALUE_DOUBLE` | `componentLeft` i `componentRight`, każdy: `label, icon, unit, valueType, precision, object.value` |
+| `ON_OFF` | `components[]` typu `BUTTON_BISTABLE`: `label, rowId:int, unit, state: ValueRef, actions: ActionRef[], onIndication, offIndication` |
+| `ON_OFF_DOUBLE` | `components[]` typu `BUTTON_BISTABLE_V2` (pola jak wyżej) |
+| `DIMMER_V2` | `label, icon, min:double, max:double, precision:int`, `object: {value, setValueAction, onAction, offAction}` |
+| `LED` | `components[]` — unia po `type`: `BUTTON_BISTABLE` (`image, onIndication, offIndication`), `SLIDER_HUE`, `SLIDER_SATURATION`, `SLIDER_BRIGHTNESS` (każdy slider: `range:{min:int,max:int}`); wszystkie mają `state` i `actions[]` |
+| `CONTACT_SENSOR` | `label, icon, onIndication, offIndication, reverseState:bool`, `object: {value, clickAction?}` |
+| `CONTACT_SENSOR_DOUBLE` | `componentLeft/Right`: `label, icon, onIndication, offIndication, reverseState, object` |
+| `SLIDER` | `label, icon, unit, min:double, max:double, precision:int`, `object: {value, setValueAction, clickAction?}` |
+| `MULTISENSOR` | `label, icon, labelVisible:bool` + 7 obiektów kanałów: `objectAirCo2, objectSound, objectAirVoc, objectLight, objectPressure, objectHumidity, objectTemperature`, każdy `{value, minValue?, maxValue?, threshold?, sensitivity?}` |
+| `ROLLER_SHUTTER` (legacy) | `components[]` typu `BUTTON_BISTABLE`: `image, state, indication` (`ON_OFF\|OPEN_CLOSED\|OPEN_LOCKED\|UP_DOWN`), `actions[]` |
+| `ROLLER_SHUTTER_V3` | `icon, label`, `object` z ~30 polami; wymagane: `state, position, lamelPosition, setPositionAction, setLamelPositionAction, moveUpAction, moveDownAction, startAction, setRollerBlockedAction`; opcjonalne m.in.: `stopAction?, lamelMoveTimeout?, up?, down?, holdAction?, calibrationAction?` |
+| `CAMERA` | `components[]` typu `CAMERA_STREAM`: `label, rowId, unit, image, value` (**`value` = URL strumienia**, np. RTSP) |
+| `SCENE` | `components[]` typu `BUTTON_MONOSTABLE`: `label, rowId, unit, actions: ActionRef[]` |
+| `SCENE_DOUBLE` | jak `SCENE` (zwykle 2 komponenty, **oba z `rowId` 0**); opcjonalne `background` (prezentacyjne) |
+| `THERMOSTAT_V2` | `label`, `icon?`, `no_of_fan_speeds?`, `object`: wymagane `currentTemperature`, `targetTemperature`, `setTargetTemperatureAction`; opcjonalne `minTemperature`, `maxTemperature`, `mode` + `setModeAction`, `state` + `setStateAction`, `controlOutValue`, `setMin/MaxTemperatureAction`, `scheduleData` + `setScheduleDataAction` |
+
+**Widgety prezentacyjne:** `HEADER` (nagłówek sekcji: `components[]` z samym `label`) jest rozpoznawany, **nie tworzy urządzenia i nie jest raportowany jako pominięty** (§3.6) — to układ UI, nie błąd.
+
+**Znane, nieobsługiwane w v1:** `EVENT_SCHEDULER` (harmonogram zdarzeń: lista reguł, dodawanie/usuwanie) — pomijany jak nieznany typ.
+
+Wspólna baza komponentów listowych: `label: string`, `rowId: int`, `unit: enum {UNKNOWN, PERCENT, DEGREE}`.
+
+### 3.6 Reguły parsowania
+
+1. **Unie dyskryminowane.** Widgety dyskryminowane po `type`, komponenty LED po `type`, `ValueRef` po `callType`, `ActionRef` po `callType`. Nieznana wartość dyskryminatora = błąd parsowania danego elementu.
+2. **Tolerancja na poziomie widgetu.** Widget, który nie parsuje się (nieznany `type`, brak pola, nieznana wartość enuma), jest **pomijany z logiem na poziomie debug** — strona i cały interfejs parsują się dalej. Pominięcie jest **obserwowalne**: dla każdej strony implementacja udostępnia listę wartości `type` pominiętych widgetów w kolejności wystąpienia (`null`, gdy widget nie ma `type`). Tolerancja dotyczy wyłącznie widgetów — błąd na poziomie korzenia (np. brak `encryption`) odrzuca cały interfejs. To gwarancja kompatybilności w przód: nowe typy widgetów w aplikacji myGrenton nie mogą wysypać biblioteki.
+3. **Ścisłość poniżej widgetu.** Wewnątrz widgetu brak wymaganego pola = odrzucenie całego widgetu (nie „częściowe" urządzenie).
+4. Pola nieznane (nadmiarowe) są ignorowane na każdym poziomie.
+
+---
+
+## 4. Moduł Provisioning
+
+### 4.1 Endpoint
+
+```
+GET http://{host}:{port}/api/v1/interface/hash/{pin}
+```
+
+- `host`, `port` — adres komputera z uruchomionym Object Managerem (domyślny port **9998**).
+- `pin` — PIN interfejsu myGrenton (ten sam, którym paruje się aplikację mobilną). OM wyświetla go jako „Token” w oknie „Wyślij na urządzenia mobilne”, pogrupowany spacją (`149 853`). Przed zbudowaniem URL-a implementacja **usuwa wszystkie białe znaki** z PIN-u — każdy znak z właściwością Unicode `White_Space` (spacja, tab, znaki nowej linii, NBSP, U+3000…), w dowolnym miejscu (`149 853` → `149853`). Znaki spoza `White_Space` (np. U+200B) zostają.
+- PIN jest **jednym segmentem ścieżki**: znaki spoza `unreserved` / `sub-delims` / `:` / `@` (RFC 3986) koduje się procentowo jako UTF-8; w szczególności `/` → `%2F`, `?` → `%3F`, `#` → `%23`, `%` → `%25`.
+- Nie da się zbudować URL-a (PIN pusty po usunięciu białych znaków, port spoza 1–65535) → `ProvisioningError.connection`.
+- Host IPv6 podawany jest gołym literałem (`fe80::1`) lub w nawiasach (`[fe80::1]`); w URL-u zawsze w nawiasach.
+- Zwykłe HTTP bez TLS (tak działa OM; kanał jest lokalny).
+
+### 4.2 Odpowiedzi
+
+| Status | Znaczenie | Błąd kanoniczny |
+|---|---|---|
+| `200` | ciało = plik ZIP | — |
+| `401` | zły PIN | `ProvisioningError.authenticationFailed` |
+| inne | — | `ProvisioningError.connection(status)` |
+| błąd sieci | — | `ProvisioningError.connection(cause)` |
+
+### 4.3 Przetwarzanie ZIP
+
+1. Otwórz ciało odpowiedzi jako archiwum ZIP; błąd formatu → `ProvisioningError.invalidData("bad zip")`.
+2. Wymagany wpis: **`mygrenton/data.json`**; brak → `invalidData`.
+3. Odczytaj jako UTF-8, sparsuj JSON → `MobileInterface` (Model, §3); błąd JSON/schematu → `invalidData`.
+4. **Limity zasobów:** rozmiar ciała odpowiedzi i rozmiar `data.json` po dekompresji ograniczone (zalecane: 10 MB każdy) — przekroczenie → `invalidData` (ochrona przed zip-bombą/odpowiedzią-śmieciem); ścieżka wpisu dopasowywana dokładnie, bez interpretacji `..`.
+
+### 4.4 Tożsamość i rekonfiguracja
+
+`interface.id` identyfikuje konfigurację. Konsument biblioteki powinien:
+- przy pierwszym pobraniu zapisać `id` jako tożsamość instalacji,
+- przy ponownym pobraniu (rekonfiguracja) odrzucić interfejs o innym `id` (ochrona przed podpięciem cudzej instalacji),
+- porównywać `version` do wykrycia zmian.
+
+Core dostarcza tylko dane; polityka zapisu należy do adaptera.
+
+---
+
+## 5. Moduł Runtime
+
+### 5.1 Kryptografia
+
+- **Algorytm:** AES w trybie **CBC**, padding **PKCS#7** (blok 16 B).
+- **Klucz i IV:** z `interface.encryption` (base64). Klucz musi mieć 16/24/32 B (AES-128/192/256; w praktyce 128), IV dokładnie 16 B — inaczej `CryptoError.invalidKeyMaterial` przy tworzeniu sesji.
+- **Każdy datagram UDP jest w całości jednym szyfrogramem**: `ciphertext = AES-CBC-PKCS7(key, iv, utf8(frame))`. Odbiór: deszyfruj, **zweryfikuj padding ściśle** (długość 1–16, wszystkie bajty paddingu równe długości; inaczej odrzuć datagram), dekoduj UTF-8, obetnij białe znaki.
+- **IV jest statyczny** — ten sam dla każdej wiadomości. To własność protokołu Grentona, nie wybór biblioteki. Konsekwencje: (a) szyfrowanie jest deterministyczne, co umożliwia złote wektory testowe międzyportowe (§9.1); (b) poufność jest słaba (identyczne plaintexty ⇒ identyczne szyfrogramy); (c) **schemat nie zapewnia żadnej integralności ani uwierzytelnienia** — CBC bez MAC nie chroni przed modyfikacją, a walidacja paddingu odrzuca tylko część zniekształconych szyfrogramów. Biblioteka traktuje szyfr wyłącznie jako obfuskację; nie wolno tego „naprawiać" po stronie klienta — CLU oczekuje dokładnie tego schematu. Ścieżka odbioru nie rozróżnia na zewnątrz rodzaju błędu deszyfracji (padding vs rozmiar) — wszystkie kończą się tym samym cichym odrzuceniem.
+- Datagram, którego nie da się odszyfrować/odpaddingować/zdekodować, jest **cicho odrzucany z logiem warning** (śmieci w sieci nie mogą psuć sesji).
+
+### 5.2 Format ramek
+
+Ramki są tekstowe (UTF-8), pola rozdzielone dwukropkami, dzielone na **maksymalnie 4 części** (trzy pierwsze dwukropki; payload może zawierać dalsze dwukropki).
+
+**Żądanie** (klient → CLU):
+
+```
+req::{msg_id}:{payload}
+```
+
+Uwaga: między `req` a `msg_id` jest **puste pole** (stąd podwójny dwukropek).
+
+**Odpowiedź / notyfikacja** (CLU → klient):
+
+```
+resp:{clu_ip}:{msg_id}:{payload}
+```
+
+Walidacja odbioru: musi zaczynać się od `resp:` i mieć dokładnie 4 części; inaczej ignoruj z logiem debug.
+
+**`msg_id`:** 8 znaków hex (4 losowe bajty), **normalizowane do lowercase** przy nadawaniu i porównywaniu (CLU potrafi odpowiedzieć wielkimi literami).
+
+**Notyfikacja** = ramka `resp` z `msg_id == "00000000"`. Jedyna znana notyfikacja to `clientReport` (§5.3.3).
+
+### 5.3 Katalog wiadomości
+
+#### 5.3.1 Ping (keep-alive)
+
+- Żądanie: payload `checkAlive()`.
+- `msg_id` pinga = **`keepAliveId`** — stały identyfikator sesji CLU, wylosowany raz (4 bajty hex) przy tworzeniu sesji. Kolejne pingi używają tego samego id (tak robi myGrenton; jednocześnie w locie jest najwyżej jeden ping, więc korelacja pozostaje jednoznaczna).
+- Odpowiedź: dowolna ramka `resp` z pasującym `msg_id`; **payload odpowiedzi jest ignorowany** — sam fakt odpowiedzi oznacza sukces.
+- Ping utrzymuje „sesję klienta" po stronie CLU — bez regularnych pingów CLU przestaje wysyłać `clientReport`.
+
+#### 5.3.2 Rejestracja subskrypcji (`clientRegister`)
+
+Żądanie (świeży losowy `msg_id`):
+
+```
+SYSTEM:clientRegister(0,{sessionId},1,{K1,K2,...,Kn})
+```
+
+- `sessionId` — **zawsze `0`**. Przy niezerowej wartości CLU nie wysyła notyfikacji `clientReport`; przy `0` wysyła je przy każdej zmianie, na adres i port gniazda rejestracji. **Δ** Upstream `main` referencji (PR #12) wysyła niezerowy `sessionId`, co wyłącza push; wydanie V0.2.3 wysyła `0`.
+- Pierwsza `0` i trzecia `1` — stałe protokołu o nieznanej semantyce; wysyłać dokładnie tak.
+- Klucz `Ki` dla `ValueRef.variable(name)` → `"{name}"` (w cudzysłowach); dla `ValueRef.attribute(obj, idx)` → `{{obj},{idx}}` np. `{DOU8272,0}`.
+- **Limit: maks. 30 kluczy na jedno żądanie** (empiryczny limit bufora UDP CLU; payload + padding AES musi zmieścić się w MTU).
+
+Odpowiedź — payload w formacie *client report*:
+
+```
+clientReport:{sessionId}:{v1,v2,...,vn}
+```
+
+Wartości `vi` w kolejności kluczy żądania; są to **wartości początkowe** subskrybowanych stanów. Parsowanie payloadu:
+
+1. Prefiks `clientReport:`; drugie pole = int (w praktyce zawsze `1`, niezależnie od wysłanego `sessionId` — **nie** jest to jego echo).
+2. Trzecia część musi być otoczona `{`…`}`; zawartość dzielona **po przecinkach**, każdy element: trim + zdjęcie cudzysłowów + `castString` (§3.1).
+3. **Semantyka błędów parsowania:** payload bez prefiksu / z niepoprawnym `sessionId` → payload odrzucony (dla odpowiedzi na rejestrację: **chunk uznany za nieudany**, §5.4.2). Poprawny prefiks i `sessionId`, ale brak nawiasów `{}` lub pusta zawartość → **pusta lista wartości**: dla odpowiedzi na rejestrację chunk nieudany (liczba wartości ≠ liczba kluczy), dla notyfikacji — raport zignorowany z logiem, bez aktualizacji stanu.
+4. **Znane ograniczenie protokołu:** brak escapowania — wartość string zawierająca przecinek lub cudzysłów rozjedzie parsowanie pozycyjne. Wpisane jako ograniczenie (§10).
+
+#### 5.3.3 Notyfikacja `clientReport`
+
+Po rejestracji CLU wysyła — bez pytania, na adres i **port źródłowy socketu, z którego przyszła rejestracja** — ramki:
+
+```
+resp:{clu_ip}:00000000:clientReport:{sid}:{v1,...,vn}
+```
+
+przy każdej zmianie któregokolwiek subskrybowanego stanu (raport zawiera zawsze **komplet wartości** subskrypcji, w kolejności rejestracji).
+
+**Krytyczny wart protokołu:** pole `sid` w notyfikacji **nie jest wiarygodne** (nie odpowiada `sessionId` z rejestracji; w praktyce bywa zerem/śmieciem). Jedynym niezawodnym sposobem powiązania raportu z listą kluczy jest **socket, na który przyszedł**. Stąd architektura: jeden dedykowany socket UDP na każdy chunk (§5.4).
+
+#### 5.3.4 Akcje
+
+Świeży losowy `msg_id`; payload zależny od wariantu `ActionRef`:
+
+| Wariant | Payload |
+|---|---|
+| `VARIABLE` | `setVar("{index}","{value}")` |
+| `ATTRIBUTE` | `{objectName}:set({index},"{value}")` |
+| `METHOD` | `{objectName}:execute({index},"{value}")` |
+| `SCRIPT` | `{objectName}({value})` — `value` **dosłownie** (składnia Lua: `"abc"`, `42`, pusty → `nazwa()`) |
+
+Odpowiedź: ramka `resp` z pasującym `msg_id`; payload ignorowany (sukces = odpowiedź przyszła). Timeout = porażka akcji.
+
+**Interpolacja bez escapowania:** pola `index`/`objectName`/`value` wchodzą do payloadu dosłownie — cudzysłów lub separator protokołu w wartości zmienia znaczenie payloadu (de facto injection do Lua CLU). Wartości generowane przez Core (liczby z intencji urządzeń) są bezpieczne z konstrukcji; wartości przekazywane od użytkownika (parametr sceny) są **świadomie dosłowne** — odpowiedzialność wywołującego, odnotowana w API.
+
+#### 5.3.5 Przykładowa wymiana
+
+```
+→ req::a1b2c3d4:checkAlive()
+← resp:192.168.1.10:a1b2c3d4:...
+
+→ req::0f3e9a11:SYSTEM:clientRegister(0,0,1,{"AnalogIn1",{DOU8272,0}})
+← resp:192.168.1.10:0f3e9a11:clientReport:1:{21.5,"ON"}
+   … później, bez pytania, na ten sam socket:
+← resp:192.168.1.10:00000000:clientReport:0:{22.0,"OFF"}
+
+→ req::7c2d91aa:DOU8272:set(0,"1")
+← resp:192.168.1.10:7c2d91aa:...
+```
+
+### 5.4 Sesja CLU — `CluSession`
+
+Jedna instancja per CLU. Stan sesji:
+
+- `clu` (id, ip, port), `cipher` (klucz+IV interfejsu — wspólne dla wszystkich CLU),
+- `keepAliveId` (stały, §5.3.1),
+- **socket główny** — pingi i akcje,
+- **lista endpointów subskrypcyjnych** — po jednym sockecie na chunk: `{socket, keys[≤30], sessionId}`,
+- mapa oczekujących żądań `msg_id → pending` (korelacja odpowiedzi),
+- callback/strumień raportów do warstwy wyżej.
+
+#### 5.4.1 Korelacja żądanie–odpowiedź
+
+1. Wyślij: zapisz `pending[msg_id]`, zaszyfruj, `sendto(clu.ip, clu.port)`.
+2. Odbiór datagramu: deszyfruj → waliduj ramkę → `msg_id`:
+   - jest w `pending` → zdejmij, dostarcz odpowiedź czekającemu;
+   - nie ma w `pending` i ramka jest `clientReport` (msg_id `00000000` + prefiks payloadu) → ścieżka raportu (§5.4.3);
+   - inaczej → log debug, odrzuć.
+3. **Timeout odpowiedzi: 5 s** — zdejmij z `pending`, zwróć błąd `TimeoutError`.
+4. Zamknięcie/awaria socketu: wszystkie `pending` kończą się błędem `ConnectionClosed`.
+
+#### 5.4.2 Chunking i rejestracja
+
+`register(keys)`:
+
+1. Zamknij wszystkie dotychczasowe endpointy subskrypcyjne.
+2. Podziel `keys` (w kolejności!) na chunki po ≤30.
+3. Dla każdego chunka **po kolei** (następny dopiero po odpowiedzi lub timeoucie poprzedniego): otwórz nowy socket UDP (efemeryczny port lokalny), wyślij `clientRegister` z `sessionId` = **0** (§5.3.2 — niezerowa wartość wyłącza push) **z tego socketu**, czekaj na odpowiedź.
+4. Wynik: lista **slotów** pozycyjnie zgodna z `keys`, gdzie `Slot = failed | value(GrentonValue)`. Chunk, który zawiódł (timeout, błąd parsowania, zła liczba wartości), wnosi `failed` na swoich pozycjach — te pozycje **nie nadpisują** stanu (§5.5). **Δ** Referencja koduje awarię jako `null`, przez co prawdziwy `nil` z CLU jest nieodróżnialny od awarii; Core rozdziela te przypadki jawnym typem slotu.
+5. Endpoint zapamiętuje swoje `keys`; przychodzące na jego socket raporty są parowane pozycyjnie z tymi kluczami.
+
+**Δ Chunki sekwencyjnie, nie równolegle.** Referencja (upstream `main`, PR #12) wysyła wszystkie chunki naraz. CLU z wieloma chunkami nie nadąża z równoległymi rejestracjami i na część z nich nie odpowiada w czasie — encje tych chunków zostają bez stanu i bez push do następnej re-rejestracji (§5.4.4). Rejestracje **różnych** CLU mogą iść równolegle.
+
+#### 5.4.3 Ścieżka raportu
+
+Datagram `clientReport` na sockecie endpointu → sparsuj wartości → wyemituj `(keys_endpointu, values)` do warstwy wyżej (aktualizacja `StateStore` + zdarzenia). Raport na sockecie głównym (brak przypisanych kluczy) → log debug, odrzuć.
+
+#### 5.4.4 Pętle utrzymania
+
+| Pętla | Interwał | Działanie |
+|---|---|---|
+| **Ping** | co **5 s** | `checkAlive()` do każdego CLU; porażka → log warning (sesja żyje dalej — pojedynczy zgubiony ping to norma UDP) |
+| **Re-rejestracja** | co **45 s** | pełny `register(keys)` od nowa (nowe sockety; `sessionId` zawsze 0). Pełni dwie funkcje: odnowienie „leasingu" subskrypcji po stronie CLU oraz okresową pełną resynchronizację wartości (samonaprawa po zgubionych raportach) |
+
+**Δ** W implementacji referencyjnej pętla re-rejestracji ma drobną usterkę sekwencji (sprawdza warunek przed `sleep`, przez co pierwsza iteracja może czekać 45 s mimo braku pracy). Core specyfikuje prosto: *co 45 s od zakończenia poprzedniej rejestracji, jeżeli lista kluczy jest niepusta*.
+
+**Δ** Core dodaje: zmiana zbioru subskrypcji w trakcie życia sesji (doszły/ubyły urządzenia) wyzwala natychmiastową re-rejestrację, bez czekania na tik pętli. W implementacji referencyjnej zbiór jest budowany raz przy starcie.
+
+#### 5.4.5 Cykl życia
+
+Sesja jest jawną maszyną stanów:
+
+```
+idle ──start()──► starting ──► ready ◄──► degraded ──stop()──► stopped
+                     │            ▲            │
+                     └── błąd ────┴── sukces ──┘
+```
+
+| Stan | Znaczenie |
+|---|---|
+| `idle` | utworzona, nic nie otwarte |
+| `starting` | connect + ping początkowy + register początkowy w toku |
+| `ready` | pętle działają, ostatni ping/rejestracja udane |
+| `degraded` | pętle działają, ale CLU nie odpowiada (timeouty) — samoczynny powrót do `ready` po udanym pingu |
+| `stopped` | zamknięta; wszystkie pending zakończone `ConnectionClosed` |
+
+Reguły:
+
+- `start()` i `stop()` są **idempotentne**; po `stop()` wolno wywołać `start()` ponownie na tej samej instancji (wymóg cyklu tło/pierwszy plan na mobile).
+- Operacje wieloetapowe (`start`, `register`, `stop`) są **wzajemnie zserializowane** — nie mogą się przeplatać (np. dwie równoległe rejestracje zamykające sobie nawzajem endpointy). Wywołanie w trakcie trwającej operacji czeka lub jest łączone z bieżącą.
+- Błąd `connect`/pierwszego pinga nie jest fatalny dla całego systemu — pozostałe CLU działają; sesja wchodzi w `degraded`, a pętla pingów pełni rolę retry (kolejny udany ping → re-rejestracja → `ready`). Jeżeli w `degraded` **socket główny nie istnieje** (samo jego utworzenie zawiodło), każdy tik pingu najpierw ponawia otwarcie socketu głównego, a dopiero potem wysyła ping.
+
+### 5.5 Magazyn stanu — `StateStore`
+
+Struktura per CLU:
+
+- `variables: map[name → GrentonValue]`
+- `attributes: map[(objectName, index) → GrentonValue]`
+- `subscriptionOrder: lista kluczy w kolejności rejestracji` — **kolejność jest częścią protokołu** (parowanie pozycyjne).
+
+Operacje:
+
+- `registerKey(ValueRef)` — idempotentna (klucz już obecny → no-op); dopisuje do `subscriptionOrder`. Wartość początkowa: „jeszcze nieznane" (**Δ** referencja używa pustego stringa).
+- `updateKeys(keys, slots)` — pozycyjne nadpisanie; sloty `failed` są **pomijane**, sloty `value(v)` nadpisują — **w tym `value(null)`** (prawdziwy `nil` z CLU ustawia stan na `null`). **Δ** Referencja pomija każdy `None`, więc `nil` nigdy nie nadpisywał wartości; dzięki jawnemu typowi slotu (§5.4.2) Core może to poprawnie rozróżnić. Wartości z notyfikacji `clientReport` są zawsze slotami `value(…)`.
+- `get(ValueRef) -> GrentonValue?` — odczyt bieżącej wartości (`nil`/„nieznane" rozróżnialne od `value(null)`).
+
+**Δ Zdarzenia.** Implementacja referencyjna emituje jedno globalne „coś się zmieniło" (broadcast koordynatora HA). Core specyfikuje zdarzenia granularne: `StateChanged(cluId, key, oldValue, newValue)` emitowane tylko dla faktycznych zmian wartości. Wymagania wobec mechanizmu dostarczania: (a) **wielu niezależnych subskrybentów** — subskrypcja tworzy własny strumień/rejestrację, nie współdzieloną kolejkę jednego konsumenta; (b) zdefiniowana polityka buforowania wolnego subskrybenta (zalecane: bufor ograniczony, najnowsze wygrywają — konsument i tak czyta świeży stan ze store'a); (c) anulowanie subskrypcji sprząta zasoby. To umożliwia tanie bindowanie per urządzenie w adapterach.
+
+### 5.6 Model współbieżności (wymagania semantyczne)
+
+Neutralnie technologicznie (aktor / kolejka szeregowa / mutex — wybór portu):
+
+1. Mutacje stanu jednej `CluSession` (mapa `pending`, lista endpointów) są zserializowane.
+2. `StateStore` jest bezpieczny przy współbieżnym odczycie z wielu wątków i zapisie z sesji.
+3. Zdarzenia do konsumenta są dostarczane **w kolejności powstania** dla danego CLU.
+4. Anulowanie (shutdown) jest bezpieczne w każdym momencie i nie gubi się (pętle, oczekujące żądania).
+
+---
+
+## 6. Moduł Devices — model kanoniczny
+
+### 6.1 Zasady ogólne
+
+- **Pipeline mapowania — dwa etapy:**
+  1. **Deskryptory** (czysta funkcja na DTO, bez zależności od Runtime): `MobileInterface → pages[].widgets[] (spłaszczone) → DeviceDescriptor[]` — deskryptor niesie id, kind, nazwę, referencje (`ValueRef`), akcje (`ActionRef`), zakresy i reguły kompletności. Testowalny bez sieci.
+  2. **Bindowanie** (fabryka w Runtime/systemie): `DeviceDescriptor + StateStore + CluSession → żywe encje` z odczytem stanu i intencjami.
+  Rozdział jest obowiązkowy — konsument może użyć samych deskryptorów (np. do wyświetlenia listy urządzeń bez łączenia się z CLU).
+- Strony służą tylko jako kontener — Core nie modeluje układu UI.
+- Każde urządzenie ma: `id` (= `widget.id`), `widgetType` (= `widget.type`), `kind` (rodzaj kanoniczny), `name`, `page` (`{index, name}` strony, na której leży widget) oraz listę **encji kanonicznych** (jedno urządzenie może mieć ich kilka, np. podwójny przekaźnik → 2 przełączniki). Identyfikator encji: `{widget.id}_{sufiks}` — sufiksy podane niżej per typ (są **stabilnym kontraktem** — adaptery budują na nich unique_id). Urządzenia sterujące tym samym obiektem CLU grupuje §6.6.
+- **`kind` urządzenia** mówi, czym jest urządzenie, niezależnie od encji, które wystawia (czujnik kontaktronowy z przyciskiem to nadal `contactSensor`). Stały per typ widgetu:
+
+  | `widget.type` | `kind` |
+  |---|---|
+  | `ON_OFF`, `ON_OFF_DOUBLE` | `switch` |
+  | `DIMMER_V2` | `dimmableLight` |
+  | `LED` | `hsbLight` |
+  | `CONTACT_SENSOR`, `CONTACT_SENSOR_DOUBLE` | `contactSensor` |
+  | `VALUE_V2`, `VALUE_DOUBLE` | `sensor` |
+  | `MULTISENSOR` | `multisensor` |
+  | `SLIDER` | `numberSetting` |
+  | `ROLLER_SHUTTER`, `ROLLER_SHUTTER_V3` | `cover` |
+  | `SCENE`, `SCENE_DOUBLE` | `scene` |
+  | `THERMOSTAT_V2` | `thermostat` |
+  | `CAMERA` | `camera` |
+
+- **`name` urządzenia:** `label` widgetu, jeśli typ go ma (`VALUE_V2`, `DIMMER_V2`, `CONTACT_SENSOR`, `SLIDER`, `MULTISENSOR`, `ROLLER_SHUTTER_V3`, `THERMOSTAT_V2`). W przeciwnym razie niepuste `label` komponentów w kolejności, złączone `" / "` (`VALUE_DOUBLE`, `CONTACT_SENSOR_DOUBLE`: lewy, prawy; widgety z `components[]`: kolejność listy). Wyjątek: `LED` → `label` pierwszego komponentu `BUTTON_BISTABLE`. Brak etykiet → `""`. Nazwy encji są niezależne (§6.3).
+- **Kolejność jest częścią kontraktu:** urządzenia w kolejności `pages[]` → `widgets[]` (pominięte widgety nie tworzą urządzeń); encje urządzenia w kolejności podanej w §6.3 (komponenty w kolejności listy; `CONTACT_SENSOR_DOUBLE`: czujnik lewy, przycisk lewy, czujnik prawy, przycisk prawy; `MULTISENSOR`: kolejność tabeli §6.3.6; czujnik/suwak przed przyciskiem).
+- **Reguły kompletności:** widget, który nie spełnia wymagań swojego mapowania (brak akcji, brak komponentu), produkuje urządzenie **bez encji** lub pomija daną encję — nigdy błąd całości.
+- Encja czyta stan przez `StateStore.get(valueRef)` i wystawia **stan znormalizowany**; komendy tłumaczą wartości kanoniczne na format urządzenia i wykonują `ActionRef` przez sesję. Cała ta translacja (coercje, zakresy, odwrócenia skal, zaokrąglenia) mieszka w Core — adaptery jej **nie reimplementują**.
+- Funkcja pomocnicza normalizacji:
+
+```
+mapRange((a,b) → (c,d), v) = c + (v−a)/(b−a) · (d−c);   gdy b−a ≤ 0 → c
+```
+
+- **Walidacja wejść intencji:** `mapRange` nie obcina — każda intencja przyjmująca wartość liczbową **najpierw przycina ją do zakresu kanonicznego** (brightness/saturation do [0,1], hue do [0,360], position/tilt do [0,100], setValue do [min,max]); zaokrąglanie połówek: half-to-even (zgodne z `round` referencji).
+
+### 6.2 Koercje wspólne
+
+- **`boolFromOnOff(v)`** (przełączniki): `true` ⇔ `v` to string `"ON"`, bool `true` **albo liczba równa 1** (`int` 1, `double` 1.0). Inne wartości → `false` (także `"1"`, `2`, `"on"`); `null` → stan nieznany. Referencja: `value == "ON" or value == True` — w Pythonie `1 == True` i `1.0 == True` są prawdziwe. Przekaźniki (`DOU…`, cecha 0) raportują stan jako liczbę 0/1, więc to ta gałąź decyduje o stanie większości przełączników.
+- **`truthy(v)`** (czujniki binarne, LED on/off): standardowa prawdziwość (`0`/`0.0`/`""`/`false`/`null` → fałsz); `null` → stan nieznany (przed koercją).
+- Odczyt liczbowy: `int`/`double` wprost; string liczbowo się nie re-parsuje (casting nastąpił przy odbiorze).
+
+### 6.3 Katalog urządzeń
+
+#### 6.3.1 `Switch` — z `ON_OFF` i `ON_OFF_DOUBLE`
+
+- Po jednej encji na komponent; sufiks: `_{rowId}`.
+- **Wymóg:** komponent musi mieć akcję z `event==ON` **i** z `event==OFF`; brak którejś → komponent pominięty. Przy kilku akcjach tego samego zdarzenia wygrywa **pierwsza** na liście; akcje `CLICK` są ignorowane.
+- Stan: `isOn = boolFromOnOff(state)`. Intencje: `turnOn()` → akcja ON; `turnOff()` → akcja OFF.
+
+#### 6.3.2 `DimmableLight` — z `DIMMER_V2`
+
+- Jedna encja; sufiks `_0`.
+- Parametry: `min`, `max`, `precision` z widgetu.
+- Stan: `isOn = wartość > 0`; `brightness ∈ [0,1] = mapRange((min,max)→(0,1), wartość)`.
+- Intencje: `turnOn()` → onAction; `turnOff()` → offAction; `setBrightness(b∈[0,1])` → `setValueAction` z `value = format(round(mapRange((0,1)→(min,max), b), precision))`.
+
+#### 6.3.3 `HsbLight` — z `LED`
+
+- **Wymóg kompletności:** wszystkie 4 komponenty (`BUTTON_BISTABLE`, `SLIDER_HUE`, `SLIDER_SATURATION`, `SLIDER_BRIGHTNESS`); brak któregokolwiek → urządzenie bez encji. Akcje ON i OFF na przycisku wymagane. Akcja sliderów: pierwsza z listy `actions`.
+- Jedna encja; sufiks `_0`. Każdy slider ma własny `range{min,max}` i własny `ValueRef`.
+- Stan: `isOn = truthy(state przycisku)`; `hue ∈ [0,360] = mapRange(hueRange→(0,360))`; `saturation ∈ [0,1] = mapRange(satRange→(0,1))`; `brightness ∈ [0,1] = mapRange(briRange→(0,1))`.
+- Intencje: `setColor(h,s)` → dwie akcje (hue, saturation), wartości do zakresów urządzenia, zaokrąglone do 2 miejsc; `setBrightness(b)` analogicznie; `turnOn()/turnOff()`. Kolejność przy złożonej zmianie: kolor → jasność → ON (jak referencja).
+
+#### 6.3.4 `ContactSensor` — z `CONTACT_SENSOR` i `CONTACT_SENSOR_DOUBLE`
+
+- `CONTACT_SENSOR`: encja `_binary_sensor`; opcjonalnie encja `_button` (`Trigger`, §6.3.9), gdy jest `clickAction`.
+- `CONTACT_SENSOR_DOUBLE`: encje `_binary_sensor_left` i `_binary_sensor_right`; opcjonalnie `_button_left` / `_button_right`, gdy dany komponent ma `clickAction` (sufiksy zgodne z referencją — kontrakt unique_id).
+- Stan: `isActive = truthy(value) XOR reverseState`.
+- Metadane: `onIndication`, `offIndication` (etykiety stanów dla UI adaptera).
+
+#### 6.3.5 `Sensor` — z `VALUE_V2`, `VALUE_DOUBLE`
+
+- `VALUE_V2`: encja `_0`. `VALUE_DOUBLE`: encje `_0` (componentLeft) i `_1` (componentRight) — sufiksy zgodne z referencją (kontrakt unique_id).
+- Stan: `value: GrentonValue` (surowy, po castingu przewodowym). Metadane: `unit` (enum Grentona), `valueType`, `precision` — adapter decyduje o prezentacji; user-config (§6.4) może nadpisać klasę/jednostkę.
+
+#### 6.3.6 `Sensor` ×7 — z `MULTISENSOR`
+
+Siedem encji o stałych kanałach — kanał determinuje **kanoniczny rodzaj i jednostkę**:
+
+| Sufiks encji | Kanał | Rodzaj kanoniczny | Jednostka |
+|---|---|---|---|
+| `_air_co2` | objectAirCo2 | `co2` | ppm |
+| `_sound` | objectSound | `soundPressure` | dB |
+| `_air_voc` | objectAirVoc | `voc` | ppb |
+| `_light` | objectLight | `illuminance` | lx |
+| `_pressure` | objectPressure | `pressure` | hPa |
+| `_humidity` | objectHumidity | `humidity` | % |
+| `_temperature` | objectTemperature | `temperature` | °C |
+
+(Pola `minValue/maxValue/threshold/sensitivity` — na razie nieużywane; zostawić w DTO.)
+
+#### 6.3.7 `NumberSetting` — z `SLIDER`
+
+- Encja `_slider`: `value` (surowa liczba), `min`, `max`, `step = 10^(−precision)`; intencja `setValue(v)` → `setValueAction` z `value = format(round(v, precision))`.
+- Opcjonalna encja `_button` (`Trigger`), gdy `clickAction` obecna.
+
+#### 6.3.8 `Cover` — z `ROLLER_SHUTTER_V3`
+
+- Jedna encja; **id = widget.id bez sufiksu** (tak w referencji — zachować dla zgodności unique_id).
+- Subskrybowane stany: `state`, `position`, warunkowo `lamelPosition`.
+- **Lamele (tilt) są obecne ⇔ pole `lamelMoveTimeout` występuje w obiekcie** (heurystyka referencyjna „roleta ma lamele"). `stop` obecny ⇔ `stopAction` występuje.
+- Stan znormalizowany:
+  - `position ∈ [0,100]` — surowa wartość `position` (0 = zamknięta, 100 = otwarta);
+  - `motion`: z `state` — `0 → idle`, `1 → opening`, `2 → closing`;
+  - `isClosed = (position == 0)`;
+  - `tilt ∈ [0,100] = 100 − mapRange((0,90)→(0,100), lamelPosition)` — urządzenie raportuje 0–90 w skali odwrotnej do kanonicznej.
+- Intencje: `open()` → setPosition("100"); `close()` → setPosition("0"); `setPosition(p)` → `setPositionAction` z int 0–100; `stop()` → `stopAction` (jeśli jest); `setTilt(t∈[0,100])` → `setLamelPositionAction` z `int(90 − mapRange((0,100)→(0,90), t))`; `openTilt()` = setTilt(100) ⇒ wartość urządzenia 0; `closeTilt()` = setTilt(0) ⇒ 90.
+- Pozostałe pola obiektu V3 (moveUp/Down, hold, kalibracja…) — poza zakresem v1; DTO je zachowuje.
+
+#### 6.3.9 `StateSensor` + `Trigger` — z `ROLLER_SHUTTER` (legacy)
+
+- **Wymóg kompletności:** **pierwszy** komponent ma ≥1 akcję; inaczej urządzenie bez encji (**Δ** referencja indeksuje `components[0]` bez sprawdzenia — pusty komponent wysypuje mapowanie).
+- Encja `_sensor`: stan wyliczeniowy z pierwszego komponentu: `0→stopped, 1→opening, 2→closing, 3→locked, inne→unknown`.
+- Encja `_button` (`Trigger`): wykonuje **pierwszą** akcję pierwszego komponentu.
+- `Trigger` to ogólna encja kanoniczna „przycisk": jedna intencja `press()` wykonująca przypisany `ActionRef`.
+
+#### 6.3.10 `SceneTrigger` — z `SCENE` i `SCENE_DOUBLE`
+
+- Po jednej encji na komponent. Sufiks: `SCENE` → `_{rowId}` (kontrakt unique_id referencji); `SCENE_DOUBLE` → `_{pozycja}` (0, 1… — indeks komponentu na liście, także gdy wcześniejszy komponent został pominięty), bo `rowId` się powtarza.
+- **Wymóg:** akcja z `event==CLICK` i `callType==SCRIPT`; brak → komponent pominięty.
+- Intencje: `run()` — wykonuje skrypt z `value` z widgetu; `run(parameter: string)` — wykonuje z `value` **zastąpionym dosłownie** parametrem (składnia Lua po stronie wywołującego: `"abc"`, `42`, `""` → `scene()`); oryginalny `ActionRef` pozostaje niezmutowany (kopiuj przy nadpisaniu).
+
+#### 6.3.11 `Camera` — z `CAMERA`
+
+- **Wymóg kompletności:** ≥1 komponent `CAMERA_STREAM`; inaczej urządzenie bez encji (**Δ** referencja indeksuje `components[0]` bez sprawdzenia).
+- Encja `_0`; stan statyczny: `streamUrl = components[0].value` (np. RTSP). Core nie dotyka strumienia — odtwarzanie to sprawa adaptera.
+
+#### 6.3.12 `Thermostat` — z `THERMOSTAT_V2`
+
+Widget obiektu wirtualnego Grenton Thermostat. Semantyka cech według instrukcji Grentona („Obiekt wirtualny Termostat", Object Manager); **Δ** implementacja referencyjna tego widgetu nie obsługuje.
+
+- Jedna encja; sufiks `_0`. Kompletność: wymagane pola z §3.5 (brak → widget pominięty); kontrolki opcjonalne istnieją, gdy jest **i** cecha, **i** jej akcja.
+- Stan:
+  - `currentTemperature`, `targetTemperature` — liczby (`targetTemperature` to wynikowa `TargetTemp`, zależna od trybu);
+  - `minTemperature`, `maxTemperature` — granice (opcjonalne);
+  - `mode` z cechy Mode: `0 → manual`, `1 → holiday`, `2 → schedule`, inne → nieznany;
+  - `isOn = truthy(state)` — cecha State: 0 = termostat zatrzymany (nie steruje wyjściem), 1 = pracuje;
+  - `output` — `controlOutValue` surowo (0/1 dla wyjścia cyfrowego, poziom dla analogowego).
+- Intencje (wszystkie akcje mają `$value$`, §3.3):
+  - `setTargetTemperature(t)` → `setTargetTemperatureAction` (PointValue, nastawa ręczna); `t` przycięte do `[min, max]`, gdy obie granice są znane; `value = format(round(t, 1))` (§10 pkt 3);
+  - `setMode(m)` → `setModeAction` z `"0"`/`"1"`/`"2"`;
+  - `turnOn()` / `turnOff()` → `setStateAction` z `"1"` / `"0"`;
+  - brak kontrolki → intencja jest no-opem (jak `stop()` rolety bez `stopAction`).
+- Poza zakresem v1: harmonogram (`scheduleData`), zmiana granic, wentylatory (`no_of_fan_speeds`).
+- Wartości liczbowe: temperatury przychodzą jako `int` albo `double` (`"20"` → `int`, `"19.8"` → `double`), także ułamkowe temperatury zadane (`21.5`) — odczyt traktuje oba typy jako liczbę (§6.2). Granice `min/max` pochodzą z CLU; nie zakładać zakresu z instrukcji.
+- W trybie ręcznym `targetTemperature` przyjmuje wartość zapisaną przez `setTargetTemperature`.
+
+### 6.4 Metadane użytkownika (user config)
+
+Adaptery pozwalają użytkownikowi doprecyzować prezentację (device class, jednostka, tryb suwaka). Skoro Core tych danych **nie interpretuje ani nie persystuje, nie przechowuje ich wcale**: konfiguracja użytkownika żyje w całości po stronie adaptera jako jego własna mapa `entityId → config`, kluczowana stabilnym identyfikatorem encji (§6.1). Gwarancją Core jest wyłącznie **stabilność identyfikatorów encji** między uruchomieniami i portami. Dzięki temu klucze konfiguracyjne HA (np. `device_class`) nie przeciekają do Core, a inny adapter (HomeKit) trzyma własne — i encje Core pozostają niemutowalne.
+
+### 6.5 Zdarzenia urządzeń
+
+Devices subskrybuje granularne `StateChanged` z Runtime (§5.5 Δ) i tłumaczy je na `DeviceStateChanged(deviceId, entityId)` — emitowane tylko, gdy zmiana dotyczy `ValueRef` danej encji. Adapter binduje encję do jej strumienia i odczytuje świeży stan znormalizowany.
+
+### 6.6 Obiekty fizyczne
+
+Urządzenie odpowiada **widgetowi**, a nie sprzętowi: ten sam obiekt CLU bywa pokazany przez kilka widgetów, na różnych stronach i pod różnymi nazwami (np. termostat na stronie pomieszczenia jako „Temperatura" i na zbiorczej stronie ogrzewania pod nazwą pomieszczenia). Identyfikatory urządzeń i encji zostają per widget (stabilny kontrakt §6.1), a Core **dodatkowo** udostępnia grupowanie po obiekcie, żeby adapter mógł pokazać jeden termostat zamiast dwóch.
+
+- **Obiekt fizyczny** = to, czym encja steruje na CLU, identyfikowane kluczem `{cluId, kind, name, index}`:
+  - `object` — cecha/metoda obiektu (`THE1001` / `14`, `ROL1001` / `…`), `name` = `objectName`, `index` = indeks cechy (lub metody dla encji bez stanu). **Indeks jest częścią klucza:** jeden moduł LED steruje osobnymi taśmami na osobnych kanałach (`LED1001` / `3` i `/ 4` to dwa różne urządzenia), a oba widgety termostatu czytają tę samą cechę (`THE1001` / `14`);
+  - `variable` — zmienna globalna CLU, `name` = nazwa zmiennej, `index` = `null`;
+  - `script` — skrypt Lua (sceny), `name` = `objectName` akcji `SCRIPT`, `index` = `null`.
+- **Każda encja należy do jednego obiektu** — według głównej referencji: `switch`, `dimmableLight`, `contactSensor`, `sensor`, `numberSetting`, `stateSensor` → `state`; `hsbLight` → `powerState`; `cover` → `position`; `thermostat` → `currentTemperature`; encje bez stanu (`trigger`, `sceneTrigger`) → ich akcja (`VARIABLE` → zmienna, `SCRIPT` → skrypt, pozostałe → obiekt). `camera` nie dotyka CLU i nie jest grupowana.
+- Widget może więc należeć do kilku obiektów (`ON_OFF_DOUBLE` → dwa przekaźniki; czujnik kontaktronowy z przyciskiem na zmiennej → obiekt czujnika i zmienna) — z właściwymi encjami przy każdym.
+- **Wynik:** lista obiektów w kolejności pierwszego użycia (urządzenia w kolejności §6.1, encje w ich kolejności); każdy obiekt: `key` i `widgets[]` w kolejności urządzeń, każdy wpis: `deviceId`, `widgetType`, `name` (nazwa urządzenia), `page`, `entityIds[]` (encje tego widgetu należące do obiektu).
+- Wybór nazwy i obszaru (np. strona pomieszczenia vs strona funkcyjna) należy do adaptera — Core podaje wszystkie.
+
+---
+
+## 7. Kontrakt portu
+
+Interfejsy, które **musi dostarczyć platforma** (wstrzykiwane; nazwy kanoniczne):
+
+### 7.1 `UdpSocketFactory` / `UdpSocket`
+
+```
+UdpSocketFactory.open(remoteHost, remotePort) -> UdpSocket   // bind na porcie efemerycznym
+UdpSocket.send(datagram: bytes)                              // do ustalonego peera
+UdpSocket.incoming: strumień/callback (bytes)                // datagramy przychodzące
+UdpSocket.close()
+```
+
+Wymagania: każdy socket ma **własny lokalny port efemeryczny** (fundament routingu chunków!); odbiór unicastów na ten port; brak wymogu multicast/broadcast. Filtrowanie źródła do adresu CLU jest dopuszczalne (**Δ** — referencja go nie robi), ale implementacja portu **musi mieć przetestowany tryb bez filtrowania** (odbiór od dowolnego nadawcy) jako pełnoprawny fallback: CLU z wieloma interfejsami sieciowymi może wysyłać raporty z innego adresu źródłowego niż adres, na który słano rejestrację.
+
+### 7.2 `AesCbcCipher`
+
+```
+encrypt(plaintext: bytes) -> bytes   // PKCS7 + AES-CBC(key, staticIV)
+decrypt(ciphertext: bytes) -> bytes? // null przy błędzie paddingu/rozmiaru
+```
+
+Konstruowany z materiału z §5.1 z walidacją długości.
+
+### 7.3 `HttpClient` + `ZipReader` (tylko Provisioning)
+
+```
+HttpClient.get(url) -> (status, body: bytes)
+ZipReader.entry(archive: bytes, path: string) -> bytes?
+```
+
+### 7.4 `Clock` / `TimerScheduler`
+
+```
+sleep(duration), now()   // z obsługą anulowania
+```
+
+Wstrzykiwany, żeby testy sterowały czasem (pętle 5 s / 45 s, timeout 5 s).
+
+### 7.5 `RandomSource`
+
+```
+bytes(n) -> bytes        // msg_id, keepAliveId
+int(in: 1...65535) -> int // nieużywane przez sesję — sessionId zawsze 0 (§5.3.2)
+```
+
+Wstrzykiwany dla determinizmu testów.
+
+### 7.6 `Logger`
+
+Poziomy `debug/info/warning/error`; Core loguje przez fasadę, nigdy bezpośrednio.
+
+### 7.7 Wykonanie asynchroniczne
+
+Port zapewnia prymitywy: uruchomienie zadania, anulowanie, serializacja mutacji (aktor/kolejka). Semantyka — §5.6.
+
+---
+
+## 8. Taksonomia błędów
+
+| Kategoria | Warianty | Kiedy |
+|---|---|---|
+| `ProvisioningError` | `authenticationFailed`, `connection`, `invalidData` | §4 |
+| `CryptoError` | `invalidKeyMaterial`, `encryptFailed`, `decryptFailed` | §5.1; `decryptFailed` na ścieżce odbioru → drop datagramu, nie propagacja |
+| `ProtocolError` | `malformedFrame`, `malformedPayload` | walidacja ramek/payloadów |
+| `TimeoutError` | — | brak odpowiedzi w 5 s |
+| `SessionError` | `notConnected`, `connectionClosed` | cykl życia §5.4.5 |
+
+Zasada: błędy ścieżki odbioru (śmieciowy datagram) są logowane i połykane; błędy ścieżki żądania (akcja, rejestracja) są zwracane wywołującemu; błędy pętli utrzymania są logowane i pętla działa dalej.
+
+---
+
+## 9. Strategia testów
+
+**Zestaw zgodności** (`conformance/`, kontrakt: [`conformance.md`](conformance.md)) jest normatywną, maszynowo wykonywalną formą tej sekcji: przypadki JSON niezależne od języka, które każdy port uruchamia własnym runnerem. Wersja 0.4.0 obejmuje profil `stateless` — pkt 1, 2, 4 i część 6 z checklisty §9.5 (wektory AES, casting, payloady, koercje, format liczb) oraz URL/PIN z §4.1 — i profil `mapping` — pkt 3 (fixtura interfejsu → urządzenia/encje, reguły kompletności, tolerancja widgetów). Tabele poniżej są ilustracją; przy rozbieżności rozstrzyga zestaw (i poprawia się jedno albo drugie).
+
+### 9.1 Złote wektory kryptograficzne
+
+Statyczny IV ⇒ szyfrowanie deterministyczne ⇒ identyczne wektory obowiązują każdy port. Materiał testowy:
+
+```
+key (b64): AAECAwQFBgcICQoLDA0ODw==        (hex 000102030405060708090a0b0c0d0e0f)
+iv  (b64): EBESExQVFhcYGRobHB0eHw==        (hex 101112131415161718191a1b1c1d1e1f)
+```
+
+| Plaintext (UTF-8) | Ciphertext (hex) |
+|---|---|
+| `req::aabbccdd:checkAlive()` | `5eab3361763eb47aecf01654656faa9b4e31ef685544739464c5291048d6ab60` |
+| `req::0f3e9a11:SYSTEM:clientRegister(0,12345,1,{"AnalogIn1",{DOU8272,0}})` | `32a53db2c8eb9ad8e14bd127c466c22f3ed8932f5614c2a355d3e57fee6e5aec934236153383944a680ec2c811803421df6a81a75c9be4370bfe85a669b47ffdb62893c77bc792803ca88917ac3fa61a` |
+| `resp:192.168.1.10:00000000:clientReport:0:{21.5,"ON"}` | `9d53460871ebf060f96fe81c68fcd85ff81ed07fad264a4106ddeeb511329c8cafed3face4e8a334d20e5b307ddf62cb2ab676e0e1a0527242489ba39349b644` |
+
+Test dwukierunkowy: encrypt(plaintext) == ciphertext oraz decrypt(ciphertext) == plaintext.
+
+Wektor z `clientRegister(0,12345,…)` to wyłącznie fixture serializacji/szyfru — sesja zawsze wysyła `sessionId` = 0 (§5.3.2).
+
+### 9.2 Tabela castowania wartości
+
+| Wejście | Wynik |
+|---|---|
+| `nil` / `NIL` | null |
+| `true` / `false` | bool |
+| `"ON"` | string `ON` |
+| `42` / `-7` | int |
+| `21.5` / `-3e2` | double |
+| `"21.5"` | double 21.5 (cudzysłowy zdejmowane przed castem) |
+| ` tekst ` | string `tekst` |
+
+### 9.3 Fixtury parsowania
+
+- Minimalny `data.json` z ≥1 widgetem każdego typu + 1 widget nieznanego typu (musi zostać pominięty) + 1 widget z brakującym polem (pominięty).
+- Wspólny plik fixture w repo Core; każdy port dekoduje go i asertuje identyczną listę urządzeń/encji (id, sufiksy, kompletność).
+
+### 9.4 Symulator CLU (fake CLU)
+
+Testowy serwer UDP na loopbacku, z tym samym szyfrem:
+
+- odpowiada na `checkAlive()` i akcje echem ramki `resp`,
+- na `clientRegister` odpowiada `clientReport` z zadanymi wartościami początkowymi,
+- potrafi na żądanie testu wyemitować notyfikację `clientReport` (msg_id `00000000`) na port źródłowy rejestracji,
+- scenariusze negatywne: brak odpowiedzi (timeout), zła ramka, zły padding.
+
+Na nim jeżdżą testy integracyjne sesji: rejestracja chunkowana (>30 kluczy ⇒ ≥2 sockety), routing raportów per chunk, re-rejestracja, aktualizacje magazynu stanu, akcje.
+
+### 9.5 Checklist zgodności portu
+
+1. Złote wektory AES (9.1) ✔ — zestaw: `crypto.*`
+2. Tabela castowania (9.2) ✔ — zestaw: `value.cast.*`
+3. Fixtura interfejsu → identyczny zestaw urządzeń/encji (9.3) ✔ — zestaw: `mapping.*`
+4. Budowa payloadów: register (klucze var/attr), 4 warianty akcji — porównanie stringów 1:1 ✔ — zestaw: `wire.*`, `payload.*`
+5. Scenariusze fake CLU (9.4) ✔
+6. Normalizacje Devices: dimmer round-trip, LED HSB round-trip, cover tilt odwrócony, reverseState XOR ✔
+
+---
+
+## 10. Znane ograniczenia i decyzje
+
+1. **Statyczny IV / brak MAC** — narzucone przez protokół CLU; nie do naprawienia po stronie klienta (§5.1).
+2. **Parowanie pozycyjne bez escapowania** — string z przecinkiem/cudzysłowem w wartości rozjedzie raport (§5.3.2). Ryzyko realne głównie dla zmiennych tekstowych; brak obejścia.
+3. **Format liczb w payloadach akcji:** referencja wysyła Pythonowe `str(round(v, p))` (np. `5.0` przy precision 0). **Domyślnym zachowaniem Core jest format zgodny z referencją** (CLU go przyjmuje, np. `"22.0"`). Format bez `.0` jest dostępny tylko za flagą — jego akceptacja przez CLU nie jest potwierdzona.
+4. **Limit 30 kluczy/chunk** — empiryczny; zależny od MTU. Stała konfigurowalna, default 30.
+5. **Brak weryfikacji nadawcy datagramu** w referencji; Core dopuszcza filtrowanie po adresie CLU (Δ §7.1).
+6. **`sessionId` w notyfikacjach niewiarygodny** — fundament decyzji socket-per-chunk (§5.3.3); nie próbować „optymalizować" do jednego socketu.
+7. Pole `interface.pushNotifications` i tryb chmurowy — poza zakresem v1.
+8. Usterki referencji, których **nie przenosimy**: martwy kod `self.min = min` w encji LED; pusty string jako wartość początkowa; liberalne parsowanie liczb Pythona; sekwencja pętli re-rejestracji (§5.4.4).
+9. **Termostat — tryby 1/2:** semantyka trybów urlopowego i harmonogramu pochodzi z dokumentacji Grentona; zapis Mode bezpośrednio przez cechę (zamiast metod `HolidayModeStart`/`AutoModeStart`) nie jest potwierdzony na CLU.
+
+---
+
+## 11. Słownik
+
+| Termin | Znaczenie |
+|---|---|
+| **CLU** | Kontroler logiki Grenton — urządzenie na LAN, z którym rozmawia Runtime po UDP |
+| **Object Manager (OM)** | Program konfiguracyjny Grentona na PC; źródło interfejsu mobilnego |
+| **Interfejs mobilny** | Definicja UI/urządzeń projektowana w OM dla aplikacji myGrenton; JSON konsumowany przez Core |
+| **Widget** | Element interfejsu mobilnego (typ + komponenty); jednostka mapowania na urządzenie |
+| **Komponent** | Pod-element widgetu (przycisk, slider, strumień kamery) |
+| **ValueRef / ActionRef** | Referencja odczytu stanu / definicja akcji na CLU (§3.2, §3.3) |
+| **Chunk** | Porcja ≤30 kluczy subskrypcji obsługiwana przez dedykowany socket UDP |
+| **client report** | Payload z wartościami subskrypcji — jako odpowiedź na rejestrację i jako notyfikacja |
+| **Encja kanoniczna** | Znormalizowany element urządzenia (przełącznik, czujnik…) wystawiany adapterom |

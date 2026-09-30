@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "mapping.interface.reject-missing-encryption",
+  "specRefs": [
+    "model.widget-tolerance"
+  ],
+  "description": "Tolerance is per widget only: a root missing a required field fails the whole interface.",
+  "provenance": "spec §3.4, §3.6",
+  "operation": "mapping.interface",
+  "input": {
+    "fixture": "fixtures/interfaces/missing-encryption.json"
+  },
+  "expect": {
+    "outcome": "reject"
+  }
+}

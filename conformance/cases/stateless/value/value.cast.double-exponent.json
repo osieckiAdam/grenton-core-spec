@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "value.cast.double-exponent",
+  "specRefs": [
+    "model.cast"
+  ],
+  "description": "castString(\"-3e2\")",
+  "provenance": "spec §3.1 + §9.2",
+  "operation": "value.cast",
+  "input": {
+    "text": "-3e2"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "value": {
+        "type": "double",
+        "bits": "c072c00000000000",
+        "decimal": "-300.0"
+      }
+    }
+  }
+}

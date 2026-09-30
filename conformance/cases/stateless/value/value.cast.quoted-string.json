@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "value.cast.quoted-string",
+  "specRefs": [
+    "model.cast"
+  ],
+  "description": "castString(\"\\\"ON\\\"\")",
+  "provenance": "spec §3.1 + §9.2",
+  "operation": "value.cast",
+  "input": {
+    "text": "\"ON\""
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "value": {
+        "type": "string",
+        "value": "ON"
+      }
+    }
+  }
+}

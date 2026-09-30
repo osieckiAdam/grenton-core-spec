@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "payload.report.reject-missing-body",
+  "specRefs": [
+    "payload.report"
+  ],
+  "description": "Fewer than three fields is rejected.",
+  "provenance": "spec §5.3.2 pt 3",
+  "operation": "payload.report",
+  "input": {
+    "payload": "clientReport:1"
+  },
+  "expect": {
+    "outcome": "reject"
+  }
+}

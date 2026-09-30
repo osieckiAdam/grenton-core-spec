@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "wire.response.notification",
+  "specRefs": [
+    "wire.response"
+  ],
+  "description": "msg_id 00000000 marks an unsolicited notification.",
+  "provenance": "spec §5.2",
+  "operation": "wire.response",
+  "input": {
+    "frame": "resp:192.168.1.10:00000000:clientReport:0:{22.0,\"OFF\"}"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "cluIp": "192.168.1.10",
+      "msgId": "00000000",
+      "payload": "clientReport:0:{22.0,\"OFF\"}",
+      "isNotification": true
+    }
+  }
+}

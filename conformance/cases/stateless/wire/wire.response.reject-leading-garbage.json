@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "wire.response.reject-leading-garbage",
+  "specRefs": [
+    "wire.response"
+  ],
+  "description": "The frame must start with `resp:`.",
+  "provenance": "spec §5.2",
+  "operation": "wire.response",
+  "input": {
+    "frame": "xresp:192.168.1.10:a1b2c3d4:OK"
+  },
+  "expect": {
+    "outcome": "reject"
+  }
+}

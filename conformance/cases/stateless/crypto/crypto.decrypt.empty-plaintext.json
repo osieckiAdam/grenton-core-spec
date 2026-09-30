@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "crypto.decrypt.empty-plaintext",
+  "specRefs": [
+    "crypto.aes-cbc",
+    "crypto.padding"
+  ],
+  "description": "Inverse: Empty plaintext encrypts to exactly one block of 0x10 padding.",
+  "provenance": "openssl enc",
+  "operation": "crypto.decrypt",
+  "input": {
+    "keyBase64": "AAECAwQFBgcICQoLDA0ODw==",
+    "ivBase64": "EBESExQVFhcYGRobHB0eHw==",
+    "ciphertextHex": "0a940bb5416ef045f1c39458c653ea5a"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "plaintextHex": ""
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "wire.response.reply",
+  "specRefs": [
+    "wire.response"
+  ],
+  "description": "A plain reply frame splits into four fields.",
+  "provenance": "spec §5.2 literal",
+  "operation": "wire.response",
+  "input": {
+    "frame": "resp:192.168.1.10:a1b2c3d4:checkAlive()"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "cluIp": "192.168.1.10",
+      "msgId": "a1b2c3d4",
+      "payload": "checkAlive()",
+      "isNotification": false
+    }
+  }
+}

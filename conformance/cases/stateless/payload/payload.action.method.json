@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "payload.action.method",
+  "specRefs": [
+    "payload.action"
+  ],
+  "description": "METHOD → {objectName}:execute({index},\"{value}\").",
+  "provenance": "spec §5.3.4 literal",
+  "operation": "payload.action",
+  "input": {
+    "action": {
+      "event": "OFF",
+      "cluId": "CLU_501234567",
+      "objectName": "DOU8272",
+      "value": "0",
+      "callType": "METHOD",
+      "index": "4"
+    }
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "payload": "DOU8272:execute(4,\"0\")"
+    }
+  }
+}

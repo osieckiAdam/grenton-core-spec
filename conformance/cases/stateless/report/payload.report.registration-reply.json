@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "payload.report.registration-reply",
+  "specRefs": [
+    "payload.report"
+  ],
+  "description": "The §5.3.5 registration reply: positional values, cast per §3.1.",
+  "provenance": "spec §5.3.2",
+  "operation": "payload.report",
+  "input": {
+    "payload": "clientReport:1:{21.5,\"ON\"}"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "sessionId": 1,
+      "values": [
+        {
+          "type": "double",
+          "bits": "4035800000000000",
+          "decimal": "21.5"
+        },
+        {
+          "type": "string",
+          "value": "ON"
+        }
+      ]
+    }
+  }
+}

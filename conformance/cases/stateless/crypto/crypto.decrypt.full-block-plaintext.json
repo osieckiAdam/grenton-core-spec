@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "crypto.decrypt.full-block-plaintext",
+  "specRefs": [
+    "crypto.aes-cbc",
+    "crypto.padding"
+  ],
+  "description": "Inverse: A block-aligned plaintext gets a whole extra padding block.",
+  "provenance": "openssl enc",
+  "operation": "crypto.decrypt",
+  "input": {
+    "keyBase64": "AAECAwQFBgcICQoLDA0ODw==",
+    "ivBase64": "EBESExQVFhcYGRobHB0eHw==",
+    "ciphertextHex": "eb9e5ba41b902db8252982aa1a23f4be50c761ee882c090360eb92688653635f"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "plaintextHex": "30313233343536373839616263646566"
+    }
+  }
+}

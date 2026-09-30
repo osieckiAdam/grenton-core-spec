@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "coercion.truthy.double-zero",
+  "specRefs": [
+    "devices.coercion"
+  ],
+  "description": "truthy: standard truthiness; null is unknown.",
+  "provenance": "spec §6.2",
+  "operation": "coercion.truthy",
+  "input": {
+    "value": {
+      "type": "double",
+      "bits": "0000000000000000",
+      "decimal": "0.0"
+    }
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "result": false
+    }
+  }
+}

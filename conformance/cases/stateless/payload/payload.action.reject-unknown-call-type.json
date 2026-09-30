@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "payload.action.reject-unknown-call-type",
+  "specRefs": [
+    "model.action-ref"
+  ],
+  "description": "An unknown callType discriminator is a parse error.",
+  "provenance": "spec §3.6",
+  "operation": "payload.action",
+  "input": {
+    "action": {
+      "event": "CLICK",
+      "cluId": "CLU_501234567",
+      "objectName": "DOU8272",
+      "value": "1",
+      "callType": "LAMBDA",
+      "index": "0"
+    }
+  },
+  "expect": {
+    "outcome": "reject"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "provisioning.url.pin-non-ascii-encoded",
+  "specRefs": [
+    "provisioning.url"
+  ],
+  "description": "Non-ASCII is percent-encoded as UTF-8.",
+  "provenance": "spec §4.1",
+  "operation": "provisioning.url",
+  "input": {
+    "host": "192.168.1.5",
+    "pin": "ą1"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "url": "http://192.168.1.5:9998/api/v1/interface/hash/%C4%851"
+    }
+  }
+}

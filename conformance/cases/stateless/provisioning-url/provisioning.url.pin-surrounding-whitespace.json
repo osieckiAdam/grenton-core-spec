@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "provisioning.url.pin-surrounding-whitespace",
+  "specRefs": [
+    "provisioning.pin"
+  ],
+  "description": "Leading/trailing whitespace is removed.",
+  "provenance": "spec §4.1",
+  "operation": "provisioning.url",
+  "input": {
+    "host": "192.168.1.5",
+    "pin": " 149853\n"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "url": "http://192.168.1.5:9998/api/v1/interface/hash/149853"
+    }
+  }
+}

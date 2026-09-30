@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "payload.register.single-attribute",
+  "specRefs": [
+    "payload.register"
+  ],
+  "description": "Attribute keys render as {objectName,index}.",
+  "provenance": "spec §5.3.2",
+  "operation": "payload.register",
+  "input": {
+    "sessionId": 0,
+    "keys": [
+      {
+        "type": "attribute",
+        "objectName": "LED3340",
+        "index": "3"
+      }
+    ]
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "payload": "SYSTEM:clientRegister(0,0,1,{{LED3340,3}})"
+    }
+  }
+}
