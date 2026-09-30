@@ -27,8 +27,8 @@ FIXTURES = os.path.join(CONFORMANCE, "fixtures")
 MANIFEST = os.path.join(CONFORMANCE, "manifest.json")
 
 SCHEMA_VERSION = 1
-SUITE_VERSION = "0.4.4"
-SPEC_VERSION = "0.4.5"
+SUITE_VERSION = "0.4.5"
+SPEC_VERSION = "0.4.6"
 
 # operation -> (profile, required input keys, optional input keys)
 OPERATIONS = {
@@ -243,6 +243,7 @@ def build_manifest():
         "specVersion": SPEC_VERSION,
         "profiles": {profile: sorted(op for op, (p, _, _) in OPERATIONS.items() if p == profile)
                      for profile in sorted({p for p, _, _ in OPERATIONS.values()})},
+        "requirements": dict(sorted(REQUIREMENTS.items())),
         "cases": entries,
         "fixtures": fixtures,
     }

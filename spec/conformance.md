@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Wersja zestawu** | 0.4.4 (specyfikacja 0.4.5, schemat przypadków 1) |
+| **Wersja zestawu** | 0.4.5 (specyfikacja 0.4.6, schemat przypadków 1) |
 | **Dotyczy** | `spec/grenton-core-design.md` §9 |
 
 Zestaw zgodności to **dane, nie kod**: każdy przypadek to plik JSON w `conformance/cases/`. Port dostarcza cienki runner, który wczytuje przypadki, wywołuje produkcyjne API portu i porównuje obserwację z oczekiwaniem. Dopisanie przypadku raz obejmuje wszystkie porty.
@@ -11,7 +11,7 @@ Zestaw zgodności to **dane, nie kod**: każdy przypadek to plik JSON w `conform
 
 Zgodność deklaruje się **per profil** — przejście części zestawu nie jest „pełną zgodnością".
 
-| Profil | Zakres | Status |
+| Profil | Zakres | Od wersji zestawu |
 |---|---|---|
 | `stateless` | funkcje bez stanu: AES, ramki, payloady, casting, URL/PIN, koercje, format liczb | 0.1.0 |
 | `mapping` | `data.json` → urządzenia/encje, pominięte widgety | 0.2.0 (0.3.0: termostat, `SCENE_DOUBLE`, `HEADER`; 0.4.0: `page`, obiekty fizyczne) |
@@ -34,7 +34,7 @@ Zgodność deklaruje się **per profil** — przejście części zestawu nie jes
 ```
 
 - `id` — stabilny, globalnie unikalny, równy nazwie pliku; zaczyna się od grupy operacji.
-- `specRefs` — stabilne identyfikatory wymagań (tabela §6), nie numery sekcji — przenumerowanie specyfikacji nie unieważnia przypadków.
+- `specRefs` — stabilne identyfikatory wymagań (tabela §6, maszynowo w `manifest.json` → `requirements`), nie numery sekcji — przenumerowanie specyfikacji nie unieważnia przypadków.
 - `provenance` — skąd pochodzi oczekiwany wynik. **Oczekiwania nigdy nie są generowane przez testowany port**; źródła: dosłowny tekst specyfikacji, `openssl`, semantyka implementacji referencyjnej (Python).
 - `expect` — dokładnie jedno z:
   - `{"outcome": "ok", "value": …}` — operacja się udała, `value` to projekcja wyniku,
@@ -132,7 +132,7 @@ Runner **zawodzi zamknięty** (fail closed). Przebieg jest nieudany, jeśli:
 
 1. brakuje zestawu (np. niezainicjalizowany submodule) — wyraźny komunikat, nie „0 testów",
 2. `manifest.json` nie zgadza się z plikami (brakujący/nadmiarowy przypadek lub fixtura, zła suma SHA-256),
-3. przypadek ma nieznaną operację, nieobsługiwane `schemaVersion`, nie da się go zdekodować albo nie spełnia kształtu z §2 (nadmiarowe lub brakujące pola, puste `specRefs`, zły kształt `expect`),
+3. przypadek ma nieznaną operację, nieobsługiwane `schemaVersion`, nie da się go zdekodować albo nie spełnia kształtu z §2 (nadmiarowe lub brakujące pola, puste `specRefs` lub identyfikator wymagania spoza `manifest.json` → `requirements`, zły kształt `expect`, `id` różny od nazwy pliku albo plik poza `cases/`),
 3a. deklaracja portu wymienia profil, którego manifest nie zna; runner wykonuje wszystkie przypadki zadeklarowanych profili, a przypadki pozostałych profili raportuje jako nieobjęte deklaracją (nie jako sukces),
 4. deklaracja portu wskazuje pominięcie nieistniejącego przypadku albo pominięty przypadek **przechodzi** (nieoczekiwany sukces — usuń pominięcie),
 5. wersja zestawu w deklaracji portu ≠ `suiteVersion` z manifestu.
@@ -143,7 +143,7 @@ Runner wywołuje wyłącznie produkcyjne API i serializuje obserwację. **Nie wo
 
 ```json
 {
-  "suiteVersion": "0.1.0",
+  "suiteVersion": "<suiteVersion z manifest.json>",
   "profiles": ["stateless"],
   "skips": [{ "id": "…", "reason": "…", "issue": "…" }]
 }

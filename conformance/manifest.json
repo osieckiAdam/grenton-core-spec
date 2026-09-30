@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "suiteVersion": "0.4.4",
-  "specVersion": "0.4.5",
+  "suiteVersion": "0.4.5",
+  "specVersion": "0.4.6",
   "profiles": {
     "mapping": [
       "mapping.interface"
@@ -20,6 +20,27 @@
       "wire.request",
       "wire.response"
     ]
+  },
+  "requirements": {
+    "crypto.aes-cbc": "\u00a75.1",
+    "crypto.key-material": "\u00a75.1",
+    "crypto.padding": "\u00a75.1",
+    "devices.coercion": "\u00a76.2",
+    "devices.mapping": "\u00a76.1, \u00a76.3",
+    "devices.number-format": "\u00a710 pt 3",
+    "devices.order": "\u00a76.1",
+    "devices.physical-objects": "\u00a76.6",
+    "model.action-ref": "\u00a73.3, \u00a73.6",
+    "model.cast": "\u00a73.1",
+    "model.widget-tolerance": "\u00a73.6",
+    "payload.action": "\u00a75.3.4",
+    "payload.register": "\u00a75.3.2",
+    "payload.report": "\u00a75.3.2",
+    "provisioning.pin": "\u00a74.1",
+    "provisioning.url": "\u00a74.1",
+    "wire.msg-id-case": "\u00a75.2",
+    "wire.request": "\u00a75.2",
+    "wire.response": "\u00a75.2"
   },
   "cases": [
     {

@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Status** | Projekt (do implementacji) |
-| **Wersja** | 0.4.5 |
+| **Wersja** | 0.4.6 |
 | **Data** | 2026-09-30 |
 | **Implementacja referencyjna** | `homeassistant-grenton` (Python, integracja Home Assistant) |
 | **Przeznaczenie** | Specyfikacja niezależna od języka — podstawa dla portów (pierwszy: Swift) |
@@ -694,7 +694,7 @@ Zasada: błędy ścieżki odbioru (śmieciowy datagram) są logowane i połykane
 
 ## 9. Strategia testów
 
-**Zestaw zgodności** (`conformance/`, kontrakt: [`conformance.md`](conformance.md)) jest normatywną, maszynowo wykonywalną formą tej sekcji: przypadki JSON niezależne od języka, które każdy port uruchamia własnym runnerem. Wersja 0.4.0 obejmuje profil `stateless` — pkt 1, 2, 4 i część 6 z checklisty §9.5 (wektory AES, casting, payloady, koercje, format liczb) oraz URL/PIN z §4.1 — i profil `mapping` — pkt 3 (fixtura interfejsu → urządzenia/encje, reguły kompletności, tolerancja widgetów). Tabele poniżej są ilustracją; przy rozbieżności rozstrzyga zestaw (i poprawia się jedno albo drugie).
+**Zestaw zgodności** (`conformance/`, kontrakt: [`conformance.md`](conformance.md)) jest normatywną, maszynowo wykonywalną formą tej sekcji: przypadki JSON niezależne od języka, które każdy port uruchamia własnym runnerem. Profile i ich zakres (obecnie `stateless` i `mapping`) opisuje [`conformance.md`](conformance.md) §1; aktualną wersję zestawu podaje `conformance/manifest.json`. Tabele poniżej są ilustracją; przy rozbieżności rozstrzyga zestaw (i poprawia się jedno albo drugie).
 
 ### 9.1 Złote wektory kryptograficzne
 

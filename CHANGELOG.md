@@ -1,5 +1,12 @@
 # Changelog
 
+## Spec 0.4.6, suite 0.4.5 — 2026-09-30
+
+- `manifest.json` carries `requirements`, the requirement ids with their spec sections, so a runner can validate `specRefs` without parsing prose.
+- conformance.md §5: the runner rejects a case whose `id` differs from its file name, a case outside `cases/`, and unknown `specRefs`.
+- §9 no longer names a suite version ("0.4.0" had gone stale). It points to conformance.md and the manifest.
+- conformance.md: the profile table column is "Od wersji zestawu" (since which suite version), and the `port.json` example no longer hard-codes a version.
+
 ## Spec 0.4.5, suite 0.4.4 — 2026-09-30
 
 - §3.3, §8: an action whose `value` is exactly `$value$` fails with `PayloadError.unresolvedPlaceholder` when its payload is built, so nothing is sent. This also applies to low-level raw execution. Before, the rule only said such an action "must not be executed", and a port's raw path sent the placeholder literally.
