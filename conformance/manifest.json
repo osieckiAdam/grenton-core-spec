@@ -1,10 +1,13 @@
 {
   "schemaVersion": 1,
-  "suiteVersion": "0.4.5",
-  "specVersion": "0.4.6",
+  "suiteVersion": "0.5.0",
+  "specVersion": "0.5.0",
   "profiles": {
     "mapping": [
       "mapping.interface"
+    ],
+    "session": [
+      "session.scenario"
     ],
     "stateless": [
       "coercion.boolFromOnOff",
@@ -38,6 +41,12 @@
     "payload.report": "\u00a75.3.2",
     "provisioning.pin": "\u00a74.1",
     "provisioning.url": "\u00a74.1",
+    "session.actions": "\u00a75.3.4, \u00a73.3",
+    "session.chunking": "\u00a75.4.2, \u00a75.3.2",
+    "session.correlation": "\u00a75.4.1",
+    "session.keepalive": "\u00a75.3.1",
+    "session.lifecycle": "\u00a75.4.5",
+    "session.report-routing": "\u00a75.4.3, \u00a75.3.3",
     "wire.msg-id-case": "\u00a75.2",
     "wire.request": "\u00a75.2",
     "wire.response": "\u00a75.2"
@@ -582,6 +591,101 @@
       "id": "provisioning.url.pin-zero-width-space-kept",
       "path": "cases/stateless/provisioning-url/provisioning.url.pin-zero-width-space-kept.json",
       "sha256": "a4365bf4fd21929e63bdc62ac2e776888d0f9e7d203ece02aa34ab3f031a6bc4"
+    },
+    {
+      "id": "session.scenario.chunks-are-registered-one-after-another",
+      "path": "cases/session/session.scenario.chunks-are-registered-one-after-another.json",
+      "sha256": "6c32e045936191fe4002a5751d00e2685c1f7d3b35a93241b1383cfc2bbc774f"
+    },
+    {
+      "id": "session.scenario.execute-before-start-is-not-connected",
+      "path": "cases/session/session.scenario.execute-before-start-is-not-connected.json",
+      "sha256": "289605189e609c98a10a020baca32c2138224121c39ac820e82bfa83ad626a15"
+    },
+    {
+      "id": "session.scenario.execute-refuses-an-unresolved-placeholder",
+      "path": "cases/session/session.scenario.execute-refuses-an-unresolved-placeholder.json",
+      "sha256": "3830d4710438f699c9defa9d709dd3cf85fafaf5cb98ef94c2666d21d951e092"
+    },
+    {
+      "id": "session.scenario.execute-sends-the-action-on-the-main-socket",
+      "path": "cases/session/session.scenario.execute-sends-the-action-on-the-main-socket.json",
+      "sha256": "87df95f3d1242b109a293a6e471a78a2fd892b00626a068bd70489b528ddea9b"
+    },
+    {
+      "id": "session.scenario.execute-times-out",
+      "path": "cases/session/session.scenario.execute-times-out.json",
+      "sha256": "169869879bd8b121c7df4ce42c2a147f3b11b7a980165b1f019d50a812febc3a"
+    },
+    {
+      "id": "session.scenario.garbage-and-unknown-frames-are-dropped",
+      "path": "cases/session/session.scenario.garbage-and-unknown-frames-are-dropped.json",
+      "sha256": "872c4e5fe1686ec45ec48dcb4de4efa93dd77b6896c730b87b6ba8d71f08451e"
+    },
+    {
+      "id": "session.scenario.keep-alive-id-is-stable",
+      "path": "cases/session/session.scenario.keep-alive-id-is-stable.json",
+      "sha256": "36dfe326d08bb3a82e5081bc48a90d84955872d319e87ae110d639168aa24f5b"
+    },
+    {
+      "id": "session.scenario.late-reply-is-dropped",
+      "path": "cases/session/session.scenario.late-reply-is-dropped.json",
+      "sha256": "d0ea3ad93c0486252e5ffc56209e2f5925762fee3373db61989a24a670c95714"
+    },
+    {
+      "id": "session.scenario.notifications-are-routed-by-socket",
+      "path": "cases/session/session.scenario.notifications-are-routed-by-socket.json",
+      "sha256": "9f38396665932375ca596eaba9b20cb04bfba4e686af4b820bea2c0fbd12035d"
+    },
+    {
+      "id": "session.scenario.ping-timeout-degrades-then-recovers",
+      "path": "cases/session/session.scenario.ping-timeout-degrades-then-recovers.json",
+      "sha256": "544d324180673899e352293e7cbbaec8ec85bc832721b1614b4e53ba526e96ab"
+    },
+    {
+      "id": "session.scenario.re-registration-closes-the-old-sockets",
+      "path": "cases/session/session.scenario.re-registration-closes-the-old-sockets.json",
+      "sha256": "6cde4203368a468ec6703ed8632130dd02f12d872f4a38768bb3bee19f44d2d9"
+    },
+    {
+      "id": "session.scenario.recovery-re-registers-before-ready",
+      "path": "cases/session/session.scenario.recovery-re-registers-before-ready.json",
+      "sha256": "39e747b6f083b3834ff30dbc946530176cbbfc4c6259727bc93d22dc3ba720ec"
+    },
+    {
+      "id": "session.scenario.register-one-chunk-with-session-id-0",
+      "path": "cases/session/session.scenario.register-one-chunk-with-session-id-0.json",
+      "sha256": "971f87c756cefcedad1413dcb19b26ad400408a64a9e884579d717146645ce04"
+    },
+    {
+      "id": "session.scenario.registration-reply-session-id-is-not-checked",
+      "path": "cases/session/session.scenario.registration-reply-session-id-is-not-checked.json",
+      "sha256": "6dffdd81bf3c32564f0b5611fd23ae11e8e4ce6d72bc0a425e076cb8252b24dc"
+    },
+    {
+      "id": "session.scenario.start-pings-and-becomes-ready",
+      "path": "cases/session/session.scenario.start-pings-and-becomes-ready.json",
+      "sha256": "418926622a8fce932bd86d1250a440f4b028bb5a1a0e9ba42f9def8ff97da509"
+    },
+    {
+      "id": "session.scenario.stop-closes-sockets-and-ends-pending-requests",
+      "path": "cases/session/session.scenario.stop-closes-sockets-and-ends-pending-requests.json",
+      "sha256": "c6318968f500b14ef38db6dfa94f345b95d35a719b1080241b0ff72b664aa28e"
+    },
+    {
+      "id": "session.scenario.unanswered-chunk-yields-failed-slots",
+      "path": "cases/session/session.scenario.unanswered-chunk-yields-failed-slots.json",
+      "sha256": "94672d064aca56765c4c7ce6a1337711e03f5e72d5076be24914c4bc0f44b15b"
+    },
+    {
+      "id": "session.scenario.uppercase-msg-id-matches",
+      "path": "cases/session/session.scenario.uppercase-msg-id-matches.json",
+      "sha256": "0f761cf81cb1dea1e1f54346f827ab94ace697d37fbfd1a489210e713707cd3b"
+    },
+    {
+      "id": "session.scenario.wrong-value-count-fails-the-chunk",
+      "path": "cases/session/session.scenario.wrong-value-count-fails-the-chunk.json",
+      "sha256": "f4086d1796ec02c3b0775007f4db2a46ee231291d2f28e91a010ec59e8ba3886"
     },
     {
       "id": "value.cast.all-surrounding-quotes-stripped",

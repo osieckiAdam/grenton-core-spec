@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "id": "session.scenario.registration-reply-session-id-is-not-checked",
+  "specRefs": [
+    "session.chunking"
+  ],
+  "description": "The number after clientReport: is not an echo of sessionId (§5.3.2 pt 1); a reply with any number is accepted.",
+  "provenance": "spec §5.3–§5.4 text, conformance.md §4b",
+  "operation": "session.scenario",
+  "input": {
+    "clu": {
+      "id": "CLU_1",
+      "ip": "10.0.0.1",
+      "port": 1234
+    },
+    "responseTimeoutMs": 5000,
+    "steps": [
+      {
+        "call": "start",
+        "as": "start"
+      },
+      {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "checkAlive()"
+        }
+      },
+      {
+        "respond": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "1"
+        }
+      },
+      {
+        "await": "start",
+        "result": null
+      },
+      {
+        "expectState": "ready"
+      },
+      {
+        "call": "register",
+        "keys": [
+          {
+            "type": "variable",
+            "name": "x_a"
+          },
+          {
+            "type": "attribute",
+            "objectName": "DOU1001",
+            "index": "0"
+          }
+        ],
+        "as": "reg"
+      },
+      {
+        "expectSent": {
+          "socket": "@chunk1",
+          "msgId": "$r1",
+          "payload": "SYSTEM:clientRegister(0,0,1,{\"x_a\",{DOU1001,0}})"
+        }
+      },
+      {
+        "respond": {
+          "socket": "@chunk1",
+          "msgId": "$r1",
+          "payload": "clientReport:7:{0,\"OFF\"}"
+        }
+      },
+      {
+        "await": "reg",
+        "result": {
+          "slots": [
+            {
+              "type": "int",
+              "value": "0"
+            },
+            {
+              "type": "string",
+              "value": "OFF"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "completed": true
+    }
+  }
+}

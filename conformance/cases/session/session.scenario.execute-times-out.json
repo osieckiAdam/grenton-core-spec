@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "id": "session.scenario.execute-times-out",
+  "specRefs": [
+    "session.actions",
+    "session.correlation"
+  ],
+  "description": "An unanswered action fails with a timeout after 5 s.",
+  "provenance": "spec §5.3–§5.4 text, conformance.md §4b",
+  "operation": "session.scenario",
+  "input": {
+    "clu": {
+      "id": "CLU_1",
+      "ip": "10.0.0.1",
+      "port": 1234
+    },
+    "responseTimeoutMs": 5000,
+    "steps": [
+      {
+        "call": "start",
+        "as": "start"
+      },
+      {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "checkAlive()"
+        }
+      },
+      {
+        "respond": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "1"
+        }
+      },
+      {
+        "await": "start",
+        "result": null
+      },
+      {
+        "expectState": "ready"
+      },
+      {
+        "call": "execute",
+        "action": {
+          "event": "ON",
+          "cluId": "CLU_1",
+          "objectName": "DOU1001",
+          "index": "0",
+          "value": "1",
+          "callType": "ATTRIBUTE"
+        },
+        "as": "act"
+      },
+      {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$a",
+          "payload": "DOU1001:set(0,\"1\")"
+        }
+      },
+      {
+        "advance": 5000
+      },
+      {
+        "await": "act",
+        "result": {
+          "error": "session.timeout"
+        }
+      }
+    ]
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "completed": true
+    }
+  }
+}

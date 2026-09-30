@@ -39,7 +39,9 @@
     { "if": { "properties": { "operation": { "const": "number.format" } } },
       "then": { "properties": { "input": { "$ref": "#/$defs/input.number.format" } } } },
     { "if": { "properties": { "operation": { "const": "mapping.interface" } } },
-      "then": { "properties": { "input": { "$ref": "#/$defs/input.mapping.interface" } } } }
+      "then": { "properties": { "input": { "$ref": "#/$defs/input.mapping.interface" } } } },
+    { "if": { "properties": { "operation": { "const": "session.scenario" } } },
+      "then": { "properties": { "input": { "$ref": "#/$defs/input.session.scenario" } } } }
   ],
   "$defs": {
     "hex": { "type": "string", "pattern": "^([0-9a-f]{2})*$" },
@@ -143,6 +145,58 @@
         "value": { "allOf": [{ "$ref": "#/$defs/value" }], "properties": { "type": { "const": "double" } } },
         "precision": { "type": "integer" }
       }
+    },
+    "input.session.scenario": {
+      "description": "conformance.md §4b. Cross-step rules (captures, labels, awaits) are checked by tools/suite.py.",
+      "type": "object", "additionalProperties": false, "required": ["clu", "responseTimeoutMs", "steps"],
+      "properties": {
+        "clu": {
+          "type": "object", "additionalProperties": false, "required": ["id", "ip", "port"],
+          "properties": { "id": { "type": "string" }, "ip": { "type": "string" }, "port": { "type": "integer" } }
+        },
+        "responseTimeoutMs": { "type": "integer", "minimum": 1 },
+        "steps": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/session.step" } }
+      }
+    },
+    "session.socket": { "type": "string", "pattern": "^@[A-Za-z0-9_]+$" },
+    "session.msgId": { "type": "string", "pattern": "^(\\$[A-Za-z0-9_]+|[0-9A-Fa-f]{8})$" },
+    "session.slot": {
+      "oneOf": [
+        { "$ref": "#/$defs/value" },
+        { "type": "object", "additionalProperties": false, "required": ["failed"], "properties": { "failed": { "const": true } } }
+      ]
+    },
+    "session.step": {
+      "oneOf": [
+        { "type": "object", "additionalProperties": false, "required": ["call", "as"],
+          "properties": { "call": { "enum": ["start", "stop", "ping", "register", "execute"] },
+                          "as": { "type": "string" }, "keys": { "type": "array" }, "action": { "type": "object" } } },
+        { "type": "object", "additionalProperties": false, "required": ["await", "result"],
+          "properties": { "await": { "type": "string" }, "result": {} } },
+        { "type": "object", "additionalProperties": false, "required": ["expectSent"],
+          "properties": { "expectSent": { "type": "object", "additionalProperties": false, "required": ["socket", "msgId", "payload"],
+            "properties": { "socket": { "$ref": "#/$defs/session.socket" }, "msgId": { "$ref": "#/$defs/session.msgId" }, "payload": { "type": "string" } } } } },
+        { "type": "object", "additionalProperties": false, "required": ["expectQuiet"],
+          "properties": { "expectQuiet": { "const": true } } },
+        { "type": "object", "additionalProperties": false, "required": ["respond"],
+          "properties": { "respond": { "type": "object", "additionalProperties": false, "required": ["socket", "msgId", "payload"],
+            "properties": { "socket": { "$ref": "#/$defs/session.socket" }, "msgId": { "$ref": "#/$defs/session.msgId" },
+                            "payload": { "type": "string" }, "upper": { "type": "boolean" } } } } },
+        { "type": "object", "additionalProperties": false, "required": ["deliver"],
+          "properties": { "deliver": { "type": "object", "additionalProperties": false, "required": ["socket", "frame", "encrypted"],
+            "properties": { "socket": { "$ref": "#/$defs/session.socket" }, "frame": { "type": "string" }, "encrypted": { "type": "boolean" } } } } },
+        { "type": "object", "additionalProperties": false, "required": ["advance"],
+          "properties": { "advance": { "type": "integer", "minimum": 0 } } },
+        { "type": "object", "additionalProperties": false, "required": ["expectState"],
+          "properties": { "expectState": { "enum": ["idle", "starting", "ready", "degraded", "stopped"] } } },
+        { "type": "object", "additionalProperties": false, "required": ["expectReport"],
+          "properties": { "expectReport": { "type": "object", "additionalProperties": false, "required": ["keys", "values"],
+            "properties": { "keys": { "type": "array" }, "values": { "type": "array", "items": { "$ref": "#/$defs/session.slot" } } } } } },
+        { "type": "object", "additionalProperties": false, "required": ["expectNoReport"],
+          "properties": { "expectNoReport": { "const": true } } },
+        { "type": "object", "additionalProperties": false, "required": ["expectClosed"],
+          "properties": { "expectClosed": { "$ref": "#/$defs/session.socket" } } }
+      ]
     }
   }
 }

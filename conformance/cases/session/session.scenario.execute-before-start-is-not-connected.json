@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "id": "session.scenario.execute-before-start-is-not-connected",
+  "specRefs": [
+    "session.actions",
+    "session.lifecycle"
+  ],
+  "description": "Before start() there is no main socket: an action fails with notConnected and nothing is sent.",
+  "provenance": "spec §5.3–§5.4 text, conformance.md §4b",
+  "operation": "session.scenario",
+  "input": {
+    "clu": {
+      "id": "CLU_1",
+      "ip": "10.0.0.1",
+      "port": 1234
+    },
+    "responseTimeoutMs": 5000,
+    "steps": [
+      {
+        "call": "execute",
+        "action": {
+          "event": "ON",
+          "cluId": "CLU_1",
+          "objectName": "DOU1001",
+          "index": "0",
+          "value": "1",
+          "callType": "ATTRIBUTE"
+        },
+        "as": "act"
+      },
+      {
+        "await": "act",
+        "result": {
+          "error": "session.notConnected"
+        }
+      },
+      {
+        "expectQuiet": true
+      }
+    ]
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "completed": true
+    }
+  }
+}

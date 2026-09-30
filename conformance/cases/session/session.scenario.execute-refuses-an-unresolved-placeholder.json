@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "id": "session.scenario.execute-refuses-an-unresolved-placeholder",
+  "specRefs": [
+    "session.actions"
+  ],
+  "description": "An action whose value is still $value$ fails and sends nothing (§3.3).",
+  "provenance": "spec §5.3–§5.4 text, conformance.md §4b",
+  "operation": "session.scenario",
+  "input": {
+    "clu": {
+      "id": "CLU_1",
+      "ip": "10.0.0.1",
+      "port": 1234
+    },
+    "responseTimeoutMs": 5000,
+    "steps": [
+      {
+        "call": "start",
+        "as": "start"
+      },
+      {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "checkAlive()"
+        }
+      },
+      {
+        "respond": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "1"
+        }
+      },
+      {
+        "await": "start",
+        "result": null
+      },
+      {
+        "expectState": "ready"
+      },
+      {
+        "call": "execute",
+        "action": {
+          "event": "ON",
+          "cluId": "CLU_1",
+          "objectName": "DOU1001",
+          "index": "0",
+          "value": "$value$",
+          "callType": "ATTRIBUTE"
+        },
+        "as": "act"
+      },
+      {
+        "await": "act",
+        "result": {
+          "error": "payload.unresolvedPlaceholder"
+        }
+      },
+      {
+        "expectQuiet": true
+      }
+    ]
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "completed": true
+    }
+  }
+}

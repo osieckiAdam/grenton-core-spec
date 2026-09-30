@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "id": "session.scenario.garbage-and-unknown-frames-are-dropped",
+  "specRefs": [
+    "session.correlation"
+  ],
+  "description": "Datagrams that do not decrypt, frames that are not resp:, and replies to unknown msg_ids are dropped without disturbing the session.",
+  "provenance": "spec §5.3–§5.4 text, conformance.md §4b",
+  "operation": "session.scenario",
+  "input": {
+    "clu": {
+      "id": "CLU_1",
+      "ip": "10.0.0.1",
+      "port": 1234
+    },
+    "responseTimeoutMs": 5000,
+    "steps": [
+      {
+        "call": "start",
+        "as": "start"
+      },
+      {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "checkAlive()"
+        }
+      },
+      {
+        "deliver": {
+          "socket": "@main",
+          "frame": "not a ciphertext",
+          "encrypted": false
+        }
+      },
+      {
+        "deliver": {
+          "socket": "@main",
+          "frame": "hello",
+          "encrypted": true
+        }
+      },
+      {
+        "respond": {
+          "socket": "@main",
+          "msgId": "deadbeef",
+          "payload": "1"
+        }
+      },
+      {
+        "expectState": "starting"
+      },
+      {
+        "respond": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "1"
+        }
+      },
+      {
+        "await": "start",
+        "result": null
+      },
+      {
+        "expectState": "ready"
+      }
+    ]
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "completed": true
+    }
+  }
+}

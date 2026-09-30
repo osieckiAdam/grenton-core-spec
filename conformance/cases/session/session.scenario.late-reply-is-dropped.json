@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "id": "session.scenario.late-reply-is-dropped",
+  "specRefs": [
+    "session.correlation"
+  ],
+  "description": "After the 5 s timeout a reply no longer has a pending request and is dropped: the session stays degraded.",
+  "provenance": "spec §5.3–§5.4 text, conformance.md §4b",
+  "operation": "session.scenario",
+  "input": {
+    "clu": {
+      "id": "CLU_1",
+      "ip": "10.0.0.1",
+      "port": 1234
+    },
+    "responseTimeoutMs": 5000,
+    "steps": [
+      {
+        "call": "start",
+        "as": "start"
+      },
+      {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "checkAlive()"
+        }
+      },
+      {
+        "advance": 5000
+      },
+      {
+        "await": "start",
+        "result": null
+      },
+      {
+        "respond": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "1"
+        }
+      },
+      {
+        "expectState": "degraded"
+      }
+    ]
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "completed": true
+    }
+  }
+}

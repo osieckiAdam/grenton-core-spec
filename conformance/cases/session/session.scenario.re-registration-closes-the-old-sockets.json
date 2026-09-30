@@ -1,0 +1,142 @@
+{
+  "schemaVersion": 1,
+  "id": "session.scenario.re-registration-closes-the-old-sockets",
+  "specRefs": [
+    "session.chunking"
+  ],
+  "description": "register() first closes the previous subscription sockets, then registers on new ones.",
+  "provenance": "spec §5.3–§5.4 text, conformance.md §4b",
+  "operation": "session.scenario",
+  "input": {
+    "clu": {
+      "id": "CLU_1",
+      "ip": "10.0.0.1",
+      "port": 1234
+    },
+    "responseTimeoutMs": 5000,
+    "steps": [
+      {
+        "call": "start",
+        "as": "start"
+      },
+      {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "checkAlive()"
+        }
+      },
+      {
+        "respond": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "1"
+        }
+      },
+      {
+        "await": "start",
+        "result": null
+      },
+      {
+        "expectState": "ready"
+      },
+      {
+        "call": "register",
+        "keys": [
+          {
+            "type": "variable",
+            "name": "x_a"
+          },
+          {
+            "type": "attribute",
+            "objectName": "DOU1001",
+            "index": "0"
+          }
+        ],
+        "as": "r1"
+      },
+      {
+        "expectSent": {
+          "socket": "@first",
+          "msgId": "$m1",
+          "payload": "SYSTEM:clientRegister(0,0,1,{\"x_a\",{DOU1001,0}})"
+        }
+      },
+      {
+        "respond": {
+          "socket": "@first",
+          "msgId": "$m1",
+          "payload": "clientReport:1:{1,\"ON\"}"
+        }
+      },
+      {
+        "await": "r1",
+        "result": {
+          "slots": [
+            {
+              "type": "int",
+              "value": "1"
+            },
+            {
+              "type": "string",
+              "value": "ON"
+            }
+          ]
+        }
+      },
+      {
+        "call": "register",
+        "keys": [
+          {
+            "type": "variable",
+            "name": "x_a"
+          },
+          {
+            "type": "attribute",
+            "objectName": "DOU1001",
+            "index": "0"
+          }
+        ],
+        "as": "r2"
+      },
+      {
+        "expectSent": {
+          "socket": "@second",
+          "msgId": "$m2",
+          "payload": "SYSTEM:clientRegister(0,0,1,{\"x_a\",{DOU1001,0}})"
+        }
+      },
+      {
+        "expectClosed": "@first"
+      },
+      {
+        "respond": {
+          "socket": "@second",
+          "msgId": "$m2",
+          "payload": "clientReport:1:{0,\"OFF\"}"
+        }
+      },
+      {
+        "await": "r2",
+        "result": {
+          "slots": [
+            {
+              "type": "int",
+              "value": "0"
+            },
+            {
+              "type": "string",
+              "value": "OFF"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "completed": true
+    }
+  }
+}

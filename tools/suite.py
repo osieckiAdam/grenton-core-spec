@@ -27,8 +27,8 @@ FIXTURES = os.path.join(CONFORMANCE, "fixtures")
 MANIFEST = os.path.join(CONFORMANCE, "manifest.json")
 
 SCHEMA_VERSION = 1
-SUITE_VERSION = "0.4.5"
-SPEC_VERSION = "0.4.6"
+SUITE_VERSION = "0.5.0"
+SPEC_VERSION = "0.5.0"
 
 # operation -> (profile, required input keys, optional input keys)
 OPERATIONS = {
@@ -45,6 +45,7 @@ OPERATIONS = {
     "coercion.truthy": ("stateless", {"value"}, set()),
     "number.format": ("stateless", {"value", "precision"}, set()),
     "mapping.interface": ("mapping", {"fixture"}, set()),
+    "session.scenario": ("session", {"clu", "responseTimeoutMs", "steps"}, set()),
 }
 
 # Stable requirement ids -> spec sections (see spec/conformance.md).
@@ -56,6 +57,9 @@ REQUIREMENTS = {
     "provisioning.url": "§4.1", "provisioning.pin": "§4.1",
     "devices.coercion": "§6.2", "devices.number-format": "§10 pt 3",
     "model.widget-tolerance": "§3.6", "devices.mapping": "§6.1, §6.3", "devices.order": "§6.1", "devices.physical-objects": "§6.6",
+    "session.correlation": "§5.4.1", "session.chunking": "§5.4.2, §5.3.2",
+    "session.report-routing": "§5.4.3, §5.3.3", "session.keepalive": "§5.3.1",
+    "session.lifecycle": "§5.4.5", "session.actions": "§5.3.4, §3.3",
 }
 
 ERROR_CODES = {"crypto.invalidKeyMaterial", "provisioning.connection", "payload.unresolvedPlaceholder"}
@@ -138,6 +142,104 @@ def python_value(tagged):
     return tagged["value"]
 
 
+# conformance.md §4b: step verb -> (required keys, optional keys)
+STEPS = {
+    "call": ({"call", "as"}, {"keys", "action"}),
+    "await": ({"await", "result"}, set()),
+    "expectSent": ({"expectSent"}, set()),
+    "expectQuiet": ({"expectQuiet"}, set()),
+    "respond": ({"respond"}, set()),
+    "deliver": ({"deliver"}, set()),
+    "advance": ({"advance"}, set()),
+    "expectState": ({"expectState"}, set()),
+    "expectReport": ({"expectReport"}, set()),
+    "expectNoReport": ({"expectNoReport"}, set()),
+    "expectClosed": ({"expectClosed"}, set()),
+}
+CALLS = {"start", "stop", "ping", "register", "execute"}
+STATES = {"idle", "starting", "ready", "degraded", "stopped"}
+EXECUTE_ERRORS = {"session.timeout", "session.notConnected", "session.connectionClosed",
+                  "payload.unresolvedPlaceholder"}
+
+
+def check_scenario(doc, errors):
+    """Static checks: known verbs and fields, awaits refer to earlier calls,
+    socket labels and captured ids are bound before they are used."""
+    where = doc["id"]
+    inp = doc["input"]
+    if not isinstance(inp["steps"], list) or not inp["steps"]:
+        errors.append(f"{where}: steps must be a non-empty list")
+        return
+    clu = inp["clu"]
+    if not isinstance(clu, dict) or set(clu) != {"id", "ip", "port"}:
+        errors.append(f"{where}: clu must be {{id, ip, port}}")
+    calls, awaited, labels, captures = {}, set(), set(), set()
+    for n, step in enumerate(inp["steps"]):
+        at = f"{where}: step {n}"
+        verb = next((v for v in STEPS if v in step), None)
+        if verb is None:
+            errors.append(f"{at}: unknown step {step}")
+            continue
+        required, optional = STEPS[verb]
+        if not required <= set(step) or not set(step) <= required | optional:
+            errors.append(f"{at}: {verb} takes {sorted(required | optional)}")
+            continue
+        if verb == "call":
+            if step["call"] not in CALLS:
+                errors.append(f"{at}: unknown call {step['call']}")
+            if step["as"] in calls:
+                errors.append(f"{at}: name {step['as']} used twice")
+            if (step["call"] == "register") != ("keys" in step) or (step["call"] == "execute") != ("action" in step):
+                errors.append(f"{at}: register takes keys, execute takes action, nothing else does")
+            calls[step["as"]] = step["call"]
+        elif verb == "await":
+            name = step["await"]
+            if name not in calls:
+                errors.append(f"{at}: await of unknown call {name}")
+            elif name in awaited:
+                errors.append(f"{at}: {name} awaited twice")
+            else:
+                awaited.add(name)
+                result, kind = step["result"], calls[name]
+                if kind in ("start", "stop") and result is not None:
+                    errors.append(f"{at}: {kind} has no result, use null")
+                if kind == "ping" and (not isinstance(result, dict) or set(result) != {"ok"}):
+                    errors.append(f"{at}: ping result is {{ok}}")
+                if kind == "register" and (not isinstance(result, dict) or set(result) != {"slots"}):
+                    errors.append(f"{at}: register result is {{slots}}")
+                if kind == "execute" and not (result == {"ok": True} or (isinstance(result, dict) and set(result) == {"error"} and result["error"] in EXECUTE_ERRORS)):
+                    errors.append(f"{at}: execute result is {{ok: true}} or {{error: <execute error>}}")
+        elif verb == "expectSent":
+            body = step["expectSent"]
+            if set(body) != {"socket", "msgId", "payload"}:
+                errors.append(f"{at}: expectSent takes socket, msgId, payload")
+                continue
+            labels.add(body["socket"])
+            if body["msgId"].startswith("$"):
+                captures.add(body["msgId"])
+        elif verb in ("respond", "deliver"):
+            body = step[verb]
+            fields = {"socket", "msgId", "payload"} if verb == "respond" else {"socket", "frame", "encrypted"}
+            if not fields <= set(body) or not set(body) <= fields | {"upper"}:
+                errors.append(f"{at}: {verb} takes {sorted(fields)}")
+                continue
+            if body["socket"] not in labels:
+                errors.append(f"{at}: socket {body['socket']} is not bound yet")
+            if verb == "respond" and body["msgId"].startswith("$") and body["msgId"] not in captures:
+                errors.append(f"{at}: {body['msgId']} is not captured yet")
+        elif verb == "expectClosed" and step["expectClosed"] not in labels:
+            errors.append(f"{at}: socket {step['expectClosed']} is not bound yet")
+        elif verb == "expectState" and step["expectState"] not in STATES:
+            errors.append(f"{at}: unknown state {step['expectState']}")
+        elif verb == "advance" and not (isinstance(step["advance"], int) and step["advance"] > 0):
+            errors.append(f"{at}: advance takes a positive number of milliseconds")
+    for name in set(calls) - awaited:
+        errors.append(f"{where}: call {name} is never awaited")
+    for label in labels:
+        if not (isinstance(label, str) and label.startswith("@")):
+            errors.append(f"{where}: socket labels start with @: {label}")
+
+
 def oracle(doc, errors):
     """Re-derive the expected value where an independent oracle exists."""
     op, inp, exp = doc["operation"], doc["input"], doc["expect"]
@@ -151,6 +253,10 @@ def oracle(doc, errors):
             want = exp["value"]["plaintextHex"]
         if got != want:
             errors.append(f"{where}: openssl gives {got}, case expects {want}")
+    if op == "session.scenario":
+        check_scenario(doc, errors)
+        if exp != {"outcome": "ok", "value": {"completed": True}}:
+            errors.append(f"{where}: a scenario expects {{outcome: ok, value: {{completed: true}}}}")
     if op == "mapping.interface":
         sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
         from oracles.mapping import map_interface

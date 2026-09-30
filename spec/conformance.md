@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Wersja zestawu** | 0.4.5 (specyfikacja 0.4.6, schemat przypadków 1) |
+| **Wersja zestawu** | 0.5.0 (specyfikacja 0.5.0, schemat przypadków 1) |
 | **Dotyczy** | `spec/grenton-core-design.md` §9 |
 
 Zestaw zgodności to **dane, nie kod**: każdy przypadek to plik JSON w `conformance/cases/`. Port dostarcza cienki runner, który wczytuje przypadki, wywołuje produkcyjne API portu i porównuje obserwację z oczekiwaniem. Dopisanie przypadku raz obejmuje wszystkie porty.
@@ -16,7 +16,7 @@ Zgodność deklaruje się **per profil** — przejście części zestawu nie jes
 | `stateless` | funkcje bez stanu: AES, ramki, payloady, casting, URL/PIN, koercje, format liczb | 0.1.0 |
 | `mapping` | `data.json` → urządzenia/encje, pominięte widgety | 0.2.0 (0.3.0: termostat, `SCENE_DOUBLE`, `HEADER`; 0.4.0: `page`, obiekty fizyczne) |
 | `provisioning` | odpowiedzi HTTP i archiwa ZIP → interfejs lub błąd | planowany |
-| `session` | scenariusze z fake CLU i wirtualnym czasem | planowany — wymaga semantyki barier czasu |
+| `session` | scenariusze rozmowy jednej sesji CLU (§5.4) z CLU sterowanym scenariuszem i wirtualnym czasem | 0.5.0 |
 
 ## 2. Plik przypadku
 
@@ -126,6 +126,38 @@ Deszyfracja zwraca **bajty**; dekodowanie UTF-8 i obcinanie białych znaków nal
 
 **Fixtury** leżą w `conformance/fixtures/` i są w manifeście z sumą SHA-256 (runner weryfikuje je tak jak przypadki). Widget, który **musi** zostać pominięty z powodu brakującego pola lub nieznanego enuma, jest w fixturze oznaczony polem `"x-conformance-expect-skip": true`. Porty je ignorują (nieznane pola, §3.6 pkt 4); czyta je tylko wyrocznia `tools/oracles/mapping.py`, bo §3.5 nie podaje pełnego schematu pól każdego widgetu.
 
+## 4b. Scenariusze sesji (profil `session`)
+
+Operacja `session.scenario` sprawdza jedną sesję CLU (spec §5.3–§5.4) w rozmowie z CLU, którego rolę gra runner, krok po kroku według scenariusza. Wejście: `{"clu": {"id", "ip", "port"}, "responseTimeoutMs", "steps": [...]}`; wynik `ok` to `{"completed": true}`. Runner, który napotka niezgodny krok, zwraca `{"completed": false, "failedStep": <indeks>, "observed": …}`, dzięki czemu różnica wskazuje krok.
+
+**Co port udostępnia runnerowi** (nazwy dowolne, zachowanie wg §5.4): utworzenie sesji dla CLU z kluczem i IV z §9.1, zegarem i transportem dostarczonymi przez runnera; `start()`, `stop()`, `ping()`, `register(keys) → slots`, `execute(action)`, bieżący stan (§5.4.5) i strumień raportów (§5.4.3). Transport runnera widzi każde otwarte gniazdo, każdy wysłany datagram i zamknięcie gniazda; runner deszyfruje wysłane datagramy i szyfruje wstrzykiwane, więc scenariusze operują na tekście ramek (§5.2).
+
+**Wirtualny czas.** Zegar sesji należy do runnera i stoi, dopóki krok `advance` go nie przesunie. Timeout odpowiedzi (§5.4.1) upływa wyłącznie przez `advance`.
+
+**Bariera.** Po każdym kroku runner czeka, aż sesja przestanie wykonywać pracę możliwą bez czasu i bez nowych datagramów (w praktyce: aż zaplanowane zadania się wykonają). Dopiero wtedy sprawdza oczekiwania. `expectSent` czeka na datagram najdłużej ustaloną przez runnera chwilę realnego czasu; `expectQuiet` stwierdza, że po barierze nie wysłano nic więcej.
+
+**Przechwytywanie.** `msgId` postaci `$nazwa` przy pierwszym użyciu wiąże się z obserwowaną wartością, przy kolejnych musi być jej równy. Gniazda nazywa się etykietami `@nazwa`: pierwsze użycie wiąże etykietę z gniazdem **innym niż wszystkie już nazwane**, kolejne muszą wskazywać to samo gniazdo. Dzięki temu scenariusz sprawdza, że każdy chunk ma własne gniazdo.
+
+Kroki (każdy obiekt ma dokładnie jeden czasownik):
+
+| Krok | Znaczenie |
+|---|---|
+| `{"call": "start" \| "stop" \| "ping", "as": "x"}` | uruchamia operację sesji w tle; wynik odbiera `await` |
+| `{"call": "register", "keys": [ValueRef…], "as": "x"}` | jak wyżej; `keys` w formacie `payload.register` |
+| `{"call": "execute", "action": {ActionRef jak w data.json}, "as": "x"}` | jak wyżej |
+| `{"await": "x", "result": …}` | czeka na koniec operacji `x` i porównuje wynik: `null` (start/stop), `{"ok": true\|false}` (ping), `{"slots": [wartość otagowana \| {"failed": true}]}` (register), `{"ok": true}` albo `{"error": kod}` (execute) |
+| `{"expectSent": {"socket": "@s", "msgId": "$m" \| "…", "payload": "…"}}` | następny wysłany datagram to `req::{msgId}:{payload}` z gniazda `@s` |
+| `{"expectQuiet": true}` | po barierze nie wysłano nic ponad już sprawdzone |
+| `{"respond": {"socket": "@s", "msgId": "$m" \| "…", "payload": "…", "upper": bool?}}` | CLU odpowiada na gnieździe `@s` ramką `resp:{clu.ip}:{msgId}:{payload}` (`upper`: `msgId` wielkimi literami) |
+| `{"deliver": {"socket": "@s", "frame": "…", "encrypted": bool}}` | dowolna ramka na gniazdo; `encrypted: false` wysyła bajty, których nie da się odszyfrować |
+| `{"advance": ms}` | przesuwa wirtualny zegar |
+| `{"expectState": "idle" \| "starting" \| "ready" \| "degraded" \| "stopped"}` | bieżący stan sesji |
+| `{"expectReport": {"keys": [ValueRef…], "values": [wartość otagowana \| {"failed": true}]}}` | następny raport ze strumienia raportów |
+| `{"expectNoReport": true}` | brak nowego raportu po barierze |
+| `{"expectClosed": "@s"}` | gniazdo `@s` zostało zamknięte |
+
+Kody błędów `execute`: `session.timeout` (§5.4.1 pkt 3), `session.notConnected`, `session.connectionClosed` (§5.4.5), `payload.unresolvedPlaceholder` (§3.3).
+
 ## 5. Obowiązki runnera
 
 Runner **zawodzi zamknięty** (fail closed). Przebieg jest nieudany, jeśli:
@@ -178,6 +210,12 @@ Zestaw jest wersjonowany razem ze specyfikacją w repo `grenton-core-spec`. Port
 | `devices.mapping` | §6.1, §6.3 |
 | `devices.order` | §6.1 |
 | `devices.physical-objects` | §6.6 |
+| `session.correlation` | §5.4.1 |
+| `session.chunking` | §5.4.2, §5.3.2 |
+| `session.report-routing` | §5.4.3, §5.3.3 |
+| `session.keepalive` | §5.3.1 |
+| `session.lifecycle` | §5.4.5 |
+| `session.actions` | §5.3.4, §3.3 |
 
 ## 7. Utrzymanie
 

@@ -1,5 +1,13 @@
 # Changelog
 
+## Spec 0.5.0, suite 0.5.0 — 2026-09-30
+
+- New conformance profile `session` (conformance.md §4b). The operation `session.scenario` runs one CLU session against a CLU played by the runner, step by step, on a virtual clock. It has 19 scenarios covering request/response correlation, keep-alive, sequential chunked registration with sid 0, report routing by socket, lifecycle and recovery, and actions with their error codes.
+- New requirement ids: `session.correlation`, `session.chunking`, `session.report-routing`, `session.keepalive`, `session.lifecycle`, `session.actions`.
+- `case.schema.json` describes the `session.scenario` input and its steps. `tools/suite.py check` also checks cross-step rules: awaits refer to earlier calls, socket labels and `$` captures are bound before use, and every call is awaited.
+- §5.4.1 pt 3: a reply that arrives after its timeout has no pending entry and is dropped.
+- §5.4.5: the values from the recovery re-registration reach the upper layer through the report path, and a failed chunk contributes `failed` at its positions.
+
 ## Spec 0.4.6, suite 0.4.5 — 2026-09-30
 
 - `manifest.json` carries `requirements`, the requirement ids with their spec sections, so a runner can validate `specRefs` without parsing prose.

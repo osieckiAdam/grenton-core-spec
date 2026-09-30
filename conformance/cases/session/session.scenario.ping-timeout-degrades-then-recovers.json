@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "id": "session.scenario.ping-timeout-degrades-then-recovers",
+  "specRefs": [
+    "session.lifecycle",
+    "session.correlation",
+    "session.keepalive"
+  ],
+  "description": "An unanswered first ping times out after 5 s and the session is degraded; the next answered ping (same keepAliveId) makes it ready.",
+  "provenance": "spec §5.3–§5.4 text, conformance.md §4b",
+  "operation": "session.scenario",
+  "input": {
+    "clu": {
+      "id": "CLU_1",
+      "ip": "10.0.0.1",
+      "port": 1234
+    },
+    "responseTimeoutMs": 5000,
+    "steps": [
+      {
+        "call": "start",
+        "as": "start"
+      },
+      {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "checkAlive()"
+        }
+      },
+      {
+        "advance": 5000
+      },
+      {
+        "await": "start",
+        "result": null
+      },
+      {
+        "expectState": "degraded"
+      },
+      {
+        "call": "ping",
+        "as": "ping"
+      },
+      {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "checkAlive()"
+        }
+      },
+      {
+        "respond": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "1"
+        }
+      },
+      {
+        "await": "ping",
+        "result": {
+          "ok": true
+        }
+      },
+      {
+        "expectState": "ready"
+      }
+    ]
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "completed": true
+    }
+  }
+}

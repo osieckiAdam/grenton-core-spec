@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Status** | Projekt (do implementacji) |
-| **Wersja** | 0.4.6 |
+| **Wersja** | 0.5.0 |
 | **Data** | 2026-09-30 |
 | **Implementacja referencyjna** | `homeassistant-grenton` (Python, integracja Home Assistant) |
 | **Przeznaczenie** | Specyfikacja niezależna od języka — podstawa dla portów (pierwszy: Swift) |
@@ -365,7 +365,7 @@ Jedna instancja per CLU. Stan sesji:
    - jest w `pending` → zdejmij, dostarcz odpowiedź czekającemu;
    - nie ma w `pending` i ramka jest `clientReport` (msg_id `00000000` + prefiks payloadu) → ścieżka raportu (§5.4.3);
    - inaczej → log debug, odrzuć.
-3. **Timeout odpowiedzi: 5 s** — zdejmij z `pending`, zwróć błąd `TimeoutError`.
+3. **Timeout odpowiedzi: 5 s** — zdejmij z `pending`, zwróć błąd `TimeoutError`. Odpowiedź, która przyjdzie później, nie ma już `pending` i jest odrzucana jak każda nieoczekiwana ramka.
 4. Zamknięcie/awaria socketu: wszystkie `pending` kończą się błędem `ConnectionClosed`.
 
 #### 5.4.2 Chunking i rejestracja
@@ -417,7 +417,7 @@ Reguły:
 
 - `start()` i `stop()` są **idempotentne**; po `stop()` wolno wywołać `start()` ponownie na tej samej instancji (wymóg cyklu tło/pierwszy plan na mobile).
 - Operacje wieloetapowe (`start`, `register`, `stop`) są **wzajemnie zserializowane** — nie mogą się przeplatać (np. dwie równoległe rejestracje zamykające sobie nawzajem endpointy). Wywołanie w trakcie trwającej operacji czeka lub jest łączone z bieżącą.
-- Błąd `connect`/pierwszego pinga nie jest fatalny dla całego systemu — pozostałe CLU działają; sesja wchodzi w `degraded`, a pętla pingów pełni rolę retry (kolejny udany ping → re-rejestracja → `ready`). Jeżeli w `degraded` **socket główny nie istnieje** (samo jego utworzenie zawiodło), każdy tik pingu najpierw ponawia otwarcie socketu głównego, a dopiero potem wysyła ping.
+- Błąd `connect`/pierwszego pinga nie jest fatalny dla całego systemu — pozostałe CLU działają; sesja wchodzi w `degraded`, a pętla pingów pełni rolę retry (kolejny udany ping → re-rejestracja → `ready`). Wartości z tej re-rejestracji trafiają do warstwy wyżej ścieżką raportu (§5.4.3), jak z każdego endpointu; chunk, który zawiódł, wnosi `failed` na swoich pozycjach. Jeżeli w `degraded` **socket główny nie istnieje** (samo jego utworzenie zawiodło), każdy tik pingu najpierw ponawia otwarcie socketu głównego, a dopiero potem wysyła ping.
 
 ### 5.5 Magazyn stanu — `StateStore`
 
