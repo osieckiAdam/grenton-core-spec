@@ -13,6 +13,7 @@ vendor this repository and must pass the suite.
 - `python3 tools/suite.py manifest`: rebuild the manifest after changing cases.
 - `python3 tools/check_versions.py`: spec, suite, manifest and CHANGELOG versions agree.
 - Git hooks live in `tools/hooks`. Enable them once per clone: `git config core.hooksPath tools/hooks`.
+- The installation-data check needs an interface archive: `$GRENTON_INTERFACE`, `git config grenton.interface <path>`, or `../grenton-core-swift/dist/interface.zip`. A clone with no installation sets `git config grenton.interface none`.
 
 ## Rules
 
