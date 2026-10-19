@@ -3,8 +3,8 @@
 | | |
 |---|---|
 | **Status** | Projekt (do implementacji) |
-| **Wersja** | 0.6.0 |
-| **Data** | 2026-09-30 |
+| **Wersja** | 0.7.0 |
+| **Data** | 2026-10-19 |
 | **Implementacja referencyjna** | `homeassistant-grenton` (Python, integracja Home Assistant) |
 | **Przeznaczenie** | Specyfikacja niezależna od języka — podstawa dla portów (pierwszy: Swift) |
 | **Zestaw zgodności** | `conformance/` + kontrakt w [`conformance.md`](conformance.md) |
@@ -277,45 +277,54 @@ Walidacja odbioru: musi zaczynać się od `resp:` i mieć dokładnie 4 części;
 - Żądanie: payload `checkAlive()`.
 - `msg_id` pinga = **`keepAliveId`** — stały identyfikator sesji CLU, wylosowany raz (4 bajty hex) przy tworzeniu sesji. Kolejne pingi używają tego samego id (tak robi myGrenton; jednocześnie w locie jest najwyżej jeden ping, więc korelacja pozostaje jednoznaczna).
 - Odpowiedź: dowolna ramka `resp` z pasującym `msg_id`; **payload odpowiedzi jest ignorowany** — sam fakt odpowiedzi oznacza sukces.
-- Ping utrzymuje „sesję klienta" po stronie CLU — bez regularnych pingów CLU przestaje wysyłać `clientReport`.
+- Ping wykrywa, czy CLU odpowiada (§5.4.5). **Nie** przedłuża subskrypcji: CLU przestaje wysyłać `clientReport` około minutę po ostatniej rejestracji, niezależnie od pingów; subskrypcję odnawia wyłącznie re-rejestracja (§5.4.4).
 
 #### 5.3.2 Rejestracja subskrypcji (`clientRegister`)
 
 Żądanie (świeży losowy `msg_id`):
 
 ```
-SYSTEM:clientRegister(0,{sessionId},1,{K1,K2,...,Kn})
+SYSTEM:clientRegister(0,0,{session},{K1,K2,...,Kn})
 ```
 
-- `sessionId` — **zawsze `0`**. Przy niezerowej wartości CLU nie wysyła notyfikacji `clientReport`; przy `0` wysyła je przy każdej zmianie, na adres i port gniazda rejestracji. **Δ** Upstream `main` referencji (PR #12) wysyła niezerowy `sessionId`, co wyłącza push; wydanie V0.2.3 wysyła `0`.
-- Pierwsza `0` i trzecia `1` — stałe protokołu o nieznanej semantyce; wysyłać dokładnie tak.
+Argumenty to `(ip, port, session, keys)`:
+
+- `ip`, `port` — adres, na który CLU ma wysyłać notyfikacje. **`0,0` oznacza adres i port źródłowy socketu, z którego przyszła rejestracja** — Core wysyła zawsze `0,0`. Inne formy (jawny adres i port) istnieją, ale Core ich nie używa: notyfikacje mają wracać na socket sesji. Forma `ip = 0` z niezerowym `port` nie jest przenośna: część CLU wysyła wtedy notyfikacje na port źródłowy, a część nie wysyła ich wcale — działa wszędzie tylko `0,0`. **Δ** Upstream `main` referencji (PR #12) wysyła w polu `port` losową wartość, przez co CLU nie wysyła notyfikacji; wydanie V0.2.3 wysyła `0`.
+- `session` — **numer subskrypcji, dodatnia liczba całkowita**; w Core przydziela go sesja per chunk (§5.4.2). CLU rozróżnia subskrypcje trójką `(ip, port, session)`: ponowna rejestracja z tą samą trójką **zastępuje** listę kluczy; inna trójka zakłada osobną subskrypcję, także na tym samym sockecie. Numer wraca w odpowiedzi i w każdej notyfikacji (§5.3.3).
 - Klucz `Ki` dla `ValueRef.variable(name)` → `"{name}"` (w cudzysłowach); dla `ValueRef.attribute(obj, idx)` → `{{obj},{idx}}` np. `{DOU8272,0}`.
-- **Limit: maks. 30 kluczy na jedno żądanie** (empiryczny limit bufora UDP CLU; payload + padding AES musi zmieścić się w MTU).
+- **Limit rozmiaru: ramka żądania (tekst UTF-8 przed szyfrowaniem, §5.2) ma najwyżej 1471 B**, czyli datagram najwyżej 1472 B (§5.1: PKCS#7 dopełnia do wielokrotności 16) — jeden pakiet IP przy MTU 1500. Na większe żądanie część CLU nie odpowiada wcale (nie składa fragmentów IP). Limit dotyczy bajtów, nie liczby kluczy; dzielenie na chunki — §5.4.2 (jedyny wyjątek: pojedynczy klucz większy niż limit).
+- **Subskrypcja wygasa** około minutę po rejestracji, jeżeli nie zostanie odnowiona tą samą trójką (§5.4.4).
 
 Odpowiedź — payload w formacie *client report*:
 
 ```
-clientReport:{sessionId}:{v1,v2,...,vn}
+clientReport:{session}:{v1,v2,...,vn}
 ```
 
 Wartości `vi` w kolejności kluczy żądania; są to **wartości początkowe** subskrybowanych stanów. Parsowanie payloadu:
 
-1. Prefiks `clientReport:`; drugie pole = int (w praktyce zawsze `1`, niezależnie od wysłanego `sessionId` — **nie** jest to jego echo).
+1. Prefiks `clientReport:`; drugie pole = int — numer subskrypcji. Odpowiedź na rejestrację jest skorelowana przez `msg_id` (§5.4.1), więc numeru w odpowiedzi **nie sprawdza się**.
 2. Trzecia część musi być otoczona `{`…`}`; zawartość dzielona **po przecinkach**, każdy element: trim + zdjęcie cudzysłowów + `castString` (§3.1).
-3. **Semantyka błędów parsowania:** payload bez prefiksu / z niepoprawnym `sessionId` → payload odrzucony (dla odpowiedzi na rejestrację: **chunk uznany za nieudany**, §5.4.2). Poprawny prefiks i `sessionId`, ale brak nawiasów `{}` lub pusta zawartość → **pusta lista wartości**: dla odpowiedzi na rejestrację chunk nieudany (liczba wartości ≠ liczba kluczy), dla notyfikacji — raport zignorowany z logiem, bez aktualizacji stanu.
+3. **Semantyka błędów parsowania:** payload bez prefiksu / z niepoprawnym numerem → payload odrzucony (dla odpowiedzi na rejestrację: **chunk uznany za nieudany**, §5.4.2). Poprawny prefiks i numer, ale brak nawiasów `{}` lub pusta zawartość → **pusta lista wartości**: dla odpowiedzi na rejestrację chunk nieudany (liczba wartości ≠ liczba kluczy), dla notyfikacji — raport zignorowany z logiem, bez aktualizacji stanu.
 4. **Znane ograniczenie protokołu:** brak escapowania — wartość string zawierająca przecinek lub cudzysłów rozjedzie parsowanie pozycyjne. Wpisane jako ograniczenie (§10).
+
+**Wyrejestrowanie** (`clientDestroy`), świeży losowy `msg_id`:
+
+```
+SYSTEM:clientDestroy(0,0,{session})
+```
+
+Ta sama trójka co przy rejestracji; CLU przestaje wysyłać notyfikacje tej subskrypcji. Żądanie wysyła się **bez czekania na odpowiedź** — odpowiedź, jeśli przyjdzie, jest odrzucana jak każda nieoczekiwana ramka (§5.4.1 pkt 2). (CLU odpowiada numerem subskrypcji, a `nil`, gdy takiej subskrypcji nie ma — np. już wygasła.) Core wysyła je, gdy subskrypcja przestaje być potrzebna (§5.4.2 pkt 6, §5.4.5); bez niego CLU i tak przestałby wysyłać po wygaśnięciu.
 
 #### 5.3.3 Notyfikacja `clientReport`
 
 Po rejestracji CLU wysyła — bez pytania, na adres i **port źródłowy socketu, z którego przyszła rejestracja** — ramki:
 
 ```
-resp:{clu_ip}:00000000:clientReport:{sid}:{v1,...,vn}
+resp:{clu_ip}:00000000:clientReport:{session}:{v1,...,vn}
 ```
 
-przy każdej zmianie któregokolwiek subskrybowanego stanu (raport zawiera zawsze **komplet wartości** subskrypcji, w kolejności rejestracji).
-
-**Krytyczny wart protokołu:** pole `sid` w notyfikacji **nie jest wiarygodne** (nie odpowiada `sessionId` z rejestracji; w praktyce bywa zerem/śmieciem). Jedynym niezawodnym sposobem powiązania raportu z listą kluczy jest **socket, na który przyszedł**. Stąd architektura: jeden dedykowany socket UDP na każdy chunk (§5.4).
+przy każdej zmianie któregokolwiek subskrybowanego stanu (raport zawiera zawsze **komplet wartości** subskrypcji, w kolejności rejestracji). Pole `session` to numer z rejestracji (§5.3.2) — po nim sesja dopasowuje raport do listy kluczy chunka (§5.4.3). Notyfikacja to pojedynczy datagram bez potwierdzenia i bez ponowienia; zgubiony raport naprawia dopiero re-rejestracja (§5.4.4).
 
 #### 5.3.4 Akcje
 
@@ -340,11 +349,18 @@ Odpowiedź: ramka `resp` z pasującym `msg_id`; payload ignorowany (sukces = odp
 
 → req::0f3e9a11:SYSTEM:clientRegister(0,0,1,{"AnalogIn1",{DOU8272,0}})
 ← resp:192.168.1.10:0f3e9a11:clientReport:1:{21.5,"ON"}
+→ req::4d81c0e7:SYSTEM:clientRegister(0,0,2,{{DOU8273,0}})
+← resp:192.168.1.10:4d81c0e7:clientReport:2:{"OFF"}
    … później, bez pytania, na ten sam socket:
-← resp:192.168.1.10:00000000:clientReport:0:{22.0,"OFF"}
+← resp:192.168.1.10:00000000:clientReport:1:{22.0,"OFF"}
+← resp:192.168.1.10:00000000:clientReport:2:{"ON"}
 
 → req::7c2d91aa:DOU8272:set(0,"1")
 ← resp:192.168.1.10:7c2d91aa:...
+
+   … przy zatrzymaniu sesji, bez czekania na odpowiedź:
+→ req::9e02b7f3:SYSTEM:clientDestroy(0,0,1)
+→ req::c57a1d20:SYSTEM:clientDestroy(0,0,2)
 ```
 
 ### 5.4 Sesja CLU — `CluSession`
@@ -353,8 +369,8 @@ Jedna instancja per CLU. Stan sesji:
 
 - `clu` (id, ip, port), `cipher` (klucz+IV interfejsu — wspólne dla wszystkich CLU),
 - `keepAliveId` (stały, §5.3.1),
-- **socket główny** — pingi i akcje,
-- **lista endpointów subskrypcyjnych** — po jednym sockecie na chunk: `{socket, keys[≤30], sessionId}`,
+- **socket główny** — jedyny socket sesji: pingi, akcje, rejestracje i odbiór notyfikacji,
+- **lista chunków** — `{session, keys}` w kolejności kluczy, każdy w limicie ramki (§5.4.2), oraz **licznik numerów subskrypcji** (§5.4.2),
 - mapa oczekujących żądań `msg_id → pending` (korelacja odpowiedzi),
 - callback/strumień raportów do warstwy wyżej.
 
@@ -372,28 +388,33 @@ Jedna instancja per CLU. Stan sesji:
 
 `register(keys)`:
 
-1. Zamknij wszystkie dotychczasowe endpointy subskrypcyjne.
-2. Podziel `keys` (w kolejności!) na chunki po ≤30.
-3. Dla każdego chunka **po kolei** (następny dopiero po odpowiedzi lub timeoucie poprzedniego): otwórz nowy socket UDP (efemeryczny port lokalny), wyślij `clientRegister` z `sessionId` = **0** (§5.3.2 — niezerowa wartość wyłącza push) **z tego socketu**, czekaj na odpowiedź.
+1. Podziel `keys` (w kolejności!) na chunki: każdy chunk to **najdłuższy ciąg kolejnych kluczy, dla którego ramka `req::{msg_id}:SYSTEM:clientRegister(0,0,999999,{K1,...,Km})` mieści się w limicie ramki** — domyślnie 1471 B UTF-8 (§5.3.2); port może pozwolić go zmniejszyć (np. przy VPN albo PPPoE z mniejszym MTU), nie zwiększyć. Numer liczy się jako 6 cyfr niezależnie od rzeczywistego, żeby podział nie zależał od numeracji. Klucz, który sam przekracza limit, tworzy własny chunk i jest wysyłany mimo to; jego wynik zależy od CLU jak każdego chunka (pkt 4) — CLU, który nie składa fragmentów IP, nie odpowie i slot będzie `failed`. Chunk `i` **zachowuje numer** dotychczasowego chunka `i`, jeżeli jego lista kluczy jest z nim identyczna (ta sama kolejność); w każdym innym przypadku dostaje **nowy numer** z licznika sesji (kolejne liczby od `1`, licznik zerowany w `start()`; numer ma najwyżej 6 cyfr, czyli ≤ 999999, zgodnie z rezerwą w podziale). Gdy potrzebny byłby numer 1000000, sesja wyrejestrowuje wszystkie chunki, zamyka socket główny, otwiera nowy i numeruje od `1` — nowy port daje nowe trójki (§5.3.2), więc żaden numer nie wraca z inną listą na tym samym porcie. Numer nigdy nie wraca do użycia z inną listą kluczy — inaczej spóźniona notyfikacja starej listy albo zgubione żądanie z nową trafiłyby wartości na złe klucze przy tej samej ich liczbie.
+2. Dla każdego chunka **po kolei** (następny dopiero po odpowiedzi lub timeoucie poprzedniego): wyślij `clientRegister(0,0,{session},…)` **z socketu głównego**, czekaj na odpowiedź. Z chwilą wysłania chunk zapamiętuje swoje `keys` — niezależnie od wyniku, bo CLU mógł przyjąć rejestrację, choć odpowiedź nie dotarła.
+3. Rejestracja z numerem, który już istnieje po stronie CLU, **zastępuje** tamtą listę (§5.3.2); odnowienie niezmienionej listy nie wymaga więc ani nowego socketu, ani wyrejestrowania.
 4. Wynik: lista **slotów** pozycyjnie zgodna z `keys`, gdzie `Slot = failed | value(GrentonValue)`. Chunk, który zawiódł (timeout, błąd parsowania, zła liczba wartości), wnosi `failed` na swoich pozycjach — te pozycje **nie nadpisują** stanu (§5.5). **Δ** Referencja koduje awarię jako `null`, przez co prawdziwy `nil` z CLU jest nieodróżnialny od awarii; Core rozdziela te przypadki jawnym typem slotu.
-5. Endpoint zapamiętuje swoje `keys`; przychodzące na jego socket raporty są parowane pozycyjnie z tymi kluczami.
+5. Przychodzące notyfikacje są parowane pozycyjnie z `keys` chunka o tym samym numerze (§5.4.3).
+6. Po zarejestrowaniu wszystkich chunków wyślij `clientDestroy(0,0,{session})` (§5.3.2, bez czekania na odpowiedź) dla każdego **numeru, którego nowa lista już nie używa** — zastąpionego nowym numerem albo nadmiarowego, gdy chunków jest mniej — rosnąco, i zapomnij te chunki. Przy `keys = []` wyrejestruj wszystkie.
 
-**Δ Chunki sekwencyjnie, nie równolegle.** Referencja (upstream `main`, PR #12) wysyła wszystkie chunki naraz. CLU z wieloma chunkami nie nadąża z równoległymi rejestracjami i na część z nich nie odpowiada w czasie — encje tych chunków zostają bez stanu i bez push do następnej re-rejestracji (§5.4.4). Rejestracje **różnych** CLU mogą iść równolegle.
+**Δ Chunki sekwencyjnie, nie równolegle.** Referencja (upstream `main`, PR #12) wysyła wszystkie chunki naraz. CLU gubi żądania wysłane seriami: z wieloma chunkami naraz na część z nich nie odpowiada w czasie — encje tych chunków zostają bez stanu i bez push do następnej re-rejestracji (§5.4.4). Rejestracje **różnych** CLU mogą iść równolegle.
+
+**Δ Jeden socket, chunki jako numery subskrypcji.** Referencja otwiera osobny socket na każdy chunk i przy każdej re-rejestracji nowe, a starych nie wyrejestrowuje — każda poprzednia subskrypcja wysyła wtedy notyfikacje na zamknięty port aż do wygaśnięcia. Core rejestruje wszystkie chunki z socketu głównego, każdy pod własnym numerem, i odnawia je tymi samymi numerami.
 
 #### 5.4.3 Ścieżka raportu
 
-Datagram `clientReport` na sockecie endpointu → sparsuj wartości → wyemituj `(keys_endpointu, values)` do warstwy wyżej (aktualizacja `StateStore` + zdarzenia). Raport na sockecie głównym (brak przypisanych kluczy) → log debug, odrzuć.
+Datagram `clientReport` z `msg_id` `00000000` na sockecie głównym → odczytaj numer subskrypcji → chunk o tym numerze → sparsuj wartości → jeżeli ich liczba równa się liczbie `keys` chunka, wyemituj `(keys, values)` do warstwy wyżej (aktualizacja `StateStore` + zdarzenia). Numer bez chunka (np. po wyrejestrowaniu albo z poprzedniego uruchomienia sesji) albo liczba wartości różna od liczby kluczy → log debug, odrzuć.
 
 #### 5.4.4 Pętle utrzymania
 
 | Pętla | Interwał | Działanie |
 |---|---|---|
 | **Ping** | **5 s** od zakończenia poprzedniego pingu pętli (odpowiedź albo timeout) | `checkAlive()`; porażka → log warning (sesja żyje dalej — pojedynczy zgubiony ping to norma UDP) |
-| **Re-rejestracja** | **45 s** od zakończenia poprzedniej rejestracji, jeżeli lista kluczy jest niepusta | pełny `register(keys)` od nowa (nowe sockety; `sessionId` zawsze 0). Pełni dwie funkcje: odnowienie „leasingu" subskrypcji po stronie CLU oraz okresową pełną resynchronizację wartości (samonaprawa po zgubionych raportach) |
+| **Re-rejestracja** | **30 s** od **rozpoczęcia** poprzedniej rejestracji (wysłania jej pierwszego chunka), nie wcześniej niż po jej zakończeniu, jeżeli lista kluczy jest niepusta | pełny `register(keys)` od nowa: te same numery chunków z tego samego socketu (§5.4.2). Pełni dwie funkcje: odnowienie subskrypcji po stronie CLU (wygasa po około minucie, §5.3.2) oraz okresową pełną resynchronizację wartości (samonaprawa po zgubionych raportach) |
 
-Pętle należą do sesji: pętla pingów rusza po zakończeniu `start()` (także gdy sesja jest `degraded` — wtedy pełni rolę retry, §5.4.5), a obie kończą się w `stop()`. „Poprzednia rejestracja" to każda rejestracja sesji: jawne `register(keys)`, re-rejestracja po odzyskaniu połączenia (§5.4.5) i sama pętla; każda z nich odlicza 45 s od nowa. Wartości z re-rejestracji pętli trafiają do warstwy wyżej ścieżką raportu (§5.4.3), jak przy odzyskaniu połączenia. Interwały 5 s i 45 s są domyślne; port może pozwolić je skonfigurować (testy, tryby oszczędzania energii).
+Odliczanie od rozpoczęcia sprawia, że każdy chunk jest odnawiany około 30 s po swojej poprzedniej rejestracji niezależnie od tego, ile trwała cała sekwencja chunków. Interwał dobrano tak, by jedno zgubione odnowienie, jego timeout (§5.4.1 pkt 3) i naprawa przez pętlę pingów (§5.4.5) — razem 30 + 5 + 5 s — zmieściły się przed wygaśnięciem subskrypcji.
 
-**Δ** W implementacji referencyjnej pętla re-rejestracji ma drobną usterkę sekwencji (sprawdza warunek przed `sleep`, przez co pierwsza iteracja może czekać 45 s mimo braku pracy). Core specyfikuje prosto: *45 s od zakończenia poprzedniej rejestracji, jeżeli lista kluczy jest niepusta*.
+Pętle należą do sesji: pętla pingów rusza po zakończeniu `start()` (także gdy sesja jest `degraded` — wtedy pełni rolę retry, §5.4.5), a obie kończą się w `stop()`. „Poprzednia rejestracja" to każda rejestracja sesji: jawne `register(keys)`, re-rejestracja po odzyskaniu połączenia (§5.4.5) i sama pętla; każda z nich odlicza 30 s od nowa. Wartości z re-rejestracji pętli trafiają do warstwy wyżej ścieżką raportu (§5.4.3), jak przy odzyskaniu połączenia. Interwały 5 s i 30 s są domyślne; port może pozwolić je skonfigurować (testy, tryby oszczędzania energii).
+
+**Δ** Referencja odnawia co 45 s, czyli z jednym odnowieniem na czas życia subskrypcji; jej pętla ma też drobną usterkę sekwencji (sprawdza warunek przed `sleep`, przez co pierwsza iteracja może czekać 45 s mimo braku pracy). Core specyfikuje prosto: *30 s od rozpoczęcia poprzedniej rejestracji, jeżeli lista kluczy jest niepusta*.
 
 **Δ** Core dodaje: zmiana zbioru subskrypcji w trakcie życia sesji (doszły/ubyły urządzenia) wyzwala natychmiastową re-rejestrację, bez czekania na tik pętli. W implementacji referencyjnej zbiór jest budowany raz przy starcie.
 
@@ -418,10 +439,11 @@ idle ──start()──► starting ──► ready ◄──► degraded ─�
 Reguły:
 
 - `start()` i `stop()` są **idempotentne**; po `stop()` wolno wywołać `start()` ponownie na tej samej instancji (wymóg cyklu tło/pierwszy plan na mobile).
-- Operacje wieloetapowe (`start`, `register`, `stop`) są **wzajemnie zserializowane** — nie mogą się przeplatać (np. dwie równoległe rejestracje zamykające sobie nawzajem endpointy). Wywołanie w trakcie trwającej operacji czeka lub jest łączone z bieżącą.
-- Błąd `connect`/pierwszego pinga nie jest fatalny dla całego systemu — pozostałe CLU działają; sesja wchodzi w `degraded`, a pętla pingów pełni rolę retry (kolejny udany ping → re-rejestracja → `ready`). Wartości z tej re-rejestracji trafiają do warstwy wyżej ścieżką raportu (§5.4.3), jak z każdego endpointu; chunk, który zawiódł, wnosi `failed` na swoich pozycjach. Jeżeli w `degraded` **socket główny nie istnieje** (jego utworzenie zawiodło albo socket uległ awarii, §5.4.1 pkt 4), każdy tik pingu najpierw ponawia otwarcie socketu głównego, a dopiero potem wysyła ping.
+- `stop()` najpierw kończy oczekujące żądania błędem `ConnectionClosed`, potem wysyła `clientDestroy(0,0,i)` dla każdego zapamiętanego chunka (§5.3.2, bez czekania na odpowiedź), zamyka socket główny i zapomina chunki. Po ponownym `start()` lista chunków jest pusta — subskrypcje zakłada na nowo warstwa wyżej przez `register(keys)`.
+- Operacje wieloetapowe (`start`, `register`, `stop`) są **wzajemnie zserializowane** — nie mogą się przeplatać (np. dwie rejestracje mieszające numery chunków). Wywołanie w trakcie trwającej operacji czeka lub jest łączone z bieżącą.
+- Błąd `connect`/pierwszego pinga nie jest fatalny dla całego systemu — pozostałe CLU działają; sesja wchodzi w `degraded`, a pętla pingów pełni rolę retry (kolejny udany ping → re-rejestracja → `ready`). Wartości z tej re-rejestracji trafiają do warstwy wyżej ścieżką raportu (§5.4.3), jak z każdego chunka; chunk, który zawiódł, wnosi `failed` na swoich pozycjach. Jeżeli w `degraded` **socket główny nie istnieje** (jego utworzenie zawiodło albo socket uległ awarii, §5.4.1 pkt 4), każdy tik pingu najpierw ponawia otwarcie socketu głównego, a dopiero potem wysyła ping. Nowy socket główny to dla CLU nowy adres: subskrypcje założone ze starego socketu wygasają same, a re-rejestracja po udanym pingu zakłada je na nowo.
 - `execute` bez otwartego socketu głównego (`idle`, `stopped`, `degraded` bez socketu) kończy się błędem `SessionError.notConnected` i niczego nie wysyła. Akcja nie otwiera socketu sama; robi to `start()` albo ping.
-- Rejestracja przerwana przez `stop()` kończy się jak chunk, który zawiódł: `failed` na pozycjach niedokończonych chunków (§5.4.2 pkt 4).
+- Rejestracja przerwana przez `stop()` kończy się jak chunk, który zawiódł: `failed` na pozycjach niedokończonych chunków (§5.4.2 pkt 4). Chunk, którego żądanie już wyszło, jest wyrejestrowany jak każdy inny.
 
 ### 5.5 Magazyn stanu — `StateStore`
 
@@ -443,7 +465,7 @@ Operacje:
 
 Neutralnie technologicznie (aktor / kolejka szeregowa / mutex — wybór portu):
 
-1. Mutacje stanu jednej `CluSession` (mapa `pending`, lista endpointów) są zserializowane.
+1. Mutacje stanu jednej `CluSession` (mapa `pending`, lista chunków) są zserializowane.
 2. `StateStore` jest bezpieczny przy współbieżnym odczycie z wielu wątków i zapisie z sesji.
 3. Zdarzenia do konsumenta są dostarczane **w kolejności powstania** dla danego CLU.
 4. Anulowanie (shutdown) jest bezpieczne w każdym momencie i nie gubi się (pętle, oczekujące żądania).
@@ -636,7 +658,7 @@ UdpSocket.incoming: strumień/callback (bytes)                // datagramy przyc
 UdpSocket.close()
 ```
 
-Wymagania: każdy socket ma **własny lokalny port efemeryczny** (fundament routingu chunków!); odbiór unicastów na ten port; brak wymogu multicast/broadcast. Filtrowanie źródła do adresu CLU jest dopuszczalne (**Δ** — referencja go nie robi), ale implementacja portu **musi mieć przetestowany tryb bez filtrowania** (odbiór od dowolnego nadawcy) jako pełnoprawny fallback: CLU z wieloma interfejsami sieciowymi może wysyłać raporty z innego adresu źródłowego niż adres, na który słano rejestrację.
+Wymagania: socket ma **własny lokalny port efemeryczny** (to na niego CLU wysyła notyfikacje, §5.3.2); odbiór unicastów na ten port; brak wymogu multicast/broadcast. Filtrowanie źródła do adresu CLU jest dopuszczalne (**Δ** — referencja go nie robi), ale implementacja portu **musi mieć przetestowany tryb bez filtrowania** (odbiór od dowolnego nadawcy) jako pełnoprawny fallback: CLU z wieloma interfejsami sieciowymi może wysyłać raporty z innego adresu źródłowego niż adres, na który słano rejestrację.
 
 ### 7.2 `AesCbcCipher`
 
@@ -660,13 +682,13 @@ ZipReader.entry(archive: bytes, path: string) -> bytes?
 sleep(duration), now()   // z obsługą anulowania
 ```
 
-Wstrzykiwany, żeby testy sterowały czasem (pętle 5 s / 45 s, timeout 5 s).
+Wstrzykiwany, żeby testy sterowały czasem (pętle 5 s / 30 s, timeout 5 s).
 
 ### 7.5 `RandomSource`
 
 ```
 bytes(n) -> bytes        // msg_id, keepAliveId
-int(in: 1...65535) -> int // nieużywane przez sesję — sessionId zawsze 0 (§5.3.2)
+int(in: 1...65535) -> int // nieużywane przez sesję — numery subskrypcji są kolejne (§5.4.2)
 ```
 
 Wstrzykiwany dla determinizmu testów.
@@ -717,7 +739,7 @@ iv  (b64): EBESExQVFhcYGRobHB0eHw==        (hex 101112131415161718191a1b1c1d1e1f
 
 Test dwukierunkowy: encrypt(plaintext) == ciphertext oraz decrypt(ciphertext) == plaintext.
 
-Wektor z `clientRegister(0,12345,…)` to wyłącznie fixture serializacji/szyfru — sesja zawsze wysyła `sessionId` = 0 (§5.3.2).
+Wektor z `clientRegister(0,12345,…)` to wyłącznie fixture szyfru — forma jego argumentów nie jest normatywna (sesja wysyła `clientRegister(0,0,{session},…)`, §5.3.2).
 
 ### 9.2 Tabela castowania wartości
 
@@ -745,7 +767,7 @@ Testowy serwer UDP na loopbacku, z tym samym szyfrem:
 - potrafi na żądanie testu wyemitować notyfikację `clientReport` (msg_id `00000000`) na port źródłowy rejestracji,
 - scenariusze negatywne: brak odpowiedzi (timeout), zła ramka, zły padding.
 
-Na nim jeżdżą testy integracyjne sesji: rejestracja chunkowana (>30 kluczy ⇒ ≥2 sockety), routing raportów per chunk, re-rejestracja, aktualizacje magazynu stanu, akcje.
+Na nim jeżdżą testy integracyjne sesji: rejestracja chunkowana (lista kluczy ponad limit ramki ⇒ ≥2 numery subskrypcji), routing raportów po numerze, re-rejestracja, wyrejestrowanie, aktualizacje magazynu stanu, akcje.
 
 ### 9.5 Checklist zgodności portu
 
@@ -763,12 +785,13 @@ Na nim jeżdżą testy integracyjne sesji: rejestracja chunkowana (>30 kluczy �
 1. **Statyczny IV / brak MAC** — narzucone przez protokół CLU; nie do naprawienia po stronie klienta (§5.1).
 2. **Parowanie pozycyjne bez escapowania** — string z przecinkiem/cudzysłowem w wartości rozjedzie raport (§5.3.2). Ryzyko realne głównie dla zmiennych tekstowych; brak obejścia.
 3. **Format liczb w payloadach akcji:** referencja wysyła Pythonowe `str(round(v, p))` (np. `5.0` przy precision 0). **Domyślnym zachowaniem Core jest format zgodny z referencją** (CLU go przyjmuje, np. `"22.0"`). Format bez `.0` jest dostępny tylko za flagą — jego akceptacja przez CLU nie jest potwierdzona.
-4. **Limit 30 kluczy/chunk** — empiryczny; zależny od MTU. Stała konfigurowalna, default 30.
+4. **Limit ramki rejestracji 1471 B** (§5.3.2) — bajtowy, nie liczba kluczy: liczba kluczy nie chroni przed długimi nazwami zmiennych. Wynika z MTU 1500, więc port może pozwolić go zmniejszyć, gdy po drodze jest mniejsze MTU; nie może go zwiększyć, bo część CLU nie składa fragmentów IP.
 5. **Brak weryfikacji nadawcy datagramu** w referencji; Core dopuszcza filtrowanie po adresie CLU (Δ §7.1).
-6. **`sessionId` w notyfikacjach niewiarygodny** — fundament decyzji socket-per-chunk (§5.3.3); nie próbować „optymalizować" do jednego socketu.
-7. Pole `interface.pushNotifications` i tryb chmurowy — poza zakresem v1.
-8. Usterki referencji, których **nie przenosimy**: martwy kod `self.min = min` w encji LED; pusty string jako wartość początkowa; liberalne parsowanie liczb Pythona; sekwencja pętli re-rejestracji (§5.4.4).
-9. **Termostat — tryby 1/2:** semantyka trybów urlopowego i harmonogramu pochodzi z dokumentacji Grentona; zapis Mode bezpośrednio przez cechę (zamiast metod `HolidayModeStart`/`AutoModeStart`) nie jest potwierdzony na CLU.
+6. **Jeden socket na sesję, chunki jako numery subskrypcji** (§5.4.2). Wcześniejsze wydania tej specyfikacji zakładały, że numer w notyfikacji jest niewiarygodny, i wymagały socketu na chunk; to był błędny odczyt argumentów `clientRegister` (§5.3.2). Notyfikacje przychodzą na port źródłowy rejestracji, więc socket główny jest też odbiornikiem raportów.
+7. **Wygasanie subskrypcji** po około minucie jest cechą CLU, nie klienta; nie da się go wyłączyć, można tylko odnawiać (§5.4.4).
+8. Pole `interface.pushNotifications` i tryb chmurowy — poza zakresem v1.
+9. Usterki referencji, których **nie przenosimy**: martwy kod `self.min = min` w encji LED; pusty string jako wartość początkowa; liberalne parsowanie liczb Pythona; sekwencja pętli re-rejestracji (§5.4.4).
+10. **Termostat — tryby 1/2:** semantyka trybów urlopowego i harmonogramu pochodzi z dokumentacji Grentona; zapis Mode bezpośrednio przez cechę (zamiast metod `HolidayModeStart`/`AutoModeStart`) nie jest potwierdzony na CLU.
 
 ---
 
@@ -782,6 +805,6 @@ Na nim jeżdżą testy integracyjne sesji: rejestracja chunkowana (>30 kluczy �
 | **Widget** | Element interfejsu mobilnego (typ + komponenty); jednostka mapowania na urządzenie |
 | **Komponent** | Pod-element widgetu (przycisk, slider, strumień kamery) |
 | **ValueRef / ActionRef** | Referencja odczytu stanu / definicja akcji na CLU (§3.2, §3.3) |
-| **Chunk** | Porcja ≤30 kluczy subskrypcji obsługiwana przez dedykowany socket UDP |
+| **Chunk** | Porcja kluczy subskrypcji, której ramka rejestracji mieści się w limicie (§5.4.2), zarejestrowana pod własnym numerem subskrypcji (`session`) |
 | **client report** | Payload z wartościami subskrypcji — jako odpowiedź na rejestrację i jako notyfikacja |
 | **Encja kanoniczna** | Znormalizowany element urządzenia (przełącznik, czujnik…) wystawiany adapterom |

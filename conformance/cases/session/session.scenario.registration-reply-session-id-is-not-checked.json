@@ -4,7 +4,7 @@
   "specRefs": [
     "session.chunking"
   ],
-  "description": "The number after clientReport: is not an echo of sessionId (§5.3.2 pt 1); a reply with any number is accepted.",
+  "description": "The number after clientReport: in a registration reply is not checked (§5.3.2 pt 1): the reply is correlated by msg_id, so any number is accepted.",
   "provenance": "spec §5.3–§5.4 text, conformance.md §4b",
   "operation": "session.scenario",
   "input": {
@@ -59,14 +59,14 @@
       },
       {
         "expectSent": {
-          "socket": "@chunk1",
+          "socket": "@main",
           "msgId": "$r1",
           "payload": "SYSTEM:clientRegister(0,0,1,{\"x_a\",{DOU1001,0}})"
         }
       },
       {
         "respond": {
-          "socket": "@chunk1",
+          "socket": "@main",
           "msgId": "$r1",
           "payload": "clientReport:7:{0,\"OFF\"}"
         }

@@ -59,14 +59,14 @@
       },
       {
         "expectSent": {
-          "socket": "@chunk1",
+          "socket": "@main",
           "msgId": "$r1",
           "payload": "SYSTEM:clientRegister(0,0,1,{\"x_a\",{DOU1001,0}})"
         }
       },
       {
         "respond": {
-          "socket": "@chunk1",
+          "socket": "@main",
           "msgId": "$r1",
           "payload": "clientReport:1:{1}"
         }

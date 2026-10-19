@@ -5,7 +5,7 @@
     "session.chunking",
     "session.correlation"
   ],
-  "description": "A chunk that times out contributes failed slots at its positions; the next chunk is sent after the timeout.",
+  "description": "A chunk that times out contributes failed slots at its positions; the next chunk is sent after the timeout. The frame limit is set to 309 B so that exactly 30 of these keys fit.",
   "provenance": "spec §5.3–§5.4 text, conformance.md §4b",
   "operation": "session.scenario",
   "input": {
@@ -17,6 +17,7 @@
     "responseTimeoutMs": 5000,
     "pingIntervalMs": 3600000,
     "registerIntervalMs": 3600000,
+    "registerFrameLimitBytes": 309,
     "steps": [
       {
         "call": "start",
@@ -226,7 +227,7 @@
       },
       {
         "expectSent": {
-          "socket": "@chunk1",
+          "socket": "@main",
           "msgId": "$r1",
           "payload": "SYSTEM:clientRegister(0,0,1,{{OBJ,0},{OBJ,1},{OBJ,2},{OBJ,3},{OBJ,4},{OBJ,5},{OBJ,6},{OBJ,7},{OBJ,8},{OBJ,9},{OBJ,10},{OBJ,11},{OBJ,12},{OBJ,13},{OBJ,14},{OBJ,15},{OBJ,16},{OBJ,17},{OBJ,18},{OBJ,19},{OBJ,20},{OBJ,21},{OBJ,22},{OBJ,23},{OBJ,24},{OBJ,25},{OBJ,26},{OBJ,27},{OBJ,28},{OBJ,29}})"
         }
@@ -239,16 +240,16 @@
       },
       {
         "expectSent": {
-          "socket": "@chunk2",
+          "socket": "@main",
           "msgId": "$r2",
-          "payload": "SYSTEM:clientRegister(0,0,1,{{OBJ,30},{OBJ,31},{OBJ,32},{OBJ,33},{OBJ,34}})"
+          "payload": "SYSTEM:clientRegister(0,0,2,{{OBJ,30},{OBJ,31},{OBJ,32},{OBJ,33},{OBJ,34}})"
         }
       },
       {
         "respond": {
-          "socket": "@chunk2",
+          "socket": "@main",
           "msgId": "$r2",
-          "payload": "clientReport:1:{7,7,7,7,7}"
+          "payload": "clientReport:2:{7,7,7,7,7}"
         }
       },
       {

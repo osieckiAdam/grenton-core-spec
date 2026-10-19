@@ -1,10 +1,11 @@
 {
   "schemaVersion": 1,
-  "id": "session.scenario.a-registration-restarts-the-45-s-wait",
+  "id": "session.scenario.a-notification-for-a-replaced-number-is-dropped",
   "specRefs": [
-    "session.loops"
+    "session.chunking",
+    "session.report-routing"
   ],
-  "description": "An explicit registration 30 s after the previous one moves the next periodic re-registration to 45 s after it, with the new keys.",
+  "description": "After a key list was replaced under a new session number, a late notification carrying the old number is dropped, one with the new number is reported.",
   "provenance": "spec §5.3–§5.4 text, conformance.md §4b",
   "operation": "session.scenario",
   "input": {
@@ -15,6 +16,7 @@
     },
     "responseTimeoutMs": 5000,
     "pingIntervalMs": 3600000,
+    "registerIntervalMs": 3600000,
     "steps": [
       {
         "call": "start",
@@ -54,31 +56,10 @@
       },
       {
         "expectSent": {
-          "socket": "@first",
+          "socket": "@main",
           "msgId": "$m1",
           "payload": "SYSTEM:clientRegister(0,0,1,{{OBJ,0}})"
         }
-      },
-      {
-        "respond": {
-          "socket": "@first",
-          "msgId": "$m1",
-          "payload": "clientReport:1:{1}"
-        }
-      },
-      {
-        "await": "r1",
-        "result": {
-          "slots": [
-            {
-              "type": "int",
-              "value": "1"
-            }
-          ]
-        }
-      },
-      {
-        "advance": 30000
       },
       {
         "call": "register",
@@ -92,17 +73,45 @@
         "as": "r2"
       },
       {
+        "expectQuiet": true
+      },
+      {
+        "respond": {
+          "socket": "@main",
+          "msgId": "$m1",
+          "payload": "clientReport:1:{5}"
+        }
+      },
+      {
+        "await": "r1",
+        "result": {
+          "slots": [
+            {
+              "type": "int",
+              "value": "5"
+            }
+          ]
+        }
+      },
+      {
         "expectSent": {
-          "socket": "@second",
+          "socket": "@main",
           "msgId": "$m2",
-          "payload": "SYSTEM:clientRegister(0,0,1,{{OBJ,1}})"
+          "payload": "SYSTEM:clientRegister(0,0,2,{{OBJ,1}})"
         }
       },
       {
         "respond": {
-          "socket": "@second",
+          "socket": "@main",
           "msgId": "$m2",
-          "payload": "clientReport:1:{2}"
+          "payload": "clientReport:2:{6}"
+        }
+      },
+      {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$d1",
+          "payload": "SYSTEM:clientDestroy(0,0,1)"
         }
       },
       {
@@ -111,32 +120,26 @@
           "slots": [
             {
               "type": "int",
-              "value": "2"
+              "value": "6"
             }
           ]
         }
       },
       {
-        "advance": 44999
-      },
-      {
-        "expectQuiet": true
-      },
-      {
-        "advance": 1
-      },
-      {
-        "expectSent": {
-          "socket": "@third",
-          "msgId": "$m3",
-          "payload": "SYSTEM:clientRegister(0,0,1,{{OBJ,1}})"
+        "respond": {
+          "socket": "@main",
+          "msgId": "00000000",
+          "payload": "clientReport:1:{42}"
         }
       },
       {
+        "expectNoReport": true
+      },
+      {
         "respond": {
-          "socket": "@third",
-          "msgId": "$m3",
-          "payload": "clientReport:1:{2}"
+          "socket": "@main",
+          "msgId": "00000000",
+          "payload": "clientReport:2:{7}"
         }
       },
       {
@@ -151,7 +154,7 @@
           "values": [
             {
               "type": "int",
-              "value": "2"
+              "value": "7"
             }
           ]
         }

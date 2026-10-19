@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "id": "session.scenario.re-registration-runs-45-s-after-the-previous-one",
+  "id": "session.scenario.re-registration-runs-30-s-after-the-previous-one",
   "specRefs": [
     "session.chunking",
     "session.loops",
     "session.report-routing"
   ],
-  "description": "45 s after a registration ends the session registers the same keys again on a new socket, closes the old one, and reports the fresh values.",
+  "description": "30 s after a registration was sent (not after its reply) the session registers the same keys again as the same session on the main socket and reports the fresh values.",
   "provenance": "spec §5.3–§5.4 text, conformance.md §4b",
   "operation": "session.scenario",
   "input": {
@@ -60,7 +60,7 @@
       },
       {
         "expectSent": {
-          "socket": "@first",
+          "socket": "@main",
           "msgId": "$m1",
           "payload": "SYSTEM:clientRegister(0,0,1,{\"x_a\",{DOU1001,0}})"
         }
@@ -70,7 +70,7 @@
       },
       {
         "respond": {
-          "socket": "@first",
+          "socket": "@main",
           "msgId": "$m1",
           "payload": "clientReport:1:{1,\"ON\"}"
         }
@@ -91,7 +91,7 @@
         }
       },
       {
-        "advance": 44999
+        "advance": 26999
       },
       {
         "expectQuiet": true
@@ -101,17 +101,14 @@
       },
       {
         "expectSent": {
-          "socket": "@second",
+          "socket": "@main",
           "msgId": "$m2",
           "payload": "SYSTEM:clientRegister(0,0,1,{\"x_a\",{DOU1001,0}})"
         }
       },
       {
-        "expectClosed": "@first"
-      },
-      {
         "respond": {
-          "socket": "@second",
+          "socket": "@main",
           "msgId": "$m2",
           "payload": "clientReport:1:{0,\"OFF\"}"
         }
@@ -142,18 +139,18 @@
         }
       },
       {
-        "advance": 45000
+        "advance": 30000
       },
       {
         "expectSent": {
-          "socket": "@third",
+          "socket": "@main",
           "msgId": "$m3",
           "payload": "SYSTEM:clientRegister(0,0,1,{\"x_a\",{DOU1001,0}})"
         }
       },
       {
         "respond": {
-          "socket": "@third",
+          "socket": "@main",
           "msgId": "$m3",
           "payload": "clientReport:1:{0,\"OFF\"}"
         }

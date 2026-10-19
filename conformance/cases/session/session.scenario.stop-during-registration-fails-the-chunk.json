@@ -5,7 +5,7 @@
     "session.lifecycle",
     "session.chunking"
   ],
-  "description": "stop() while a chunk awaits its reply ends that request, so the chunk contributes failed slots, and closes the chunk socket too.",
+  "description": "stop() while a chunk awaits its reply ends that request, so the chunk contributes failed slots; the chunk is still destroyed, because the CLU may have accepted it.",
   "provenance": "spec §5.3–§5.4 text, conformance.md §4b",
   "operation": "session.scenario",
   "input": {
@@ -60,7 +60,7 @@
       },
       {
         "expectSent": {
-          "socket": "@chunk",
+          "socket": "@main",
           "msgId": "$m",
           "payload": "SYSTEM:clientRegister(0,0,1,{\"x_a\",{DOU1001,0}})"
         }
@@ -87,7 +87,11 @@
         }
       },
       {
-        "expectClosed": "@chunk"
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$d",
+          "payload": "SYSTEM:clientDestroy(0,0,1)"
+        }
       },
       {
         "expectClosed": "@main"

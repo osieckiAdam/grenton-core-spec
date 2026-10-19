@@ -42,13 +42,13 @@
         "expectState": "ready"
       },
       {
-        "advance": 45000
+        "advance": 30000
       },
       {
         "expectQuiet": true
       },
       {
-        "advance": 45000
+        "advance": 30000
       },
       {
         "expectQuiet": true

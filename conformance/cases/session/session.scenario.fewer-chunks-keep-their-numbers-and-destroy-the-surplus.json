@@ -1,10 +1,11 @@
 {
   "schemaVersion": 1,
-  "id": "session.scenario.notifications-are-routed-by-socket",
+  "id": "session.scenario.fewer-chunks-keep-their-numbers-and-destroy-the-surplus",
   "specRefs": [
+    "session.chunking",
     "session.report-routing"
   ],
-  "description": "A clientReport notification is paired with the keys of the chunk whose socket received it, whatever its sid; one on the main socket is dropped.",
+  "description": "Registering only the first chunk's keys again keeps session 1 (same list) and destroys the surplus session 2; a later notification for session 2 is dropped. The frame limit is set to 309 B so that exactly 30 of these keys fit.",
   "provenance": "spec §5.3–§5.4 text, conformance.md §4b",
   "operation": "session.scenario",
   "input": {
@@ -16,6 +17,7 @@
     "responseTimeoutMs": 5000,
     "pingIntervalMs": 3600000,
     "registerIntervalMs": 3600000,
+    "registerFrameLimitBytes": 309,
     "steps": [
       {
         "call": "start",
@@ -225,30 +227,33 @@
       },
       {
         "expectSent": {
-          "socket": "@chunk1",
+          "socket": "@main",
           "msgId": "$r1",
           "payload": "SYSTEM:clientRegister(0,0,1,{{OBJ,0},{OBJ,1},{OBJ,2},{OBJ,3},{OBJ,4},{OBJ,5},{OBJ,6},{OBJ,7},{OBJ,8},{OBJ,9},{OBJ,10},{OBJ,11},{OBJ,12},{OBJ,13},{OBJ,14},{OBJ,15},{OBJ,16},{OBJ,17},{OBJ,18},{OBJ,19},{OBJ,20},{OBJ,21},{OBJ,22},{OBJ,23},{OBJ,24},{OBJ,25},{OBJ,26},{OBJ,27},{OBJ,28},{OBJ,29}})"
         }
       },
       {
+        "expectQuiet": true
+      },
+      {
         "respond": {
-          "socket": "@chunk1",
+          "socket": "@main",
           "msgId": "$r1",
-          "payload": "clientReport:1:{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}"
+          "payload": "clientReport:1:{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29}"
         }
       },
       {
         "expectSent": {
-          "socket": "@chunk2",
+          "socket": "@main",
           "msgId": "$r2",
-          "payload": "SYSTEM:clientRegister(0,0,1,{{OBJ,30},{OBJ,31},{OBJ,32},{OBJ,33},{OBJ,34}})"
+          "payload": "SYSTEM:clientRegister(0,0,2,{{OBJ,30},{OBJ,31},{OBJ,32},{OBJ,33},{OBJ,34}})"
         }
       },
       {
         "respond": {
-          "socket": "@chunk2",
+          "socket": "@main",
           "msgId": "$r2",
-          "payload": "clientReport:1:{0,0,0,0,0}"
+          "payload": "clientReport:2:{30,31,32,33,34}"
         }
       },
       {
@@ -259,182 +264,6 @@
               "type": "int",
               "value": "0"
             },
-            {
-              "type": "int",
-              "value": "0"
-            },
-            {
-              "type": "int",
-              "value": "0"
-            },
-            {
-              "type": "int",
-              "value": "0"
-            },
-            {
-              "type": "int",
-              "value": "0"
-            },
-            {
-              "type": "int",
-              "value": "0"
-            },
-            {
-              "type": "int",
-              "value": "0"
-            },
-            {
-              "type": "int",
-              "value": "0"
-            },
-            {
-              "type": "int",
-              "value": "0"
-            },
-            {
-              "type": "int",
-              "value": "0"
-            },
-            {
-              "type": "int",
-              "value": "0"
-            },
-            {
-              "type": "int",
-              "value": "0"
-            },
-            {
-              "type": "int",
-              "value": "0"
-            },
-            {
-              "type": "int",
-              "value": "0"
-            },
-            {
-              "type": "int",
-              "value": "0"
-            },
-            {
-              "type": "int",
-              "value": "0"
-            },
-            {
-              "type": "int",
-              "value": "0"
-            },
-            {
-              "type": "int",
-              "value": "0"
-            },
-            {
-              "type": "int",
-              "value": "0"
-            },
-            {
-              "type": "int",
-              "value": "0"
-            },
-            {
-              "type": "int",
-              "value": "0"
-            },
-            {
-              "type": "int",
-              "value": "0"
-            },
-            {
-              "type": "int",
-              "value": "0"
-            },
-            {
-              "type": "int",
-              "value": "0"
-            },
-            {
-              "type": "int",
-              "value": "0"
-            },
-            {
-              "type": "int",
-              "value": "0"
-            },
-            {
-              "type": "int",
-              "value": "0"
-            },
-            {
-              "type": "int",
-              "value": "0"
-            },
-            {
-              "type": "int",
-              "value": "0"
-            },
-            {
-              "type": "int",
-              "value": "0"
-            },
-            {
-              "type": "int",
-              "value": "0"
-            },
-            {
-              "type": "int",
-              "value": "0"
-            },
-            {
-              "type": "int",
-              "value": "0"
-            },
-            {
-              "type": "int",
-              "value": "0"
-            },
-            {
-              "type": "int",
-              "value": "0"
-            }
-          ]
-        }
-      },
-      {
-        "respond": {
-          "socket": "@chunk2",
-          "msgId": "00000000",
-          "payload": "clientReport:0:{1,2,3,4,5}"
-        }
-      },
-      {
-        "expectReport": {
-          "keys": [
-            {
-              "type": "attribute",
-              "objectName": "OBJ",
-              "index": "30"
-            },
-            {
-              "type": "attribute",
-              "objectName": "OBJ",
-              "index": "31"
-            },
-            {
-              "type": "attribute",
-              "objectName": "OBJ",
-              "index": "32"
-            },
-            {
-              "type": "attribute",
-              "objectName": "OBJ",
-              "index": "33"
-            },
-            {
-              "type": "attribute",
-              "objectName": "OBJ",
-              "index": "34"
-            }
-          ],
-          "values": [
             {
               "type": "int",
               "value": "1"
@@ -454,300 +283,438 @@
             {
               "type": "int",
               "value": "5"
+            },
+            {
+              "type": "int",
+              "value": "6"
+            },
+            {
+              "type": "int",
+              "value": "7"
+            },
+            {
+              "type": "int",
+              "value": "8"
+            },
+            {
+              "type": "int",
+              "value": "9"
+            },
+            {
+              "type": "int",
+              "value": "10"
+            },
+            {
+              "type": "int",
+              "value": "11"
+            },
+            {
+              "type": "int",
+              "value": "12"
+            },
+            {
+              "type": "int",
+              "value": "13"
+            },
+            {
+              "type": "int",
+              "value": "14"
+            },
+            {
+              "type": "int",
+              "value": "15"
+            },
+            {
+              "type": "int",
+              "value": "16"
+            },
+            {
+              "type": "int",
+              "value": "17"
+            },
+            {
+              "type": "int",
+              "value": "18"
+            },
+            {
+              "type": "int",
+              "value": "19"
+            },
+            {
+              "type": "int",
+              "value": "20"
+            },
+            {
+              "type": "int",
+              "value": "21"
+            },
+            {
+              "type": "int",
+              "value": "22"
+            },
+            {
+              "type": "int",
+              "value": "23"
+            },
+            {
+              "type": "int",
+              "value": "24"
+            },
+            {
+              "type": "int",
+              "value": "25"
+            },
+            {
+              "type": "int",
+              "value": "26"
+            },
+            {
+              "type": "int",
+              "value": "27"
+            },
+            {
+              "type": "int",
+              "value": "28"
+            },
+            {
+              "type": "int",
+              "value": "29"
+            },
+            {
+              "type": "int",
+              "value": "30"
+            },
+            {
+              "type": "int",
+              "value": "31"
+            },
+            {
+              "type": "int",
+              "value": "32"
+            },
+            {
+              "type": "int",
+              "value": "33"
+            },
+            {
+              "type": "int",
+              "value": "34"
             }
           ]
         }
       },
       {
-        "respond": {
-          "socket": "@chunk1",
-          "msgId": "00000000",
-          "payload": "clientReport:12345:{9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9}"
-        }
+        "call": "register",
+        "keys": [
+          {
+            "type": "attribute",
+            "objectName": "OBJ",
+            "index": "0"
+          },
+          {
+            "type": "attribute",
+            "objectName": "OBJ",
+            "index": "1"
+          },
+          {
+            "type": "attribute",
+            "objectName": "OBJ",
+            "index": "2"
+          },
+          {
+            "type": "attribute",
+            "objectName": "OBJ",
+            "index": "3"
+          },
+          {
+            "type": "attribute",
+            "objectName": "OBJ",
+            "index": "4"
+          },
+          {
+            "type": "attribute",
+            "objectName": "OBJ",
+            "index": "5"
+          },
+          {
+            "type": "attribute",
+            "objectName": "OBJ",
+            "index": "6"
+          },
+          {
+            "type": "attribute",
+            "objectName": "OBJ",
+            "index": "7"
+          },
+          {
+            "type": "attribute",
+            "objectName": "OBJ",
+            "index": "8"
+          },
+          {
+            "type": "attribute",
+            "objectName": "OBJ",
+            "index": "9"
+          },
+          {
+            "type": "attribute",
+            "objectName": "OBJ",
+            "index": "10"
+          },
+          {
+            "type": "attribute",
+            "objectName": "OBJ",
+            "index": "11"
+          },
+          {
+            "type": "attribute",
+            "objectName": "OBJ",
+            "index": "12"
+          },
+          {
+            "type": "attribute",
+            "objectName": "OBJ",
+            "index": "13"
+          },
+          {
+            "type": "attribute",
+            "objectName": "OBJ",
+            "index": "14"
+          },
+          {
+            "type": "attribute",
+            "objectName": "OBJ",
+            "index": "15"
+          },
+          {
+            "type": "attribute",
+            "objectName": "OBJ",
+            "index": "16"
+          },
+          {
+            "type": "attribute",
+            "objectName": "OBJ",
+            "index": "17"
+          },
+          {
+            "type": "attribute",
+            "objectName": "OBJ",
+            "index": "18"
+          },
+          {
+            "type": "attribute",
+            "objectName": "OBJ",
+            "index": "19"
+          },
+          {
+            "type": "attribute",
+            "objectName": "OBJ",
+            "index": "20"
+          },
+          {
+            "type": "attribute",
+            "objectName": "OBJ",
+            "index": "21"
+          },
+          {
+            "type": "attribute",
+            "objectName": "OBJ",
+            "index": "22"
+          },
+          {
+            "type": "attribute",
+            "objectName": "OBJ",
+            "index": "23"
+          },
+          {
+            "type": "attribute",
+            "objectName": "OBJ",
+            "index": "24"
+          },
+          {
+            "type": "attribute",
+            "objectName": "OBJ",
+            "index": "25"
+          },
+          {
+            "type": "attribute",
+            "objectName": "OBJ",
+            "index": "26"
+          },
+          {
+            "type": "attribute",
+            "objectName": "OBJ",
+            "index": "27"
+          },
+          {
+            "type": "attribute",
+            "objectName": "OBJ",
+            "index": "28"
+          },
+          {
+            "type": "attribute",
+            "objectName": "OBJ",
+            "index": "29"
+          }
+        ],
+        "as": "r2"
       },
       {
-        "expectReport": {
-          "keys": [
-            {
-              "type": "attribute",
-              "objectName": "OBJ",
-              "index": "0"
-            },
-            {
-              "type": "attribute",
-              "objectName": "OBJ",
-              "index": "1"
-            },
-            {
-              "type": "attribute",
-              "objectName": "OBJ",
-              "index": "2"
-            },
-            {
-              "type": "attribute",
-              "objectName": "OBJ",
-              "index": "3"
-            },
-            {
-              "type": "attribute",
-              "objectName": "OBJ",
-              "index": "4"
-            },
-            {
-              "type": "attribute",
-              "objectName": "OBJ",
-              "index": "5"
-            },
-            {
-              "type": "attribute",
-              "objectName": "OBJ",
-              "index": "6"
-            },
-            {
-              "type": "attribute",
-              "objectName": "OBJ",
-              "index": "7"
-            },
-            {
-              "type": "attribute",
-              "objectName": "OBJ",
-              "index": "8"
-            },
-            {
-              "type": "attribute",
-              "objectName": "OBJ",
-              "index": "9"
-            },
-            {
-              "type": "attribute",
-              "objectName": "OBJ",
-              "index": "10"
-            },
-            {
-              "type": "attribute",
-              "objectName": "OBJ",
-              "index": "11"
-            },
-            {
-              "type": "attribute",
-              "objectName": "OBJ",
-              "index": "12"
-            },
-            {
-              "type": "attribute",
-              "objectName": "OBJ",
-              "index": "13"
-            },
-            {
-              "type": "attribute",
-              "objectName": "OBJ",
-              "index": "14"
-            },
-            {
-              "type": "attribute",
-              "objectName": "OBJ",
-              "index": "15"
-            },
-            {
-              "type": "attribute",
-              "objectName": "OBJ",
-              "index": "16"
-            },
-            {
-              "type": "attribute",
-              "objectName": "OBJ",
-              "index": "17"
-            },
-            {
-              "type": "attribute",
-              "objectName": "OBJ",
-              "index": "18"
-            },
-            {
-              "type": "attribute",
-              "objectName": "OBJ",
-              "index": "19"
-            },
-            {
-              "type": "attribute",
-              "objectName": "OBJ",
-              "index": "20"
-            },
-            {
-              "type": "attribute",
-              "objectName": "OBJ",
-              "index": "21"
-            },
-            {
-              "type": "attribute",
-              "objectName": "OBJ",
-              "index": "22"
-            },
-            {
-              "type": "attribute",
-              "objectName": "OBJ",
-              "index": "23"
-            },
-            {
-              "type": "attribute",
-              "objectName": "OBJ",
-              "index": "24"
-            },
-            {
-              "type": "attribute",
-              "objectName": "OBJ",
-              "index": "25"
-            },
-            {
-              "type": "attribute",
-              "objectName": "OBJ",
-              "index": "26"
-            },
-            {
-              "type": "attribute",
-              "objectName": "OBJ",
-              "index": "27"
-            },
-            {
-              "type": "attribute",
-              "objectName": "OBJ",
-              "index": "28"
-            },
-            {
-              "type": "attribute",
-              "objectName": "OBJ",
-              "index": "29"
-            }
-          ],
-          "values": [
-            {
-              "type": "int",
-              "value": "9"
-            },
-            {
-              "type": "int",
-              "value": "9"
-            },
-            {
-              "type": "int",
-              "value": "9"
-            },
-            {
-              "type": "int",
-              "value": "9"
-            },
-            {
-              "type": "int",
-              "value": "9"
-            },
-            {
-              "type": "int",
-              "value": "9"
-            },
-            {
-              "type": "int",
-              "value": "9"
-            },
-            {
-              "type": "int",
-              "value": "9"
-            },
-            {
-              "type": "int",
-              "value": "9"
-            },
-            {
-              "type": "int",
-              "value": "9"
-            },
-            {
-              "type": "int",
-              "value": "9"
-            },
-            {
-              "type": "int",
-              "value": "9"
-            },
-            {
-              "type": "int",
-              "value": "9"
-            },
-            {
-              "type": "int",
-              "value": "9"
-            },
-            {
-              "type": "int",
-              "value": "9"
-            },
-            {
-              "type": "int",
-              "value": "9"
-            },
-            {
-              "type": "int",
-              "value": "9"
-            },
-            {
-              "type": "int",
-              "value": "9"
-            },
-            {
-              "type": "int",
-              "value": "9"
-            },
-            {
-              "type": "int",
-              "value": "9"
-            },
-            {
-              "type": "int",
-              "value": "9"
-            },
-            {
-              "type": "int",
-              "value": "9"
-            },
-            {
-              "type": "int",
-              "value": "9"
-            },
-            {
-              "type": "int",
-              "value": "9"
-            },
-            {
-              "type": "int",
-              "value": "9"
-            },
-            {
-              "type": "int",
-              "value": "9"
-            },
-            {
-              "type": "int",
-              "value": "9"
-            },
-            {
-              "type": "int",
-              "value": "9"
-            },
-            {
-              "type": "int",
-              "value": "9"
-            },
-            {
-              "type": "int",
-              "value": "9"
-            }
-          ]
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$m3",
+          "payload": "SYSTEM:clientRegister(0,0,1,{{OBJ,0},{OBJ,1},{OBJ,2},{OBJ,3},{OBJ,4},{OBJ,5},{OBJ,6},{OBJ,7},{OBJ,8},{OBJ,9},{OBJ,10},{OBJ,11},{OBJ,12},{OBJ,13},{OBJ,14},{OBJ,15},{OBJ,16},{OBJ,17},{OBJ,18},{OBJ,19},{OBJ,20},{OBJ,21},{OBJ,22},{OBJ,23},{OBJ,24},{OBJ,25},{OBJ,26},{OBJ,27},{OBJ,28},{OBJ,29}})"
         }
       },
       {
         "respond": {
           "socket": "@main",
+          "msgId": "$m3",
+          "payload": "clientReport:1:{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29}"
+        }
+      },
+      {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$d2",
+          "payload": "SYSTEM:clientDestroy(0,0,2)"
+        }
+      },
+      {
+        "await": "r2",
+        "result": {
+          "slots": [
+            {
+              "type": "int",
+              "value": "0"
+            },
+            {
+              "type": "int",
+              "value": "1"
+            },
+            {
+              "type": "int",
+              "value": "2"
+            },
+            {
+              "type": "int",
+              "value": "3"
+            },
+            {
+              "type": "int",
+              "value": "4"
+            },
+            {
+              "type": "int",
+              "value": "5"
+            },
+            {
+              "type": "int",
+              "value": "6"
+            },
+            {
+              "type": "int",
+              "value": "7"
+            },
+            {
+              "type": "int",
+              "value": "8"
+            },
+            {
+              "type": "int",
+              "value": "9"
+            },
+            {
+              "type": "int",
+              "value": "10"
+            },
+            {
+              "type": "int",
+              "value": "11"
+            },
+            {
+              "type": "int",
+              "value": "12"
+            },
+            {
+              "type": "int",
+              "value": "13"
+            },
+            {
+              "type": "int",
+              "value": "14"
+            },
+            {
+              "type": "int",
+              "value": "15"
+            },
+            {
+              "type": "int",
+              "value": "16"
+            },
+            {
+              "type": "int",
+              "value": "17"
+            },
+            {
+              "type": "int",
+              "value": "18"
+            },
+            {
+              "type": "int",
+              "value": "19"
+            },
+            {
+              "type": "int",
+              "value": "20"
+            },
+            {
+              "type": "int",
+              "value": "21"
+            },
+            {
+              "type": "int",
+              "value": "22"
+            },
+            {
+              "type": "int",
+              "value": "23"
+            },
+            {
+              "type": "int",
+              "value": "24"
+            },
+            {
+              "type": "int",
+              "value": "25"
+            },
+            {
+              "type": "int",
+              "value": "26"
+            },
+            {
+              "type": "int",
+              "value": "27"
+            },
+            {
+              "type": "int",
+              "value": "28"
+            },
+            {
+              "type": "int",
+              "value": "29"
+            }
+          ]
+        }
+      },
+      {
+        "expectQuiet": true
+      },
+      {
+        "respond": {
+          "socket": "@main",
           "msgId": "00000000",
-          "payload": "clientReport:0:{1}"
+          "payload": "clientReport:2:{1,2,3,4,5}"
         }
       },
       {

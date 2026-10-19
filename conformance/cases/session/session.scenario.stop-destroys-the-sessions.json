@@ -1,10 +1,11 @@
 {
   "schemaVersion": 1,
-  "id": "session.scenario.register-one-chunk-with-session-id-0",
+  "id": "session.scenario.stop-destroys-the-sessions",
   "specRefs": [
+    "session.lifecycle",
     "session.chunking"
   ],
-  "description": "Up to 30 keys go in one clientRegister with sessionId 0, sent from a new socket; the reply's values become slots in key order.",
+  "description": "stop() sends clientDestroy for every registered session before closing the main socket.",
   "provenance": "spec §5.3–§5.4 text, conformance.md §4b",
   "operation": "session.scenario",
   "input": {
@@ -59,15 +60,15 @@
       },
       {
         "expectSent": {
-          "socket": "@chunk1",
-          "msgId": "$r1",
+          "socket": "@main",
+          "msgId": "$m1",
           "payload": "SYSTEM:clientRegister(0,0,1,{\"x_a\",{DOU1001,0}})"
         }
       },
       {
         "respond": {
-          "socket": "@chunk1",
-          "msgId": "$r1",
+          "socket": "@main",
+          "msgId": "$m1",
           "payload": "clientReport:1:{1,\"ON\"}"
         }
       },
@@ -85,6 +86,27 @@
             }
           ]
         }
+      },
+      {
+        "call": "stop",
+        "as": "stop"
+      },
+      {
+        "await": "stop",
+        "result": null
+      },
+      {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$d",
+          "payload": "SYSTEM:clientDestroy(0,0,1)"
+        }
+      },
+      {
+        "expectClosed": "@main"
+      },
+      {
+        "expectState": "stopped"
       }
     ]
   },

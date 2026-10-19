@@ -4,7 +4,7 @@
   "specRefs": [
     "payload.register"
   ],
-  "description": "The builder renders any sessionId verbatim; the session policy (always 0) is tested elsewhere.",
+  "description": "The builder renders any sessionId verbatim as the third argument; which numbers a session uses is tested in the session profile.",
   "provenance": "spec §9.1 fixture",
   "operation": "payload.register",
   "input": {
@@ -24,7 +24,7 @@
   "expect": {
     "outcome": "ok",
     "value": {
-      "payload": "SYSTEM:clientRegister(0,12345,1,{\"AnalogIn1\",{DOU8272,0}})"
+      "payload": "SYSTEM:clientRegister(0,0,12345,{\"AnalogIn1\",{DOU8272,0}})"
     }
   }
 }

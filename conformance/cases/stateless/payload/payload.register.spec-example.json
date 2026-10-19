@@ -8,7 +8,7 @@
   "provenance": "spec §5.3.2 + §5.3.5",
   "operation": "payload.register",
   "input": {
-    "sessionId": 0,
+    "sessionId": 1,
     "keys": [
       {
         "type": "variable",

@@ -27,8 +27,8 @@ FIXTURES = os.path.join(CONFORMANCE, "fixtures")
 MANIFEST = os.path.join(CONFORMANCE, "manifest.json")
 
 SCHEMA_VERSION = 1
-SUITE_VERSION = "0.6.0"
-SPEC_VERSION = "0.6.0"
+SUITE_VERSION = "0.7.0"
+SPEC_VERSION = "0.7.0"
 
 # operation -> (profile, required input keys, optional input keys)
 OPERATIONS = {
@@ -45,7 +45,7 @@ OPERATIONS = {
     "coercion.truthy": ("stateless", {"value"}, set()),
     "number.format": ("stateless", {"value", "precision"}, set()),
     "mapping.interface": ("mapping", {"fixture"}, set()),
-    "session.scenario": ("session", {"clu", "responseTimeoutMs", "steps"}, {"pingIntervalMs", "registerIntervalMs"}),
+    "session.scenario": ("session", {"clu", "responseTimeoutMs", "steps"}, {"pingIntervalMs", "registerIntervalMs", "registerFrameLimitBytes"}),
 }
 
 # Stable requirement ids -> spec sections (see spec/conformance.md).
@@ -164,6 +164,59 @@ EXECUTE_ERRORS = {"session.timeout", "session.notConnected", "session.connection
                   "payload.unresolvedPlaceholder"}
 
 
+DEFAULT_REGISTER_FRAME_LIMIT = 1471   # spec §5.3.2: UTF-8 frame bytes; the datagram is then ≤ 1472 B
+REGISTER_RE = re.compile(r"^SYSTEM:clientRegister\(0,0,(\d+),\{(.*)\}\)$")
+
+
+def render_key(key):
+    return f'"{key["name"]}"' if key["type"] == "variable" else f'{{{key["objectName"]},{key["index"]}}}'
+
+
+def register_frame_bytes(rendered):
+    """Spec §5.4.2 pt 1: the frame with the number counted as six digits."""
+    return len(f"req::00000000:SYSTEM:clientRegister(0,0,999999,{{{','.join(rendered)}}})".encode("utf-8"))
+
+
+def greedy_chunks(rendered, limit):
+    """Spec §5.4.2 pt 1, from the first key: each chunk is the longest run that
+    fits; a key larger than the limit alone is a chunk of its own."""
+    chunks, i = [], 0
+    while i < len(rendered):
+        j = i + 1
+        while j < len(rendered) and register_frame_bytes(rendered[i:j + 1]) <= limit:
+            j += 1
+        chunks.append(",".join(rendered[i:j]))
+        i = j
+    return chunks
+
+
+def check_chunking(doc, errors):
+    """Every expected clientRegister is the next chunk of the greedy split of
+    the last registered key list. A registration (explicit, renewal or
+    recovery) always starts again from the first chunk."""
+    where = doc["id"]
+    limit = doc["input"].get("registerFrameLimitBytes", DEFAULT_REGISTER_FRAME_LIMIT)
+    if not isinstance(limit, int) or not 1 <= limit <= DEFAULT_REGISTER_FRAME_LIMIT:
+        errors.append(f"{where}: registerFrameLimitBytes must be 1…{DEFAULT_REGISTER_FRAME_LIMIT}")
+        return
+    chunks, nxt = [], 0
+    for n, step in enumerate(doc["input"]["steps"]):
+        if step.get("call") == "register":
+            chunks, nxt = greedy_chunks([render_key(k) for k in step["keys"]], limit), 0
+            continue
+        sent = step.get("expectSent")
+        match = REGISTER_RE.match(sent["payload"]) if isinstance(sent, dict) and isinstance(sent.get("payload"), str) else None
+        if not match:
+            continue
+        body = match.group(2)
+        if nxt < len(chunks) and body == chunks[nxt]:
+            nxt += 1
+        elif chunks and body == chunks[0]:
+            nxt = 1
+        else:
+            errors.append(f"{where}: step {n}: expected chunk {nxt + 1} of the {limit} B split, or chunk 1 of a new registration")
+
+
 def check_scenario(doc, errors):
     """Static checks: known verbs and fields, awaits refer to earlier calls,
     socket labels and captured ids are bound before they are used."""
@@ -244,7 +297,7 @@ def check_scenario(doc, errors):
 
 SCHEMA_PATH = os.path.join(CONFORMANCE, "schemas", "case.schema.json")
 SCHEMA_KEYWORDS = {"$schema", "$id", "$defs", "$ref", "title", "description", "type", "const", "enum",
-                   "pattern", "minimum", "required", "properties", "additionalProperties", "items",
+                   "pattern", "minimum", "maximum", "required", "properties", "additionalProperties", "items",
                    "minItems", "allOf", "oneOf", "if", "then"}
 
 
@@ -284,6 +337,8 @@ def schema_errors(value, schema, root, path="$"):
         yield f"{path}: does not match {schema['pattern']}"
     if "minimum" in schema and isinstance(value, (int, float)) and value < schema["minimum"]:
         yield f"{path}: must be ≥ {schema['minimum']}"
+    if "maximum" in schema and isinstance(value, (int, float)) and value > schema["maximum"]:
+        yield f"{path}: must be ≤ {schema['maximum']}"
     if isinstance(value, dict):
         for key in schema.get("required", []):
             if key not in value:
@@ -325,6 +380,7 @@ def oracle(doc, errors):
             errors.append(f"{where}: openssl gives {got}, case expects {want}")
     if op == "session.scenario":
         check_scenario(doc, errors)
+        check_chunking(doc, errors)
         if exp != {"outcome": "ok", "value": {"completed": True}}:
             errors.append(f"{where}: a scenario expects {{outcome: ok, value: {{completed: true}}}}")
     if op == "mapping.interface":

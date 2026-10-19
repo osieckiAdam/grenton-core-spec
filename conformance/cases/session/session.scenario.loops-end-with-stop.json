@@ -5,7 +5,7 @@
     "session.lifecycle",
     "session.loops"
   ],
-  "description": "After stop() neither loop sends anything, however much time passes.",
+  "description": "After stop() the session destroys its session on the CLU and neither loop sends anything, however much time passes.",
   "provenance": "spec §5.3–§5.4 text, conformance.md §4b",
   "operation": "session.scenario",
   "input": {
@@ -58,14 +58,14 @@
       },
       {
         "expectSent": {
-          "socket": "@chunk",
+          "socket": "@main",
           "msgId": "$m",
           "payload": "SYSTEM:clientRegister(0,0,1,{\"x_a\",{DOU1001,0}})"
         }
       },
       {
         "respond": {
-          "socket": "@chunk",
+          "socket": "@main",
           "msgId": "$m",
           "payload": "clientReport:1:{1,\"ON\"}"
         }
@@ -94,13 +94,20 @@
         "result": null
       },
       {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$d",
+          "payload": "SYSTEM:clientDestroy(0,0,1)"
+        }
+      },
+      {
         "advance": 5000
       },
       {
         "expectQuiet": true
       },
       {
-        "advance": 45000
+        "advance": 30000
       },
       {
         "expectQuiet": true

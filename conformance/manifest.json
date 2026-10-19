@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "suiteVersion": "0.6.0",
-  "specVersion": "0.6.0",
+  "suiteVersion": "0.7.0",
+  "specVersion": "0.7.0",
   "profiles": {
     "mapping": [
       "mapping.interface"
@@ -436,17 +436,17 @@
     {
       "id": "payload.register.nonzero-session-id",
       "path": "cases/stateless/payload/payload.register.nonzero-session-id.json",
-      "sha256": "485497628cc6b76af1100faaad5b51ed40ce203e645712514dd7c8edfdacec41"
+      "sha256": "a728fd55a046571354ba3790f1b4fccae2d0736f56e87f9f805dfce2b01cd576"
     },
     {
       "id": "payload.register.single-attribute",
       "path": "cases/stateless/payload/payload.register.single-attribute.json",
-      "sha256": "a700877a5a4e16fec0aef938bfa5094bf84365cbee471ed48bc995cfde8b6b70"
+      "sha256": "e8d151d9d39e3865ae6cc08af185fb52b7c164f04d3876e8ed0981edcb7ba7bc"
     },
     {
       "id": "payload.register.spec-example",
       "path": "cases/stateless/payload/payload.register.spec-example.json",
-      "sha256": "504a97e744417d3aa7a6e35a133b747c2ea9634a54ff6fd1f14d9f9e0f25e5a4"
+      "sha256": "e50598ef16732c68ec5248d33b6befd11548abf45771361c238fd7ff1e9bd89c"
     },
     {
       "id": "payload.report.empty-braces",
@@ -594,14 +594,39 @@
       "sha256": "a4365bf4fd21929e63bdc62ac2e776888d0f9e7d203ece02aa34ab3f031a6bc4"
     },
     {
-      "id": "session.scenario.a-registration-restarts-the-45-s-wait",
-      "path": "cases/session/session.scenario.a-registration-restarts-the-45-s-wait.json",
-      "sha256": "4a83f390c733bd57a8acf46a1db2b7438bcc2fdf1fd401c8fb353c2405f6ddf0"
+      "id": "session.scenario.a-changed-key-list-gets-a-new-session",
+      "path": "cases/session/session.scenario.a-changed-key-list-gets-a-new-session.json",
+      "sha256": "5e4b18724b861241ca1170f2d49baea38a1acb2077617f89f30fa940ba403628"
+    },
+    {
+      "id": "session.scenario.a-notification-for-a-replaced-number-is-dropped",
+      "path": "cases/session/session.scenario.a-notification-for-a-replaced-number-is-dropped.json",
+      "sha256": "c8fb7a3931afc070a32a5420896765aca7c4d4ec528ef46e03c4dda45feaa76d"
+    },
+    {
+      "id": "session.scenario.a-registration-restarts-the-30-s-wait",
+      "path": "cases/session/session.scenario.a-registration-restarts-the-30-s-wait.json",
+      "sha256": "73cc9ff388ca32b470778b8e769a1088e55b9b459beb427bda2f09866c0d9334"
     },
     {
       "id": "session.scenario.chunks-are-registered-one-after-another",
       "path": "cases/session/session.scenario.chunks-are-registered-one-after-another.json",
-      "sha256": "cee91e1d079a3ff8ee08dff249a2f2502ffed28d1c71c870d4f7be7e917d6a11"
+      "sha256": "3cd3ee0387aa4003c3cb18594a6536ea50c2598277c6f93b5df91c2b161b5e44"
+    },
+    {
+      "id": "session.scenario.default-frame-limit-fits-1471-bytes",
+      "path": "cases/session/session.scenario.default-frame-limit-fits-1471-bytes.json",
+      "sha256": "bcac7249ca2d93daa10cb7f0ed4db8867f9b0c8a546ed61fd1a83c01946525ac"
+    },
+    {
+      "id": "session.scenario.default-frame-limit-splits-at-1472-bytes",
+      "path": "cases/session/session.scenario.default-frame-limit-splits-at-1472-bytes.json",
+      "sha256": "2acf4c4a8afe1705accf52c138c71bd5562218533e3219c44e060c308dc0126e"
+    },
+    {
+      "id": "session.scenario.empty-registration-destroys-all-sessions",
+      "path": "cases/session/session.scenario.empty-registration-destroys-all-sessions.json",
+      "sha256": "d36b79c4f5e6149535ac1cecd2347f0f4a90b0820e548245915c57f587b34bbe"
     },
     {
       "id": "session.scenario.execute-before-start-is-not-connected",
@@ -624,6 +649,11 @@
       "sha256": "a94b29470e87166e7bf682a51cc8e0519c4e386c9f34880176a940879abbe60f"
     },
     {
+      "id": "session.scenario.fewer-chunks-keep-their-numbers-and-destroy-the-surplus",
+      "path": "cases/session/session.scenario.fewer-chunks-keep-their-numbers-and-destroy-the-surplus.json",
+      "sha256": "57e5768579f4a3f806b55fb4779489898735f5c9cd816d4dc56fd41395b735b5"
+    },
+    {
       "id": "session.scenario.garbage-and-unknown-frames-are-dropped",
       "path": "cases/session/session.scenario.garbage-and-unknown-frames-are-dropped.json",
       "sha256": "3cb525cf91373853c6b967d79b1230a6f6c952066061178831b9557198893d0c"
@@ -641,7 +671,7 @@
     {
       "id": "session.scenario.loops-end-with-stop",
       "path": "cases/session/session.scenario.loops-end-with-stop.json",
-      "sha256": "61f6444c46e52bcc721ea9ad5ac05aa8401275785cab8471bf3b34dcd3881097"
+      "sha256": "4aa3dadd034a14705340eb41d04ff9d3d8be73968ee044c37473c823a72db867"
     },
     {
       "id": "session.scenario.main-socket-failure-ends-pending-requests",
@@ -651,12 +681,12 @@
     {
       "id": "session.scenario.no-re-registration-without-keys",
       "path": "cases/session/session.scenario.no-re-registration-without-keys.json",
-      "sha256": "7f8cd33a270a962fca0e54bdce94c67220eddfd058e44d4da3f53fbf4873540d"
+      "sha256": "ac61f2a529327cb54af958d750ec5c38d469bafe035053f8c15ff98e6c8f1e2d"
     },
     {
-      "id": "session.scenario.notifications-are-routed-by-socket",
-      "path": "cases/session/session.scenario.notifications-are-routed-by-socket.json",
-      "sha256": "db74b6effdd79a2f6851eda5afc07abbbc72a162411750b111eea7eaa7029856"
+      "id": "session.scenario.notifications-are-routed-by-session",
+      "path": "cases/session/session.scenario.notifications-are-routed-by-session.json",
+      "sha256": "5d4a1e489dfe7fa0cb604eacf4e0e579f010f92c1756e64b68e2e24b2cd72869"
     },
     {
       "id": "session.scenario.ping-loop-retries-a-degraded-session",
@@ -674,39 +704,39 @@
       "sha256": "652604ccc0fa38c4ea82baf6eb2acf01f24850e252aef0d2304fc212cfc34a76"
     },
     {
-      "id": "session.scenario.re-registration-closes-the-old-sockets",
-      "path": "cases/session/session.scenario.re-registration-closes-the-old-sockets.json",
-      "sha256": "f4df5eea8d174a3c6095f1fb550bf98a9ab6dcd4c512e52d604966737cc61bbd"
+      "id": "session.scenario.re-registration-reuses-the-socket-and-session",
+      "path": "cases/session/session.scenario.re-registration-reuses-the-socket-and-session.json",
+      "sha256": "f8b21278658c80073f8380b49611de5fc3e49fb8e7fb8d5e3377b5e55749c6df"
     },
     {
-      "id": "session.scenario.re-registration-runs-45-s-after-the-previous-one",
-      "path": "cases/session/session.scenario.re-registration-runs-45-s-after-the-previous-one.json",
-      "sha256": "e8b51ff75705f57bcc9ba5b9e023eb9fd7b068b3d1dcf1fdbaa97ac18a20b486"
+      "id": "session.scenario.re-registration-runs-30-s-after-the-previous-one",
+      "path": "cases/session/session.scenario.re-registration-runs-30-s-after-the-previous-one.json",
+      "sha256": "8f4857fb1d1b8f07c96d992a665bdd5c19f8cd23d84370b7d190b56ef8fa1d19"
     },
     {
       "id": "session.scenario.recovery-re-registers-before-ready",
       "path": "cases/session/session.scenario.recovery-re-registers-before-ready.json",
-      "sha256": "2623043af2f867997bee913c1f4f358e3e36237947e3112defdac8800a1697c8"
+      "sha256": "20cc929c09b6ac9debb466ecc6e9f3910ca8e3887d4b999922171d8d33b0e3c1"
     },
     {
-      "id": "session.scenario.register-one-chunk-with-session-id-0",
-      "path": "cases/session/session.scenario.register-one-chunk-with-session-id-0.json",
-      "sha256": "5704889edfbf89a5ead2084f676023bf507972b90f210160db853ce82232f8d0"
+      "id": "session.scenario.register-one-chunk-as-session-1",
+      "path": "cases/session/session.scenario.register-one-chunk-as-session-1.json",
+      "sha256": "33b97f4def4322bf508f946882ebcaf1791b4f5da75d15cba4cc3578a16d0016"
     },
     {
       "id": "session.scenario.register-waits-for-start",
       "path": "cases/session/session.scenario.register-waits-for-start.json",
-      "sha256": "145ae0a1f6c094ecec0d0314c83bd3a6caa87ecea23e36472707386c73efe764"
+      "sha256": "fff4ff3f77e3df7bcf40d7ddf256627b797a323aaba1ee8af59520181389c4d3"
     },
     {
       "id": "session.scenario.registration-reply-session-id-is-not-checked",
       "path": "cases/session/session.scenario.registration-reply-session-id-is-not-checked.json",
-      "sha256": "397ab09a069a5c0c5658525940bda230c30758a41497c2529313050da0605d73"
+      "sha256": "f790be6392db63dcd1f966de09f3ee53cd0d6c0c09f48f639c9f58c7b157ad33"
     },
     {
       "id": "session.scenario.registrations-do-not-interleave",
       "path": "cases/session/session.scenario.registrations-do-not-interleave.json",
-      "sha256": "05385348ac798bdb38f96892ab4f6a6778dd76fdfc911b51b3a6233bf3f1736a"
+      "sha256": "de4d891c5f1d8285d85205a391c4330e8156e1277dc6c8f758f081496fe902b6"
     },
     {
       "id": "session.scenario.start-after-stop-opens-a-new-main-socket",
@@ -729,14 +759,19 @@
       "sha256": "2b5b4dce268b78eb50c7a87815e6dd647ca8ee431722223d7d9bdcf58e19d2e4"
     },
     {
+      "id": "session.scenario.stop-destroys-the-sessions",
+      "path": "cases/session/session.scenario.stop-destroys-the-sessions.json",
+      "sha256": "51ec532043deaace0828bc44818f142f6091502d3a2c6f21d0d57064d7087dc3"
+    },
+    {
       "id": "session.scenario.stop-during-registration-fails-the-chunk",
       "path": "cases/session/session.scenario.stop-during-registration-fails-the-chunk.json",
-      "sha256": "4c19ee66c72c3be57d12c075372b3611c18fc456a60f4f3c3c9121c730b39331"
+      "sha256": "fb3d416a07acfdf2f20c256ca3e62a4e19885868248ed59c9db512fe5f2acbcd"
     },
     {
       "id": "session.scenario.unanswered-chunk-yields-failed-slots",
       "path": "cases/session/session.scenario.unanswered-chunk-yields-failed-slots.json",
-      "sha256": "ad449f3acf5f3e5b050bef1e02827b4a638802acba1d956df72cb39faa354f8a"
+      "sha256": "c668da8096b41b1bde5e69c0f2de9c59b29bd8beec6399aaee9c4a6185679d3e"
     },
     {
       "id": "session.scenario.uppercase-msg-id-matches",
@@ -746,7 +781,7 @@
     {
       "id": "session.scenario.wrong-value-count-fails-the-chunk",
       "path": "cases/session/session.scenario.wrong-value-count-fails-the-chunk.json",
-      "sha256": "3289b17c029dc0ecd5ac6c397bb3104713f14d729dfe72a52d8b88dae40cef23"
+      "sha256": "7a41d31e546ae4f54a639fac2a23c177fce002ce5a9dd3d3797f1c890ce5f424"
     },
     {
       "id": "value.cast.all-surrounding-quotes-stripped",

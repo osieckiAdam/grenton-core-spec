@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Wersja zestawu** | 0.6.0 (specyfikacja 0.6.0, schemat przypadków 1) |
+| **Wersja zestawu** | 0.7.0 (specyfikacja 0.7.0, schemat przypadków 1) |
 | **Dotyczy** | `spec/grenton-core-design.md` §9 |
 
 Zestaw zgodności to **dane, nie kod**: każdy przypadek to plik JSON w `conformance/cases/`. Port dostarcza cienki runner, który wczytuje przypadki, wywołuje produkcyjne API portu i porównuje obserwację z oczekiwaniem. Dopisanie przypadku raz obejmuje wszystkie porty.
@@ -128,9 +128,9 @@ Deszyfracja zwraca **bajty**; dekodowanie UTF-8 i obcinanie białych znaków nal
 
 ## 4b. Scenariusze sesji (profil `session`)
 
-Operacja `session.scenario` sprawdza jedną sesję CLU (spec §5.3–§5.4) w rozmowie z CLU, którego rolę gra runner, krok po kroku według scenariusza. Wejście: `{"clu": {"id", "ip", "port"}, "responseTimeoutMs", "pingIntervalMs"?, "registerIntervalMs"?, "steps": [...]}`. Interwał pominięty oznacza domyślny interwał portu (spec §5.4.4: 5 s i 45 s) — tak scenariusze pętli sprawdzają wartości normatywne; pozostałe scenariusze odsuwają pętle na godzinę, żeby nie przeplatały się z krokami. wynik `ok` to `{"completed": true}`. Runner, który napotka niezgodny krok, zwraca `{"completed": false, "failedStep": <indeks>, "observed": …}`, dzięki czemu różnica wskazuje krok.
+Operacja `session.scenario` sprawdza jedną sesję CLU (spec §5.3–§5.4) w rozmowie z CLU, którego rolę gra runner, krok po kroku według scenariusza. Wejście: `{"clu": {"id", "ip", "port"}, "responseTimeoutMs", "pingIntervalMs"?, "registerIntervalMs"?, "registerFrameLimitBytes"?, "steps": [...]}`. Interwał pominięty oznacza domyślny interwał portu (spec §5.4.4: 5 s i 30 s) — tak scenariusze pętli sprawdzają wartości normatywne; pozostałe scenariusze odsuwają pętle na godzinę, żeby nie przeplatały się z krokami. `registerFrameLimitBytes` to limit ramki rejestracji (spec §5.4.2 pkt 1); pominięty oznacza domyślne 1471 B — tak sprawdzają go scenariusze `default-frame-limit-*`. Pozostałe scenariusze z kilkoma chunkami podają mniejszy limit, żeby lista kluczy była krótka. wynik `ok` to `{"completed": true}`. Runner, który napotka niezgodny krok, zwraca `{"completed": false, "failedStep": <indeks>, "observed": …}`, dzięki czemu różnica wskazuje krok.
 
-**Co port udostępnia runnerowi** (nazwy dowolne, zachowanie wg §5.4): utworzenie sesji dla CLU z kluczem i IV z §9.1, zegarem i transportem dostarczonymi przez runnera; `start()`, `stop()`, `ping()`, `register(keys) → slots`, `execute(action)`, bieżący stan (§5.4.5) i strumień raportów (§5.4.3). Transport runnera widzi każde otwarte gniazdo, każdy wysłany datagram i zamknięcie gniazda; runner deszyfruje wysłane datagramy i szyfruje wstrzykiwane, więc scenariusze operują na tekście ramek (§5.2).
+**Co port udostępnia runnerowi** (nazwy dowolne, zachowanie wg §5.4): utworzenie sesji dla CLU z kluczem i IV z §9.1, zegarem i transportem dostarczonymi przez runnera oraz opcjonalnym limitem ramki rejestracji; `start()`, `stop()`, `ping()`, `register(keys) → slots`, `execute(action)`, bieżący stan (§5.4.5) i strumień raportów (§5.4.3). Transport runnera widzi każde otwarte gniazdo, każdy wysłany datagram i zamknięcie gniazda; runner deszyfruje wysłane datagramy i szyfruje wstrzykiwane, więc scenariusze operują na tekście ramek (§5.2).
 
 **Wirtualny czas.** Zegar sesji należy do runnera i stoi, dopóki krok `advance` go nie przesunie. Timeout odpowiedzi (§5.4.1) i interwały pętli (§5.4.4) upływają wyłącznie przez `advance`. `advance` przesuwa zegar jednym skokiem; scenariusz dobiera kroki tak, by w jednym `advance` upływał co najwyżej jeden termin każdego timera i by terminy różnych timerów nie wypadały w tej samej chwili, bo ich kolejność nie jest określona.
 
@@ -138,7 +138,7 @@ Operacja `session.scenario` sprawdza jedną sesję CLU (spec §5.3–§5.4) w ro
 
 **Asercje negatywne.** `expectQuiet` i `expectNoReport` stwierdzają brak zdarzenia, więc po barierze runner obserwuje dodatkowo **okno ciszy: co najmniej 200 ms realnego czasu**, i dopiero wtedy uznaje brak za potwierdzony. To gwarancja probabilistyczna: port, który opóźnia pracę dłużej niż okno bez udziału zegara sesji, może ją przejść. Runner, którego środowisko pozwala wykryć bezczynność deterministycznie (własny executor, jawne opróżnienie kolejek), może to zrobić zamiast okna.
 
-**Przechwytywanie.** `msgId` postaci `$nazwa` przy pierwszym użyciu wiąże się z obserwowaną wartością, przy kolejnych musi być jej równy. Gniazda nazywa się etykietami `@nazwa`: pierwsze użycie wiąże etykietę z gniazdem **innym niż wszystkie już nazwane**, kolejne muszą wskazywać to samo gniazdo. Dzięki temu scenariusz sprawdza, że każdy chunk ma własne gniazdo.
+**Przechwytywanie.** `msgId` postaci `$nazwa` przy pierwszym użyciu wiąże się z obserwowaną wartością, przy kolejnych musi być jej równy. Gniazda nazywa się etykietami `@nazwa`: pierwsze użycie wiąże etykietę z gniazdem **innym niż wszystkie już nazwane**, kolejne muszą wskazywać to samo gniazdo. Sesja używa jednego gniazda (§5.4), więc scenariusze nazywają je `@main`, a po ponownym `start()` nowe gniazdo dostaje nową etykietę.
 
 Kroki (każdy obiekt ma dokładnie jeden czasownik):
 
@@ -235,7 +235,6 @@ python3 tools/suite.py manifest   # przebudowa manifestu po dodaniu/zmianie przy
 ## 8. Poza zakresem — otwarte decyzje
 
 - **Walidacja `msg_id`:** §5.2 mówi „8 znaków hex", ale odbiór tego nie wymusza. Zestaw nie testuje zniekształconych `msg_id`, dopóki specyfikacja nie rozstrzygnie: ściśle czy liberalnie.
-- **Pusta rejestracja** (`keys = []`): zachowanie niespecyfikowane — brak przypadku.
 - **Zbiór białych znaków przy castingu i parsowaniu raportu:** przypadki używają tylko spacji i tabulatora; szczegółowy zbiór do ustalenia.
 - **Pozycja pominiętego widgetu** (np. `/pages/0/widgets/3`) — na razie porównywane są tylko typy per strona.
 - **Limit 10 MB** (§4.3) jest zaleceniem, nie normą — testy brzegowe po jego ustaleniu.

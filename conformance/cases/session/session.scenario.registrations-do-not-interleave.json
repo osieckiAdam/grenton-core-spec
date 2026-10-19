@@ -5,7 +5,7 @@
     "session.lifecycle",
     "session.chunking"
   ],
-  "description": "Two registrations are serialized: the second one starts only after the first ends, then closes the first one's socket.",
+  "description": "Two registrations are serialized: the second one starts only after the first ends; its different key list gets session 2 and session 1 is destroyed.",
   "provenance": "spec §5.3–§5.4 text, conformance.md §4b",
   "operation": "session.scenario",
   "input": {
@@ -56,7 +56,7 @@
       },
       {
         "expectSent": {
-          "socket": "@first",
+          "socket": "@main",
           "msgId": "$m1",
           "payload": "SYSTEM:clientRegister(0,0,1,{{OBJ,0}})"
         }
@@ -77,7 +77,7 @@
       },
       {
         "respond": {
-          "socket": "@first",
+          "socket": "@main",
           "msgId": "$m1",
           "payload": "clientReport:1:{5}"
         }
@@ -95,19 +95,23 @@
       },
       {
         "expectSent": {
-          "socket": "@second",
+          "socket": "@main",
           "msgId": "$m2",
-          "payload": "SYSTEM:clientRegister(0,0,1,{{OBJ,1}})"
+          "payload": "SYSTEM:clientRegister(0,0,2,{{OBJ,1}})"
         }
       },
       {
-        "expectClosed": "@first"
+        "respond": {
+          "socket": "@main",
+          "msgId": "$m2",
+          "payload": "clientReport:2:{6}"
+        }
       },
       {
-        "respond": {
-          "socket": "@second",
-          "msgId": "$m2",
-          "payload": "clientReport:1:{6}"
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$d1",
+          "payload": "SYSTEM:clientDestroy(0,0,1)"
         }
       },
       {

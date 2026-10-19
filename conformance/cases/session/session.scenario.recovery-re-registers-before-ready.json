@@ -5,7 +5,7 @@
     "session.lifecycle",
     "session.report-routing"
   ],
-  "description": "After a failed ping the session is degraded; the next successful ping re-registers the keys on a new socket, reports their values, and only then is the session ready.",
+  "description": "After a failed ping the session is degraded; the next successful ping re-registers the keys as the same session, reports their values, and only then is the session ready.",
   "provenance": "spec §5.3–§5.4 text, conformance.md §4b",
   "operation": "session.scenario",
   "input": {
@@ -60,14 +60,14 @@
       },
       {
         "expectSent": {
-          "socket": "@first",
+          "socket": "@main",
           "msgId": "$m1",
           "payload": "SYSTEM:clientRegister(0,0,1,{\"x_a\",{DOU1001,0}})"
         }
       },
       {
         "respond": {
-          "socket": "@first",
+          "socket": "@main",
           "msgId": "$m1",
           "payload": "clientReport:1:{1,\"ON\"}"
         }
@@ -130,7 +130,7 @@
       },
       {
         "expectSent": {
-          "socket": "@again",
+          "socket": "@main",
           "msgId": "$m2",
           "payload": "SYSTEM:clientRegister(0,0,1,{\"x_a\",{DOU1001,0}})"
         }
@@ -140,7 +140,7 @@
       },
       {
         "respond": {
-          "socket": "@again",
+          "socket": "@main",
           "msgId": "$m2",
           "payload": "clientReport:1:{0,\"OFF\"}"
         }

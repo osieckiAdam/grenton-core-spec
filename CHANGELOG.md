@@ -1,5 +1,40 @@
 # Changelog
 
+## Spec 0.7.0, suite 0.7.0 — 2026-10-19
+
+One socket per session, chunks as subscription numbers, re-registration every 30 s, `clientDestroy`.
+
+Evidence (one installation, two CLU firmware generations, 2026-10-01 and 2026-10-19 — probe program in the Swift port's `Examples/probe-register`, a packet capture of the official mobile app, and two third-party clients run or read against the same CLUs):
+
+- The arguments of `clientRegister` are `(ip, port, session, keys)`. `0,0` means "report to the sender's address and port"; the number given as `session` is echoed in the reply and in every notification; two sessions registered from one socket both push and are distinguishable; re-registering the same `(ip, port, session)` replaces the key list; `clientDestroy(0,0,session)` stops the pushes. The 0.6.0 text read the second argument as a "session id that must be 0" and the number in a notification as unreliable — both were wrong, and the socket-per-chunk layout rested on that reading.
+- A registration pushes for about 56–60 s and then stops; pings do not renew it, only a registration with the same triple does. The reference's 45 s interval therefore leaves one renewal per lease. The official mobile app re-registers every ~31 s on one socket per CLU with the same triple; a third-party hub does the same every 30 s and documents that a lost renewal left wrong state for days.
+- With new sockets on every renewal and no `clientDestroy` (the 0.6.0 layout), each old registration kept pushing to a closed port for the rest of its lease — a third of all pushes wasted at 45 s, all of them doubled at 30 s.
+- The size limit of a registration is in bytes, not keys. A binary search on one CLU stopped at the same edge in three series — 129 short keys, 71 long keys, 115 interface keys: a 1472 B datagram (frame ≤ 1471 B) is answered, a 1488 B one is not. 1472 B is the UDP payload of one IP packet at MTU 1500; that CLU generation does not reassemble IP fragments. A CLU of the other generation answered 9200 B datagrams (fragmented), the most the test host could send. Thirty long variable names already exceed 1471 B, so a key count never was a safe limit. Duplicate keys in one registration are accepted; replies and pushes larger than one packet arrive fine.
+- With `ip = 0` and a non-zero `port`, one firmware generation sends no notifications at all and the others send them to the source port; only `0,0` behaves the same everywhere. Measured on six CLUs of three firmware generations.
+- `clientDestroy` replies with the subscription number, and `nil` when there is no such subscription (seen after the lease had already run out).
+- CLUs drop registrations sent as a burst; chunks already go one after another.
+
+Spec:
+
+- §5.3.1: a ping does not renew the subscription.
+- §5.3.2: `clientRegister(0,0,{session},…)`, the triple semantics, why only `0,0`, the ~1 min expiry, the size limit (frame ≤ 1471 B instead of 30 keys), and `clientDestroy(0,0,{session})` sent without waiting for a reply (what its reply means is noted). The number in a registration reply is still not checked (the reply is correlated by `msg_id`).
+- §5.3.3, §5.4.3: a notification carries the session number; the report path routes by it and drops an unknown number or a wrong value count.
+- §5.4.2 pt 1: chunks are split by frame size — each chunk is the longest run of keys whose frame, with the number counted as six digits so the split does not depend on numbering, fits the limit (default 1471 B; a port may lower it, never raise it); a key larger than the limit is a chunk of its own and is sent anyway, its result decided by the CLU like any chunk. Numbers are capped at 999999 to match the six-digit reservation (otherwise a long run could push an unchanged list over the limit; review finding); needing 1000000 destroys every chunk and starts over on a new main socket, so no number returns with another list on the same port.
+- §5.4, §5.4.2: one socket; every chunk is registered from the main socket under its own subscription number. A chunk keeps its number only while its key list is unchanged; a changed list gets a fresh number from a per-start counter and the old number is destroyed, because reusing a number with other keys would let a late notification of the old list, or a lost request with the new one, land values on the wrong keys when the counts match (review finding). A chunk remembers its keys from the moment its request is sent; numbers no longer used → `clientDestroy`; `register([])` destroys all.
+- §5.4.4: re-registration 30 s after the previous one was *started* (its first chunk sent), same numbers, same socket. Counting from the start keeps every chunk about 30 s from its own previous registration however long the sequence took (counting from the end let a slow eight-chunk sequence renew chunk 1 after the lease; review finding). 30 + 5 s timeout + 5 s ping recovery fit before the ~56 s expiry.
+- §5.4.5: `stop()` destroys every remembered chunk before closing the socket; a new main socket after a failure means new subscriptions.
+- §7.1, §7.5, §9.1, §9.4, §10 pt 4 (the byte limit) and 6 (pt 7, the expiry, is new; later points renumbered), §11: wording follows.
+
+Suite (38 session scenarios, 193 cases in total):
+
+- renamed and rewritten for the main socket: `register-one-chunk-as-session-1`, `notifications-are-routed-by-session` (unknown number and wrong count dropped), `re-registration-reuses-the-socket-and-session`, `re-registration-runs-30-s-after-the-previous-one`, `a-registration-restarts-the-30-s-wait`;
+- second chunks are session 2 (`chunks-are-registered-one-after-another`, `unanswered-chunk-yields-failed-slots`); `loops-end-with-stop` and `stop-during-registration-fails-the-chunk` expect the `clientDestroy`; the remaining scenarios only change socket labels or 45 s → 30 s;
+- `registrations-do-not-interleave` and `a-registration-restarts-the-30-s-wait`: the second, different key list is session 2 and session 1 is destroyed;
+- new: `a-changed-key-list-gets-a-new-session`, `fewer-chunks-keep-their-numbers-and-destroy-the-surplus`, `a-notification-for-a-replaced-number-is-dropped`, `stop-destroys-the-sessions`, `empty-registration-destroys-all-sessions`;
+- `payload.register`: the input's `sessionId` is the third argument; expected payloads updated.
+- conformance.md §4b: `session.scenario` takes an optional `registerFrameLimitBytes`; omitted means the default 1471 B. New `default-frame-limit-fits-1471-bytes` and `default-frame-limit-splits-at-1472-bytes` test the default to the byte; the five other multi-chunk scenarios set a 309 B limit so that exactly 30 of their keys fit, and their expectations are unchanged.
+- `tools/suite.py check` re-derives chunking: it splits the last registered key list greedily from the first key and requires every expected `clientRegister` to be the next chunk of that split, or chunk 1 when a new registration starts (the first version matched any run anywhere, rejecting valid duplicate keys and accepting overlapping chunks; review finding). `registerFrameLimitBytes` is checked against 1…1471 in the schema and the checker; the stdlib schema checker learned `maximum`.
+
 ## Spec 0.6.0, suite 0.6.0 — 2026-09-30
 
 - §5.4.4, the maintenance loops, is now precise:

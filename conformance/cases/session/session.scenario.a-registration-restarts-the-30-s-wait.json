@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "id": "session.scenario.re-registration-closes-the-old-sockets",
+  "id": "session.scenario.a-registration-restarts-the-30-s-wait",
   "specRefs": [
-    "session.chunking"
+    "session.loops"
   ],
-  "description": "register() first closes the previous subscription sockets, then registers on new ones.",
+  "description": "An explicit registration 20 s after the previous one moves the next periodic re-registration to 30 s after it, with the new keys.",
   "provenance": "spec §5.3–§5.4 text, conformance.md §4b",
   "operation": "session.scenario",
   "input": {
@@ -15,7 +15,6 @@
     },
     "responseTimeoutMs": 5000,
     "pingIntervalMs": 3600000,
-    "registerIntervalMs": 3600000,
     "steps": [
       {
         "call": "start",
@@ -46,12 +45,8 @@
         "call": "register",
         "keys": [
           {
-            "type": "variable",
-            "name": "x_a"
-          },
-          {
             "type": "attribute",
-            "objectName": "DOU1001",
+            "objectName": "OBJ",
             "index": "0"
           }
         ],
@@ -59,16 +54,16 @@
       },
       {
         "expectSent": {
-          "socket": "@first",
+          "socket": "@main",
           "msgId": "$m1",
-          "payload": "SYSTEM:clientRegister(0,0,1,{\"x_a\",{DOU1001,0}})"
+          "payload": "SYSTEM:clientRegister(0,0,1,{{OBJ,0}})"
         }
       },
       {
         "respond": {
-          "socket": "@first",
+          "socket": "@main",
           "msgId": "$m1",
-          "payload": "clientReport:1:{1,\"ON\"}"
+          "payload": "clientReport:1:{1}"
         }
       },
       {
@@ -78,44 +73,43 @@
             {
               "type": "int",
               "value": "1"
-            },
-            {
-              "type": "string",
-              "value": "ON"
             }
           ]
         }
       },
       {
+        "advance": 20000
+      },
+      {
         "call": "register",
         "keys": [
           {
-            "type": "variable",
-            "name": "x_a"
-          },
-          {
             "type": "attribute",
-            "objectName": "DOU1001",
-            "index": "0"
+            "objectName": "OBJ",
+            "index": "1"
           }
         ],
         "as": "r2"
       },
       {
         "expectSent": {
-          "socket": "@second",
+          "socket": "@main",
           "msgId": "$m2",
-          "payload": "SYSTEM:clientRegister(0,0,1,{\"x_a\",{DOU1001,0}})"
+          "payload": "SYSTEM:clientRegister(0,0,2,{{OBJ,1}})"
         }
       },
       {
-        "expectClosed": "@first"
+        "respond": {
+          "socket": "@main",
+          "msgId": "$m2",
+          "payload": "clientReport:2:{2}"
+        }
       },
       {
-        "respond": {
-          "socket": "@second",
-          "msgId": "$m2",
-          "payload": "clientReport:1:{0,\"OFF\"}"
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$d1",
+          "payload": "SYSTEM:clientDestroy(0,0,1)"
         }
       },
       {
@@ -124,11 +118,47 @@
           "slots": [
             {
               "type": "int",
-              "value": "0"
-            },
+              "value": "2"
+            }
+          ]
+        }
+      },
+      {
+        "advance": 29999
+      },
+      {
+        "expectQuiet": true
+      },
+      {
+        "advance": 1
+      },
+      {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$m3",
+          "payload": "SYSTEM:clientRegister(0,0,2,{{OBJ,1}})"
+        }
+      },
+      {
+        "respond": {
+          "socket": "@main",
+          "msgId": "$m3",
+          "payload": "clientReport:2:{2}"
+        }
+      },
+      {
+        "expectReport": {
+          "keys": [
             {
-              "type": "string",
-              "value": "OFF"
+              "type": "attribute",
+              "objectName": "OBJ",
+              "index": "1"
+            }
+          ],
+          "values": [
+            {
+              "type": "int",
+              "value": "2"
             }
           ]
         }
