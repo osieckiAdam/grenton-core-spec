@@ -1,0 +1,201 @@
+{
+  "schemaVersion": 1,
+  "id": "session.scenario.fetch-leaves-subscriptions-alone",
+  "specRefs": [
+    "session.fetch",
+    "session.chunking",
+    "session.loops"
+  ],
+  "description": "A fetch between registrations neither changes the chunk numbers nor restarts the re-registration wait: session 1 keeps reporting and is renewed 30 s after its registration started, not after the fetch.",
+  "provenance": "spec §5.3–§5.4 text, conformance.md §4b",
+  "operation": "session.scenario",
+  "input": {
+    "clu": {
+      "id": "CLU_1",
+      "ip": "10.0.0.1",
+      "port": 1234
+    },
+    "responseTimeoutMs": 5000,
+    "steps": [
+      {
+        "call": "start",
+        "as": "start"
+      },
+      {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "checkAlive()"
+        }
+      },
+      {
+        "respond": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "1"
+        }
+      },
+      {
+        "await": "start",
+        "result": null
+      },
+      {
+        "expectState": "ready"
+      },
+      {
+        "call": "register",
+        "keys": [
+          {
+            "type": "attribute",
+            "objectName": "OBJ",
+            "index": "0"
+          }
+        ],
+        "as": "r1"
+      },
+      {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$r1",
+          "payload": "SYSTEM:clientRegister(0,0,1,{{OBJ,0}})"
+        }
+      },
+      {
+        "respond": {
+          "socket": "@main",
+          "msgId": "$r1",
+          "payload": "clientReport:1:{5}"
+        }
+      },
+      {
+        "await": "r1",
+        "result": {
+          "slots": [
+            {
+              "type": "int",
+              "value": "5"
+            }
+          ]
+        }
+      },
+      {
+        "advance": 10000
+      },
+      {
+        "call": "fetch",
+        "keys": [
+          {
+            "type": "variable",
+            "name": "x_a"
+          },
+          {
+            "type": "attribute",
+            "objectName": "DOU1001",
+            "index": "0"
+          }
+        ],
+        "as": "f"
+      },
+      {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$m1",
+          "payload": "SYSTEM:fetchValues({\"x_a\",{DOU1001,0}})"
+        }
+      },
+      {
+        "respond": {
+          "socket": "@main",
+          "msgId": "$m1",
+          "payload": "values:{1,\"ON\"}"
+        }
+      },
+      {
+        "await": "f",
+        "result": {
+          "slots": [
+            {
+              "type": "int",
+              "value": "1"
+            },
+            {
+              "type": "string",
+              "value": "ON"
+            }
+          ]
+        }
+      },
+      {
+        "respond": {
+          "socket": "@main",
+          "msgId": "00000000",
+          "payload": "clientReport:1:{6}"
+        }
+      },
+      {
+        "expectReport": {
+          "keys": [
+            {
+              "type": "attribute",
+              "objectName": "OBJ",
+              "index": "0"
+            }
+          ],
+          "values": [
+            {
+              "type": "int",
+              "value": "6"
+            }
+          ]
+        }
+      },
+      {
+        "advance": 19999
+      },
+      {
+        "expectQuiet": true
+      },
+      {
+        "advance": 1
+      },
+      {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$r2",
+          "payload": "SYSTEM:clientRegister(0,0,1,{{OBJ,0}})"
+        }
+      },
+      {
+        "respond": {
+          "socket": "@main",
+          "msgId": "$r2",
+          "payload": "clientReport:1:{6}"
+        }
+      },
+      {
+        "expectReport": {
+          "keys": [
+            {
+              "type": "attribute",
+              "objectName": "OBJ",
+              "index": "0"
+            }
+          ],
+          "values": [
+            {
+              "type": "int",
+              "value": "6"
+            }
+          ]
+        }
+      }
+    ],
+    "pingIntervalMs": 3600000
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "completed": true
+    }
+  }
+}

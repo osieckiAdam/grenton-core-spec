@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "payload.fetch.single-attribute",
+  "specRefs": [
+    "payload.fetch"
+  ],
+  "description": "One attribute key.",
+  "provenance": "spec §5.3.2",
+  "operation": "payload.fetch",
+  "input": {
+    "keys": [
+      {
+        "type": "attribute",
+        "objectName": "LED3340",
+        "index": "3"
+      }
+    ]
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "payload": "SYSTEM:fetchValues({{LED3340,3}})"
+    }
+  }
+}

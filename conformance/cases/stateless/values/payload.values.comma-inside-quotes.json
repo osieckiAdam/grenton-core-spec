@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "payload.values.comma-inside-quotes",
+  "specRefs": [
+    "payload.values"
+  ],
+  "description": "The same element rules as a client report.",
+  "provenance": "spec §5.3.2 pt 2",
+  "operation": "payload.values",
+  "input": {
+    "payload": "values:{\"a, b\",{1,2}}"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "values": [
+        {
+          "type": "string",
+          "value": "a, b"
+        },
+        {
+          "type": "string",
+          "value": "{1,2}"
+        }
+      ]
+    }
+  }
+}

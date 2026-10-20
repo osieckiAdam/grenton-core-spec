@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "suiteVersion": "0.8.0",
-  "specVersion": "0.8.0",
+  "suiteVersion": "0.9.0",
+  "specVersion": "0.9.0",
   "profiles": {
     "mapping": [
       "mapping.interface"
@@ -19,8 +19,10 @@
       "crypto.encrypt",
       "number.format",
       "payload.action",
+      "payload.fetch",
       "payload.register",
       "payload.report",
+      "payload.values",
       "provisioning.url",
       "value.cast",
       "wire.request",
@@ -40,8 +42,10 @@
     "model.cast": "\u00a73.1",
     "model.widget-tolerance": "\u00a73.6",
     "payload.action": "\u00a75.3.4",
+    "payload.fetch": "\u00a75.3.2",
     "payload.register": "\u00a75.3.2",
     "payload.report": "\u00a75.3.2",
+    "payload.values": "\u00a75.3.2",
     "provisioning.omp": "\u00a74.5",
     "provisioning.omp-archive": "\u00a74.5.1",
     "provisioning.omp-selection": "\u00a74.5.2",
@@ -50,6 +54,7 @@
     "session.actions": "\u00a75.3.4, \u00a73.3",
     "session.chunking": "\u00a75.4.2, \u00a75.3.2",
     "session.correlation": "\u00a75.4.1",
+    "session.fetch": "\u00a75.4.2",
     "session.keepalive": "\u00a75.3.1",
     "session.lifecycle": "\u00a75.4.5",
     "session.loops": "\u00a75.4.4",
@@ -440,6 +445,16 @@
       "sha256": "1635dc378ed61d5d2741fee17a13e8d39b48ca92b84d0c6a8a7192288f7ed1ee"
     },
     {
+      "id": "payload.fetch.single-attribute",
+      "path": "cases/stateless/payload/payload.fetch.single-attribute.json",
+      "sha256": "a739d805f784e63537ddedc9fd68af07da328c05d5d7e38d52b8775afb074518"
+    },
+    {
+      "id": "payload.fetch.spec-example",
+      "path": "cases/stateless/payload/payload.fetch.spec-example.json",
+      "sha256": "aa248f49c08ead214f72373b24040d690b59302ce2e80026161aaef1f903112a"
+    },
+    {
       "id": "payload.register.nonzero-session-id",
       "path": "cases/stateless/payload/payload.register.nonzero-session-id.json",
       "sha256": "a728fd55a046571354ba3790f1b4fccae2d0736f56e87f9f805dfce2b01cd576"
@@ -453,6 +468,11 @@
       "id": "payload.register.spec-example",
       "path": "cases/stateless/payload/payload.register.spec-example.json",
       "sha256": "e50598ef16732c68ec5248d33b6befd11548abf45771361c238fd7ff1e9bd89c"
+    },
+    {
+      "id": "payload.report.comma-inside-quotes",
+      "path": "cases/stateless/report/payload.report.comma-inside-quotes.json",
+      "sha256": "7f8e6b919c23df5d9ad2323e68f5022f9471a72421f931c1cd4e8e21a5c048b3"
     },
     {
       "id": "payload.report.empty-braces",
@@ -470,9 +490,19 @@
       "sha256": "2dc6056a3745e6533d4fb8b78cdee995d9146581646a515669b3212327d6f7b6"
     },
     {
+      "id": "payload.report.missing-closing-brace",
+      "path": "cases/stateless/report/payload.report.missing-closing-brace.json",
+      "sha256": "fb0ff90b3e2b7198a52cea6b17cef09d5a95f0ee6df63072e6c057ff48d0d66d"
+    },
+    {
       "id": "payload.report.mixed-types",
       "path": "cases/stateless/report/payload.report.mixed-types.json",
       "sha256": "7706ae887b26dad56c52bcbb5b47dbee766dee8a5f226aa92ae4052409b528ba"
+    },
+    {
+      "id": "payload.report.nested-braces",
+      "path": "cases/stateless/report/payload.report.nested-braces.json",
+      "sha256": "ccd237fedfa0360cd7b13134676d7f64f229020cf21fe13a66651cb57a2ae14d"
     },
     {
       "id": "payload.report.notification",
@@ -500,9 +530,49 @@
       "sha256": "cc33edb2104b8d852a2a9c66272658e2b408dfe47472a64a9eb7a4d10e5b2db0"
     },
     {
+      "id": "payload.report.reject-reversed-braces",
+      "path": "cases/stateless/report/payload.report.reject-reversed-braces.json",
+      "sha256": "da554ea1b54b07c63a68068c7256a09110672bbdf5701a694d63e8ae34eb03f3"
+    },
+    {
+      "id": "payload.report.reject-unbalanced-brace",
+      "path": "cases/stateless/report/payload.report.reject-unbalanced-brace.json",
+      "sha256": "da0766f41927538a930ca6f766f2d1286d08bd263e546b3fc59384d345b914f5"
+    },
+    {
+      "id": "payload.report.reject-unbalanced-quote",
+      "path": "cases/stateless/report/payload.report.reject-unbalanced-quote.json",
+      "sha256": "43eee4de808a1dfb2f3caa594ac0e735799d8701fbcba338454c8e192bf8cc70"
+    },
+    {
       "id": "payload.report.trim-then-unquote",
       "path": "cases/stateless/report/payload.report.trim-then-unquote.json",
       "sha256": "ce7d363df2c3c59c78f6a41532388728c781ee6a8920279db908f1ef54c01bfb"
+    },
+    {
+      "id": "payload.values.comma-inside-quotes",
+      "path": "cases/stateless/values/payload.values.comma-inside-quotes.json",
+      "sha256": "049b420075638debcb52395fa6aa09b7791c558d23c68d8472bd308de82066f2"
+    },
+    {
+      "id": "payload.values.list",
+      "path": "cases/stateless/values/payload.values.list.json",
+      "sha256": "a67c9fc923c32c95638195ffd826e4888a1026ee7fc902dc2ce2222f726e2caa"
+    },
+    {
+      "id": "payload.values.nil-for-unknown-key",
+      "path": "cases/stateless/values/payload.values.nil-for-unknown-key.json",
+      "sha256": "aa924b59f45d91ae52a9ced489e8b1d63281e6017cf02a610018b8d1ec29a3af"
+    },
+    {
+      "id": "payload.values.reject-malformed-empty",
+      "path": "cases/stateless/values/payload.values.reject-malformed-empty.json",
+      "sha256": "c21008700c9a737dee723be9f86573b1ab0c873eed5e6faa0b15e860522a827d"
+    },
+    {
+      "id": "payload.values.reject-no-prefix",
+      "path": "cases/stateless/values/payload.values.reject-no-prefix.json",
+      "sha256": "66a7d2f6e271838d6268246dbcba8752a7ec25c09c0f74ae6db7a5d99abbc604"
     },
     {
       "id": "provisioning.omp.ambiguous-without-id",
@@ -715,6 +785,31 @@
       "sha256": "a94b29470e87166e7bf682a51cc8e0519c4e386c9f34880176a940879abbe60f"
     },
     {
+      "id": "session.scenario.fetch-leaves-subscriptions-alone",
+      "path": "cases/session/session.scenario.fetch-leaves-subscriptions-alone.json",
+      "sha256": "910910bf8f064cc609091beab7db2d2f512ce36538f2c0a6cdca8af0119eb603"
+    },
+    {
+      "id": "session.scenario.fetch-sends-one-request-and-returns-slots",
+      "path": "cases/session/session.scenario.fetch-sends-one-request-and-returns-slots.json",
+      "sha256": "0b1b8f470add8b35bae3fcf3086f09d70bc007365ca62c8d57bad47fcdc7b6dc"
+    },
+    {
+      "id": "session.scenario.fetch-splits-by-the-frame-limit",
+      "path": "cases/session/session.scenario.fetch-splits-by-the-frame-limit.json",
+      "sha256": "80d4d5c8b3f02ee0e5ffd75ffc5cbf73bc45c012bda4a3cc1ef6effbf61ba9af"
+    },
+    {
+      "id": "session.scenario.fetch-timeout-yields-failed-slots",
+      "path": "cases/session/session.scenario.fetch-timeout-yields-failed-slots.json",
+      "sha256": "035feebc1fabf994d4c26d70d5ed2bb9e0c47b5a5a2e6823cd293a92e33b4b27"
+    },
+    {
+      "id": "session.scenario.fetch-without-a-socket-sends-nothing",
+      "path": "cases/session/session.scenario.fetch-without-a-socket-sends-nothing.json",
+      "sha256": "980b4b37327ab70e50c82b738de60d14ac6a0bfc68b1581a68b13d0b7bc27629"
+    },
+    {
       "id": "session.scenario.fewer-chunks-keep-their-numbers-and-destroy-the-surplus",
       "path": "cases/session/session.scenario.fewer-chunks-keep-their-numbers-and-destroy-the-surplus.json",
       "sha256": "57e5768579f4a3f806b55fb4779489898735f5c9cd816d4dc56fd41395b735b5"
@@ -828,6 +923,11 @@
       "id": "session.scenario.stop-destroys-the-sessions",
       "path": "cases/session/session.scenario.stop-destroys-the-sessions.json",
       "sha256": "51ec532043deaace0828bc44818f142f6091502d3a2c6f21d0d57064d7087dc3"
+    },
+    {
+      "id": "session.scenario.stop-during-fetch-fails-the-rest",
+      "path": "cases/session/session.scenario.stop-during-fetch-fails-the-rest.json",
+      "sha256": "3d2e7ef27a2b5aed5841e7a5b737461e4877d908f13e9957adfa2c2a29eb3ffd"
     },
     {
       "id": "session.scenario.stop-during-registration-fails-the-chunk",

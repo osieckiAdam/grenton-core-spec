@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "payload.fetch.spec-example",
+  "specRefs": [
+    "payload.fetch"
+  ],
+  "description": "fetchValues renders its keys exactly like clientRegister, without any leading arguments.",
+  "provenance": "spec §5.3.2",
+  "operation": "payload.fetch",
+  "input": {
+    "keys": [
+      {
+        "type": "variable",
+        "name": "AnalogIn1"
+      },
+      {
+        "type": "attribute",
+        "objectName": "DOU8272",
+        "index": "0"
+      }
+    ]
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "payload": "SYSTEM:fetchValues({\"AnalogIn1\",{DOU8272,0}})"
+    }
+  }
+}

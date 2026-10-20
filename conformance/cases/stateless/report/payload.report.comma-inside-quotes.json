@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "payload.report.comma-inside-quotes",
+  "specRefs": [
+    "payload.report"
+  ],
+  "description": "A comma inside a quoted string does not separate elements (§5.3.2 pt 2).",
+  "provenance": "spec §5.3.2 pt 2",
+  "operation": "payload.report",
+  "input": {
+    "payload": "clientReport:1:{\"Salon, parter\",0,\"a,b,c\"}"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "sessionId": 1,
+      "values": [
+        {
+          "type": "string",
+          "value": "Salon, parter"
+        },
+        {
+          "type": "int",
+          "value": "0"
+        },
+        {
+          "type": "string",
+          "value": "a,b,c"
+        }
+      ]
+    }
+  }
+}

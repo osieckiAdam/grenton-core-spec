@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Wersja zestawu** | 0.8.0 (specyfikacja 0.8.0, schemat przypadków 1) |
+| **Wersja zestawu** | 0.9.0 (specyfikacja 0.9.0, schemat przypadków 1) |
 | **Dotyczy** | `spec/grenton-core-design.md` §9 |
 
 Zestaw zgodności to **dane, nie kod**: każdy przypadek to plik JSON w `conformance/cases/`. Port dostarcza cienki runner, który wczytuje przypadki, wywołuje produkcyjne API portu i porównuje obserwację z oczekiwaniem. Dopisanie przypadku raz obejmuje wszystkie porty.
@@ -69,6 +69,8 @@ Porównanie `ok.value`: strukturalna równość JSON, bez znaczenia kolejności 
 | `payload.register` | `sessionId`, `keys[]` (`{type:variable,name}` / `{type:attribute,objectName,index}`) | `payload` | |
 | `payload.action` | `action` — obiekt ActionRef dokładnie jak w `data.json` | `payload` | `reject` (błąd parsowania, §3.6); `error payload.unresolvedPlaceholder` (`value` = `$value$`, §3.3) |
 | `payload.report` | `payload` | `sessionId`, `values[]` | `reject` |
+| `payload.fetch` | `keys[]` (jak w `payload.register`) | `payload` | |
+| `payload.values` | `payload` (odpowiedź na `fetchValues`) | `values[]` | `reject` |
 | `value.cast` | `text` | `value` | |
 | `provisioning.url` | `host`, `port`? (domyślnie 9998), `pin` | `url` | `error provisioning.connection` |
 | `coercion.boolFromOnOff` | `value` | `result` (`true`/`false`/`null` = nieznany) | |
@@ -146,9 +148,9 @@ Kroki (każdy obiekt ma dokładnie jeden czasownik):
 | Krok | Znaczenie |
 |---|---|
 | `{"call": "start" \| "stop" \| "ping", "as": "x"}` | uruchamia operację sesji w tle; wynik odbiera `await` |
-| `{"call": "register", "keys": [ValueRef…], "as": "x"}` | jak wyżej; `keys` w formacie `payload.register` |
+| `{"call": "register" \| "fetch", "keys": [ValueRef…], "as": "x"}` | jak wyżej; `keys` w formacie `payload.register`; oba dzielą klucze limitem `registerFrameLimitBytes` (§5.4.2), `fetch` z tekstem ramki `fetchValues` |
 | `{"call": "execute", "action": {ActionRef jak w data.json}, "as": "x"}` | jak wyżej |
-| `{"await": "x", "result": …}` | czeka na koniec operacji `x` i porównuje wynik: `null` (start/stop), `{"ok": true\|false}` (ping), `{"slots": [wartość otagowana \| {"failed": true}]}` (register), `{"ok": true}` albo `{"error": kod}` (execute) |
+| `{"await": "x", "result": …}` | czeka na koniec operacji `x` i porównuje wynik: `null` (start/stop), `{"ok": true\|false}` (ping), `{"slots": [wartość otagowana \| {"failed": true}]}` (register, fetch), `{"ok": true}` albo `{"error": kod}` (execute) |
 | `{"expectSent": {"socket": "@s", "msgId": "$m" \| "…", "payload": "…"}}` | następny wysłany datagram to `req::{msgId}:{payload}` z gniazda `@s` |
 | `{"expectQuiet": true}` | po barierze nie wysłano nic ponad już sprawdzone |
 | `{"respond": {"socket": "@s", "msgId": "$m" \| "…", "payload": "…", "upper": bool?}}` | CLU odpowiada na gnieździe `@s` ramką `resp:{clu.ip}:{msgId}:{payload}` (`upper`: `msgId` wielkimi literami) |
@@ -222,6 +224,8 @@ Zestaw jest wersjonowany razem ze specyfikacją w repo `grenton-core-spec`. Port
 | `payload.register` | §5.3.2 |
 | `payload.report` | §5.3.2 |
 | `payload.action` | §5.3.4 |
+| `payload.fetch` | §5.3.2 |
+| `payload.values` | §5.3.2 |
 | `model.cast` | §3.1 |
 | `model.action-ref` | §3.3, §3.6 |
 | `provisioning.url` | §4.1 |
@@ -242,6 +246,7 @@ Zestaw jest wersjonowany razem ze specyfikacją w repo `grenton-core-spec`. Port
 | `session.lifecycle` | §5.4.5 |
 | `session.actions` | §5.3.4, §3.3 |
 | `session.loops` | §5.4.4 |
+| `session.fetch` | §5.4.2 |
 
 ## 7. Utrzymanie
 

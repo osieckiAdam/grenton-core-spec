@@ -34,8 +34,8 @@ FIXTURES = os.path.join(CONFORMANCE, "fixtures")
 MANIFEST = os.path.join(CONFORMANCE, "manifest.json")
 
 SCHEMA_VERSION = 1
-SUITE_VERSION = "0.8.0"
-SPEC_VERSION = "0.8.0"
+SUITE_VERSION = "0.9.0"
+SPEC_VERSION = "0.9.0"
 
 # operation -> (profile, required input keys, optional input keys)
 OPERATIONS = {
@@ -46,6 +46,8 @@ OPERATIONS = {
     "payload.register": ("stateless", {"sessionId", "keys"}, set()),
     "payload.action": ("stateless", {"action"}, set()),
     "payload.report": ("stateless", {"payload"}, set()),
+    "payload.fetch": ("stateless", {"keys"}, set()),
+    "payload.values": ("stateless", {"payload"}, set()),
     "value.cast": ("stateless", {"text"}, set()),
     "provisioning.url": ("stateless", {"host", "pin"}, {"port"}),
     "coercion.boolFromOnOff": ("stateless", {"value"}, set()),
@@ -61,6 +63,7 @@ REQUIREMENTS = {
     "crypto.aes-cbc": "§5.1", "crypto.padding": "§5.1", "crypto.key-material": "§5.1",
     "wire.request": "§5.2", "wire.response": "§5.2", "wire.msg-id-case": "§5.2",
     "payload.register": "§5.3.2", "payload.report": "§5.3.2", "payload.action": "§5.3.4",
+    "payload.fetch": "§5.3.2", "payload.values": "§5.3.2", "session.fetch": "§5.4.2",
     "model.cast": "§3.1", "model.action-ref": "§3.3, §3.6",
     "provisioning.url": "§4.1", "provisioning.pin": "§4.1",
     "provisioning.omp": "§4.5", "provisioning.omp-selection": "§4.5.2", "provisioning.omp-archive": "§4.5.1",
@@ -232,7 +235,7 @@ STEPS = {
     "expectClosed": ({"expectClosed"}, set()),
     "fail": ({"fail"}, set()),
 }
-CALLS = {"start", "stop", "ping", "register", "execute"}
+CALLS = {"start", "stop", "ping", "register", "fetch", "execute"}
 STATES = {"idle", "starting", "ready", "degraded", "stopped"}
 EXECUTE_ERRORS = {"session.timeout", "session.notConnected", "session.connectionClosed",
                   "payload.unresolvedPlaceholder"}
@@ -240,6 +243,7 @@ EXECUTE_ERRORS = {"session.timeout", "session.notConnected", "session.connection
 
 DEFAULT_REGISTER_FRAME_LIMIT = 1471   # spec §5.3.2: UTF-8 frame bytes; the datagram is then ≤ 1472 B
 REGISTER_RE = re.compile(r"^SYSTEM:clientRegister\(0,0,(\d+),\{(.*)\}\)$")
+FETCH_RE = re.compile(r"^SYSTEM:fetchValues\(\{(.*)\}\)$")
 
 
 def render_key(key):
@@ -251,13 +255,18 @@ def register_frame_bytes(rendered):
     return len(f"req::00000000:SYSTEM:clientRegister(0,0,999999,{{{','.join(rendered)}}})".encode("utf-8"))
 
 
-def greedy_chunks(rendered, limit):
+def fetch_frame_bytes(rendered):
+    """Spec §5.4.2, `fetch`: the same split with the fetchValues frame text."""
+    return len(f"req::00000000:SYSTEM:fetchValues({{{','.join(rendered)}}})".encode("utf-8"))
+
+
+def greedy_chunks(rendered, limit, frame_bytes=register_frame_bytes):
     """Spec §5.4.2 pt 1, from the first key: each chunk is the longest run that
     fits; a key larger than the limit alone is a chunk of its own."""
     chunks, i = [], 0
     while i < len(rendered):
         j = i + 1
-        while j < len(rendered) and register_frame_bytes(rendered[i:j + 1]) <= limit:
+        while j < len(rendered) and frame_bytes(rendered[i:j + 1]) <= limit:
             j += 1
         chunks.append(",".join(rendered[i:j]))
         i = j
@@ -273,13 +282,26 @@ def check_chunking(doc, errors):
     if not isinstance(limit, int) or not 1 <= limit <= DEFAULT_REGISTER_FRAME_LIMIT:
         errors.append(f"{where}: registerFrameLimitBytes must be 1…{DEFAULT_REGISTER_FRAME_LIMIT}")
         return
-    chunks, nxt = [], 0
+    chunks, nxt = [], 0                 # the registered list, renewed by the loop
+    fetch, fetch_nxt = [], 0            # the last fetch, sent once
     for n, step in enumerate(doc["input"]["steps"]):
         if step.get("call") == "register":
             chunks, nxt = greedy_chunks([render_key(k) for k in step["keys"]], limit), 0
             continue
+        if step.get("call") == "fetch":
+            fetch, fetch_nxt = greedy_chunks([render_key(k) for k in step["keys"]], limit, fetch_frame_bytes), 0
+            continue
         sent = step.get("expectSent")
-        match = REGISTER_RE.match(sent["payload"]) if isinstance(sent, dict) and isinstance(sent.get("payload"), str) else None
+        payload = sent.get("payload") if isinstance(sent, dict) else None
+        if not isinstance(payload, str):
+            continue
+        if match := FETCH_RE.match(payload):
+            if fetch_nxt < len(fetch) and match.group(1) == fetch[fetch_nxt]:
+                fetch_nxt += 1
+            else:
+                errors.append(f"{where}: step {n}: expected chunk {fetch_nxt + 1} of the {limit} B fetch split")
+            continue
+        match = REGISTER_RE.match(payload)
         if not match:
             continue
         body = match.group(2)
@@ -318,8 +340,8 @@ def check_scenario(doc, errors):
                 errors.append(f"{at}: unknown call {step['call']}")
             if step["as"] in calls:
                 errors.append(f"{at}: name {step['as']} used twice")
-            if (step["call"] == "register") != ("keys" in step) or (step["call"] == "execute") != ("action" in step):
-                errors.append(f"{at}: register takes keys, execute takes action, nothing else does")
+            if (step["call"] in ("register", "fetch")) != ("keys" in step) or (step["call"] == "execute") != ("action" in step):
+                errors.append(f"{at}: register and fetch take keys, execute takes action, nothing else does")
             calls[step["as"]] = step["call"]
         elif verb == "await":
             name = step["await"]
@@ -334,8 +356,8 @@ def check_scenario(doc, errors):
                     errors.append(f"{at}: {kind} has no result, use null")
                 if kind == "ping" and (not isinstance(result, dict) or set(result) != {"ok"}):
                     errors.append(f"{at}: ping result is {{ok}}")
-                if kind == "register" and (not isinstance(result, dict) or set(result) != {"slots"}):
-                    errors.append(f"{at}: register result is {{slots}}")
+                if kind in ("register", "fetch") and (not isinstance(result, dict) or set(result) != {"slots"}):
+                    errors.append(f"{at}: {kind} result is {{slots}}")
                 if kind == "execute" and not (result == {"ok": True} or (isinstance(result, dict) and set(result) == {"error"} and result["error"] in EXECUTE_ERRORS)):
                     errors.append(f"{at}: execute result is {{ok: true}} or {{error: <execute error>}}")
         elif verb == "expectSent":

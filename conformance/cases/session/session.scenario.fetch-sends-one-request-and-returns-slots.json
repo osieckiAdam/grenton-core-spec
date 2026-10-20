@@ -1,0 +1,111 @@
+{
+  "schemaVersion": 1,
+  "id": "session.scenario.fetch-sends-one-request-and-returns-slots",
+  "specRefs": [
+    "session.fetch",
+    "session.correlation"
+  ],
+  "description": "fetch(keys) sends SYSTEM:fetchValues with the keys from the main socket, with a fresh msg_id, and the values: reply becomes slots in key order; nothing is registered.",
+  "provenance": "spec §5.3–§5.4 text, conformance.md §4b",
+  "operation": "session.scenario",
+  "input": {
+    "clu": {
+      "id": "CLU_1",
+      "ip": "10.0.0.1",
+      "port": 1234
+    },
+    "responseTimeoutMs": 5000,
+    "pingIntervalMs": 3600000,
+    "registerIntervalMs": 3600000,
+    "steps": [
+      {
+        "call": "start",
+        "as": "start"
+      },
+      {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "checkAlive()"
+        }
+      },
+      {
+        "respond": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "1"
+        }
+      },
+      {
+        "await": "start",
+        "result": null
+      },
+      {
+        "expectState": "ready"
+      },
+      {
+        "call": "fetch",
+        "keys": [
+          {
+            "type": "variable",
+            "name": "x_a"
+          },
+          {
+            "type": "attribute",
+            "objectName": "DOU1001",
+            "index": "0"
+          }
+        ],
+        "as": "f"
+      },
+      {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$m1",
+          "payload": "SYSTEM:fetchValues({\"x_a\",{DOU1001,0}})"
+        }
+      },
+      {
+        "respond": {
+          "socket": "@main",
+          "msgId": "$m1",
+          "payload": "values:{1,\"ON\"}"
+        }
+      },
+      {
+        "await": "f",
+        "result": {
+          "slots": [
+            {
+              "type": "int",
+              "value": "1"
+            },
+            {
+              "type": "string",
+              "value": "ON"
+            }
+          ]
+        }
+      },
+      {
+        "expectQuiet": true
+      },
+      {
+        "respond": {
+          "socket": "@main",
+          "msgId": "00000000",
+          "payload": "clientReport:1:{0,\"OFF\"}"
+        }
+      },
+      {
+        "expectNoReport": true
+      }
+    ]
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "completed": true
+    }
+  }
+}

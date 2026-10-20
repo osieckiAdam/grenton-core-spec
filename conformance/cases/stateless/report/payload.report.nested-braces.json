@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "id": "payload.report.nested-braces",
+  "specRefs": [
+    "payload.report"
+  ],
+  "description": "A nested {…} block is one element and stays a string with its braces; commas inside it do not separate.",
+  "provenance": "spec §5.3.2 pt 2",
+  "operation": "payload.report",
+  "input": {
+    "payload": "clientReport:2:{0,{1,2,3},5,{{4},6}}"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "sessionId": 2,
+      "values": [
+        {
+          "type": "int",
+          "value": "0"
+        },
+        {
+          "type": "string",
+          "value": "{1,2,3}"
+        },
+        {
+          "type": "int",
+          "value": "5"
+        },
+        {
+          "type": "string",
+          "value": "{{4},6}"
+        }
+      ]
+    }
+  }
+}

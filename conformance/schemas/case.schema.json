@@ -30,6 +30,10 @@
       "then": { "properties": { "input": { "$ref": "#/$defs/input.payload.action" } } } },
     { "if": { "properties": { "operation": { "const": "payload.report" } } },
       "then": { "properties": { "input": { "$ref": "#/$defs/input.payload.report" } } } },
+    { "if": { "properties": { "operation": { "const": "payload.fetch" } } },
+      "then": { "properties": { "input": { "$ref": "#/$defs/input.payload.fetch" } } } },
+    { "if": { "properties": { "operation": { "const": "payload.values" } } },
+      "then": { "properties": { "input": { "$ref": "#/$defs/input.payload.report" } } } },
     { "if": { "properties": { "operation": { "const": "value.cast" } } },
       "then": { "properties": { "input": { "$ref": "#/$defs/input.value.cast" } } } },
     { "if": { "properties": { "operation": { "const": "provisioning.url" } } },
@@ -103,7 +107,10 @@
       "type": "object", "additionalProperties": false, "required": ["sessionId", "keys"],
       "properties": {
         "sessionId": { "type": "integer" },
-        "keys": {
+        "keys": { "$ref": "#/$defs/subscription.keys" }
+      }
+    },
+    "subscription.keys": {
           "type": "array", "minItems": 1,
           "items": {
             "oneOf": [
@@ -114,12 +121,14 @@
                                 "index": { "type": "string" } } }
             ]
           }
-        }
-      }
-    },
+        },
     "input.payload.action": {
       "type": "object", "additionalProperties": false, "required": ["action"],
       "properties": { "action": { "type": "object", "description": "An ActionRef exactly as it appears in data.json (spec §3.3)." } }
+    },
+    "input.payload.fetch": {
+      "type": "object", "additionalProperties": false, "required": ["keys"],
+      "properties": { "keys": { "$ref": "#/$defs/subscription.keys" } }
     },
     "input.payload.report": {
       "type": "object", "additionalProperties": false, "required": ["payload"],
@@ -179,7 +188,7 @@
     "session.step": {
       "oneOf": [
         { "type": "object", "additionalProperties": false, "required": ["call", "as"],
-          "properties": { "call": { "enum": ["start", "stop", "ping", "register", "execute"] },
+          "properties": { "call": { "enum": ["start", "stop", "ping", "register", "fetch", "execute"] },
                           "as": { "type": "string" }, "keys": { "type": "array" }, "action": { "type": "object" } } },
         { "type": "object", "additionalProperties": false, "required": ["await", "result"],
           "properties": { "await": { "type": "string" }, "result": {} } },

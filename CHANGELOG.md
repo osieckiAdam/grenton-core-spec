@@ -1,5 +1,35 @@
 # Changelog
 
+## Spec 0.9.0, suite 0.9.0 — 2026-10-21
+
+Report parsing that respects quotes and nesting, the one-shot read `fetchValues`, and notes from the mobile app.
+
+Evidence (one installation, two CLU firmware generations; a static analysis of the official Android app 1.17.8 with jadx, a packet capture of the iOS app, and live probes in the Swift port's `Examples/probe-register`, phases J and K):
+
+- The app splits a report on commas outside quotes and keeps a nested `{…}` block whole; the reference splits on every comma, which the 0.8.0 text had copied as an unfixable limitation. Only a quote inside a string stays unrecoverable.
+- `SYSTEM:fetchValues({keys})` is one of the three `SYSTEM:` commands the app has (with `clientRegister` and `mqttRegister`; it has no `clientDestroy`). The app uses it to read one widget's values when a schedule editor opens. Live, on both firmware generations: the reply is `values:{…}` with no subscription number, 30 keys answer, an unknown object gives `nil`, an empty list gives the malformed `values:}`, no notification follows for 20 s, and a second read after a wall switch returns the new value.
+- The app sends numeric action values bare, with a space after the comma; the reference quotes them. Live, on a dimmer method: `execute(3,"120.0")`, `execute(3, 60.0)`, `execute(3,"90")`, `execute(3,150)`, `"33.33"` and `66.66` are all accepted with the same `nil` reply, the value lands the same way and fractions are truncated by the CLU; `set` on the method's index replies `nil` and changes nothing.
+- The app waits 5 s for a ping and 15 s for a command; live, actions answered within tens of milliseconds.
+- The app reads `pushNotifications` to match FCM pushes whose `encryptedData` it decrypts with the interface key; its cloud mode is MQTT with the same frame bytes, authenticated by a certificate shipped in the app.
+- The iOS and Android apps differ on the wire (empty vs filled ip field, msg_id case, subscription number 1 vs a constant, ~31 vs 40 s renewal) and the CLU accepts both; none of this changes the session rules of 0.7.0.
+
+Spec:
+
+- §5.3.2 pt 2–4: elements are split on commas outside quotes and outside nested braces; a nested block is one string element; an unclosed string, an unclosed inner brace or a closing brace at depth 0 rejects the payload, while a third part without its outer `{` or `}` is an empty list as before. §10 pt 2 narrowed to the quote. (Review findings: reversed nesting and a missing outer brace were ambiguous.)
+- §5.3.2 (new paragraph): `SYSTEM:fetchValues({keys})` → `values:{…}`; at least one key, the registration frame limit, `nil` for an unknown key, no subscription.
+- §5.4.2 (new paragraph): `fetch(keys) → slots`, chunked and sequential like `register`, serialized with the other operations, touching neither chunks nor loops; without a main socket it sends nothing and yields `failed`. §5.4.5: `stop()` during a fetch fails the chunk in flight and the unsent ones, keeps the slots already read, and sends nothing more (review finding).
+- §5.3.4 Δ: the app's unquoted values; Core keeps the reference form; `set`/`execute` are decided by `callType`. §10 pt 3: a quote around a number is irrelevant to the CLU.
+- §5.4.1 pt 3 Δ: the app's 15 s command timeout; Core keeps 5 s.
+- §5.3.5: a `fetchValues` exchange in the example.
+- §10 pt 8: what `pushNotifications` and the cloud mode are, and why both stay out of scope.
+
+Suite (224 cases; 44 session scenarios):
+
+- `payload.report`: `comma-inside-quotes`, `nested-braces`, `reject-unbalanced-quote`, `reject-unbalanced-brace`, `reject-reversed-braces`, `missing-closing-brace`;
+- new operations `payload.fetch` (2 cases) and `payload.values` (5 cases: a list, `nil`, quotes, no prefix, the malformed empty reply); requirement ids `payload.fetch`, `payload.values`, `session.fetch`;
+- `session.scenario` gains the `fetch` call with a `{slots}` result; scenarios: a fetch answered and not followed by a report, a timeout and a client report in place of `values:` both failing the slots, a fetch between registrations leaving session 1 and its 30 s wait alone, a fetch before `start()` sending nothing, a fetch split by a 50 B frame limit with its second chunk unanswered, and `stop()` during a fetch failing the rest without sending it; `tools/suite.py check` holds fetch requests to the greedy split as it does registrations;
+- the key list schema is a named definition (`subscription.keys`) shared by `payload.register` and `payload.fetch`.
+
 ## Spec 0.8.0, suite 0.8.0 — 2026-10-20
 
 Import of the mobile interface from an Object Manager project file (`.omp`), for the widget types whose editor format is confirmed.

@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "payload.values.nil-for-unknown-key",
+  "specRefs": [
+    "payload.values"
+  ],
+  "description": "An unknown key is reported as nil, which casts to null.",
+  "provenance": "spec §5.3.2",
+  "operation": "payload.values",
+  "input": {
+    "payload": "values:{nil}"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "values": [
+        {
+          "type": "null"
+        }
+      ]
+    }
+  }
+}

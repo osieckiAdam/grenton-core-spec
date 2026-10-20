@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "payload.values.reject-no-prefix",
+  "specRefs": [
+    "payload.values"
+  ],
+  "description": "Without the values: prefix the payload is rejected; a clientReport is not a fetch reply.",
+  "provenance": "spec §5.3.2",
+  "operation": "payload.values",
+  "input": {
+    "payload": "clientReport:1:{1}"
+  },
+  "expect": {
+    "outcome": "reject"
+  }
+}

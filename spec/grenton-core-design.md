@@ -3,8 +3,8 @@
 | | |
 |---|---|
 | **Status** | Projekt (do implementacji) |
-| **Wersja** | 0.8.0 |
-| **Data** | 2026-10-20 |
+| **Wersja** | 0.9.0 |
+| **Data** | 2026-10-21 |
 | **Implementacja referencyjna** | `homeassistant-grenton` (Python, integracja Home Assistant) |
 | **Przeznaczenie** | Specyfikacja niezależna od języka — podstawa dla portów (pierwszy: Swift) |
 | **Zestaw zgodności** | `conformance/` + kontrakt w [`conformance.md`](conformance.md) |
@@ -412,9 +412,9 @@ clientReport:{session}:{v1,v2,...,vn}
 Wartości `vi` w kolejności kluczy żądania; są to **wartości początkowe** subskrybowanych stanów. Parsowanie payloadu:
 
 1. Prefiks `clientReport:`; drugie pole = int — numer subskrypcji. Odpowiedź na rejestrację jest skorelowana przez `msg_id` (§5.4.1), więc numeru w odpowiedzi **nie sprawdza się**.
-2. Trzecia część musi być otoczona `{`…`}`; zawartość dzielona **po przecinkach**, każdy element: trim + zdjęcie cudzysłowów + `castString` (§3.1).
-3. **Semantyka błędów parsowania:** payload bez prefiksu / z niepoprawnym numerem → payload odrzucony (dla odpowiedzi na rejestrację: **chunk uznany za nieudany**, §5.4.2). Poprawny prefiks i numer, ale brak nawiasów `{}` lub pusta zawartość → **pusta lista wartości**: dla odpowiedzi na rejestrację chunk nieudany (liczba wartości ≠ liczba kluczy), dla notyfikacji — raport zignorowany z logiem, bez aktualizacji stanu.
-4. **Znane ograniczenie protokołu:** brak escapowania — wartość string zawierająca przecinek lub cudzysłów rozjedzie parsowanie pozycyjne. Wpisane jako ograniczenie (§10).
+2. Trzecia część musi zaczynać się od `{` i kończyć `}` (nawiasy zewnętrzne; brak któregokolwiek → pkt 3). Zawartość między nimi dzielona jest na elementy **po przecinkach poza cudzysłowami i poza zagnieżdżonymi nawiasami**: `"` otwiera i zamyka tekst (bez escapowania), `{` i `}` poza tekstem zwiększają i zmniejszają głębokość, a elementy rozdziela tylko przecinek poza tekstem na głębokości 0. Zagnieżdżony blok `{…}` jest jednym elementem i po `castString` zostaje stringiem z nawiasami (np. `{0,{1,2},3}` → `0`, `{1,2}`, `3`). Każdy element: trim + zdjęcie cudzysłowów + `castString` (§3.1). Tekst niedomknięty na końcu zawartości, głębokość różna od 0 na końcu albo `}` przy głębokości 0 (głębokość nigdy nie spada poniżej zera) → payload odrzucony jak w pkt 3.
+3. **Semantyka błędów parsowania:** payload bez prefiksu / z niepoprawnym numerem / z niedomkniętym tekstem lub niezrównoważonym nawiasem wewnątrz zawartości → payload odrzucony (dla odpowiedzi na rejestrację: **chunk uznany za nieudany**, §5.4.2; dla notyfikacji — zignorowany z logiem). Poprawny prefiks i numer, ale trzecia część bez `{` na początku lub bez `}` na końcu (także urwana, np. `{1,2`) albo z pustą zawartością → **pusta lista wartości**: dla odpowiedzi na rejestrację chunk nieudany (liczba wartości ≠ liczba kluczy), dla notyfikacji — raport zignorowany z logiem, bez aktualizacji stanu.
+4. **Znane ograniczenie protokołu:** brak escapowania — wartość string zawierająca cudzysłów rozjedzie parsowanie pozycyjne (przecinek w tekście i zagnieżdżone nawiasy są obsługiwane przez pkt 2). Wpisane jako ograniczenie (§10).
 
 **Wyrejestrowanie** (`clientDestroy`), świeży losowy `msg_id`:
 
@@ -423,6 +423,20 @@ SYSTEM:clientDestroy(0,0,{session})
 ```
 
 Ta sama trójka co przy rejestracji; CLU przestaje wysyłać notyfikacje tej subskrypcji. Żądanie wysyła się **bez czekania na odpowiedź** — odpowiedź, jeśli przyjdzie, jest odrzucana jak każda nieoczekiwana ramka (§5.4.1 pkt 2). (CLU odpowiada numerem subskrypcji, a `nil`, gdy takiej subskrypcji nie ma — np. już wygasła.) Core wysyła je, gdy subskrypcja przestaje być potrzebna (§5.4.2 pkt 6, §5.4.5); bez niego CLU i tak przestałby wysyłać po wygaśnięciu.
+
+**Odczyt jednorazowy** (`fetchValues`), świeży losowy `msg_id`:
+
+```
+SYSTEM:fetchValues({K1,K2,...,Kn})
+```
+
+Klucze jak w `clientRegister`, **co najmniej jeden** (na pustą listę CLU odpowiada zniekształconym payloadem, więc Core nigdy jej nie wysyła), w tym samym limicie ramki (§5.4.2; w podziale liczy się tekst ramki `fetchValues`). Odpowiedź:
+
+```
+values:{v1,v2,...,vn}
+```
+
+Prefiks `values:`, **bez numeru subskrypcji**; lista wartości według pkt 2 wyżej, w kolejności kluczy; klucz nieznany CLU daje `nil`, nie błąd. Payload bez prefiksu `values:` albo niespełniający pkt 2 → odrzucony. Odczyt **nie zakłada subskrypcji**: CLU niczego potem nie wysyła, nic nie wygasa i nie trzeba nic wyrejestrowywać. Core używa go tam, gdzie potrzebna jest jednorazowa, kompletna migawka bez subskrypcji (§5.4.2, `fetch`).
 
 #### 5.3.3 Notyfikacja `clientReport`
 
@@ -447,6 +461,8 @@ przy każdej zmianie któregokolwiek subskrybowanego stanu (raport zawiera zawsz
 
 Odpowiedź: ramka `resp` z pasującym `msg_id`; payload ignorowany (sukces = odpowiedź przyszła). Timeout = porażka akcji.
 
+**Δ Cudzysłów wokół wartości.** Aplikacja myGrenton wstawia wartości atrybutów i metod dosłownie, bez cudzysłowu i ze spacją po przecinku (`set(0, 1)`, `execute(3, 22.0)`), a cytuje tylko wartości tekstowe (harmonogramy, `setVar`). CLU przyjmuje obie formy identycznie: `execute(3,"120.0")` i `execute(3, 120.0)` dają tę samą wartość, a CLU sam obcina część ułamkową tam, gdzie cecha jest całkowita. Core zostaje przy formie referencji z cudzysłowem. Niezależnie od formy CLU nie zgłasza złego rodzaju wywołania — `set` na indeksie metody odpowiada `nil` i nic nie zmienia; o `set`/`execute` decyduje `callType` z interfejsu (§3.3).
+
 **Interpolacja bez escapowania:** pola `index`/`objectName`/`value` wchodzą do payloadu dosłownie — cudzysłów lub separator protokołu w wartości zmienia znaczenie payloadu (de facto injection do Lua CLU). Wartości generowane przez Core (liczby z intencji urządzeń) są bezpieczne z konstrukcji; wartości przekazywane od użytkownika (parametr sceny) są **świadomie dosłowne** — odpowiedzialność wywołującego, odnotowana w API.
 
 #### 5.3.5 Przykładowa wymiana
@@ -465,6 +481,10 @@ Odpowiedź: ramka `resp` z pasującym `msg_id`; payload ignorowany (sukces = odp
 
 → req::7c2d91aa:DOU8272:set(0,"1")
 ← resp:192.168.1.10:7c2d91aa:...
+
+   … odczyt jednorazowy, bez subskrypcji:
+→ req::b3e1a9c0:SYSTEM:fetchValues({{DOU8272,0},{NOPE_0000,0}})
+← resp:192.168.1.10:b3e1a9c0:values:{1,nil}
 
    … przy zatrzymaniu sesji, bez czekania na odpowiedź:
 → req::9e02b7f3:SYSTEM:clientDestroy(0,0,1)
@@ -489,7 +509,7 @@ Jedna instancja per CLU. Stan sesji:
    - jest w `pending` → zdejmij, dostarcz odpowiedź czekającemu;
    - nie ma w `pending` i ramka jest `clientReport` (msg_id `00000000` + prefiks payloadu) → ścieżka raportu (§5.4.3);
    - inaczej → log debug, odrzuć.
-3. **Timeout odpowiedzi: 5 s** — zdejmij z `pending`, zwróć błąd `TimeoutError`. Odpowiedź, która przyjdzie później, nie ma już `pending` i jest odrzucana jak każda nieoczekiwana ramka.
+3. **Timeout odpowiedzi: 5 s** — zdejmij z `pending`, zwróć błąd `TimeoutError`. Odpowiedź, która przyjdzie później, nie ma już `pending` i jest odrzucana jak każda nieoczekiwana ramka. **Δ** Aplikacja myGrenton czeka 5 s na ping, ale 15 s na akcję i odczyt; CLU odpowiada na akcje w dziesiątkach milisekund, więc Core zostaje przy 5 s dla wszystkich żądań, a port może udostępnić osobny timeout akcji.
 4. Zamknięcie/awaria socketu: wszystkie `pending` kończą się błędem `ConnectionClosed`. Awaria socketu głównego poza `stop()` przeprowadza sesję w `degraded` bez socketu głównego; następny ping otwiera nowy (§5.4.5).
 
 #### 5.4.2 Chunking i rejestracja
@@ -506,6 +526,8 @@ Jedna instancja per CLU. Stan sesji:
 **Δ Chunki sekwencyjnie, nie równolegle.** Referencja (upstream `main`, PR #12) wysyła wszystkie chunki naraz. CLU gubi żądania wysłane seriami: z wieloma chunkami naraz na część z nich nie odpowiada w czasie — encje tych chunków zostają bez stanu i bez push do następnej re-rejestracji (§5.4.4). Rejestracje **różnych** CLU mogą iść równolegle.
 
 **Δ Jeden socket, chunki jako numery subskrypcji.** Referencja otwiera osobny socket na każdy chunk i przy każdej re-rejestracji nowe, a starych nie wyrejestrowuje — każda poprzednia subskrypcja wysyła wtedy notyfikacje na zamknięty port aż do wygaśnięcia. Core rejestruje wszystkie chunki z socketu głównego, każdy pod własnym numerem, i odnawia je tymi samymi numerami.
+
+**`fetch(keys)` — odczyt jednorazowy.** Dzieli `keys` jak `register` (pkt 1, z tekstem ramki `fetchValues`), wysyła chunki **po kolei** z socketu głównego jako `SYSTEM:fetchValues({…})` (§5.3.2), każdy ze świeżym `msg_id`, i zwraca sloty pozycyjnie zgodne z `keys` (pkt 4: chunk bez odpowiedzi, z odrzuconym payloadem albo złą liczbą wartości → `failed`). Nie zmienia listy chunków, numerów ani pętli (§5.4.4) i niczego nie wyrejestrowuje; przy `keys = []` nic nie wysyła i zwraca pustą listę; bez otwartego socketu głównego (`idle`, `stopped`, `degraded` bez socketu) nic nie wysyła i zwraca same `failed`. Jest zserializowany z `start`, `register` i `stop` (§5.4.5). Warstwa wyżej może zasilić `StateStore` zwróconymi slotami (§5.5), tak jak slotami rejestracji.
 
 #### 5.4.3 Ścieżka raportu
 
@@ -552,6 +574,7 @@ Reguły:
 - Błąd `connect`/pierwszego pinga nie jest fatalny dla całego systemu — pozostałe CLU działają; sesja wchodzi w `degraded`, a pętla pingów pełni rolę retry (kolejny udany ping → re-rejestracja → `ready`). Wartości z tej re-rejestracji trafiają do warstwy wyżej ścieżką raportu (§5.4.3), jak z każdego chunka; chunk, który zawiódł, wnosi `failed` na swoich pozycjach. Jeżeli w `degraded` **socket główny nie istnieje** (jego utworzenie zawiodło albo socket uległ awarii, §5.4.1 pkt 4), każdy tik pingu najpierw ponawia otwarcie socketu głównego, a dopiero potem wysyła ping. Nowy socket główny to dla CLU nowy adres: subskrypcje założone ze starego socketu wygasają same, a re-rejestracja po udanym pingu zakłada je na nowo.
 - `execute` bez otwartego socketu głównego (`idle`, `stopped`, `degraded` bez socketu) kończy się błędem `SessionError.notConnected` i niczego nie wysyła. Akcja nie otwiera socketu sama; robi to `start()` albo ping.
 - Rejestracja przerwana przez `stop()` kończy się jak chunk, który zawiódł: `failed` na pozycjach niedokończonych chunków (§5.4.2 pkt 4). Chunk, którego żądanie już wyszło, jest wyrejestrowany jak każdy inny.
+- `fetch` przerwany przez `stop()` kończy się tak samo: `stop()` nie czeka na chunki odczytu — żądanie w locie kończy się `ConnectionClosed` i daje `failed`, kolejne chunki nie są wysyłane i też dają `failed`, a sloty chunków już odebranych zostają; `fetch` wraca z tą listą.
 
 ### 5.5 Magazyn stanu — `StateStore`
 
@@ -891,13 +914,13 @@ Na nim jeżdżą testy integracyjne sesji: rejestracja chunkowana (lista kluczy 
 ## 10. Znane ograniczenia i decyzje
 
 1. **Statyczny IV / brak MAC** — narzucone przez protokół CLU; nie do naprawienia po stronie klienta (§5.1).
-2. **Parowanie pozycyjne bez escapowania** — string z przecinkiem/cudzysłowem w wartości rozjedzie raport (§5.3.2). Ryzyko realne głównie dla zmiennych tekstowych; brak obejścia.
-3. **Format liczb w payloadach akcji:** referencja wysyła Pythonowe `str(round(v, p))` (np. `5.0` przy precision 0). **Domyślnym zachowaniem Core jest format zgodny z referencją** (CLU go przyjmuje, np. `"22.0"`). Format bez `.0` jest dostępny tylko za flagą — jego akceptacja przez CLU nie jest potwierdzona.
+2. **Parowanie pozycyjne bez escapowania** — string zawierający cudzysłów rozjedzie raport (§5.3.2). Przecinek w tekście i zagnieżdżone nawiasy parsują się poprawnie od 0.9.0; cudzysłowu protokół nie escapuje, więc tu obejścia nie ma. Ryzyko realne tylko dla zmiennych tekstowych.
+3. **Format liczb w payloadach akcji:** referencja wysyła Pythonowe `str(round(v, p))` (np. `5.0` przy precision 0). **Domyślnym zachowaniem Core jest format zgodny z referencją** (CLU go przyjmuje, np. `"22.0"`). Format bez `.0` jest dostępny tylko za flagą — jego akceptacja przez CLU nie jest potwierdzona. Cudzysłów wokół liczby jest dla CLU obojętny (§5.3.4 Δ).
 4. **Limit ramki rejestracji 1471 B** (§5.3.2) — bajtowy, nie liczba kluczy: liczba kluczy nie chroni przed długimi nazwami zmiennych. Wynika z MTU 1500, więc port może pozwolić go zmniejszyć, gdy po drodze jest mniejsze MTU; nie może go zwiększyć, bo część CLU nie składa fragmentów IP.
 5. **Brak weryfikacji nadawcy datagramu** w referencji; Core dopuszcza filtrowanie po adresie CLU (Δ §7.1).
 6. **Jeden socket na sesję, chunki jako numery subskrypcji** (§5.4.2). Wcześniejsze wydania tej specyfikacji zakładały, że numer w notyfikacji jest niewiarygodny, i wymagały socketu na chunk; to był błędny odczyt argumentów `clientRegister` (§5.3.2). Notyfikacje przychodzą na port źródłowy rejestracji, więc socket główny jest też odbiornikiem raportów.
 7. **Wygasanie subskrypcji** po około minucie jest cechą CLU, nie klienta; nie da się go wyłączyć, można tylko odnawiać (§5.4.4).
-8. Pole `interface.pushNotifications` i tryb chmurowy — poza zakresem v1.
+8. **`interface.pushNotifications` i tryb chmurowy — poza zakresem.** `pushNotifications` wymienia obiekty, o których CLU powiadamia przez chmurę Grentona: telefon dostaje powiadomienie FCM z `cluId` i polem `encryptedData` (hex), zaszyfrowanym tym samym AES-CBC i kluczem interfejsu co ramki CLU (§5.1), z `{title, message}` w środku. Odbiór wymaga rejestracji tokenu w usłudze Grentona, więc Core tego nie implementuje; `GrentonCipher` odszyfrowałby taką treść, gdyby aplikacja dostała ją inną drogą. Tryb chmurowy aplikacji to MQTT (AWS IoT) z tymi samymi bajtami ramek co po UDP, uwierzytelniany certyfikatem należącym do producenta — poza zakresem z tego samego powodu.
 9. Usterki referencji, których **nie przenosimy**: martwy kod `self.min = min` w encji LED; pusty string jako wartość początkowa; liberalne parsowanie liczb Pythona; sekwencja pętli re-rejestracji (§5.4.4).
 10. **Termostat — tryby 1/2:** semantyka trybów urlopowego i harmonogramu pochodzi z dokumentacji Grentona; zapis Mode bezpośrednio przez cechę (zamiast metod `HolidayModeStart`/`AutoModeStart`) nie jest potwierdzony na CLU.
 
