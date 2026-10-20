@@ -3,32 +3,39 @@
 
     python3 tools/suite.py check      validate every case, verify the manifest
     python3 tools/suite.py manifest   rewrite conformance/manifest.json
+    python3 tools/suite.py fixtures   rebuild conformance/fixtures/projects/*.omp
+                                      from conformance/sources/projects/*/
 
 `check` also re-derives expected values that have an independent oracle:
 AES cases through the `openssl` CLI, `number.format` through Python's
 round() (the reference semantics), `mapping.interface` through
-tools/oracles/mapping.py (written from spec §6), and every double's
+tools/oracles/mapping.py (written from spec §6), `provisioning.omp` through
+tools/oracles/omp.py (written from spec §4.5) plus the mapping oracle, every
+.omp fixture against its sources, and every double's
 `decimal` against its `bits`. It never uses a port's output as the source
 of truth.
 """
 import base64
 import hashlib
+import io
 import json
 import os
 import re
 import struct
 import subprocess
 import sys
+import zipfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CONFORMANCE = os.path.join(ROOT, "conformance")
 CASES = os.path.join(CONFORMANCE, "cases")
+PROJECT_SOURCES = os.path.join(CONFORMANCE, "sources", "projects")
 FIXTURES = os.path.join(CONFORMANCE, "fixtures")
 MANIFEST = os.path.join(CONFORMANCE, "manifest.json")
 
 SCHEMA_VERSION = 1
-SUITE_VERSION = "0.7.0"
-SPEC_VERSION = "0.7.0"
+SUITE_VERSION = "0.8.0"
+SPEC_VERSION = "0.8.0"
 
 # operation -> (profile, required input keys, optional input keys)
 OPERATIONS = {
@@ -45,6 +52,7 @@ OPERATIONS = {
     "coercion.truthy": ("stateless", {"value"}, set()),
     "number.format": ("stateless", {"value", "precision"}, set()),
     "mapping.interface": ("mapping", {"fixture"}, set()),
+    "provisioning.omp": ("project", {"fixture"}, {"interfaceId"}),
     "session.scenario": ("session", {"clu", "responseTimeoutMs", "steps"}, {"pingIntervalMs", "registerIntervalMs", "registerFrameLimitBytes"}),
 }
 
@@ -55,6 +63,7 @@ REQUIREMENTS = {
     "payload.register": "§5.3.2", "payload.report": "§5.3.2", "payload.action": "§5.3.4",
     "model.cast": "§3.1", "model.action-ref": "§3.3, §3.6",
     "provisioning.url": "§4.1", "provisioning.pin": "§4.1",
+    "provisioning.omp": "§4.5", "provisioning.omp-selection": "§4.5.2", "provisioning.omp-archive": "§4.5.1",
     "devices.coercion": "§6.2", "devices.number-format": "§10 pt 3",
     "model.widget-tolerance": "§3.6", "devices.mapping": "§6.1, §6.3", "devices.order": "§6.1", "devices.physical-objects": "§6.6",
     "session.correlation": "§5.4.1", "session.chunking": "§5.4.2, §5.3.2",
@@ -63,7 +72,8 @@ REQUIREMENTS = {
     "session.loops": "§5.4.4",
 }
 
-ERROR_CODES = {"crypto.invalidKeyMaterial", "provisioning.connection", "payload.unresolvedPlaceholder"}
+ERROR_CODES = {"crypto.invalidKeyMaterial", "provisioning.connection", "payload.unresolvedPlaceholder",
+               "provisioning.invalidData", "provisioning.interfaceNotFound", "provisioning.interfaceAmbiguous"}
 CASE_KEYS = {"schemaVersion", "id", "specRefs", "description", "provenance", "operation", "input", "expect"}
 ID_RE = re.compile(r"^[a-z0-9]+(\.[A-Za-z0-9-]+)+$")
 
@@ -73,6 +83,70 @@ def json_files(top):
         for name in sorted(files):
             if name.endswith(".json"):
                 yield os.path.join(dirpath, name)
+
+
+def fixture_files():
+    for dirpath, _, files in os.walk(FIXTURES):
+        for name in sorted(files):
+            if name.endswith((".json", ".omp")):
+                yield os.path.join(dirpath, name)
+
+
+def project_source_files(name):
+    """Every file of conformance/sources/projects/<name>/, as archive paths in
+    archive order: the order listed in its ORDER file, else sorted. ORDER
+    itself is not part of the archive."""
+    top = os.path.join(PROJECT_SOURCES, name)
+    out = {}
+    for dirpath, _, files in os.walk(top):
+        for f in files:
+            if f.startswith(".") or (dirpath == top and f == "ORDER"):
+                continue
+            path = os.path.join(dirpath, f)
+            out[os.path.relpath(path, top).replace(os.sep, "/")] = path
+    order_file = os.path.join(top, "ORDER")
+    if os.path.isfile(order_file):
+        with open(order_file, encoding="utf-8") as f:
+            order = [line.strip() for line in f if line.strip()]
+        if sorted(order) != sorted(out):
+            raise SystemExit(f"sources/projects/{name}/ORDER does not list exactly its files")
+        return {n: out[n] for n in order}
+    return dict(sorted(out.items()))
+
+
+def build_project(name):
+    """A deterministic .omp: sorted entries, fixed timestamps, deflated."""
+    buffer = io.BytesIO()
+    with zipfile.ZipFile(buffer, "w", zipfile.ZIP_DEFLATED) as archive:
+        for arcname, path in project_source_files(name).items():
+            info = zipfile.ZipInfo(arcname, date_time=(1980, 1, 1, 0, 0, 0))
+            info.compress_type = zipfile.ZIP_DEFLATED
+            with open(path, "rb") as f:
+                archive.writestr(info, f.read())
+    return buffer.getvalue()
+
+
+def project_names():
+    return sorted(d for d in os.listdir(PROJECT_SOURCES)
+                  if os.path.isdir(os.path.join(PROJECT_SOURCES, d))) if os.path.isdir(PROJECT_SOURCES) else []
+
+
+def check_projects(errors):
+    """Each .omp fixture holds exactly its sources (compared by content, so a
+    different zlib cannot fail it)."""
+    for name in project_names():
+        path = os.path.join(FIXTURES, "projects", name + ".omp")
+        if not os.path.isfile(path):
+            errors.append(f"fixtures/projects/{name}.omp is missing: run `python3 tools/suite.py fixtures`")
+            continue
+        with zipfile.ZipFile(path) as archive:
+            built = [(n, archive.read(n)) for n in archive.namelist()]
+        sources = []
+        for arcname, src in project_source_files(name).items():
+            with open(src, "rb") as f:
+                sources.append((arcname, f.read()))
+        if built != sources:   # names, order and content; not bytes (zlib may differ)
+            errors.append(f"fixtures/projects/{name}.omp differs from its sources: run `python3 tools/suite.py fixtures`")
 
 
 def case_files():
@@ -383,6 +457,23 @@ def oracle(doc, errors):
         check_chunking(doc, errors)
         if exp != {"outcome": "ok", "value": {"completed": True}}:
             errors.append(f"{where}: a scenario expects {{outcome: ok, value: {{completed: true}}}}")
+    if op == "provisioning.omp":
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        from oracles.omp import OmpError
+        path = os.path.join(CONFORMANCE, inp["fixture"])
+        if not os.path.isfile(path):
+            errors.append(f"{where}: fixture {inp['fixture']} does not exist")
+            return
+        with open(path, "rb") as f:
+            raw = f.read()
+        got = omp_case_value(raw, inp.get("interfaceId"), OmpError)
+        try:
+            from oracles.omp import import_project
+            errors.extend(f"{where}: {p}" for p in converted_widget_problems(import_project(raw, inp.get("interfaceId"))))
+        except OmpError:
+            pass
+        if not json_equal(got, exp):
+            errors.append(f"{where}: the .omp oracle gives {json.dumps(got)[:300]}")
     if op == "mapping.interface":
         sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
         from oracles.mapping import map_interface
@@ -409,6 +500,55 @@ def oracle(doc, errors):
         got = str(round(x, inp["precision"]))
         if got != exp["value"]["text"]:
             errors.append(f"{where}: str(round(x, p)) gives {got}, case expects {exp['value']['text']}")
+
+
+def json_equal(a, b):
+    """Type-aware: Python's False == 0 and 1 == 1.0 must not pass."""
+    return json.dumps(a, sort_keys=True) == json.dumps(b, sort_keys=True)
+
+
+# The enumerations §3.5 names: a converted widget that breaks them would be
+# skipped by §3.6 in a port while the mapping oracle mapped it.
+UNITS = {"UNKNOWN", "PERCENT", "DEGREE"}
+VALUE_TYPES = {"STRING", "FLOAT", "INTEGER"}
+
+
+def converted_widget_problems(converted):
+    from oracles.omp import CONFORMANCE_SKIP
+    problems = []
+    for p in converted["pages"]:
+        for w in p["widgets"]:
+            if CONFORMANCE_SKIP in w:
+                continue
+            parts = [w] + w.get("components", []) + [w[k] for k in ("componentLeft", "componentRight") if k in w]
+            for part in parts:
+                if "unit" in part and part["unit"] not in UNITS:
+                    problems.append(f"{w['id']}: unit {part['unit']!r} is not one of §3.5")
+                if "valueType" in part and part["valueType"] not in VALUE_TYPES:
+                    problems.append(f"{w['id']}: valueType {part['valueType']!r} is not one of §3.5")
+    return problems
+
+
+def omp_case_value(data, interface_id, OmpError):
+    """The expected outcome of a `provisioning.omp` case (conformance.md §4c)."""
+    from oracles.omp import import_project, project_interfaces
+    from oracles.mapping import map_interface
+    try:
+        converted = import_project(data, interface_id)
+        listed = project_interfaces(data)
+    except OmpError as e:
+        return {"outcome": "error", "code": e.code}
+    header = {k: converted[k] for k in ("id", "version", "name", "icon", "theme", "encryption", "clus",
+                                        "pushNotifications")}
+    from oracles.omp import CONFORMANCE_SKIP
+    from oracles.mapping import PRESENTATIONAL, SUPPORTED
+    # Widgets §3.6 keeps (§3.5 catalog and HEADER), as {id, type}.
+    header["pages"] = [{"name": p["name"], "icon": p["icon"], "isFullscreenWidget": p["isFullscreenWidget"],
+                        "widgets": [{"id": w["id"], "type": w["type"]} for w in p["widgets"]
+                                    if CONFORMANCE_SKIP not in w and w.get("type") in SUPPORTED | PRESENTATIONAL]}
+                       for p in converted["pages"]]
+    return {"outcome": "ok", "value": {"interfaces": listed, "interface": header,
+                                       "mapping": map_interface(converted)}}
 
 
 def validate(path, errors):
@@ -470,7 +610,7 @@ def build_manifest():
             "sha256": sha256(path),
         })
     entries.sort(key=lambda e: e["id"])
-    fixtures = [{"path": os.path.relpath(p, CONFORMANCE), "sha256": sha256(p)} for p in json_files(FIXTURES)]
+    fixtures = [{"path": os.path.relpath(p, CONFORMANCE), "sha256": sha256(p)} for p in fixture_files()]
     fixtures.sort(key=lambda e: e["path"])
     return {
         "schemaVersion": SCHEMA_VERSION,
@@ -492,6 +632,13 @@ def main():
             f.write("\n")
         print(f"wrote {os.path.relpath(MANIFEST, ROOT)}")
         return 0
+    if command == "fixtures":
+        os.makedirs(os.path.join(FIXTURES, "projects"), exist_ok=True)
+        for name in project_names():
+            with open(os.path.join(FIXTURES, "projects", name + ".omp"), "wb") as f:
+                f.write(build_project(name))
+            print(f"wrote conformance/fixtures/projects/{name}.omp")
+        return 0
     if command != "check":
         print(__doc__)
         return 2
@@ -505,7 +652,8 @@ def main():
             ids.add(doc["id"])
             if isinstance(doc.get("input"), dict) and "fixture" in doc["input"]:
                 referenced.add(doc["input"]["fixture"])
-    for path in json_files(FIXTURES):
+    check_projects(errors)
+    for path in fixture_files():
         rel = os.path.relpath(path, CONFORMANCE)
         if rel not in referenced:
             errors.append(f"{rel}: fixture is not used by any case")

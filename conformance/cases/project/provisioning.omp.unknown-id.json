@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "provisioning.omp.unknown-id",
+  "specRefs": [
+    "provisioning.omp-selection"
+  ],
+  "description": "No interface has this id.",
+  "provenance": "spec §4.5 text; expectations re-derived by tools/oracles/omp.py and tools/oracles/mapping.py",
+  "operation": "provisioning.omp",
+  "input": {
+    "fixture": "fixtures/projects/two-interfaces.omp",
+    "interfaceId": "00000000-0000-0000-0000-000000000000"
+  },
+  "expect": {
+    "outcome": "error",
+    "code": "provisioning.interfaceNotFound"
+  }
+}

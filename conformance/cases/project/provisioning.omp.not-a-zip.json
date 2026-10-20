@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "provisioning.omp.not-a-zip",
+  "specRefs": [
+    "provisioning.omp-archive"
+  ],
+  "description": "A file that is not a ZIP archive.",
+  "provenance": "spec §4.5 text; expectations re-derived by tools/oracles/omp.py and tools/oracles/mapping.py",
+  "operation": "provisioning.omp",
+  "input": {
+    "fixture": "fixtures/projects/not-a-zip.omp"
+  },
+  "expect": {
+    "outcome": "error",
+    "code": "provisioning.invalidData"
+  }
+}

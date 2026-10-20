@@ -1,0 +1,817 @@
+{
+  "id": "11111111-2222-3333-4444-555555555555",
+  "label": "Test House",
+  "icon": "home_1",
+  "theme": "blue",
+  "blockCloud": false,
+  "cloudSharing": null,
+  "darkLogoPath": null,
+  "lightLogoPath": null,
+  "pushNotifications": null,
+  "pages": [
+    {
+      "id": 1014,
+      "label": "Ground floor",
+      "icon": "floor_0",
+      "widgets": [
+        {
+          "id": 1001,
+          "type": "HEADER",
+          "dtoId": "hdr00001",
+          "text": {
+            "image": null,
+            "label": "Section",
+            "type": "HEADER",
+            "rowId": 0
+          }
+        },
+        {
+          "id": 1007,
+          "type": "VALUE_DOUBLE",
+          "dtoId": "va000002",
+          "componentLeft": {
+            "unit": "PERCENT",
+            "valueType": "INTEGER",
+            "precision": 0,
+            "icon": "humidity",
+            "label": "Humidity",
+            "value": {
+              "cluId": "CLU_B",
+              "objectName": "HUM1001",
+              "index": "0",
+              "callType": "ATTRIBUTE"
+            }
+          },
+          "componentRight": {
+            "unit": "UNKNOWN",
+            "valueType": "STRING",
+            "precision": 0,
+            "icon": "info",
+            "label": "Mode",
+            "value": {
+              "cluId": "CLU_B",
+              "objectName": "X_MODE",
+              "index": "X_MODE",
+              "callType": "VARIABLE"
+            }
+          }
+        },
+        {
+          "id": 1002,
+          "type": "ON_OFF",
+          "dtoId": "sw000001",
+          "buttonBistable": {
+            "image": "lamp",
+            "label": "Lamp",
+            "indication": "ON_OFF",
+            "onIndication": "On",
+            "offIndication": "Off",
+            "type": "BUTTON_BISTABLE",
+            "rowId": 0,
+            "state": {
+              "cluId": "CLU_A",
+              "objectName": "DOU1001",
+              "index": "0",
+              "callType": "ATTRIBUTE"
+            },
+            "actionOn": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "1",
+              "objectName": "DOU1001",
+              "index": "0",
+              "type": "ON",
+              "value": "1",
+              "callType": "PSEUDO_METHOD"
+            },
+            "actionOff": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "0",
+              "objectName": "DOU1001",
+              "index": "0",
+              "type": "OFF",
+              "value": "0",
+              "callType": "PSEUDO_METHOD"
+            }
+          }
+        },
+        {
+          "id": 1003,
+          "type": "ON_OFF_DOUBLE",
+          "dtoId": "sw000002",
+          "buttonBistableFirst": {
+            "image": "socket",
+            "label": "Left",
+            "onIndication": "On",
+            "offIndication": "Off",
+            "type": "BUTTON_BISTABLE_V2",
+            "rowId": 0,
+            "state": {
+              "cluId": "CLU_A",
+              "objectName": "DOU1002",
+              "index": "0",
+              "callType": "ATTRIBUTE"
+            },
+            "actionOn": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "",
+              "objectName": "DOU1002",
+              "index": "1",
+              "type": "ON",
+              "value": "",
+              "callType": "METHOD"
+            },
+            "actionOff": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "",
+              "objectName": "DOU1002",
+              "index": "2",
+              "type": "OFF",
+              "value": "",
+              "callType": "METHOD"
+            }
+          },
+          "buttonBistableSecond": {
+            "image": "socket",
+            "label": "Right",
+            "onIndication": "On",
+            "offIndication": "Off",
+            "type": "BUTTON_BISTABLE_V2",
+            "rowId": 0,
+            "state": {
+              "cluId": "CLU_A",
+              "objectName": "DOU1003",
+              "index": "0",
+              "callType": "ATTRIBUTE"
+            },
+            "actionOn": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "",
+              "objectName": "DOU1003",
+              "index": "1",
+              "type": "ON",
+              "value": "",
+              "callType": "METHOD"
+            },
+            "actionOff": {
+              "cluId": null,
+              "valueFormattedForDto": null,
+              "objectName": null,
+              "index": null,
+              "type": "OFF",
+              "value": null,
+              "callType": "METHOD"
+            }
+          }
+        },
+        {
+          "id": 1004,
+          "type": "SCENE",
+          "dtoId": "sc000001",
+          "background": {
+            "image": "scene_morning",
+            "color": "orange"
+          },
+          "buttonMonostable": {
+            "label": "Morning",
+            "type": "BUTTON_MONOSTABLE",
+            "rowId": 0,
+            "actionClick": {
+              "cluId": "CLU_D",
+              "valueFormattedForDto": "",
+              "objectName": "X_SCRIPT",
+              "index": null,
+              "type": "CLICK",
+              "value": "",
+              "callType": "SCRIPT"
+            }
+          }
+        },
+        {
+          "id": 1005,
+          "type": "SCENE_DOUBLE",
+          "dtoId": "sc000002",
+          "background": {
+            "image": "scene_gate",
+            "color": "blue"
+          },
+          "buttonMonostableFirst": {
+            "label": "Open",
+            "type": "BUTTON_MONOSTABLE",
+            "rowId": 0,
+            "actionClick": {
+              "cluId": "CLU_B",
+              "valueFormattedForDto": "",
+              "objectName": "X_GATE_OPEN",
+              "index": null,
+              "type": "CLICK",
+              "value": "",
+              "callType": "SCRIPT"
+            }
+          },
+          "buttonMonostableSecond": {
+            "label": "Close",
+            "type": "BUTTON_MONOSTABLE",
+            "rowId": 0,
+            "actionClick": {
+              "cluId": "CLU_B",
+              "valueFormattedForDto": "0",
+              "objectName": "X_GATE",
+              "index": "X_GATE",
+              "type": "CLICK",
+              "value": "0",
+              "callType": "VARIABLE"
+            }
+          }
+        },
+        {
+          "id": 1006,
+          "type": "VALUE_V2",
+          "dtoId": "va000001",
+          "unit": "DEGREE",
+          "valueType": "FLOAT",
+          "precision": 1,
+          "icon": "temperature",
+          "label": "Temperature",
+          "value": {
+            "cluId": "CLU_A",
+            "objectName": "TMP1001",
+            "index": "0",
+            "callType": "ATTRIBUTE"
+          }
+        }
+      ]
+    },
+    {
+      "id": 1015,
+      "label": "Climate",
+      "icon": "climate",
+      "widgets": [
+        {
+          "min": 0,
+          "max": 240,
+          "precision": 2,
+          "icon": "dimmer",
+          "id": 1008,
+          "label": "Dimmer",
+          "type": "DIMMER_V2",
+          "dtoId": "di000001",
+          "object": {
+            "onAction": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "240",
+              "objectName": "DIM1001",
+              "index": "3",
+              "type": "ON",
+              "value": "240",
+              "callType": "METHOD"
+            },
+            "offAction": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "0",
+              "objectName": "DIM1001",
+              "index": "3",
+              "type": "OFF",
+              "value": "0",
+              "callType": "METHOD"
+            },
+            "setValueAction": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "$value$",
+              "objectName": "DIM1001",
+              "index": "3",
+              "type": "CLICK",
+              "value": "$value$",
+              "callType": "METHOD"
+            },
+            "value": {
+              "cluId": "CLU_A",
+              "objectName": "DIM1001",
+              "index": "3",
+              "callType": "ATTRIBUTE"
+            }
+          }
+        },
+        {
+          "icon": "temperature",
+          "id": 1009,
+          "label": "Thermostat",
+          "type": "THERMOSTAT_V2",
+          "noOfFanSpeeds": 0,
+          "dtoId": "th000001",
+          "object": {
+            "setTargetTemperature": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "99",
+              "objectName": "THE1001",
+              "index": "3",
+              "type": "CLICK",
+              "value": "99",
+              "callType": "PSEUDO_METHOD"
+            },
+            "maxTemperature": {
+              "cluId": "CLU_A",
+              "objectName": "THE1001",
+              "index": "11",
+              "callType": "ATTRIBUTE"
+            },
+            "setMaxTemperatureAction": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "$value$",
+              "objectName": "THE1001",
+              "index": "11",
+              "type": "CLICK",
+              "value": "$value$",
+              "callType": "PSEUDO_METHOD"
+            },
+            "fanControlOutValue": {
+              "cluId": null,
+              "objectName": null,
+              "index": null,
+              "callType": "ATTRIBUTE"
+            },
+            "currentTemperature": {
+              "cluId": "CLU_A",
+              "objectName": "THE1001",
+              "index": "14",
+              "callType": "ATTRIBUTE"
+            },
+            "fanMode": {
+              "cluId": null,
+              "objectName": null,
+              "index": null,
+              "callType": "ATTRIBUTE"
+            },
+            "setTargetTemperatureAction": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "$value$",
+              "objectName": "THE1001",
+              "index": "3",
+              "type": "CLICK",
+              "value": "$value$",
+              "callType": "PSEUDO_METHOD"
+            },
+            "setFanMode": {
+              "cluId": null,
+              "valueFormattedForDto": "1",
+              "objectName": null,
+              "index": null,
+              "type": "CLICK",
+              "value": "1",
+              "callType": "ATTRIBUTE"
+            },
+            "controlDirection": {
+              "cluId": null,
+              "objectName": null,
+              "index": null,
+              "callType": "ATTRIBUTE"
+            },
+            "setModeAction": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "$value$",
+              "objectName": "THE1001",
+              "index": "8",
+              "type": "CLICK",
+              "value": "$value$",
+              "callType": "PSEUDO_METHOD"
+            },
+            "mode": {
+              "cluId": "CLU_A",
+              "objectName": "THE1001",
+              "index": "8",
+              "callType": "ATTRIBUTE"
+            },
+            "controlOutValue": {
+              "cluId": "CLU_A",
+              "objectName": "THE1001",
+              "index": "13",
+              "callType": "ATTRIBUTE"
+            },
+            "setMinTemperatureAction": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "$value$",
+              "objectName": "THE1001",
+              "index": "10",
+              "type": "CLICK",
+              "value": "$value$",
+              "callType": "PSEUDO_METHOD"
+            },
+            "targetTemperature": {
+              "cluId": "CLU_A",
+              "objectName": "THE1001",
+              "index": "12",
+              "callType": "ATTRIBUTE"
+            },
+            "minTemperature": {
+              "cluId": "CLU_A",
+              "objectName": "THE1001",
+              "index": "10",
+              "callType": "ATTRIBUTE"
+            },
+            "setScheduleDataAction": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "$value$",
+              "objectName": "THE1001",
+              "index": "9",
+              "type": "CLICK",
+              "value": "$value$",
+              "callType": "PSEUDO_METHOD"
+            },
+            "setStateAction": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "$value$",
+              "objectName": "THE1001",
+              "index": "6",
+              "type": "CLICK",
+              "value": "$value$",
+              "callType": "PSEUDO_METHOD"
+            },
+            "state": {
+              "cluId": "CLU_A",
+              "objectName": "THE1001",
+              "index": "6",
+              "callType": "ATTRIBUTE"
+            },
+            "setControlDirection": {
+              "cluId": null,
+              "valueFormattedForDto": "1",
+              "objectName": null,
+              "index": null,
+              "type": "CLICK",
+              "value": "1",
+              "callType": "ATTRIBUTE"
+            },
+            "scheduleData": {
+              "cluId": "CLU_A",
+              "objectName": "THE1001",
+              "index": "9",
+              "callType": "ATTRIBUTE"
+            }
+          }
+        },
+        {
+          "icon": "blinds",
+          "id": 1010,
+          "label": "Blinds",
+          "type": "ROLLER_SHUTTER_V3",
+          "dtoId": "ro000001",
+          "object": {
+            "mechanicalOffset": {
+              "cluId": "CLU_A",
+              "objectName": "ROL1001",
+              "index": "16",
+              "callType": "ATTRIBUTE"
+            },
+            "down": {
+              "cluId": "CLU_A",
+              "objectName": "ROL1001",
+              "index": "4",
+              "callType": "ATTRIBUTE"
+            },
+            "setPosition": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "$value$",
+              "objectName": "ROL1001",
+              "index": "10",
+              "type": "CLICK",
+              "value": "$value$",
+              "callType": "METHOD"
+            },
+            "hold": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "",
+              "objectName": "ROL1001",
+              "index": "4",
+              "type": "CLICK",
+              "value": "",
+              "callType": "METHOD"
+            },
+            "overcurrent": {
+              "cluId": null,
+              "objectName": null,
+              "index": null,
+              "callType": null
+            },
+            "lamelStart": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "",
+              "objectName": "ROL1001",
+              "index": "14",
+              "type": "CLICK",
+              "value": "",
+              "callType": "METHOD"
+            },
+            "voltageType": {
+              "cluId": null,
+              "objectName": null,
+              "index": null,
+              "callType": null
+            },
+            "reversePosition": {
+              "cluId": "CLU_A",
+              "objectName": "ROL1001",
+              "index": "13",
+              "callType": "ATTRIBUTE"
+            },
+            "state": {
+              "cluId": "CLU_A",
+              "objectName": "ROL1001",
+              "index": "0",
+              "callType": "ATTRIBUTE"
+            },
+            "up": {
+              "cluId": "CLU_A",
+              "objectName": "ROL1001",
+              "index": "3",
+              "callType": "ATTRIBUTE"
+            },
+            "calibration": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "1",
+              "objectName": "ROL1001",
+              "index": "8",
+              "type": "CLICK",
+              "value": "1",
+              "callType": "METHOD"
+            },
+            "moveUp": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "0",
+              "objectName": "ROL1001",
+              "index": "0",
+              "type": "CLICK",
+              "value": "0",
+              "callType": "METHOD"
+            },
+            "setMechanicalOffset": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "$value$",
+              "objectName": "ROL1001",
+              "index": "16",
+              "type": "CLICK",
+              "value": "$value$",
+              "callType": "PSEUDO_METHOD"
+            },
+            "blindsUpMaxTime": {
+              "cluId": "CLU_A",
+              "objectName": "ROL1001",
+              "index": "14",
+              "callType": "ATTRIBUTE"
+            },
+            "setRollerBlocked": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "0",
+              "objectName": "ROL1001",
+              "index": "13",
+              "type": "CLICK",
+              "value": "0",
+              "callType": "METHOD"
+            },
+            "setBlindsUpMaxTime": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "$value$",
+              "objectName": "ROL1001",
+              "index": "14",
+              "type": "CLICK",
+              "value": "$value$",
+              "callType": "PSEUDO_METHOD"
+            },
+            "loadCurrent": {
+              "cluId": null,
+              "objectName": null,
+              "index": null,
+              "callType": null
+            },
+            "start": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "0",
+              "objectName": "ROL1001",
+              "index": "2",
+              "type": "CLICK",
+              "value": "0",
+              "callType": "METHOD"
+            },
+            "setLamelMoveTimeout": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "$value$",
+              "objectName": "ROL1001",
+              "index": "10",
+              "type": "CLICK",
+              "value": "$value$",
+              "callType": "PSEUDO_METHOD"
+            },
+            "moveDown": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "0",
+              "objectName": "ROL1001",
+              "index": "1",
+              "type": "CLICK",
+              "value": "0",
+              "callType": "METHOD"
+            },
+            "lamelPosition": {
+              "cluId": "CLU_A",
+              "objectName": "ROL1001",
+              "index": "8",
+              "callType": "ATTRIBUTE"
+            },
+            "setLamelPosition": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "$value$",
+              "objectName": "ROL1001",
+              "index": "9",
+              "type": "CLICK",
+              "value": "$value$",
+              "callType": "METHOD"
+            },
+            "stop": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "",
+              "objectName": "ROL1001",
+              "index": "3",
+              "type": "CLICK",
+              "value": "",
+              "callType": "METHOD"
+            },
+            "distributedLogicGroup": {
+              "cluId": "CLU_A",
+              "objectName": "ROL1001",
+              "index": "11",
+              "callType": "ATTRIBUTE"
+            },
+            "blindsDownMaxTime": {
+              "cluId": "CLU_A",
+              "objectName": "ROL1001",
+              "index": "15",
+              "callType": "ATTRIBUTE"
+            },
+            "holdDown": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "",
+              "objectName": "ROL1001",
+              "index": "6",
+              "type": "CLICK",
+              "value": "",
+              "callType": "METHOD"
+            },
+            "position": {
+              "cluId": "CLU_A",
+              "objectName": "ROL1001",
+              "index": "7",
+              "callType": "ATTRIBUTE"
+            },
+            "lamelMoveTimeout": {
+              "cluId": "CLU_A",
+              "objectName": "ROL1001",
+              "index": "10",
+              "callType": "ATTRIBUTE"
+            },
+            "holdUp": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "",
+              "objectName": "ROL1001",
+              "index": "5",
+              "type": "CLICK",
+              "value": "",
+              "callType": "METHOD"
+            },
+            "setBlindsDownMaxTime": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "$value$",
+              "objectName": "ROL1001",
+              "index": "15",
+              "type": "CLICK",
+              "value": "$value$",
+              "callType": "PSEUDO_METHOD"
+            }
+          }
+        },
+        {
+          "icon": "scheduler",
+          "id": 1011,
+          "label": "Schedule",
+          "type": "EVENT_SCHEDULER",
+          "dtoId": "ev000001",
+          "object": {
+            "currentRule": {
+              "cluId": "CLU_A",
+              "objectName": "EVE1001",
+              "index": "1",
+              "callType": "ATTRIBUTE"
+            },
+            "ruleList": {
+              "cluId": "CLU_A",
+              "objectName": "EVE1001",
+              "index": "0",
+              "callType": "ATTRIBUTE"
+            },
+            "start": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "",
+              "objectName": "EVE1001",
+              "index": "0",
+              "type": "CLICK",
+              "value": "",
+              "callType": "METHOD"
+            },
+            "enableRule": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "$value$",
+              "objectName": "EVE1001",
+              "index": "5",
+              "type": "CLICK",
+              "value": "$value$",
+              "callType": "METHOD"
+            },
+            "ruleSpace": {
+              "cluId": "CLU_A",
+              "objectName": "EVE1001",
+              "index": "4",
+              "callType": "ATTRIBUTE"
+            },
+            "nextRule": {
+              "cluId": "CLU_A",
+              "objectName": "EVE1001",
+              "index": "2",
+              "callType": "ATTRIBUTE"
+            },
+            "deleteRule": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "$value$",
+              "objectName": "EVE1001",
+              "index": "3",
+              "type": "CLICK",
+              "value": "$value$",
+              "callType": "METHOD"
+            },
+            "disableRule": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "$value$",
+              "objectName": "EVE1001",
+              "index": "6",
+              "type": "CLICK",
+              "value": "$value$",
+              "callType": "METHOD"
+            },
+            "ruleCount": {
+              "cluId": "CLU_A",
+              "objectName": "EVE1001",
+              "index": "3",
+              "callType": "ATTRIBUTE"
+            },
+            "stop": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "",
+              "objectName": "EVE1001",
+              "index": "1",
+              "type": "CLICK",
+              "value": "",
+              "callType": "METHOD"
+            },
+            "addRule": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "$value$",
+              "objectName": "EVE1001",
+              "index": "2",
+              "type": "CLICK",
+              "value": "$value$",
+              "callType": "METHOD"
+            },
+            "getRule": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "$value$",
+              "objectName": "EVE1001",
+              "index": "4",
+              "type": "CLICK",
+              "value": "$value$",
+              "callType": "METHOD"
+            },
+            "state": {
+              "cluId": "CLU_A",
+              "objectName": "EVE1001",
+              "index": "5",
+              "callType": "ATTRIBUTE"
+            }
+          }
+        },
+        {
+          "id": 1012,
+          "type": "LED",
+          "dtoId": "le000001",
+          "label": "Strip",
+          "someEditorField": {
+            "cluId": "CLU_E",
+            "objectName": "LED1001",
+            "index": "0",
+            "callType": "ATTRIBUTE"
+          }
+        },
+        {
+          "id": 1013,
+          "type": "ON_OFF",
+          "dtoId": "sw000099",
+          "label": "Broken"
+        }
+      ]
+    }
+  ]
+}

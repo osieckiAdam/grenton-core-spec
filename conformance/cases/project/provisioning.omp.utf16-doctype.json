@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "provisioning.omp.utf16-doctype",
+  "specRefs": [
+    "provisioning.omp-archive"
+  ],
+  "description": "A UTF-16 system.xml declaring a DOCTYPE is rejected: the parser decides the encoding, not a byte search.",
+  "provenance": "spec §4.5 text; expectations re-derived by tools/oracles/omp.py and tools/oracles/mapping.py",
+  "operation": "provisioning.omp",
+  "input": {
+    "fixture": "fixtures/projects/utf16-doctype.omp"
+  },
+  "expect": {
+    "outcome": "error",
+    "code": "provisioning.invalidData"
+  }
+}

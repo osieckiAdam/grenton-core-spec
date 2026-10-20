@@ -1,0 +1,10 @@
+<object-stream>
+  <ProjectProperties id="1">
+    <version>251600</version>
+    <versionExt>1.12.1_2516</versionExt>
+    <projectCipherKey id="2">
+      <keyBytes>AAECAwQFBgcICQoLDA0ODw==</keyBytes>
+      <ivBytes>EBESExQVFhcYGRobHB0eHw==</ivBytes>
+    </projectCipherKey>
+  </ProjectProperties>
+</object-stream>

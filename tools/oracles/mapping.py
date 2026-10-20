@@ -256,9 +256,12 @@ def map_interface(data):
         page_skipped = []
         for w in page["widgets"]:
             t = w.get("type") if isinstance(w, dict) else None
+            if w.get("x-conformance-expect-skip") if isinstance(w, dict) else False:
+                page_skipped.append(t)   # §3.6: a widget that does not parse, HEADER included
+                continue
             if t in PRESENTATIONAL:
                 continue
-            if t not in SUPPORTED or w.get("x-conformance-expect-skip"):
+            if t not in SUPPORTED:
                 page_skipped.append(t)
                 continue
             devices.append({"id": w["id"], "widgetType": t, "kind": DEVICE_KIND[t], "name": device_name(w),

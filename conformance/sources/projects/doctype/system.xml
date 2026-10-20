@@ -1,0 +1,3 @@
+<?xml version="1.0"?>
+<!DOCTYPE object-stream [<!ENTITY a "aaaaaaaaaa">]>
+<object-stream><TreeObject id="1"><name>&a;</name></TreeObject></object-stream>

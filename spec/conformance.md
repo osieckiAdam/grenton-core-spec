@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Wersja zestawu** | 0.7.0 (specyfikacja 0.7.0, schemat przypadków 1) |
+| **Wersja zestawu** | 0.8.0 (specyfikacja 0.8.0, schemat przypadków 1) |
 | **Dotyczy** | `spec/grenton-core-design.md` §9 |
 
 Zestaw zgodności to **dane, nie kod**: każdy przypadek to plik JSON w `conformance/cases/`. Port dostarcza cienki runner, który wczytuje przypadki, wywołuje produkcyjne API portu i porównuje obserwację z oczekiwaniem. Dopisanie przypadku raz obejmuje wszystkie porty.
@@ -17,6 +17,7 @@ Zgodność deklaruje się **per profil** — przejście części zestawu nie jes
 | `mapping` | `data.json` → urządzenia/encje, pominięte widgety | 0.2.0 (0.3.0: termostat, `SCENE_DOUBLE`, `HEADER`; 0.4.0: `page`, obiekty fizyczne) |
 | `provisioning` | odpowiedzi HTTP i archiwa ZIP → interfejs lub błąd | planowany |
 | `session` | scenariusze rozmowy jednej sesji CLU (§5.4) z CLU sterowanym scenariuszem i wirtualnym czasem | 0.5.0 |
+| `project` | import interfejsu z pliku projektu `.omp` (§4.5) → ten sam interfejs i te same urządzenia co z OM | 0.8.0 |
 
 ## 2. Plik przypadku
 
@@ -163,6 +164,22 @@ Strukturę kroków opisuje `conformance/schemas/case.schema.json`, a `tools/suit
 
 Kody błędów `execute`: `session.timeout` (§5.4.1 pkt 3), `session.notConnected` (§5.4.5, brak socketu głównego), `session.connectionClosed` (§5.4.1 pkt 4, §5.4.5), `payload.unresolvedPlaceholder` (§3.3).
 
+## 4c. Import pliku projektu (profil `project`)
+
+| Operacja | Wejście | `ok.value` | Inne wyniki |
+|---|---|---|---|
+| `provisioning.omp` | `fixture` — ścieżka pliku `.omp` względem `conformance/`; `interfaceId`? | `interfaces[]`, `interface`, `mapping` | `error provisioning.invalidData`, `error provisioning.interfaceNotFound`, `error provisioning.interfaceAmbiguous` (§4.5) |
+
+Port importuje plik (§4.5) i projektuje wynik:
+
+- `interfaces` — lista `{id, name}` wszystkich interfejsów archiwum, w kolejności wpisów `nodes/{n}/data.json` w archiwum (§4.5.2);
+- `interface` — korzeń wybranego interfejsu: `id`, `version`, `name`, `icon`, `theme`, `encryption: {key, iv}`, `clus[]` (pola §3.4 w kolejności §4.5.4), `pushNotifications[]` oraz `pages[]` jako `{name, icon, isFullscreenWidget, widgets: [{id, type}]}` — `widgets` to widgety, które przeszły parsowanie §3.6, w kolejności strony;
+- `mapping` — wynik operacji `mapping.interface` (§4a) dla zaimportowanego interfejsu.
+
+Widgety sprawdza więc projekcja mapowania: import z `.omp` daje te same urządzenia, encje i pominięcia, co ten sam interfejs pobrany z OM. Widgetów, których Core nie mapuje na urządzenia (`HEADER`, `EVENT_SCHEDULER`), dotyczy tylko ich obecność w `widgets` albo w `skippedWidgets`; pól prezentacyjnych, np. `background` scen, projekcja nie sprawdza.
+
+**Fixtury** `.omp` leżą w `conformance/fixtures/projects/`; każdą (poza `not-a-zip.omp`) buduje `python3 tools/suite.py fixtures` z czytelnych źródeł w `conformance/sources/projects/{nazwa}/` (`properties.xml`, `system.xml`, `nodes/*/data.json`); opcjonalny plik `ORDER` podaje kolejność wpisów archiwum (bez niego — alfabetyczna) i sam do archiwum nie trafia. `check` porównuje nazwy, kolejność i zawartość wpisów ze źródłami (nie bajty, bo zlib bywa różny) oraz sprawdza, że przekształcone widgety mają `unit` i `valueType` z §3.5. Wyrocznia przybliża parsowanie §3.6 regułami, które specyfikacja podaje (§3.2, §3.3 i typy pól z §3.5) — widget, który ich nie spełnia, traktuje jako pominięty; §3.5 nie jest pełnym schematem, więc fixtury nie mogą polegać na niczym poza tymi regułami. Wyrocznia `tools/oracles/omp.py` jest napisana z §4.5; oczekiwania wylicza razem z wyrocznią mapowania.
+
 ## 5. Obowiązki runnera
 
 Runner **zawodzi zamknięty** (fail closed). Przebieg jest nieudany, jeśli:
@@ -209,6 +226,9 @@ Zestaw jest wersjonowany razem ze specyfikacją w repo `grenton-core-spec`. Port
 | `model.action-ref` | §3.3, §3.6 |
 | `provisioning.url` | §4.1 |
 | `provisioning.pin` | §4.1 |
+| `provisioning.omp` | §4.5 |
+| `provisioning.omp-selection` | §4.5.2 |
+| `provisioning.omp-archive` | §4.5.1 |
 | `devices.coercion` | §6.2 |
 | `devices.number-format` | §10 pkt 3 |
 | `model.widget-tolerance` | §3.6 |
@@ -228,6 +248,7 @@ Zestaw jest wersjonowany razem ze specyfikacją w repo `grenton-core-spec`. Port
 ```sh
 python3 tools/suite.py check      # walidacja przypadków + niezależne wyrocznie (openssl, Python round)
 python3 tools/suite.py manifest   # przebudowa manifestu po dodaniu/zmianie przypadku
+python3 tools/suite.py fixtures   # przebudowa fixtur .omp ze źródeł w conformance/sources/projects/
 ```
 
 `check` ponownie wylicza oczekiwania tam, gdzie istnieje niezależna wyrocznia: szyfrogramy przez `openssl`, `number.format` przez Pythonowe `round()`, koercje przez wyrażenia implementacji referencyjnej (`value == "ON" or value == True`, `bool(value)`), `mapping.interface` przez `tools/oracles/mapping.py` (napisany ze specyfikacji, nie z portu), a każdą parę `decimal`/`bits` przez parser Pythona. Zgłasza też fixtury, których nie używa żaden przypadek.

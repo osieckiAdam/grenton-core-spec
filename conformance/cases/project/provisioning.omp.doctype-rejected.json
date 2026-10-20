@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "provisioning.omp.doctype-rejected",
+  "specRefs": [
+    "provisioning.omp-archive"
+  ],
+  "description": "system.xml with a DOCTYPE (entity declarations) is rejected before parsing.",
+  "provenance": "spec §4.5 text; expectations re-derived by tools/oracles/omp.py and tools/oracles/mapping.py",
+  "operation": "provisioning.omp",
+  "input": {
+    "fixture": "fixtures/projects/doctype.omp"
+  },
+  "expect": {
+    "outcome": "error",
+    "code": "provisioning.invalidData"
+  }
+}

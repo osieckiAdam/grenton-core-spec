@@ -1,0 +1,767 @@
+{
+  "schemaVersion": 1,
+  "id": "provisioning.omp.select-by-id",
+  "specRefs": [
+    "provisioning.omp"
+  ],
+  "description": "The main interface of a two-interface project whose archive lists the second one first: every specified widget type; refs and actions without an object dropped; Action suffixes, with an explicit *Action winning over a bare name; PSEUDO_METHOD as ATTRIBUTE; a script action without index; upper-case theme and scene colours; CLUs filtered to the ones used, in document order although CLU_B is used first, including one used only by an action and excluding one used only by a stub, with a serial read through an XML reference; push objects including one through a reference and one outside any CLU; an unconfirmed type and a broken ON_OFF passed on as {id, type} and skipped.",
+  "provenance": "spec §4.5 text; expectations re-derived by tools/oracles/omp.py and tools/oracles/mapping.py",
+  "operation": "provisioning.omp",
+  "input": {
+    "fixture": "fixtures/projects/two-interfaces.omp",
+    "interfaceId": "11111111-2222-3333-4444-555555555555"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "interfaces": [
+        {
+          "id": "66666666-7777-8888-9999-000000000000",
+          "name": "Integration"
+        },
+        {
+          "id": "11111111-2222-3333-4444-555555555555",
+          "name": "Test House"
+        }
+      ],
+      "interface": {
+        "id": "11111111-2222-3333-4444-555555555555",
+        "version": 0,
+        "name": "Test House",
+        "icon": "home_1",
+        "theme": "BLUE",
+        "encryption": {
+          "key": "AAECAwQFBgcICQoLDA0ODw==",
+          "iv": "EBESExQVFhcYGRobHB0eHw=="
+        },
+        "clus": [
+          {
+            "id": "CLU_A",
+            "name": "CLU_A_FIRST_FLOOR",
+            "ip": "10.0.0.1",
+            "serialNumber": "200000001",
+            "port": 1234,
+            "connectionType": "CLOUD"
+          },
+          {
+            "id": "CLU_B",
+            "name": "CLU_B_GATE",
+            "ip": "10.0.0.2",
+            "serialNumber": "500000002",
+            "port": 1234,
+            "connectionType": "CLOUD"
+          },
+          {
+            "id": "CLU_D",
+            "name": "CLU_D_SCENES",
+            "ip": "10.0.0.4",
+            "serialNumber": "100000004",
+            "port": 1234,
+            "connectionType": "CLOUD"
+          }
+        ],
+        "pushNotifications": [
+          {
+            "cluId": 200000001,
+            "objectId": "PUS1001",
+            "objectType": "PUSH-49-1"
+          },
+          {
+            "cluId": 500000002,
+            "objectId": "PUS2002",
+            "objectType": "PUSH-49-1"
+          }
+        ],
+        "pages": [
+          {
+            "name": "Ground floor",
+            "icon": "floor_0",
+            "isFullscreenWidget": false,
+            "widgets": [
+              {
+                "id": "hdr00001",
+                "type": "HEADER"
+              },
+              {
+                "id": "va000002",
+                "type": "VALUE_DOUBLE"
+              },
+              {
+                "id": "sw000001",
+                "type": "ON_OFF"
+              },
+              {
+                "id": "sw000002",
+                "type": "ON_OFF_DOUBLE"
+              },
+              {
+                "id": "sc000001",
+                "type": "SCENE"
+              },
+              {
+                "id": "sc000002",
+                "type": "SCENE_DOUBLE"
+              },
+              {
+                "id": "va000001",
+                "type": "VALUE_V2"
+              }
+            ]
+          },
+          {
+            "name": "Climate",
+            "icon": "climate",
+            "isFullscreenWidget": false,
+            "widgets": [
+              {
+                "id": "di000001",
+                "type": "DIMMER_V2"
+              },
+              {
+                "id": "th000001",
+                "type": "THERMOSTAT_V2"
+              },
+              {
+                "id": "ro000001",
+                "type": "ROLLER_SHUTTER_V3"
+              }
+            ]
+          }
+        ]
+      },
+      "mapping": {
+        "devices": [
+          {
+            "id": "va000002",
+            "widgetType": "VALUE_DOUBLE",
+            "kind": "sensor",
+            "name": "Humidity / Mode",
+            "page": {
+              "index": 0,
+              "name": "Ground floor"
+            },
+            "entities": [
+              {
+                "kind": "sensor",
+                "id": "va000002_0",
+                "name": "Humidity",
+                "state": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_B",
+                  "objectName": "HUM1001",
+                  "index": "0"
+                },
+                "sensorKind": "generic",
+                "unit": null,
+                "grentonUnit": "PERCENT",
+                "valueType": "INTEGER",
+                "precision": 0
+              },
+              {
+                "kind": "sensor",
+                "id": "va000002_1",
+                "name": "Mode",
+                "state": {
+                  "callType": "VARIABLE",
+                  "cluId": "CLU_B",
+                  "index": "X_MODE"
+                },
+                "sensorKind": "generic",
+                "unit": null,
+                "grentonUnit": "UNKNOWN",
+                "valueType": "STRING",
+                "precision": 0
+              }
+            ]
+          },
+          {
+            "id": "sw000001",
+            "widgetType": "ON_OFF",
+            "kind": "switch",
+            "name": "Lamp",
+            "page": {
+              "index": 0,
+              "name": "Ground floor"
+            },
+            "entities": [
+              {
+                "kind": "switch",
+                "id": "sw000001_0",
+                "name": "Lamp",
+                "state": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_A",
+                  "objectName": "DOU1001",
+                  "index": "0"
+                },
+                "onAction": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_A",
+                  "objectName": "DOU1001",
+                  "event": "ON",
+                  "value": "1",
+                  "index": "0"
+                },
+                "offAction": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_A",
+                  "objectName": "DOU1001",
+                  "event": "OFF",
+                  "value": "0",
+                  "index": "0"
+                },
+                "onIndication": "On",
+                "offIndication": "Off"
+              }
+            ]
+          },
+          {
+            "id": "sw000002",
+            "widgetType": "ON_OFF_DOUBLE",
+            "kind": "switch",
+            "name": "Left / Right",
+            "page": {
+              "index": 0,
+              "name": "Ground floor"
+            },
+            "entities": [
+              {
+                "kind": "switch",
+                "id": "sw000002_0",
+                "name": "Left",
+                "state": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_A",
+                  "objectName": "DOU1002",
+                  "index": "0"
+                },
+                "onAction": {
+                  "callType": "METHOD",
+                  "cluId": "CLU_A",
+                  "objectName": "DOU1002",
+                  "event": "ON",
+                  "value": "",
+                  "index": "1"
+                },
+                "offAction": {
+                  "callType": "METHOD",
+                  "cluId": "CLU_A",
+                  "objectName": "DOU1002",
+                  "event": "OFF",
+                  "value": "",
+                  "index": "2"
+                },
+                "onIndication": "On",
+                "offIndication": "Off"
+              }
+            ]
+          },
+          {
+            "id": "sc000001",
+            "widgetType": "SCENE",
+            "kind": "scene",
+            "name": "Morning",
+            "page": {
+              "index": 0,
+              "name": "Ground floor"
+            },
+            "entities": [
+              {
+                "kind": "sceneTrigger",
+                "id": "sc000001_0",
+                "name": "Morning",
+                "action": {
+                  "callType": "SCRIPT",
+                  "cluId": "CLU_D",
+                  "objectName": "X_SCRIPT",
+                  "event": "CLICK",
+                  "value": ""
+                }
+              }
+            ]
+          },
+          {
+            "id": "sc000002",
+            "widgetType": "SCENE_DOUBLE",
+            "kind": "scene",
+            "name": "Open / Close",
+            "page": {
+              "index": 0,
+              "name": "Ground floor"
+            },
+            "entities": [
+              {
+                "kind": "sceneTrigger",
+                "id": "sc000002_0",
+                "name": "Open",
+                "action": {
+                  "callType": "SCRIPT",
+                  "cluId": "CLU_B",
+                  "objectName": "X_GATE_OPEN",
+                  "event": "CLICK",
+                  "value": ""
+                }
+              }
+            ]
+          },
+          {
+            "id": "va000001",
+            "widgetType": "VALUE_V2",
+            "kind": "sensor",
+            "name": "Temperature",
+            "page": {
+              "index": 0,
+              "name": "Ground floor"
+            },
+            "entities": [
+              {
+                "kind": "sensor",
+                "id": "va000001_0",
+                "name": "Temperature",
+                "state": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_A",
+                  "objectName": "TMP1001",
+                  "index": "0"
+                },
+                "sensorKind": "generic",
+                "unit": null,
+                "grentonUnit": "DEGREE",
+                "valueType": "FLOAT",
+                "precision": 1
+              }
+            ]
+          },
+          {
+            "id": "di000001",
+            "widgetType": "DIMMER_V2",
+            "kind": "dimmableLight",
+            "name": "Dimmer",
+            "page": {
+              "index": 1,
+              "name": "Climate"
+            },
+            "entities": [
+              {
+                "kind": "dimmableLight",
+                "id": "di000001_0",
+                "name": "Dimmer",
+                "state": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_A",
+                  "objectName": "DIM1001",
+                  "index": "3"
+                },
+                "min": 0,
+                "max": 240,
+                "precision": 2,
+                "onAction": {
+                  "callType": "METHOD",
+                  "cluId": "CLU_A",
+                  "objectName": "DIM1001",
+                  "event": "ON",
+                  "value": "240",
+                  "index": "3"
+                },
+                "offAction": {
+                  "callType": "METHOD",
+                  "cluId": "CLU_A",
+                  "objectName": "DIM1001",
+                  "event": "OFF",
+                  "value": "0",
+                  "index": "3"
+                },
+                "setValueAction": {
+                  "callType": "METHOD",
+                  "cluId": "CLU_A",
+                  "objectName": "DIM1001",
+                  "event": "CLICK",
+                  "value": "$value$",
+                  "index": "3"
+                }
+              }
+            ]
+          },
+          {
+            "id": "th000001",
+            "widgetType": "THERMOSTAT_V2",
+            "kind": "thermostat",
+            "name": "Thermostat",
+            "page": {
+              "index": 1,
+              "name": "Climate"
+            },
+            "entities": [
+              {
+                "kind": "thermostat",
+                "id": "th000001_0",
+                "name": "Thermostat",
+                "currentTemperature": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_A",
+                  "objectName": "THE1001",
+                  "index": "14"
+                },
+                "targetTemperature": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_A",
+                  "objectName": "THE1001",
+                  "index": "12"
+                },
+                "setTargetTemperatureAction": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_A",
+                  "objectName": "THE1001",
+                  "event": "CLICK",
+                  "value": "$value$",
+                  "index": "3"
+                },
+                "minTemperature": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_A",
+                  "objectName": "THE1001",
+                  "index": "10"
+                },
+                "maxTemperature": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_A",
+                  "objectName": "THE1001",
+                  "index": "11"
+                },
+                "mode": {
+                  "state": {
+                    "callType": "ATTRIBUTE",
+                    "cluId": "CLU_A",
+                    "objectName": "THE1001",
+                    "index": "8"
+                  },
+                  "setAction": {
+                    "callType": "ATTRIBUTE",
+                    "cluId": "CLU_A",
+                    "objectName": "THE1001",
+                    "event": "CLICK",
+                    "value": "$value$",
+                    "index": "8"
+                  }
+                },
+                "power": {
+                  "state": {
+                    "callType": "ATTRIBUTE",
+                    "cluId": "CLU_A",
+                    "objectName": "THE1001",
+                    "index": "6"
+                  },
+                  "setAction": {
+                    "callType": "ATTRIBUTE",
+                    "cluId": "CLU_A",
+                    "objectName": "THE1001",
+                    "event": "CLICK",
+                    "value": "$value$",
+                    "index": "6"
+                  }
+                },
+                "output": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_A",
+                  "objectName": "THE1001",
+                  "index": "13"
+                }
+              }
+            ]
+          },
+          {
+            "id": "ro000001",
+            "widgetType": "ROLLER_SHUTTER_V3",
+            "kind": "cover",
+            "name": "Blinds",
+            "page": {
+              "index": 1,
+              "name": "Climate"
+            },
+            "entities": [
+              {
+                "kind": "cover",
+                "id": "ro000001",
+                "name": "Blinds",
+                "motionState": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_A",
+                  "objectName": "ROL1001",
+                  "index": "0"
+                },
+                "position": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_A",
+                  "objectName": "ROL1001",
+                  "index": "7"
+                },
+                "setPositionAction": {
+                  "callType": "METHOD",
+                  "cluId": "CLU_A",
+                  "objectName": "ROL1001",
+                  "event": "CLICK",
+                  "value": "$value$",
+                  "index": "10"
+                },
+                "tilt": {
+                  "position": {
+                    "callType": "ATTRIBUTE",
+                    "cluId": "CLU_A",
+                    "objectName": "ROL1001",
+                    "index": "8"
+                  },
+                  "setAction": {
+                    "callType": "METHOD",
+                    "cluId": "CLU_A",
+                    "objectName": "ROL1001",
+                    "event": "CLICK",
+                    "value": "$value$",
+                    "index": "9"
+                  }
+                },
+                "stopAction": {
+                  "callType": "METHOD",
+                  "cluId": "CLU_A",
+                  "objectName": "ROL1001",
+                  "event": "CLICK",
+                  "value": "",
+                  "index": "3"
+                }
+              }
+            ]
+          }
+        ],
+        "physicalObjects": [
+          {
+            "key": {
+              "cluId": "CLU_B",
+              "kind": "object",
+              "name": "HUM1001",
+              "index": "0"
+            },
+            "widgets": [
+              {
+                "deviceId": "va000002",
+                "widgetType": "VALUE_DOUBLE",
+                "name": "Humidity / Mode",
+                "page": {
+                  "index": 0,
+                  "name": "Ground floor"
+                },
+                "entityIds": [
+                  "va000002_0"
+                ]
+              }
+            ]
+          },
+          {
+            "key": {
+              "cluId": "CLU_B",
+              "kind": "variable",
+              "name": "X_MODE",
+              "index": null
+            },
+            "widgets": [
+              {
+                "deviceId": "va000002",
+                "widgetType": "VALUE_DOUBLE",
+                "name": "Humidity / Mode",
+                "page": {
+                  "index": 0,
+                  "name": "Ground floor"
+                },
+                "entityIds": [
+                  "va000002_1"
+                ]
+              }
+            ]
+          },
+          {
+            "key": {
+              "cluId": "CLU_A",
+              "kind": "object",
+              "name": "DOU1001",
+              "index": "0"
+            },
+            "widgets": [
+              {
+                "deviceId": "sw000001",
+                "widgetType": "ON_OFF",
+                "name": "Lamp",
+                "page": {
+                  "index": 0,
+                  "name": "Ground floor"
+                },
+                "entityIds": [
+                  "sw000001_0"
+                ]
+              }
+            ]
+          },
+          {
+            "key": {
+              "cluId": "CLU_A",
+              "kind": "object",
+              "name": "DOU1002",
+              "index": "0"
+            },
+            "widgets": [
+              {
+                "deviceId": "sw000002",
+                "widgetType": "ON_OFF_DOUBLE",
+                "name": "Left / Right",
+                "page": {
+                  "index": 0,
+                  "name": "Ground floor"
+                },
+                "entityIds": [
+                  "sw000002_0"
+                ]
+              }
+            ]
+          },
+          {
+            "key": {
+              "cluId": "CLU_D",
+              "kind": "script",
+              "name": "X_SCRIPT",
+              "index": null
+            },
+            "widgets": [
+              {
+                "deviceId": "sc000001",
+                "widgetType": "SCENE",
+                "name": "Morning",
+                "page": {
+                  "index": 0,
+                  "name": "Ground floor"
+                },
+                "entityIds": [
+                  "sc000001_0"
+                ]
+              }
+            ]
+          },
+          {
+            "key": {
+              "cluId": "CLU_B",
+              "kind": "script",
+              "name": "X_GATE_OPEN",
+              "index": null
+            },
+            "widgets": [
+              {
+                "deviceId": "sc000002",
+                "widgetType": "SCENE_DOUBLE",
+                "name": "Open / Close",
+                "page": {
+                  "index": 0,
+                  "name": "Ground floor"
+                },
+                "entityIds": [
+                  "sc000002_0"
+                ]
+              }
+            ]
+          },
+          {
+            "key": {
+              "cluId": "CLU_A",
+              "kind": "object",
+              "name": "TMP1001",
+              "index": "0"
+            },
+            "widgets": [
+              {
+                "deviceId": "va000001",
+                "widgetType": "VALUE_V2",
+                "name": "Temperature",
+                "page": {
+                  "index": 0,
+                  "name": "Ground floor"
+                },
+                "entityIds": [
+                  "va000001_0"
+                ]
+              }
+            ]
+          },
+          {
+            "key": {
+              "cluId": "CLU_A",
+              "kind": "object",
+              "name": "DIM1001",
+              "index": "3"
+            },
+            "widgets": [
+              {
+                "deviceId": "di000001",
+                "widgetType": "DIMMER_V2",
+                "name": "Dimmer",
+                "page": {
+                  "index": 1,
+                  "name": "Climate"
+                },
+                "entityIds": [
+                  "di000001_0"
+                ]
+              }
+            ]
+          },
+          {
+            "key": {
+              "cluId": "CLU_A",
+              "kind": "object",
+              "name": "THE1001",
+              "index": "14"
+            },
+            "widgets": [
+              {
+                "deviceId": "th000001",
+                "widgetType": "THERMOSTAT_V2",
+                "name": "Thermostat",
+                "page": {
+                  "index": 1,
+                  "name": "Climate"
+                },
+                "entityIds": [
+                  "th000001_0"
+                ]
+              }
+            ]
+          },
+          {
+            "key": {
+              "cluId": "CLU_A",
+              "kind": "object",
+              "name": "ROL1001",
+              "index": "7"
+            },
+            "widgets": [
+              {
+                "deviceId": "ro000001",
+                "widgetType": "ROLLER_SHUTTER_V3",
+                "name": "Blinds",
+                "page": {
+                  "index": 1,
+                  "name": "Climate"
+                },
+                "entityIds": [
+                  "ro000001"
+                ]
+              }
+            ]
+          }
+        ],
+        "skippedWidgets": [
+          [],
+          [
+            "EVENT_SCHEDULER",
+            "LED",
+            "ON_OFF"
+          ]
+        ]
+      }
+    }
+  }
+}

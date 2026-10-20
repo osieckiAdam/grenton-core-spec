@@ -40,6 +40,8 @@
       "then": { "properties": { "input": { "$ref": "#/$defs/input.number.format" } } } },
     { "if": { "properties": { "operation": { "const": "mapping.interface" } } },
       "then": { "properties": { "input": { "$ref": "#/$defs/input.mapping.interface" } } } },
+    { "if": { "properties": { "operation": { "const": "provisioning.omp" } } },
+      "then": { "properties": { "input": { "$ref": "#/$defs/input.provisioning.omp" } } } },
     { "if": { "properties": { "operation": { "const": "session.scenario" } } },
       "then": { "properties": { "input": { "$ref": "#/$defs/input.session.scenario" } } } }
   ],
@@ -51,7 +53,7 @@
           "properties": { "outcome": { "const": "ok" }, "value": {} } },
         { "type": "object", "additionalProperties": false, "required": ["outcome", "code"],
           "properties": { "outcome": { "const": "error" },
-                          "code": { "enum": ["crypto.invalidKeyMaterial", "provisioning.connection", "payload.unresolvedPlaceholder"] } } },
+                          "code": { "enum": ["crypto.invalidKeyMaterial", "provisioning.connection", "payload.unresolvedPlaceholder", "provisioning.invalidData", "provisioning.interfaceNotFound", "provisioning.interfaceAmbiguous"] } } },
         { "type": "object", "additionalProperties": false, "required": ["outcome"],
           "properties": { "outcome": { "const": "reject" } } }
       ]
@@ -134,6 +136,11 @@
     "input.coercion": {
       "type": "object", "additionalProperties": false, "required": ["value"],
       "properties": { "value": { "$ref": "#/$defs/value" } }
+    },
+    "input.provisioning.omp": {
+      "type": "object", "additionalProperties": false, "required": ["fixture"],
+      "properties": { "fixture": { "type": "string", "pattern": "^fixtures/projects/.+\\.omp$" },
+                      "interfaceId": { "type": "string" } }
     },
     "input.mapping.interface": {
       "type": "object", "additionalProperties": false, "required": ["fixture"],

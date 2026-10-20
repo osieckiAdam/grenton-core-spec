@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "provisioning.omp.no-interfaces",
+  "specRefs": [
+    "provisioning.omp-selection"
+  ],
+  "description": "A project whose only node is not an interface: nothing to select.",
+  "provenance": "spec §4.5 text; expectations re-derived by tools/oracles/omp.py and tools/oracles/mapping.py",
+  "operation": "provisioning.omp",
+  "input": {
+    "fixture": "fixtures/projects/no-interfaces.omp"
+  },
+  "expect": {
+    "outcome": "error",
+    "code": "provisioning.interfaceNotFound"
+  }
+}

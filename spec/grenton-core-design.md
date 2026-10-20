@@ -3,8 +3,8 @@
 | | |
 |---|---|
 | **Status** | Projekt (do implementacji) |
-| **Wersja** | 0.7.0 |
-| **Data** | 2026-10-19 |
+| **Wersja** | 0.8.0 |
+| **Data** | 2026-10-20 |
 | **Implementacja referencyjna** | `homeassistant-grenton` (Python, integracja Home Assistant) |
 | **Przeznaczenie** | Specyfikacja niezależna od języka — podstawa dla portów (pierwszy: Swift) |
 | **Zestaw zgodności** | `conformance/` + kontrakt w [`conformance.md`](conformance.md) |
@@ -17,7 +17,7 @@ Ten dokument specyfikuje **Grenton Core**: przenośną bibliotekę implementują
 
 ### 1.1 Co biblioteka robi
 
-1. **Provisioning** — pobiera i parsuje definicję interfejsu mobilnego z Grenton Object Managera (HTTP + ZIP + JSON).
+1. **Provisioning** — pobiera i parsuje definicję interfejsu mobilnego z Grenton Object Managera (HTTP + ZIP + JSON) albo odczytuje ją z pliku projektu `.omp` (§4.5).
 2. **Runtime** — utrzymuje szyfrowane sesje UDP z kontrolerami CLU: keep-alive, subskrypcje zmian stanu, wykonywanie akcji.
 3. **Model kanoniczny urządzeń** — mapuje widgety interfejsu na urządzenia o znormalizowanym stanie i intencjach (włącz, ustaw jasność, ustaw pozycję…), tak aby adaptery platformowe były cienkie.
 
@@ -64,13 +64,13 @@ Provisioning ──► Model ◄── Runtime ◄── Devices
 | Moduł | Odpowiedzialność | Zależności | I/O |
 |---|---|---|---|
 | **Model** | Typy DTO interfejsu, typy domenowe (CLU, ValueRef, ActionRef), `GrentonValue`, parsowanie/casting | brak | brak |
-| **Provisioning** | Klient Object Managera: HTTP GET → ZIP → JSON → `MobileInterface` | Model | HTTP |
+| **Provisioning** | Klient Object Managera: HTTP GET → ZIP → JSON → `MobileInterface`; import pliku projektu `.omp` → ten sam `MobileInterface` | Model | HTTP |
 | **Runtime** | Szyfr, format ramek, katalog wiadomości, sesje CLU (sockety, chunking, pętle), magazyn stanu | Model | UDP |
 | **Devices** | Mapowanie widget→urządzenie, normalizacja stanu, intencje, zdarzenia | Model, Runtime | brak (przez Runtime) |
 
 Zasady:
 
-- **Runtime przyjmuje sparsowany `MobileInterface` jako wejście** i nie wie, skąd pochodzi. Provisioning jest jednym z możliwych źródeł (inne: plik, backend aplikacji, QR).
+- **Runtime przyjmuje sparsowany `MobileInterface` jako wejście** i nie wie, skąd pochodzi. Provisioning jest jednym z możliwych źródeł (inne: plik, backend aplikacji, QR); sam ma dwa: pobranie z OM (§4.1–§4.3) i plik projektu (§4.5).
 - Wszystkie efekty uboczne (sieć, czas, losowość, logi) wchodzą przez **kontrakt portu** (§7) — interfejsy implementowane per platforma. Dzięki temu logika jest testowalna deterministycznie.
 - Nazwy API w tym dokumencie (np. `CluSession`, `StateStore`, `GrentonValue`) są **nazwami referencyjnymi na potrzeby specyfikacji i testów zgodności** — wiążąca jest semantyka i zachowanie, nie brzmienie nazw; port może użyć nazw idiomatycznych dla swojego języka, dokumentując mapowanie.
 
@@ -233,6 +233,114 @@ GET http://{host}:{port}/api/v1/interface/hash/{pin}
 - porównywać `version` do wykrycia zmian.
 
 Core dostarcza tylko dane; polityka zapisu należy do adaptera.
+
+### 4.5 Import z pliku projektu (`.omp`)
+
+Drugie źródło tego samego `MobileInterface`: plik projektu Object Managera. Projekt przechowuje interfejsy mobilne w formacie edytora OM; import przekłada je na schemat §3.4, tak jak robi to OM przy wysyłce na telefon, więc dalej (§3, §6) nic nie zależy od źródła. Nie wymaga PIN-u ani uruchomionego OM.
+
+Wszystkie błędy importu to `ProvisioningError` (§8). Kolejność sprawdzania, gdy błędów jest kilka: archiwum (§4.5.1) → `properties.xml` i `system.xml` jako XML → lista interfejsów i wybór (§4.5.2) → klucz (§4.5.3) → CLU (§4.5.4).
+
+#### 4.5.1 Archiwum
+
+1. Plik `.omp` jest archiwum ZIP; błąd formatu, błąd odczytu lub dekompresji dowolnego używanego wpisu, dwa wpisy o tej samej nazwie → `invalidData`.
+2. Używane wpisy (nazwa dopasowywana w całości): **`properties.xml`**, **`system.xml`** i każdy wpis o nazwie dokładnie `nodes/{n}/data.json`, gdzie `{n}` to niepusty ciąg cyfr ASCII. Brak `properties.xml` lub `system.xml` → `invalidData`. Pozostałe wpisy (skrypty, diagnostyka) są ignorowane — nie czyta się ich.
+3. **Limity zasobów:** rozmiar pliku, rozmiar każdego używanego wpisu po dekompresji i łączny rozmiar używanych wpisów po dekompresji — każdy co najwyżej 64 MiB (zalecane); liczba wpisów archiwum co najwyżej 10 000. Przekroczenie → `invalidData`. Limit jest wyższy niż w §4.3, bo `system.xml` dużej instalacji ma kilka megabajtów.
+4. **XML bez DTD.** Dokument z deklaracją typu dokumentu (`<!DOCTYPE …>`) w dowolnym kodowaniu → `invalidData`; o kodowaniu decyduje parser XML (deklaracja `encoding`, BOM), nie wyszukiwanie bajtów. Bez DTD nie ma encji, więc nie ma XXE ani „billion laughs". Błąd składni XML → `invalidData`.
+5. **JSON ścisły.** Wpis `nodes/{n}/data.json` czyta się jako UTF-8; niepoprawny UTF-8, niepoprawny JSON, wartości spoza JSON (`NaN`, `Infinity`), liczba całkowita spoza zakresu 64-bitowego ze znakiem, liczba, która jako double nie jest skończona (`1e400`), albo powtórzony klucz w obiekcie → `invalidData`, także gdy wpis nie okaże się interfejsem.
+6. **Referencje XML** (serializacja OM). Element z atrybutem `reference="{r}"` oznacza element z atrybutem `id="{r}"`. Każdy element czytany w §4.5.4–§4.5.5 — `TreeObject`, `specificObject`, `children` i pola tekstowe — który ma `reference`, zastępuje się celem; cel z własnym `reference` rozwiązuje się dalej. Brak celu, cykl referencji albo dwa elementy o tym samym `id` → `invalidData`.
+7. **Tekst pola XML** to treść elementu z obciętymi białymi znakami na początku i końcu; element pusty albo zawierający same białe znaki traktuje się jak brak pola. **Liczba szesnastkowa** to 1–8 cyfr `0-9a-fA-F`, bez znaku, prefiksu i separatorów.
+
+#### 4.5.2 Wybór interfejsu
+
+- Każdy używany wpis `nodes/{n}/data.json`, którego wartością jest obiekt JSON z polem `pages` będącym tablicą, jest interfejsem. Import udostępnia listę `{id, name}` (z pól `id` i `label`) wszystkich interfejsów, w kolejności ich wpisów w archiwum. Interfejs, którego `id` albo `label` nie jest napisem, oraz dwa interfejsy o tym samym `id` → `invalidData`.
+- Wybór po `id`: brak interfejsu o tym `id` → `ProvisioningError.interfaceNotFound`.
+- Bez podanego `id`: archiwum z dokładnie jednym interfejsem → ten interfejs; z kilkoma → `ProvisioningError.interfaceAmbiguous` (projekt może mieć np. osobny interfejs dla integracji; zgadywanie byłoby niebezpieczne); bez żadnego → `interfaceNotFound`.
+
+#### 4.5.3 Korzeń interfejsu
+
+| Pole §3.4 | Źródło |
+|---|---|
+| `id` | `id` interfejsu |
+| `name` | `label` |
+| `icon` | `icon` |
+| `theme` | `theme` zamienione na wielkie litery (edytor zapisuje `blue`, schemat ma `BLUE`) |
+| `version` | **`0`** — projekt nie przechowuje licznika eksportów OM; wykrywanie zmian (§4.4) dla tego źródła porównuje treść |
+| `encryption` | `{key, iv}` — tekst (§4.5.1 pkt 7, base64 bez dalszych zmian) pierwszego w kolejności dokumentu elementu `keyBytes` i pierwszego `ivBytes` w `properties.xml`; brak któregoś → `invalidData` |
+| `clus` | §4.5.4 |
+| `pages` | §4.5.6 |
+| `pushNotifications` | §4.5.5 |
+
+`icon` i `theme` muszą być napisami; w przeciwnym razie → `invalidData`.
+
+#### 4.5.4 CLU
+
+CLU projektu to elementy `system.xml` mające **bezpośrednie dzieci `nameOnCLU` i `ipAddress`** (sam element nie jest przy tym rozwiązywaną referencją), w kolejności dokumentu; ponowne wystąpienie tego samego tekstu `nameOnCLU` pomija się. Do `clus` trafiają **tylko CLU, do których odwołuje się wybrany interfejs** — `cluId` dowolnej referencji stanu lub akcji jego stron **po przekształceniu §4.5.6** (szkielety widgetów nie mają referencji) — w kolejności dokumentu, nie pierwszego użycia.
+
+| Pole §3.4 | Źródło |
+|---|---|
+| `id` | tekst `nameOnCLU` |
+| `name` | tekst dziecka `name` |
+| `ip` | tekst `ipAddress` |
+| `serialNumber` | tekst dziecka `serialNumber` jako liczba szesnastkowa (§4.5.1 pkt 7), zapisany dziesiętnie (`0bebc201` → `"200000001"`) |
+| `port` | `1234` — projekt nie zapisuje portu, CLU zawsze słuchają na nim |
+| `connectionType` | `LOCAL_ONLY`, gdy interfejs ma `blockCloud: true`, w przeciwnym razie `CLOUD` (pole jest parsowane, nieużywane — §1.2) |
+
+Brak `name`, `ipAddress` lub poprawnego `serialNumber` u CLU, do którego odwołuje się interfejs → `invalidData`. `cluId`, do którego nie pasuje żaden CLU projektu, nie jest błędem importu (mapowanie urządzeń go nie potrzebuje).
+
+#### 4.5.5 Powiadomienia push
+
+Przejście w głąb po drzewie `TreeObject`: zaczyna się od bezpośrednich dzieci `TreeObject` korzenia `system.xml`, a dzieci węzła to elementy `TreeObject` będące bezpośrednimi dziećmi jego pierwszego elementu `children`. Każdy węzeł czytany jest po rozwiązaniu referencji (§4.5.1 pkt 6), a jego obiekt to pierwszy `specificObject` (też po rozwiązaniu). Kolejność: w głąb, węzeł przed dziećmi, dzieci w kolejności dokumentu. **Każdy węzeł odwiedza się co najwyżej raz** — przy pierwszym dojściu; kolejne dojścia (przez referencję albo cykl) pomija się, więc rozmiar wyniku nie przekroczy liczby węzłów, a implementacja nie powinna polegać na rekurencji o głębokości drzewa.
+
+Węzeł, którego obiekt ma `typeName` = `Push`, daje wpis `{cluId, objectId, objectType}`:
+
+- `cluId` — `serialNumber` (§4.5.1 pkt 7) obiektu najbliższego **przodka** (bez samego węzła), którego obiekt ma `serialNumber` i `ipAddress`;
+- `objectId` — tekst `nameOnCLU`;
+- `objectType` — `PUSH-{typeId}-{typeVersion}`, gdzie `typeId` to liczba szesnastkowa zapisana dziesiętnie (`31` → `49`), a `typeVersion` — tekst.
+
+Wpis, któremu brakuje przodka CLU z poprawnym `serialNumber`, `nameOnCLU`, poprawnego `typeId` lub `typeVersion`, pomija się. Pole jest parsowane, nieużywane (§1.2); dlatego niepełne dane pomijają wpis, zamiast odrzucać import.
+
+#### 4.5.6 Strony i widgety
+
+`pages` interfejsu to tablica stron; strona, która nie jest obiektem z napisami `label` i `icon` oraz tablicą `widgets`, → `invalidData`. Strona: `{name: label, icon, isFullscreenWidget: false, widgets}`; kolejność stron i widgetów zachowana. `id` widgetu §3.4 to pole **`dtoId`** widgetu edytora (liczbowe `id` edytora jest pomijane).
+
+**Pole wymagane** to pole obecne i różne od `null`. **Obiekt** to obiekt JSON; wartość innego rodzaju w miejscu obiektu traktuje się jak brak pola. **Pola przepisywane bez zmian** przechodzą tylko wtedy, gdy są obecne (także z wartością `null`) — import nie dopisuje pól, których nie było, i nie sprawdza ich typów; to robi parsowanie §3.6.
+
+**Referencja stanu** (`ValueRef`) istnieje, gdy jest obiektem, którego `objectName` jest niepustym napisem; przechodzi jako `{cluId, objectName, index, callType}` z tymi z czterech pól, które ma. Referencja nieistniejąca (edytor trzyma puste szablony nieużywanych cech) jest **pomijana** — nie przechodzi ani pod swoją nazwą, ani jako `null`.
+
+**Akcja** (`ActionRef`) istnieje na tej samej zasadzie i przechodzi jako:
+
+| Pole §3.3 | Źródło |
+|---|---|
+| `cluId`, `objectName`, `value` | bez zmian (o ile obecne) |
+| `index` | bez zmian; pominięte, gdy brak lub `null` (skrypty) |
+| `event` | `type` (o ile obecne) |
+| `callType` | `PSEUDO_METHOD` → `ATTRIBUTE`; inna wartość bez zmian (o ile obecne) |
+
+`valueFormattedForDto` pomija się. Akcja nieistniejąca jest pomijana.
+
+Widgety według `type` (pola **pogrubione** są wymagane do przekształcenia):
+
+| `type` | Źródło w edytorze → pola §3.5 |
+|---|---|
+| `HEADER` | **`text`** (obiekt) → `components: [{unit: "UNKNOWN", label, type, rowId}]` (z `text`, bez zmian) |
+| `ON_OFF` | **`buttonBistable`** → `components: [P]` |
+| `ON_OFF_DOUBLE` | **`buttonBistableFirst`**, **`buttonBistableSecond`** → `components: [P₁, P₂]` |
+| `SCENE` | **`buttonMonostable`** → `components: [M]`; `background` → B |
+| `SCENE_DOUBLE` | **`buttonMonostableFirst`**, **`buttonMonostableSecond`** → `components: [M₁, M₂]`; `background` → B |
+| `VALUE_V2` | `unit, valueType, precision, icon, label` bez zmian; referencja `value` → `object: {value}` |
+| `VALUE_DOUBLE` | **`componentLeft`**, **`componentRight`** (obiekty) → każdy jak `VALUE_V2` (bez `id`, `type`) |
+| `DIMMER_V2` | `min, max, precision, icon, label` bez zmian; **`object`** → O |
+| `THERMOSTAT_V2` | `icon, label` bez zmian; `noOfFanSpeeds` → `no_of_fan_speeds`; **`object`** → O |
+| `ROLLER_SHUTTER_V3`, `EVENT_SCHEDULER` | `icon, label` bez zmian; **`object`** → O |
+
+- **P** (przycisk bistabilny, obiekt): `{unit: "UNKNOWN", actions: [actionOn, actionOff]}` plus bez zmian `image, label, onIndication, offIndication, type, rowId` i referencja `state` — akcje w tej kolejności, nieistniejące pominięte; pole `indication` edytora pomija się.
+- **M** (przycisk monostabilny, obiekt): `{unit: "UNKNOWN", actions: [actionClick]}` plus bez zmian `label, type, rowId`.
+- **B** (tło sceny, gdy `background` jest obiektem): `{color, name: image}`, gdzie `color` będący napisem zamienia się na wielkie litery; bez obiektu `background` pole `background` się pomija.
+- **O** (obiekt widgetu): każde pole `object` edytora, które jest obiektem z polem `valueFormattedForDto`, jest akcją i przechodzi pod nazwą z przyrostkiem `Action`, o ile nazwa już się nim nie kończy (`setPosition` → `setPositionAction`, `setModeAction` bez zmian); każde inne pole będące obiektem — jako referencja stanu pod tą samą nazwą; nieistniejące pomija się. Gdy akcja bez przyrostka (`set`) celuje w nazwę pola, które w `object` już jest (`setAction` — akcja, referencja albo szablon), wygrywa to pole, a akcja bez przyrostka jest pomijana — niezależnie od kolejności w JSON.
+
+Widget innego `type` (w tym typy z §3.5 spoza tej tabeli, dopóki ich formatu edytora nie potwierdzono), widget, który nie jest obiektem, oraz widget z tabeli bez pola wymaganego do przekształcenia (pogrubionego albo `dtoId`) przechodzi dalej **tylko z polami `id` (= `dtoId`) i `type`, o ile są napisami**. Bez pozostałych pól nie parsuje się, więc parsowanie §3.6 pkt 2 pomija go z diagnostyką, jak każdy niepoprawny widget. Pól edytora nieznanego typu nie przepisuje się, bo mogłyby przypadkiem sparsować się jako inny widget.
+
+Wynik przechodzi następnie zwykłe parsowanie §3.6, jak interfejs pobrany z OM.
 
 ---
 
@@ -707,7 +815,7 @@ Port zapewnia prymitywy: uruchomienie zadania, anulowanie, serializacja mutacji 
 
 | Kategoria | Warianty | Kiedy |
 |---|---|---|
-| `ProvisioningError` | `authenticationFailed`, `connection`, `invalidData` | §4 |
+| `ProvisioningError` | `authenticationFailed`, `connection`, `invalidData`, `interfaceNotFound`, `interfaceAmbiguous` | §4; dwa ostatnie — wybór interfejsu z pliku projektu (§4.5.2) |
 | `CryptoError` | `invalidKeyMaterial`, `encryptFailed`, `decryptFailed` | §5.1; `decryptFailed` na ścieżce odbioru → drop datagramu, nie propagacja |
 | `ProtocolError` | `malformedFrame`, `malformedPayload` | walidacja ramek/payloadów |
 | `PayloadError` | `unresolvedPlaceholder` | akcja z `value` = `$value$` bez nadpisania (§3.3) — nic nie jest wysyłane |

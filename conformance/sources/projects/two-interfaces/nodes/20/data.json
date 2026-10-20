@@ -1,0 +1,36 @@
+{
+  "id": "66666666-7777-8888-9999-000000000000",
+  "label": "Integration",
+  "icon": "home_2",
+  "theme": "red",
+  "blockCloud": true,
+  "cloudSharing": null,
+  "darkLogoPath": null,
+  "lightLogoPath": null,
+  "pushNotifications": null,
+  "pages": [
+    {
+      "id": 1016,
+      "label": "Only page",
+      "icon": "star",
+      "widgets": [
+        {
+          "id": 1017,
+          "type": "VALUE_V2",
+          "dtoId": "va000003",
+          "unit": "UNKNOWN",
+          "valueType": "INTEGER",
+          "precision": 0,
+          "icon": "info",
+          "label": "Counter",
+          "value": {
+            "cluId": "CLU_C",
+            "objectName": "X_COUNT",
+            "index": "X_COUNT",
+            "callType": "VARIABLE"
+          }
+        }
+      ]
+    }
+  ]
+}

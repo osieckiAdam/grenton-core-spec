@@ -1,5 +1,27 @@
 # Changelog
 
+## Spec 0.8.0, suite 0.8.0 — 2026-10-20
+
+Import of the mobile interface from an Object Manager project file (`.omp`), for the widget types whose editor format is confirmed.
+
+Evidence (one installation; its project file and the interface downloaded from Object Manager for the same project): an `.omp` holds every mobile interface of the project in Object Manager's editor format (`nodes/{n}/data.json`), plus the project key (`properties.xml`) and the CLUs and objects (`system.xml`). A converter written from these rules reproduced the downloaded `data.json` field for field — 18 pages, 254 widgets of 11 types, 5 CLUs, the key, the push objects — except `version`, an export counter the project does not store. The same converter ran on 15 project files saved by Object Manager 1.10.1, 1.11.1 and 1.12.1 without an error and with every widget accounted for. Details the comparison settled: the CLU list holds only the CLUs the interface uses, in `system.xml` order; `serialNumber` is the hex serial from `system.xml` written in decimal (it can differ from the number in the CLU name after a CLU swap); `theme` and scene colours are upper-cased; `PSEUDO_METHOD` actions become `ATTRIBUTE`; action fields of the V2/V3 widgets gain an `Action` suffix; references and actions without an object are editor templates and are dropped; a push object's type is `PUSH-{typeId in decimal}-{typeVersion}`. Unpacked, a real project is about 16 MB, `system.xml` alone 6.5 MB.
+
+Not yet confirmed (no project with them was available): `LED`, `CONTACT_SENSOR`, `CONTACT_SENSOR_DOUBLE`, `SLIDER`, `MULTISENSOR`, `ROLLER_SHUTTER`, `CAMERA`. Until their editor format is seen, the import passes them on as `{id, type}`, which parsing skips with a diagnostic.
+
+Spec:
+
+- §4.5 (new): the archive and its limits (64 MiB per used entry and in total, 10 000 entries, recommended; no DTD in any encoding; strict JSON; duplicate entry names, element ids or interface ids rejected), XML references (transitive; dangling or cyclic rejected), text trimming and the hex grammar, choosing an interface (by id; without an id only when there is exactly one), error precedence, the root fields (`version` is 0), CLUs (document order, only the ones used after conversion), push objects (strict ancestor; incomplete entries skipped), and the conversion of pages and the 11 confirmed widget types with exact required, copied and dropped fields. Reviewed by Codex; its 15 findings on ambiguity and malformed input are reflected in this text and the suite.
+- §8: `ProvisioningError.interfaceNotFound` and `interfaceAmbiguous`.
+- §1.1, §2: the second Provisioning source.
+
+Suite (205 cases):
+
+- new profile `project` and operation `provisioning.omp` (conformance.md §4c): the interface list, the root of the chosen interface with the `{id, type}` of every widget that parses, and the `mapping.interface` projection of the import;
+- 12 cases on 9 synthetic `.omp` fixtures: every confirmed type and its edge cases (an explicit `…Action` winning over a bare name, a CLU used only by an action, one used only by a stub and so not listed, document order against first use, a serial read through an XML reference, a push node reached twice and listed once, archive order of the interfaces), the second interface (`LOCAL_ONLY`), selection without an id (none, one and two interfaces), an unknown id, and broken archives (not a ZIP, no `system.xml`, a `DOCTYPE` in UTF-8 and in UTF-16, invalid JSON in a node that is not the interface, a non-finite number);
+- fixtures are built by `tools/suite.py fixtures` from readable sources in `conformance/sources/projects/` (an `ORDER` file sets the entry order); `check` compares every archive with its sources (names, order, content), re-derives every expectation with `tools/oracles/omp.py` (written from §4.5) and the mapping oracle with type-aware JSON equality, and rejects fixtures whose converted widgets break the §3.5 enumerations;
+- the mapping oracle reports a widget marked as not parsing as skipped before the `HEADER` rule, so a malformed `HEADER` is reported like any widget §3.6 skips (no existing case changes);
+- new error codes `provisioning.invalidData`, `provisioning.interfaceNotFound`, `provisioning.interfaceAmbiguous`.
+
 ## Spec 0.7.0, suite 0.7.0 — 2026-10-19
 
 One socket per session, chunks as subscription numbers, re-registration every 30 s, `clientDestroy`.

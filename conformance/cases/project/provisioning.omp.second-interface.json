@@ -1,0 +1,133 @@
+{
+  "schemaVersion": 1,
+  "id": "provisioning.omp.second-interface",
+  "specRefs": [
+    "provisioning.omp"
+  ],
+  "description": "The second interface of the same project: blockCloud true gives LOCAL_ONLY, and only the CLU it uses is listed.",
+  "provenance": "spec §4.5 text; expectations re-derived by tools/oracles/omp.py and tools/oracles/mapping.py",
+  "operation": "provisioning.omp",
+  "input": {
+    "fixture": "fixtures/projects/two-interfaces.omp",
+    "interfaceId": "66666666-7777-8888-9999-000000000000"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "interfaces": [
+        {
+          "id": "66666666-7777-8888-9999-000000000000",
+          "name": "Integration"
+        },
+        {
+          "id": "11111111-2222-3333-4444-555555555555",
+          "name": "Test House"
+        }
+      ],
+      "interface": {
+        "id": "66666666-7777-8888-9999-000000000000",
+        "version": 0,
+        "name": "Integration",
+        "icon": "home_2",
+        "theme": "RED",
+        "encryption": {
+          "key": "AAECAwQFBgcICQoLDA0ODw==",
+          "iv": "EBESExQVFhcYGRobHB0eHw=="
+        },
+        "clus": [
+          {
+            "id": "CLU_C",
+            "name": "CLU_C_SPARE",
+            "ip": "10.0.0.3",
+            "serialNumber": "480000003",
+            "port": 1234,
+            "connectionType": "LOCAL_ONLY"
+          }
+        ],
+        "pushNotifications": [
+          {
+            "cluId": 200000001,
+            "objectId": "PUS1001",
+            "objectType": "PUSH-49-1"
+          },
+          {
+            "cluId": 500000002,
+            "objectId": "PUS2002",
+            "objectType": "PUSH-49-1"
+          }
+        ],
+        "pages": [
+          {
+            "name": "Only page",
+            "icon": "star",
+            "isFullscreenWidget": false,
+            "widgets": [
+              {
+                "id": "va000003",
+                "type": "VALUE_V2"
+              }
+            ]
+          }
+        ]
+      },
+      "mapping": {
+        "devices": [
+          {
+            "id": "va000003",
+            "widgetType": "VALUE_V2",
+            "kind": "sensor",
+            "name": "Counter",
+            "page": {
+              "index": 0,
+              "name": "Only page"
+            },
+            "entities": [
+              {
+                "kind": "sensor",
+                "id": "va000003_0",
+                "name": "Counter",
+                "state": {
+                  "callType": "VARIABLE",
+                  "cluId": "CLU_C",
+                  "index": "X_COUNT"
+                },
+                "sensorKind": "generic",
+                "unit": null,
+                "grentonUnit": "UNKNOWN",
+                "valueType": "INTEGER",
+                "precision": 0
+              }
+            ]
+          }
+        ],
+        "physicalObjects": [
+          {
+            "key": {
+              "cluId": "CLU_C",
+              "kind": "variable",
+              "name": "X_COUNT",
+              "index": null
+            },
+            "widgets": [
+              {
+                "deviceId": "va000003",
+                "widgetType": "VALUE_V2",
+                "name": "Counter",
+                "page": {
+                  "index": 0,
+                  "name": "Only page"
+                },
+                "entityIds": [
+                  "va000003_0"
+                ]
+              }
+            ]
+          }
+        ],
+        "skippedWidgets": [
+          []
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "provisioning.omp.ambiguous-without-id",
+  "specRefs": [
+    "provisioning.omp-selection"
+  ],
+  "description": "Two interfaces and no id: the import refuses to guess.",
+  "provenance": "spec §4.5 text; expectations re-derived by tools/oracles/omp.py and tools/oracles/mapping.py",
+  "operation": "provisioning.omp",
+  "input": {
+    "fixture": "fixtures/projects/two-interfaces.omp"
+  },
+  "expect": {
+    "outcome": "error",
+    "code": "provisioning.interfaceAmbiguous"
+  }
+}
