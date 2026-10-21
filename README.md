@@ -20,7 +20,7 @@ Polish.
 
 | Port | Suite version | Profiles |
 |---|---|---|
-| [grenton-core-swift](https://github.com/osieckiAdam/grenton-core-swift) | 0.6.0 | `stateless`, `mapping`, `session` |
+| [grenton-core-swift](https://github.com/osieckiAdam/grenton-core-swift) | 0.9.1 | `stateless`, `mapping`, `session`, `project` |
 
 ## Conformance suite
 
@@ -47,15 +47,16 @@ Expected values never come from a port. They come from the spec text,
 Python derivation written from the spec (`tools/oracles/`).
 `tools/suite.py check` re-derives them wherever such an oracle exists.
 
-Version 0.8.0 contains four profiles, 205 cases in total:
+Version 0.9.1 contains four profiles, 230 cases in total:
 
-- `stateless` (149 cases): AES-CBC, frames, payloads, value casting, the
-  Object Manager URL and PIN, coercions, number formatting.
+- `stateless` (162 cases): AES-CBC, frames, payloads (registration, one-shot
+  read, actions, reports), value casting, the Object Manager URL and PIN,
+  coercions, number formatting.
 - `mapping` (6 cases on 6 interface fixtures): `data.json` → devices and
   entities, completeness rules, widget-level tolerance, normative order,
   thermostats and double scenes, and devices grouped by the CLU object
   they operate.
-- `session` (38 scenarios): one CLU session against a CLU played by the
+- `session` (50 scenarios): one CLU session against a CLU played by the
   runner on a virtual clock — correlation and timeouts, keep-alive,
   sequential chunked registration on one socket, report routing by
   subscription number, unregistering, lifecycle,
@@ -73,3 +74,7 @@ The `provisioning` profile is planned. See
 python3 tools/suite.py check      # validate all cases
 python3 tools/suite.py manifest   # rebuild the manifest after editing cases
 ```
+
+## License
+
+[MIT](LICENSE).
