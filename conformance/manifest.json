@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "suiteVersion": "0.9.0",
-  "specVersion": "0.9.0",
+  "suiteVersion": "0.9.1",
+  "specVersion": "0.9.1",
   "profiles": {
     "mapping": [
       "mapping.interface"
@@ -745,6 +745,11 @@
       "sha256": "73cc9ff388ca32b470778b8e769a1088e55b9b459beb427bda2f09866c0d9334"
     },
     {
+      "id": "session.scenario.a-running-renewal-finishes-after-degrading",
+      "path": "cases/session/session.scenario.a-running-renewal-finishes-after-degrading.json",
+      "sha256": "41bf1b44506d4a401b9bff71239c6b844b5b3b03b950739d169fd93477520b5c"
+    },
+    {
       "id": "session.scenario.chunks-are-registered-one-after-another",
       "path": "cases/session/session.scenario.chunks-are-registered-one-after-another.json",
       "sha256": "3cd3ee0387aa4003c3cb18594a6536ea50c2598277c6f93b5df91c2b161b5e44"
@@ -840,6 +845,11 @@
       "sha256": "4d88e3ff4e2b808af9f22a1d6e375f0f28b2aa729d3865b6135730c66ac4dac9"
     },
     {
+      "id": "session.scenario.no-loop-re-registration-while-degraded",
+      "path": "cases/session/session.scenario.no-loop-re-registration-while-degraded.json",
+      "sha256": "3857f76185fedb06ab3d1c690c712ae38f0b8d2f900522df078bc2271a566498"
+    },
+    {
       "id": "session.scenario.no-re-registration-without-keys",
       "path": "cases/session/session.scenario.no-re-registration-without-keys.json",
       "sha256": "ac61f2a529327cb54af958d750ec5c38d469bafe035053f8c15ff98e6c8f1e2d"
@@ -848,6 +858,11 @@
       "id": "session.scenario.notifications-are-routed-by-session",
       "path": "cases/session/session.scenario.notifications-are-routed-by-session.json",
       "sha256": "5d4a1e489dfe7fa0cb604eacf4e0e579f010f92c1756e64b68e2e24b2cd72869"
+    },
+    {
+      "id": "session.scenario.ping-before-start-sends-nothing",
+      "path": "cases/session/session.scenario.ping-before-start-sends-nothing.json",
+      "sha256": "b7235bc6b2ca8ad678a1fd0c8f1b0b4462c500799bbb74537802d4c2aa91bd66"
     },
     {
       "id": "session.scenario.ping-loop-retries-a-degraded-session",
@@ -865,6 +880,11 @@
       "sha256": "652604ccc0fa38c4ea82baf6eb2acf01f24850e252aef0d2304fc212cfc34a76"
     },
     {
+      "id": "session.scenario.ping-timeouts-count-per-socket",
+      "path": "cases/session/session.scenario.ping-timeouts-count-per-socket.json",
+      "sha256": "ec66562cb7393ff3af20625c271bbc498902da96d1edc69d0280f255d634fd35"
+    },
+    {
       "id": "session.scenario.re-registration-reuses-the-socket-and-session",
       "path": "cases/session/session.scenario.re-registration-reuses-the-socket-and-session.json",
       "sha256": "f8b21278658c80073f8380b49611de5fc3e49fb8e7fb8d5e3377b5e55749c6df"
@@ -878,6 +898,11 @@
       "id": "session.scenario.recovery-re-registers-before-ready",
       "path": "cases/session/session.scenario.recovery-re-registers-before-ready.json",
       "sha256": "20cc929c09b6ac9debb466ecc6e9f3910ca8e3887d4b999922171d8d33b0e3c1"
+    },
+    {
+      "id": "session.scenario.register-before-start-yields-failed-slots",
+      "path": "cases/session/session.scenario.register-before-start-yields-failed-slots.json",
+      "sha256": "3199a2c185b2129dab24978e3f0d87b7c1047fa4f592e9a94e1093bb8b41fc94"
     },
     {
       "id": "session.scenario.register-one-chunk-as-session-1",
@@ -933,6 +958,11 @@
       "id": "session.scenario.stop-during-registration-fails-the-chunk",
       "path": "cases/session/session.scenario.stop-during-registration-fails-the-chunk.json",
       "sha256": "fb3d416a07acfdf2f20c256ca3e62a4e19885868248ed59c9db512fe5f2acbcd"
+    },
+    {
+      "id": "session.scenario.three-ping-timeouts-replace-the-main-socket",
+      "path": "cases/session/session.scenario.three-ping-timeouts-replace-the-main-socket.json",
+      "sha256": "94602f6c2d1f830195cae4dc61890da1f22523c4bbafaec408e6d181006d69b3"
     },
     {
       "id": "session.scenario.unanswered-chunk-yields-failed-slots",

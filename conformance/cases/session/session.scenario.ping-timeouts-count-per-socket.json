@@ -1,0 +1,169 @@
+{
+  "schemaVersion": 1,
+  "id": "session.scenario.ping-timeouts-count-per-socket",
+  "specRefs": [
+    "session.lifecycle",
+    "session.keepalive"
+  ],
+  "description": "The timeout streak counts every ping on the wire from the socket's opening, the initial one of start() included; a replacement socket starts at zero, so two more timeouts on it do not close it and a reply makes the session ready.",
+  "provenance": "spec §5.3–§5.4 text, conformance.md §4b",
+  "operation": "session.scenario",
+  "input": {
+    "clu": {
+      "id": "CLU_1",
+      "ip": "10.0.0.1",
+      "port": 1234
+    },
+    "responseTimeoutMs": 5000,
+    "pingIntervalMs": 3600000,
+    "registerIntervalMs": 3600000,
+    "steps": [
+      {
+        "call": "start",
+        "as": "start"
+      },
+      {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "checkAlive()"
+        }
+      },
+      {
+        "advance": 5000
+      },
+      {
+        "await": "start",
+        "result": null
+      },
+      {
+        "expectState": "degraded"
+      },
+      {
+        "call": "ping",
+        "as": "t2"
+      },
+      {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "checkAlive()"
+        }
+      },
+      {
+        "advance": 5000
+      },
+      {
+        "await": "t2",
+        "result": {
+          "ok": false
+        }
+      },
+      {
+        "expectQuiet": true
+      },
+      {
+        "call": "ping",
+        "as": "t3"
+      },
+      {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "checkAlive()"
+        }
+      },
+      {
+        "advance": 5000
+      },
+      {
+        "await": "t3",
+        "result": {
+          "ok": false
+        }
+      },
+      {
+        "expectClosed": "@main"
+      },
+      {
+        "call": "ping",
+        "as": "t4"
+      },
+      {
+        "expectSent": {
+          "socket": "@main2",
+          "msgId": "$ka",
+          "payload": "checkAlive()"
+        }
+      },
+      {
+        "advance": 5000
+      },
+      {
+        "await": "t4",
+        "result": {
+          "ok": false
+        }
+      },
+      {
+        "call": "ping",
+        "as": "t5"
+      },
+      {
+        "expectSent": {
+          "socket": "@main2",
+          "msgId": "$ka",
+          "payload": "checkAlive()"
+        }
+      },
+      {
+        "advance": 5000
+      },
+      {
+        "await": "t5",
+        "result": {
+          "ok": false
+        }
+      },
+      {
+        "expectQuiet": true
+      },
+      {
+        "expectState": "degraded"
+      },
+      {
+        "call": "ping",
+        "as": "p"
+      },
+      {
+        "expectSent": {
+          "socket": "@main2",
+          "msgId": "$ka",
+          "payload": "checkAlive()"
+        }
+      },
+      {
+        "respond": {
+          "socket": "@main2",
+          "msgId": "$ka",
+          "payload": "1"
+        }
+      },
+      {
+        "await": "p",
+        "result": {
+          "ok": true
+        }
+      },
+      {
+        "expectState": "ready"
+      }
+    ]
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "completed": true
+    }
+  }
+}

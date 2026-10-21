@@ -1,0 +1,129 @@
+{
+  "schemaVersion": 1,
+  "id": "session.scenario.register-before-start-yields-failed-slots",
+  "specRefs": [
+    "session.lifecycle",
+    "session.chunking",
+    "session.loops"
+  ],
+  "description": "register() on an idle session, and on a stopped one, sends nothing, yields failed slots and remembers no keys: after start() the re-registration loop has nothing to renew.",
+  "provenance": "spec §5.3–§5.4 text, conformance.md §4b",
+  "operation": "session.scenario",
+  "input": {
+    "clu": {
+      "id": "CLU_1",
+      "ip": "10.0.0.1",
+      "port": 1234
+    },
+    "responseTimeoutMs": 5000,
+    "pingIntervalMs": 3600000,
+    "registerIntervalMs": 30000,
+    "steps": [
+      {
+        "expectState": "idle"
+      },
+      {
+        "call": "register",
+        "keys": [
+          {
+            "type": "attribute",
+            "objectName": "OBJ",
+            "index": "0"
+          }
+        ],
+        "as": "r"
+      },
+      {
+        "expectQuiet": true
+      },
+      {
+        "await": "r",
+        "result": {
+          "slots": [
+            {
+              "failed": true
+            }
+          ]
+        }
+      },
+      {
+        "expectState": "idle"
+      },
+      {
+        "call": "start",
+        "as": "start"
+      },
+      {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "checkAlive()"
+        }
+      },
+      {
+        "respond": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "1"
+        }
+      },
+      {
+        "await": "start",
+        "result": null
+      },
+      {
+        "expectState": "ready"
+      },
+      {
+        "advance": 30000
+      },
+      {
+        "expectQuiet": true
+      },
+      {
+        "call": "stop",
+        "as": "stop"
+      },
+      {
+        "await": "stop",
+        "result": null
+      },
+      {
+        "expectClosed": "@main"
+      },
+      {
+        "call": "register",
+        "keys": [
+          {
+            "type": "attribute",
+            "objectName": "OBJ",
+            "index": "0"
+          }
+        ],
+        "as": "r2"
+      },
+      {
+        "expectQuiet": true
+      },
+      {
+        "await": "r2",
+        "result": {
+          "slots": [
+            {
+              "failed": true
+            }
+          ]
+        }
+      },
+      {
+        "expectState": "stopped"
+      }
+    ]
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "completed": true
+    }
+  }
+}

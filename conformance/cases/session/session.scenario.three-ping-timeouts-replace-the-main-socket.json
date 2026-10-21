@@ -1,0 +1,224 @@
+{
+  "schemaVersion": 1,
+  "id": "session.scenario.three-ping-timeouts-replace-the-main-socket",
+  "specRefs": [
+    "session.lifecycle",
+    "session.keepalive",
+    "session.chunking"
+  ],
+  "description": "After three consecutive unanswered pings the session closes its main socket; the next ping opens a new one, and its reply recovers the subscription there before the session is ready. Two timeouts do not close it.",
+  "provenance": "spec §5.3–§5.4 text, conformance.md §4b",
+  "operation": "session.scenario",
+  "input": {
+    "clu": {
+      "id": "CLU_1",
+      "ip": "10.0.0.1",
+      "port": 1234
+    },
+    "responseTimeoutMs": 5000,
+    "pingIntervalMs": 3600000,
+    "registerIntervalMs": 3600000,
+    "steps": [
+      {
+        "call": "start",
+        "as": "start"
+      },
+      {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "checkAlive()"
+        }
+      },
+      {
+        "respond": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "1"
+        }
+      },
+      {
+        "await": "start",
+        "result": null
+      },
+      {
+        "expectState": "ready"
+      },
+      {
+        "call": "register",
+        "keys": [
+          {
+            "type": "attribute",
+            "objectName": "OBJ",
+            "index": "0"
+          }
+        ],
+        "as": "r1"
+      },
+      {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$r1",
+          "payload": "SYSTEM:clientRegister(0,0,1,{{OBJ,0}})"
+        }
+      },
+      {
+        "respond": {
+          "socket": "@main",
+          "msgId": "$r1",
+          "payload": "clientReport:1:{5}"
+        }
+      },
+      {
+        "await": "r1",
+        "result": {
+          "slots": [
+            {
+              "type": "int",
+              "value": "5"
+            }
+          ]
+        }
+      },
+      {
+        "call": "ping",
+        "as": "t1"
+      },
+      {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "checkAlive()"
+        }
+      },
+      {
+        "advance": 5000
+      },
+      {
+        "await": "t1",
+        "result": {
+          "ok": false
+        }
+      },
+      {
+        "expectState": "degraded"
+      },
+      {
+        "call": "ping",
+        "as": "t2"
+      },
+      {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "checkAlive()"
+        }
+      },
+      {
+        "advance": 5000
+      },
+      {
+        "await": "t2",
+        "result": {
+          "ok": false
+        }
+      },
+      {
+        "expectQuiet": true
+      },
+      {
+        "call": "ping",
+        "as": "t3"
+      },
+      {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "checkAlive()"
+        }
+      },
+      {
+        "advance": 5000
+      },
+      {
+        "await": "t3",
+        "result": {
+          "ok": false
+        }
+      },
+      {
+        "expectClosed": "@main"
+      },
+      {
+        "expectState": "degraded"
+      },
+      {
+        "call": "ping",
+        "as": "p"
+      },
+      {
+        "expectSent": {
+          "socket": "@main2",
+          "msgId": "$ka",
+          "payload": "checkAlive()"
+        }
+      },
+      {
+        "respond": {
+          "socket": "@main2",
+          "msgId": "$ka",
+          "payload": "1"
+        }
+      },
+      {
+        "expectSent": {
+          "socket": "@main2",
+          "msgId": "$r2",
+          "payload": "SYSTEM:clientRegister(0,0,1,{{OBJ,0}})"
+        }
+      },
+      {
+        "expectState": "degraded"
+      },
+      {
+        "respond": {
+          "socket": "@main2",
+          "msgId": "$r2",
+          "payload": "clientReport:1:{6}"
+        }
+      },
+      {
+        "expectReport": {
+          "keys": [
+            {
+              "type": "attribute",
+              "objectName": "OBJ",
+              "index": "0"
+            }
+          ],
+          "values": [
+            {
+              "type": "int",
+              "value": "6"
+            }
+          ]
+        }
+      },
+      {
+        "await": "p",
+        "result": {
+          "ok": true
+        }
+      },
+      {
+        "expectState": "ready"
+      }
+    ]
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "completed": true
+    }
+  }
+}

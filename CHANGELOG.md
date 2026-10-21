@@ -1,5 +1,20 @@
 # Changelog
 
+## Spec 0.9.1, suite 0.9.1 — 2026-10-21
+
+Lifecycle rules a port could otherwise get wrong, found by a code audit of the Swift port.
+
+Evidence: in the Swift port, `ping()` before `start()` opened the socket and made the session `ready` without any maintenance loop, after which `start()` was a silent no-op; a CLU that stopped answering with several chunks registered spent N × 5 s in timeouts, so the 30 s loop fired back-to-back while the ping-loop recovery registered the same keys again; and a transport that lost its network could hold the socket in a state where sends never finish, so that no ping ever replaced it.
+
+Spec:
+
+- §5.4.5: `ping()` and `register()` in `idle` or `stopped` send nothing, fail (`register` with `failed` slots) and remember nothing; only `start()` opens a session.
+- §5.4.5: three consecutive unanswered pings close the main socket (pending requests end with `ConnectionClosed`); the next ping opens a new one, and the first successful ping recovers the subscriptions on it. The streak belongs to the socket: it counts pings on the wire (the initial one of `start()` included, once per attempt whoever waits for it) since the socket opened or the last reply, and a new socket starts at zero (review finding).
+- §5.4.1 pt 3: the response timeout bounds the whole attempt from the hand-over to the transport, whether or not the transport ever finishes the send, and retiring a socket waits at most one timeout for stuck sends (review finding; the scenario vocabulary has no stuck-send step, so this is text only).
+- §5.4.4: the re-registration loop starts no renewal while the session is `degraded`, and a deadline missed there is not caught up; a renewal already running finishes its chunks (review finding). The recovery after a successful ping registers and restarts the wait.
+
+Suite (230 cases; 50 session scenarios): `ping-before-start-sends-nothing`, `register-before-start-yields-failed-slots` (idle and stopped), `three-ping-timeouts-replace-the-main-socket` (with a subscription recovered on the new socket), `ping-timeouts-count-per-socket`, `no-loop-re-registration-while-degraded`, `a-running-renewal-finishes-after-degrading`.
+
 ## Spec 0.9.0, suite 0.9.0 — 2026-10-21
 
 Report parsing that respects quotes and nesting, the one-shot read `fetchValues`, and notes from the mobile app.
