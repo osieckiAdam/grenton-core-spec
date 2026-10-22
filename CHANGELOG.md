@@ -1,5 +1,20 @@
 # Changelog
 
+## Spec 0.10.0, suite 0.10.0 — 2026-10-21
+
+The `.omp` import now converts every widget type of §3.5, plus the new `TV_REMOTE_CONTROL`, and imports widgets never sent to a phone.
+
+Evidence: a second interface of the same project with one widget of each type that was not yet confirmed, saved after Object Manager sent it to a phone, against the interface downloaded for it. The converter reproduces it field for field (10 widgets, the CLUs, the key). Rules settled by the comparison: CAMERA's `cameraStream.url` becomes the component's `value`; LED is its bistable button followed by the hue, saturation and brightness sliders, each slider's `min`/`max` becoming `range`; contact sensors and the slider use the widget `object` like the V2 widgets (their `clickAction` template drops out); the multisensor's seven channels keep only existing references, and the editor spells the VOC channel `objectAirVco` while the mobile interface has `objectAirVoc`; the legacy roller shutter's `buttonBistableClick` becomes a `BUTTON_BISTABLE` component that keeps `indication`. A new type, `TV_REMOTE_CONTROL` (a TV remote: `vodLabel`, `icon`, `label` and an `object` of button actions), exists in Object Manager; Core does not map it.
+
+Object Manager assigns a widget's `dtoId` only when it sends the interface to a phone, and writes it into the project only when the project is saved afterwards: a project saved before the first send has no `dtoId` on its new widgets. Under 0.8.0 the import skipped them. Now `omp-` plus the decimal text of the editor's integer `id` stands in (the prefix keeps it from ever equalling a real `dtoId`); the id, and with it the device and entity ids, changes once the interface has been sent and the project saved. Two widgets with one id after conversion fail the import.
+
+Spec:
+
+- §4.5.6: the conversion of `CAMERA`, `LED`, `CONTACT_SENSOR`, `CONTACT_SENSOR_DOUBLE`, `SLIDER`, `MULTISENSOR`, `ROLLER_SHUTTER` and `TV_REMOTE_CONTROL` (new structures S, R, K); the stand-in id and when it applies; duplicate widget ids → `invalidData`; stubs keep the id.
+- §3.5: `TV_REMOTE_CONTROL` is known and not supported, like `EVENT_SCHEDULER`.
+
+Suite (231 cases, expectations re-derived): `provisioning.omp.select-by-id` gains a third page with every newly confirmed type, a `TV_REMOTE_CONTROL`, a widget without `dtoId`, an LED missing a slider, an LED whose slider kinds are swapped (parsed as a union by `type`), and two widgets parsing skips (a roller whose `indication` is not a string, a camera whose component is not `CAMERA_STREAM`); new `provisioning.omp.duplicate-widget-id`. The oracle's approximation of §3.6 checks the fields and component types §3.5 names for the new types, per component kind. Reviewed by Codex; its 5 findings are reflected here.
+
 ## Spec 0.9.1, suite 0.9.1 — 2026-10-21
 
 Lifecycle rules a port could otherwise get wrong, found by a code audit of the Swift port.

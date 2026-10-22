@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "provisioning.omp.duplicate-widget-id",
+  "specRefs": [
+    "provisioning.omp"
+  ],
+  "description": "Two widgets of the interface end up with the same id: the import fails rather than let one overwrite the other.",
+  "provenance": "spec §4.5 text; expectations re-derived by tools/oracles/omp.py and tools/oracles/mapping.py",
+  "operation": "provisioning.omp",
+  "input": {
+    "fixture": "fixtures/projects/duplicate-widget-id.omp"
+  },
+  "expect": {
+    "outcome": "error",
+    "code": "provisioning.invalidData"
+  }
+}

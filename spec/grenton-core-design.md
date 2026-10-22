@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Status** | Projekt (do implementacji) |
-| **Wersja** | 0.9.1 |
+| **Wersja** | 0.10.0 |
 | **Data** | 2026-10-21 |
 | **Implementacja referencyjna** | `homeassistant-grenton` (Python, integracja Home Assistant) |
 | **Przeznaczenie** | Specyfikacja niezależna od języka — podstawa dla portów (pierwszy: Swift) |
@@ -181,7 +181,7 @@ Każdy widget ma `id: string` i dyskryminator `type`. 16 obsługiwanych typów (
 
 **Widgety prezentacyjne:** `HEADER` (nagłówek sekcji: `components[]` z samym `label`) jest rozpoznawany, **nie tworzy urządzenia i nie jest raportowany jako pominięty** (§3.6) — to układ UI, nie błąd.
 
-**Znane, nieobsługiwane w v1:** `EVENT_SCHEDULER` (harmonogram zdarzeń: lista reguł, dodawanie/usuwanie) — pomijany jak nieznany typ.
+**Znane, nieobsługiwane w v1:** `EVENT_SCHEDULER` (harmonogram zdarzeń: lista reguł, dodawanie/usuwanie) i `TV_REMOTE_CONTROL` (pilot TV: `vodLabel`, `icon`, `label`, `object` z akcjami przycisków) — pomijane jak nieznany typ.
 
 Wspólna baza komponentów listowych: `label: string`, `rowId: int`, `unit: enum {UNKNOWN, PERCENT, DEGREE}`.
 
@@ -301,7 +301,7 @@ Wpis, któremu brakuje przodka CLU z poprawnym `serialNumber`, `nameOnCLU`, popr
 
 #### 4.5.6 Strony i widgety
 
-`pages` interfejsu to tablica stron; strona, która nie jest obiektem z napisami `label` i `icon` oraz tablicą `widgets`, → `invalidData`. Strona: `{name: label, icon, isFullscreenWidget: false, widgets}`; kolejność stron i widgetów zachowana. `id` widgetu §3.4 to pole **`dtoId`** widgetu edytora (liczbowe `id` edytora jest pomijane).
+`pages` interfejsu to tablica stron; strona, która nie jest obiektem z napisami `label` i `icon` oraz tablicą `widgets`, → `invalidData`. Strona: `{name: label, icon, isFullscreenWidget: false, widgets}`; kolejność stron i widgetów zachowana. `id` widgetu §3.4 to pole **`dtoId`** widgetu edytora. OM nadaje `dtoId` dopiero przy wysłaniu interfejsu na telefon, więc widget nigdy niewysłany go nie ma. Gdy `dtoId` nie jest niepustym napisem (brak, `null`, inny typ), `id` to **`omp-` i tekst dziesiętny `id` edytora**, o ile ten jest nieujemną liczbą całkowitą JSON (bez części ułamkowej i wykładnika; `true`/`false` nie są liczbą) — identyfikator zastępczy, np. `omp-5009`. Przedrostek sprawia, że nie zrówna się z żadnym `dtoId` nadanym przez OM. Dwa widgety interfejsu z tym samym `id` po przekształceniu → `invalidData`. Po pierwszym wysłaniu interfejsu z OM i zapisaniu projektu taki widget dostaje `dtoId`, więc jego `id` — a z nim identyfikatory urządzeń i encji (§6) — się zmieni; adapter powinien to uwzględnić, np. ostrzegając użytkownika.
 
 **Pole wymagane** to pole obecne i różne od `null`. **Obiekt** to obiekt JSON; wartość innego rodzaju w miejscu obiektu traktuje się jak brak pola. **Pola przepisywane bez zmian** przechodzą tylko wtedy, gdy są obecne (także z wartością `null`) — import nie dopisuje pól, których nie było, i nie sprawdza ich typów; to robi parsowanie §3.6.
 
@@ -332,13 +332,24 @@ Widgety według `type` (pola **pogrubione** są wymagane do przekształcenia):
 | `DIMMER_V2` | `min, max, precision, icon, label` bez zmian; **`object`** → O |
 | `THERMOSTAT_V2` | `icon, label` bez zmian; `noOfFanSpeeds` → `no_of_fan_speeds`; **`object`** → O |
 | `ROLLER_SHUTTER_V3`, `EVENT_SCHEDULER` | `icon, label` bez zmian; **`object`** → O |
+| `CAMERA` | **`cameraStream`** → `components: [{unit: "UNKNOWN", value: url}]` plus bez zmian `image, label, type, rowId` (pole edytora `url` przechodzi jako `value`) |
+| `LED` | **`buttonBistable`**, **`sliderHue`**, **`sliderSaturation`**, **`sliderBrightness`** → `components: [P, S_hue, S_saturation, S_brightness]` w tej kolejności |
+| `CONTACT_SENSOR` | `icon, label, onIndication, offIndication, reverseState` bez zmian; **`object`** → O |
+| `CONTACT_SENSOR_DOUBLE` | **`componentLeft`**, **`componentRight`** (obiekty) → każdy jak `CONTACT_SENSOR` (bez `id`, `type`) |
+| `SLIDER` | `unit, min, max, precision, icon, label` bez zmian; **`object`** → O |
+| `MULTISENSOR` | `icon, label, labelVisible` bez zmian; kanały → K |
+| `ROLLER_SHUTTER` | **`buttonBistableClick`** → `components: [R]` |
+| `TV_REMOTE_CONTROL` | `vodLabel, icon, label` bez zmian; **`object`** → O |
 
 - **P** (przycisk bistabilny, obiekt): `{unit: "UNKNOWN", actions: [actionOn, actionOff]}` plus bez zmian `image, label, onIndication, offIndication, type, rowId` i referencja `state` — akcje w tej kolejności, nieistniejące pominięte; pole `indication` edytora pomija się.
 - **M** (przycisk monostabilny, obiekt): `{unit: "UNKNOWN", actions: [actionClick]}` plus bez zmian `label, type, rowId`.
+- **S** (suwak LED, obiekt): `{range: {min, max}, actions: [actionClick]}` (z `min`, `max` edytora, o ile są) plus bez zmian `unit, label, type, rowId` i referencja `state`.
+- **R** (przycisk starej rolety, obiekt): `{unit: "UNKNOWN", actions: [actionClick]}` plus bez zmian `image, label, indication, rowId` i referencja `state`; `type` `BUTTON_BISTABLE_CLICK` przechodzi jako `BUTTON_BISTABLE`, inny bez zmian. Pole `status` widgetu edytora pomija się.
+- **K** (kanały multisensora): pola edytora `objectAirCo2, objectSound, objectAirVco, objectLight, objectPressure, objectHumidity, objectTemperature`, każde będące obiektem, przechodzą jako obiekty zawierające te swoje pola, które są istniejącymi referencjami, pod nazwami mobilnymi `objectAirCo2, objectSound, objectAirVoc, objectLight, objectPressure, objectHumidity, objectTemperature` (edytor pisze kanał LZO jako `objectAirVco`).
 - **B** (tło sceny, gdy `background` jest obiektem): `{color, name: image}`, gdzie `color` będący napisem zamienia się na wielkie litery; bez obiektu `background` pole `background` się pomija.
 - **O** (obiekt widgetu): każde pole `object` edytora, które jest obiektem z polem `valueFormattedForDto`, jest akcją i przechodzi pod nazwą z przyrostkiem `Action`, o ile nazwa już się nim nie kończy (`setPosition` → `setPositionAction`, `setModeAction` bez zmian); każde inne pole będące obiektem — jako referencja stanu pod tą samą nazwą; nieistniejące pomija się. Gdy akcja bez przyrostka (`set`) celuje w nazwę pola, które w `object` już jest (`setAction` — akcja, referencja albo szablon), wygrywa to pole, a akcja bez przyrostka jest pomijana — niezależnie od kolejności w JSON.
 
-Widget innego `type` (w tym typy z §3.5 spoza tej tabeli, dopóki ich formatu edytora nie potwierdzono), widget, który nie jest obiektem, oraz widget z tabeli bez pola wymaganego do przekształcenia (pogrubionego albo `dtoId`) przechodzi dalej **tylko z polami `id` (= `dtoId`) i `type`, o ile są napisami**. Bez pozostałych pól nie parsuje się, więc parsowanie §3.6 pkt 2 pomija go z diagnostyką, jak każdy niepoprawny widget. Pól edytora nieznanego typu nie przepisuje się, bo mogłyby przypadkiem sparsować się jako inny widget.
+Widget innego `type`, widget, który nie jest obiektem, oraz widget z tabeli bez pola wymaganego do przekształcenia (pogrubionego albo identyfikatora — `dtoId` lub liczbowego `id`) przechodzi dalej **tylko z polami `id` (jak wyżej) i `type`, o ile je ma** (`type` — gdy jest napisem). Bez pozostałych pól nie parsuje się, więc parsowanie §3.6 pkt 2 pomija go z diagnostyką, jak każdy niepoprawny widget. Pól edytora nieznanego typu nie przepisuje się, bo mogłyby przypadkiem sparsować się jako inny widget.
 
 Wynik przechodzi następnie zwykłe parsowanie §3.6, jak interfejs pobrany z OM.
 

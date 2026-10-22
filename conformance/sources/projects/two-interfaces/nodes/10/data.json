@@ -812,6 +812,976 @@
           "label": "Broken"
         }
       ]
+    },
+    {
+      "id": 7777,
+      "label": "More widgets",
+      "icon": "star",
+      "widgets": [
+        {
+          "cameraStream": {
+            "image": "camera",
+            "label": "Camera",
+            "type": "CAMERA_STREAM",
+            "url": "rtsp://10.0.0.50:554/stream1",
+            "rowId": 0
+          },
+          "id": 5001,
+          "type": "CAMERA",
+          "dtoId": "ca000001"
+        },
+        {
+          "sliderSaturation": {
+            "unit": "PERCENT",
+            "min": 0,
+            "max": 1,
+            "actionClick": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "",
+              "objectName": "OBJ2001",
+              "index": "0",
+              "type": "CLICK",
+              "value": "",
+              "callType": "METHOD"
+            },
+            "label": "Saturation",
+            "state": {
+              "cluId": "CLU_A",
+              "objectName": "OBJ2002",
+              "index": "1",
+              "callType": "ATTRIBUTE"
+            },
+            "type": "SLIDER_SATURATION",
+            "rowId": 2
+          },
+          "sliderHue": {
+            "unit": "DEGREE",
+            "min": 0,
+            "max": 360,
+            "actionClick": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "",
+              "objectName": "OBJ2003",
+              "index": "0",
+              "type": "CLICK",
+              "value": "",
+              "callType": "METHOD"
+            },
+            "label": "Hue",
+            "state": {
+              "cluId": "CLU_A",
+              "objectName": "OBJ2004",
+              "index": "1",
+              "callType": "ATTRIBUTE"
+            },
+            "type": "SLIDER_HUE",
+            "rowId": 1
+          },
+          "buttonBistable": {
+            "image": "rgb",
+            "actionOff": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "",
+              "objectName": "OBJ2005",
+              "index": "1",
+              "type": "OFF",
+              "value": "",
+              "callType": "METHOD"
+            },
+            "label": "Strip power",
+            "indication": "ON_OFF",
+            "offIndication": "Off",
+            "state": {
+              "cluId": "CLU_A",
+              "objectName": "OBJ2006",
+              "index": "1",
+              "callType": "ATTRIBUTE"
+            },
+            "type": "BUTTON_BISTABLE",
+            "actionOn": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "",
+              "objectName": "OBJ2007",
+              "index": "0",
+              "type": "ON",
+              "value": "",
+              "callType": "METHOD"
+            },
+            "onIndication": "On",
+            "rowId": 0
+          },
+          "id": 5002,
+          "type": "LED",
+          "dtoId": "le000002",
+          "sliderBrightness": {
+            "unit": "PERCENT",
+            "min": 0,
+            "max": 1,
+            "actionClick": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "",
+              "objectName": "OBJ2008",
+              "index": "0",
+              "type": "CLICK",
+              "value": "",
+              "callType": "METHOD"
+            },
+            "label": "Brightness",
+            "state": {
+              "cluId": "CLU_A",
+              "objectName": "OBJ2009",
+              "index": "1",
+              "callType": "ATTRIBUTE"
+            },
+            "type": "SLIDER_BRIGHTNESS",
+            "rowId": 3
+          }
+        },
+        {
+          "icon": "lock",
+          "id": 5003,
+          "label": "Window",
+          "offIndication": "Off",
+          "type": "CONTACT_SENSOR",
+          "reverseState": true,
+          "dtoId": "cs000001",
+          "onIndication": "On",
+          "object": {
+            "value": {
+              "cluId": "CLU_A",
+              "objectName": "OBJ2010",
+              "index": "6",
+              "callType": "ATTRIBUTE"
+            },
+            "clickAction": {
+              "cluId": null,
+              "valueFormattedForDto": "1",
+              "objectName": null,
+              "index": null,
+              "type": "CLICK",
+              "value": "1",
+              "callType": "ATTRIBUTE"
+            }
+          }
+        },
+        {
+          "componentLeft": {
+            "icon": "lock",
+            "label": "Left door",
+            "offIndication": "Off",
+            "reverseState": false,
+            "onIndication": "On",
+            "object": {
+              "value": {
+                "cluId": "CLU_A",
+                "objectName": "OBJ2011",
+                "index": "1",
+                "callType": "ATTRIBUTE"
+              },
+              "clickAction": {
+                "cluId": null,
+                "valueFormattedForDto": "1",
+                "objectName": null,
+                "index": null,
+                "type": "CLICK",
+                "value": "1",
+                "callType": "ATTRIBUTE"
+              }
+            }
+          },
+          "id": 5004,
+          "type": "CONTACT_SENSOR_DOUBLE",
+          "dtoId": "cs000002",
+          "componentRight": {
+            "icon": "lock",
+            "label": "Right door",
+            "offIndication": "Off",
+            "reverseState": false,
+            "onIndication": "On",
+            "object": {
+              "value": {
+                "cluId": "CLU_A",
+                "objectName": "OBJ2012",
+                "index": "1",
+                "callType": "ATTRIBUTE"
+              },
+              "clickAction": {
+                "cluId": null,
+                "valueFormattedForDto": "1",
+                "objectName": null,
+                "index": null,
+                "type": "CLICK",
+                "value": "1",
+                "callType": "ATTRIBUTE"
+              }
+            }
+          }
+        },
+        {
+          "unit": "UNKNOWN",
+          "min": 0,
+          "max": 1,
+          "precision": 2,
+          "icon": "volume_circle",
+          "id": 5005,
+          "label": "Volume",
+          "type": "SLIDER",
+          "dtoId": "sl000001",
+          "object": {
+            "setValueAction": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "",
+              "objectName": "OBJ2013",
+              "index": "0",
+              "type": "CLICK",
+              "value": "",
+              "callType": "METHOD"
+            },
+            "value": {
+              "cluId": "CLU_A",
+              "objectName": "OBJ2014",
+              "index": "3",
+              "callType": "ATTRIBUTE"
+            },
+            "clickAction": {
+              "cluId": null,
+              "valueFormattedForDto": "1",
+              "objectName": null,
+              "index": null,
+              "type": "CLICK",
+              "value": "1",
+              "callType": "ATTRIBUTE"
+            }
+          }
+        },
+        {
+          "objectSound": {
+            "minValue": {
+              "cluId": null,
+              "objectName": null,
+              "index": null,
+              "callType": "ATTRIBUTE"
+            },
+            "maxValue": {
+              "cluId": null,
+              "objectName": null,
+              "index": null,
+              "callType": "ATTRIBUTE"
+            },
+            "threshold": {
+              "cluId": null,
+              "objectName": null,
+              "index": null,
+              "callType": "ATTRIBUTE"
+            },
+            "sensitivity": {
+              "cluId": null,
+              "objectName": null,
+              "index": null,
+              "callType": "ATTRIBUTE"
+            },
+            "value": {
+              "cluId": "CLU_A",
+              "objectName": "OBJ2015",
+              "index": "3",
+              "callType": "ATTRIBUTE"
+            }
+          },
+          "icon": "multisensor",
+          "objectPressure": {
+            "minValue": {
+              "cluId": null,
+              "objectName": null,
+              "index": null,
+              "callType": "ATTRIBUTE"
+            },
+            "maxValue": {
+              "cluId": null,
+              "objectName": null,
+              "index": null,
+              "callType": "ATTRIBUTE"
+            },
+            "threshold": {
+              "cluId": null,
+              "objectName": null,
+              "index": null,
+              "callType": "ATTRIBUTE"
+            },
+            "sensitivity": {
+              "cluId": null,
+              "objectName": null,
+              "index": null,
+              "callType": "ATTRIBUTE"
+            },
+            "value": {
+              "cluId": "CLU_A",
+              "objectName": "OBJ2016",
+              "index": "1",
+              "callType": "ATTRIBUTE"
+            }
+          },
+          "label": "Air",
+          "type": "MULTISENSOR",
+          "objectTemperature": {
+            "minValue": {
+              "cluId": null,
+              "objectName": null,
+              "index": null,
+              "callType": "ATTRIBUTE"
+            },
+            "maxValue": {
+              "cluId": null,
+              "objectName": null,
+              "index": null,
+              "callType": "ATTRIBUTE"
+            },
+            "threshold": {
+              "cluId": null,
+              "objectName": null,
+              "index": null,
+              "callType": "ATTRIBUTE"
+            },
+            "sensitivity": {
+              "cluId": null,
+              "objectName": null,
+              "index": null,
+              "callType": "ATTRIBUTE"
+            },
+            "value": {
+              "cluId": "CLU_A",
+              "objectName": "OBJ2017",
+              "index": "14",
+              "callType": "ATTRIBUTE"
+            }
+          },
+          "dtoId": "ms000001",
+          "objectAirCo2": {
+            "minValue": {
+              "cluId": null,
+              "objectName": null,
+              "index": null,
+              "callType": "ATTRIBUTE"
+            },
+            "maxValue": {
+              "cluId": null,
+              "objectName": null,
+              "index": null,
+              "callType": "ATTRIBUTE"
+            },
+            "threshold": {
+              "cluId": null,
+              "objectName": null,
+              "index": null,
+              "callType": "ATTRIBUTE"
+            },
+            "sensitivity": {
+              "cluId": null,
+              "objectName": null,
+              "index": null,
+              "callType": "ATTRIBUTE"
+            },
+            "value": {
+              "cluId": "CLU_A",
+              "objectName": "OBJ2018",
+              "index": "7",
+              "callType": "ATTRIBUTE"
+            }
+          },
+          "objectLight": {
+            "minValue": {
+              "cluId": null,
+              "objectName": null,
+              "index": null,
+              "callType": "ATTRIBUTE"
+            },
+            "maxValue": {
+              "cluId": null,
+              "objectName": null,
+              "index": null,
+              "callType": "ATTRIBUTE"
+            },
+            "threshold": {
+              "cluId": null,
+              "objectName": null,
+              "index": null,
+              "callType": "ATTRIBUTE"
+            },
+            "sensitivity": {
+              "cluId": null,
+              "objectName": null,
+              "index": null,
+              "callType": "ATTRIBUTE"
+            },
+            "value": {
+              "cluId": "CLU_A",
+              "objectName": "OBJ2019",
+              "index": "3",
+              "callType": "ATTRIBUTE"
+            }
+          },
+          "id": 5006,
+          "objectHumidity": {
+            "minValue": {
+              "cluId": null,
+              "objectName": null,
+              "index": null,
+              "callType": "ATTRIBUTE"
+            },
+            "maxValue": {
+              "cluId": null,
+              "objectName": null,
+              "index": null,
+              "callType": "ATTRIBUTE"
+            },
+            "threshold": {
+              "cluId": null,
+              "objectName": null,
+              "index": null,
+              "callType": "ATTRIBUTE"
+            },
+            "sensitivity": {
+              "cluId": null,
+              "objectName": null,
+              "index": null,
+              "callType": "ATTRIBUTE"
+            },
+            "value": {
+              "cluId": "CLU_A",
+              "objectName": "OBJ2020",
+              "index": "4",
+              "callType": "ATTRIBUTE"
+            }
+          },
+          "objectAirVco": {
+            "minValue": {
+              "cluId": null,
+              "objectName": null,
+              "index": null,
+              "callType": "ATTRIBUTE"
+            },
+            "maxValue": {
+              "cluId": null,
+              "objectName": null,
+              "index": null,
+              "callType": "ATTRIBUTE"
+            },
+            "threshold": {
+              "cluId": null,
+              "objectName": null,
+              "index": null,
+              "callType": "ATTRIBUTE"
+            },
+            "sensitivity": {
+              "cluId": null,
+              "objectName": null,
+              "index": null,
+              "callType": "ATTRIBUTE"
+            },
+            "value": {
+              "cluId": "CLU_A",
+              "objectName": "OBJ2021",
+              "index": "3",
+              "callType": "ATTRIBUTE"
+            }
+          },
+          "labelVisible": true
+        },
+        {
+          "buttonBistableClick": {
+            "image": "blinds",
+            "actionClick": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "",
+              "objectName": "OBJ2022",
+              "index": "0",
+              "type": "CLICK",
+              "value": "",
+              "callType": "METHOD"
+            },
+            "label": "Blind button",
+            "indication": "ON_OFF",
+            "state": {
+              "cluId": "CLU_A",
+              "objectName": "OBJ2023",
+              "index": "5",
+              "callType": "ATTRIBUTE"
+            },
+            "type": "BUTTON_BISTABLE_CLICK",
+            "rowId": 0
+          },
+          "id": 5007,
+          "type": "ROLLER_SHUTTER",
+          "dtoId": "rs000001",
+          "status": null
+        },
+        {
+          "vodLabel": "VOD remote control",
+          "icon": "tv",
+          "id": 5008,
+          "label": "TV",
+          "type": "TV_REMOTE_CONTROL",
+          "dtoId": "tv000001",
+          "object": {
+            "play": {
+              "cluId": null,
+              "valueFormattedForDto": "1",
+              "objectName": null,
+              "index": null,
+              "type": "CLICK",
+              "value": "1",
+              "callType": "ATTRIBUTE"
+            },
+            "init": {
+              "cluId": null,
+              "valueFormattedForDto": "1",
+              "objectName": null,
+              "index": null,
+              "type": "CLICK",
+              "value": "1",
+              "callType": "ATTRIBUTE"
+            },
+            "previousChannel": {
+              "cluId": null,
+              "valueFormattedForDto": "1",
+              "objectName": null,
+              "index": null,
+              "type": "CLICK",
+              "value": "1",
+              "callType": "ATTRIBUTE"
+            },
+            "fastRewind": {
+              "cluId": null,
+              "valueFormattedForDto": "1",
+              "objectName": null,
+              "index": null,
+              "type": "CLICK",
+              "value": "1",
+              "callType": "ATTRIBUTE"
+            },
+            "back": {
+              "cluId": null,
+              "valueFormattedForDto": "1",
+              "objectName": null,
+              "index": null,
+              "type": "CLICK",
+              "value": "1",
+              "callType": "ATTRIBUTE"
+            },
+            "mute": {
+              "cluId": null,
+              "valueFormattedForDto": "1",
+              "objectName": null,
+              "index": null,
+              "type": "CLICK",
+              "value": "1",
+              "callType": "ATTRIBUTE"
+            },
+            "vod": {
+              "cluId": null,
+              "valueFormattedForDto": "1",
+              "objectName": null,
+              "index": null,
+              "type": "CLICK",
+              "value": "1",
+              "callType": "ATTRIBUTE"
+            },
+            "right": {
+              "cluId": null,
+              "valueFormattedForDto": "1",
+              "objectName": null,
+              "index": null,
+              "type": "CLICK",
+              "value": "1",
+              "callType": "ATTRIBUTE"
+            },
+            "menu": {
+              "cluId": null,
+              "valueFormattedForDto": "1",
+              "objectName": null,
+              "index": null,
+              "type": "CLICK",
+              "value": "1",
+              "callType": "ATTRIBUTE"
+            },
+            "down": {
+              "cluId": null,
+              "valueFormattedForDto": "1",
+              "objectName": null,
+              "index": null,
+              "type": "CLICK",
+              "value": "1",
+              "callType": "ATTRIBUTE"
+            },
+            "off": {
+              "cluId": null,
+              "valueFormattedForDto": "1",
+              "objectName": null,
+              "index": null,
+              "type": "CLICK",
+              "value": "1",
+              "callType": "ATTRIBUTE"
+            },
+            "nextChannel": {
+              "cluId": null,
+              "valueFormattedForDto": "1",
+              "objectName": null,
+              "index": null,
+              "type": "CLICK",
+              "value": "1",
+              "callType": "ATTRIBUTE"
+            },
+            "pause": {
+              "cluId": null,
+              "valueFormattedForDto": "1",
+              "objectName": null,
+              "index": null,
+              "type": "CLICK",
+              "value": "1",
+              "callType": "ATTRIBUTE"
+            },
+            "volumeDown": {
+              "cluId": null,
+              "valueFormattedForDto": "1",
+              "objectName": null,
+              "index": null,
+              "type": "CLICK",
+              "value": "1",
+              "callType": "ATTRIBUTE"
+            },
+            "left": {
+              "cluId": null,
+              "valueFormattedForDto": "1",
+              "objectName": null,
+              "index": null,
+              "type": "CLICK",
+              "value": "1",
+              "callType": "ATTRIBUTE"
+            },
+            "volumeUp": {
+              "cluId": null,
+              "valueFormattedForDto": "1",
+              "objectName": null,
+              "index": null,
+              "type": "CLICK",
+              "value": "1",
+              "callType": "ATTRIBUTE"
+            },
+            "up": {
+              "cluId": null,
+              "valueFormattedForDto": "1",
+              "objectName": null,
+              "index": null,
+              "type": "CLICK",
+              "value": "1",
+              "callType": "ATTRIBUTE"
+            },
+            "ok": {
+              "cluId": null,
+              "valueFormattedForDto": "1",
+              "objectName": null,
+              "index": null,
+              "type": "CLICK",
+              "value": "1",
+              "callType": "ATTRIBUTE"
+            },
+            "fastForward": {
+              "cluId": null,
+              "valueFormattedForDto": "1",
+              "objectName": null,
+              "index": null,
+              "type": "CLICK",
+              "value": "1",
+              "callType": "ATTRIBUTE"
+            },
+            "guide": {
+              "cluId": null,
+              "valueFormattedForDto": "1",
+              "objectName": null,
+              "index": null,
+              "type": "CLICK",
+              "value": "1",
+              "callType": "ATTRIBUTE"
+            },
+            "on": {
+              "cluId": null,
+              "valueFormattedForDto": "1",
+              "objectName": null,
+              "index": null,
+              "type": "CLICK",
+              "value": "1",
+              "callType": "ATTRIBUTE"
+            }
+          }
+        },
+        {
+          "unit": "UNKNOWN",
+          "min": 0,
+          "max": 1,
+          "precision": 2,
+          "icon": "volume_circle",
+          "id": 5009,
+          "label": "Never sent",
+          "type": "SLIDER",
+          "object": {
+            "setValueAction": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "",
+              "objectName": "OBJ2024",
+              "index": "0",
+              "type": "CLICK",
+              "value": "",
+              "callType": "METHOD"
+            },
+            "value": {
+              "cluId": "CLU_A",
+              "objectName": "OBJ2025",
+              "index": "3",
+              "callType": "ATTRIBUTE"
+            },
+            "clickAction": {
+              "cluId": null,
+              "valueFormattedForDto": "1",
+              "objectName": null,
+              "index": null,
+              "type": "CLICK",
+              "value": "1",
+              "callType": "ATTRIBUTE"
+            }
+          }
+        },
+        {
+          "sliderSaturation": {
+            "unit": "PERCENT",
+            "min": 0,
+            "max": 1,
+            "actionClick": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "",
+              "objectName": "OBJ2026",
+              "index": "0",
+              "type": "CLICK",
+              "value": "",
+              "callType": "METHOD"
+            },
+            "label": "Saturation",
+            "state": {
+              "cluId": "CLU_A",
+              "objectName": "OBJ2027",
+              "index": "1",
+              "callType": "ATTRIBUTE"
+            },
+            "type": "SLIDER_SATURATION",
+            "rowId": 2
+          },
+          "buttonBistable": {
+            "image": "rgb",
+            "actionOff": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "",
+              "objectName": "OBJ2030",
+              "index": "1",
+              "type": "OFF",
+              "value": "",
+              "callType": "METHOD"
+            },
+            "label": "Strip power",
+            "indication": "ON_OFF",
+            "offIndication": "Off",
+            "state": {
+              "cluId": "CLU_A",
+              "objectName": "OBJ2031",
+              "index": "1",
+              "callType": "ATTRIBUTE"
+            },
+            "type": "BUTTON_BISTABLE",
+            "actionOn": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "",
+              "objectName": "OBJ2032",
+              "index": "0",
+              "type": "ON",
+              "value": "",
+              "callType": "METHOD"
+            },
+            "onIndication": "On",
+            "rowId": 0
+          },
+          "id": 5010,
+          "type": "LED",
+          "dtoId": "le000003",
+          "sliderBrightness": {
+            "unit": "PERCENT",
+            "min": 0,
+            "max": 1,
+            "actionClick": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "",
+              "objectName": "OBJ2033",
+              "index": "0",
+              "type": "CLICK",
+              "value": "",
+              "callType": "METHOD"
+            },
+            "label": "Brightness",
+            "state": {
+              "cluId": "CLU_A",
+              "objectName": "OBJ2034",
+              "index": "1",
+              "callType": "ATTRIBUTE"
+            },
+            "type": "SLIDER_BRIGHTNESS",
+            "rowId": 3
+          }
+        },
+        {
+          "sliderSaturation": {
+            "unit": "PERCENT",
+            "min": 0,
+            "max": 1,
+            "actionClick": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "",
+              "objectName": "OBJ2001",
+              "index": "0",
+              "type": "CLICK",
+              "value": "",
+              "callType": "METHOD"
+            },
+            "label": "Saturation",
+            "state": {
+              "cluId": "CLU_A",
+              "objectName": "OBJ2002",
+              "index": "1",
+              "callType": "ATTRIBUTE"
+            },
+            "type": "SLIDER_BRIGHTNESS",
+            "rowId": 2
+          },
+          "sliderHue": {
+            "unit": "DEGREE",
+            "min": 0,
+            "max": 360,
+            "actionClick": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "",
+              "objectName": "OBJ2003",
+              "index": "0",
+              "type": "CLICK",
+              "value": "",
+              "callType": "METHOD"
+            },
+            "label": "Hue",
+            "state": {
+              "cluId": "CLU_A",
+              "objectName": "OBJ2004",
+              "index": "1",
+              "callType": "ATTRIBUTE"
+            },
+            "type": "SLIDER_HUE",
+            "rowId": 1
+          },
+          "buttonBistable": {
+            "image": "rgb",
+            "actionOff": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "",
+              "objectName": "OBJ2005",
+              "index": "1",
+              "type": "OFF",
+              "value": "",
+              "callType": "METHOD"
+            },
+            "label": "Strip power",
+            "indication": "ON_OFF",
+            "offIndication": "Off",
+            "state": {
+              "cluId": "CLU_A",
+              "objectName": "OBJ2006",
+              "index": "1",
+              "callType": "ATTRIBUTE"
+            },
+            "type": "BUTTON_BISTABLE",
+            "actionOn": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "",
+              "objectName": "OBJ2007",
+              "index": "0",
+              "type": "ON",
+              "value": "",
+              "callType": "METHOD"
+            },
+            "onIndication": "On",
+            "rowId": 0
+          },
+          "id": 5011,
+          "type": "LED",
+          "dtoId": "le000004",
+          "sliderBrightness": {
+            "unit": "PERCENT",
+            "min": 0,
+            "max": 1,
+            "actionClick": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "",
+              "objectName": "OBJ2008",
+              "index": "0",
+              "type": "CLICK",
+              "value": "",
+              "callType": "METHOD"
+            },
+            "label": "Brightness",
+            "state": {
+              "cluId": "CLU_A",
+              "objectName": "OBJ2009",
+              "index": "1",
+              "callType": "ATTRIBUTE"
+            },
+            "type": "SLIDER_SATURATION",
+            "rowId": 3
+          },
+          "label": "Swapped strip"
+        },
+        {
+          "buttonBistableClick": {
+            "image": "blinds",
+            "actionClick": {
+              "cluId": "CLU_A",
+              "valueFormattedForDto": "",
+              "objectName": "OBJ2022",
+              "index": "0",
+              "type": "CLICK",
+              "value": "",
+              "callType": "METHOD"
+            },
+            "label": "Blind button",
+            "indication": [],
+            "state": {
+              "cluId": "CLU_A",
+              "objectName": "OBJ2023",
+              "index": "5",
+              "callType": "ATTRIBUTE"
+            },
+            "type": "BUTTON_BISTABLE_CLICK",
+            "rowId": 0
+          },
+          "id": 5012,
+          "type": "ROLLER_SHUTTER",
+          "dtoId": "rs000002",
+          "status": null
+        },
+        {
+          "cameraStream": {
+            "image": "camera",
+            "label": "Camera",
+            "type": "UNKNOWN",
+            "url": "rtsp://10.0.0.50:554/stream1",
+            "rowId": 0
+          },
+          "id": 5013,
+          "type": "CAMERA",
+          "dtoId": "ca000002"
+        }
+      ]
     }
   ]
 }

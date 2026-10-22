@@ -4,7 +4,7 @@
   "specRefs": [
     "provisioning.omp"
   ],
-  "description": "The main interface of a two-interface project whose archive lists the second one first: every specified widget type; refs and actions without an object dropped; Action suffixes, with an explicit *Action winning over a bare name; PSEUDO_METHOD as ATTRIBUTE; a script action without index; upper-case theme and scene colours; CLUs filtered to the ones used, in document order although CLU_B is used first, including one used only by an action and excluding one used only by a stub, with a serial read through an XML reference; push objects including one through a reference and one outside any CLU; an unconfirmed type and a broken ON_OFF passed on as {id, type} and skipped.",
+  "description": "The main interface of a two-interface project whose archive lists the second one first: every specified widget type; refs and actions without an object dropped; Action suffixes, with an explicit *Action winning over a bare name; PSEUDO_METHOD as ATTRIBUTE; a script action without index; upper-case theme and scene colours; CLUs filtered to the ones used, in document order although CLU_B is used first, including one used only by an action and excluding one used only by a stub, with a serial read through an XML reference; push objects including one through a reference and one outside any CLU; an LED without its editor fields and a broken ON_OFF passed on as {id, type} and skipped; a third page with every type confirmed in 0.10.0 (CAMERA, LED, CONTACT_SENSOR, CONTACT_SENSOR_DOUBLE, SLIDER, MULTISENSOR with the objectAirVco spelling, the legacy ROLLER_SHUTTER), a TV_REMOTE_CONTROL that parsing skips, a widget never sent to a phone whose editor id stands in as omp-…, an LED missing a slider, an LED whose slider kinds are swapped (still a light: a union by type), a legacy roller whose indication is not a string and a camera whose component is not a CAMERA_STREAM (both skipped).",
   "provenance": "spec §4.5 text; expectations re-derived by tools/oracles/omp.py and tools/oracles/mapping.py",
   "operation": "provisioning.omp",
   "input": {
@@ -124,6 +124,49 @@
               {
                 "id": "ro000001",
                 "type": "ROLLER_SHUTTER_V3"
+              }
+            ]
+          },
+          {
+            "name": "More widgets",
+            "icon": "star",
+            "isFullscreenWidget": false,
+            "widgets": [
+              {
+                "id": "ca000001",
+                "type": "CAMERA"
+              },
+              {
+                "id": "le000002",
+                "type": "LED"
+              },
+              {
+                "id": "cs000001",
+                "type": "CONTACT_SENSOR"
+              },
+              {
+                "id": "cs000002",
+                "type": "CONTACT_SENSOR_DOUBLE"
+              },
+              {
+                "id": "sl000001",
+                "type": "SLIDER"
+              },
+              {
+                "id": "ms000001",
+                "type": "MULTISENSOR"
+              },
+              {
+                "id": "rs000001",
+                "type": "ROLLER_SHUTTER"
+              },
+              {
+                "id": "omp-5009",
+                "type": "SLIDER"
+              },
+              {
+                "id": "le000004",
+                "type": "LED"
               }
             ]
           }
@@ -529,6 +572,516 @@
                 }
               }
             ]
+          },
+          {
+            "id": "ca000001",
+            "widgetType": "CAMERA",
+            "kind": "camera",
+            "name": "Camera",
+            "page": {
+              "index": 2,
+              "name": "More widgets"
+            },
+            "entities": [
+              {
+                "kind": "camera",
+                "id": "ca000001_0",
+                "name": "Camera",
+                "streamUrl": "rtsp://10.0.0.50:554/stream1"
+              }
+            ]
+          },
+          {
+            "id": "le000002",
+            "widgetType": "LED",
+            "kind": "hsbLight",
+            "name": "Strip power",
+            "page": {
+              "index": 2,
+              "name": "More widgets"
+            },
+            "entities": [
+              {
+                "kind": "hsbLight",
+                "id": "le000002_0",
+                "name": "Strip power",
+                "powerState": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_A",
+                  "objectName": "OBJ2006",
+                  "index": "1"
+                },
+                "onAction": {
+                  "callType": "METHOD",
+                  "cluId": "CLU_A",
+                  "objectName": "OBJ2007",
+                  "event": "ON",
+                  "value": "",
+                  "index": "0"
+                },
+                "offAction": {
+                  "callType": "METHOD",
+                  "cluId": "CLU_A",
+                  "objectName": "OBJ2005",
+                  "event": "OFF",
+                  "value": "",
+                  "index": "1"
+                },
+                "hue": {
+                  "state": {
+                    "callType": "ATTRIBUTE",
+                    "cluId": "CLU_A",
+                    "objectName": "OBJ2004",
+                    "index": "1"
+                  },
+                  "setAction": {
+                    "callType": "METHOD",
+                    "cluId": "CLU_A",
+                    "objectName": "OBJ2003",
+                    "event": "CLICK",
+                    "value": "",
+                    "index": "0"
+                  },
+                  "range": {
+                    "min": 0,
+                    "max": 360
+                  }
+                },
+                "saturation": {
+                  "state": {
+                    "callType": "ATTRIBUTE",
+                    "cluId": "CLU_A",
+                    "objectName": "OBJ2002",
+                    "index": "1"
+                  },
+                  "setAction": {
+                    "callType": "METHOD",
+                    "cluId": "CLU_A",
+                    "objectName": "OBJ2001",
+                    "event": "CLICK",
+                    "value": "",
+                    "index": "0"
+                  },
+                  "range": {
+                    "min": 0,
+                    "max": 1
+                  }
+                },
+                "brightness": {
+                  "state": {
+                    "callType": "ATTRIBUTE",
+                    "cluId": "CLU_A",
+                    "objectName": "OBJ2009",
+                    "index": "1"
+                  },
+                  "setAction": {
+                    "callType": "METHOD",
+                    "cluId": "CLU_A",
+                    "objectName": "OBJ2008",
+                    "event": "CLICK",
+                    "value": "",
+                    "index": "0"
+                  },
+                  "range": {
+                    "min": 0,
+                    "max": 1
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "cs000001",
+            "widgetType": "CONTACT_SENSOR",
+            "kind": "contactSensor",
+            "name": "Window",
+            "page": {
+              "index": 2,
+              "name": "More widgets"
+            },
+            "entities": [
+              {
+                "kind": "contactSensor",
+                "id": "cs000001_binary_sensor",
+                "name": "Window",
+                "state": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_A",
+                  "objectName": "OBJ2010",
+                  "index": "6"
+                },
+                "reversed": true,
+                "onIndication": "On",
+                "offIndication": "Off"
+              }
+            ]
+          },
+          {
+            "id": "cs000002",
+            "widgetType": "CONTACT_SENSOR_DOUBLE",
+            "kind": "contactSensor",
+            "name": "Left door / Right door",
+            "page": {
+              "index": 2,
+              "name": "More widgets"
+            },
+            "entities": [
+              {
+                "kind": "contactSensor",
+                "id": "cs000002_binary_sensor_left",
+                "name": "Left door",
+                "state": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_A",
+                  "objectName": "OBJ2011",
+                  "index": "1"
+                },
+                "reversed": false,
+                "onIndication": "On",
+                "offIndication": "Off"
+              },
+              {
+                "kind": "contactSensor",
+                "id": "cs000002_binary_sensor_right",
+                "name": "Right door",
+                "state": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_A",
+                  "objectName": "OBJ2012",
+                  "index": "1"
+                },
+                "reversed": false,
+                "onIndication": "On",
+                "offIndication": "Off"
+              }
+            ]
+          },
+          {
+            "id": "sl000001",
+            "widgetType": "SLIDER",
+            "kind": "numberSetting",
+            "name": "Volume",
+            "page": {
+              "index": 2,
+              "name": "More widgets"
+            },
+            "entities": [
+              {
+                "kind": "numberSetting",
+                "id": "sl000001_slider",
+                "name": "Volume",
+                "state": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_A",
+                  "objectName": "OBJ2014",
+                  "index": "3"
+                },
+                "setValueAction": {
+                  "callType": "METHOD",
+                  "cluId": "CLU_A",
+                  "objectName": "OBJ2013",
+                  "event": "CLICK",
+                  "value": "",
+                  "index": "0"
+                },
+                "min": 0,
+                "max": 1,
+                "precision": 2
+              }
+            ]
+          },
+          {
+            "id": "ms000001",
+            "widgetType": "MULTISENSOR",
+            "kind": "multisensor",
+            "name": "Air",
+            "page": {
+              "index": 2,
+              "name": "More widgets"
+            },
+            "entities": [
+              {
+                "kind": "sensor",
+                "id": "ms000001_air_co2",
+                "name": "Air",
+                "state": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_A",
+                  "objectName": "OBJ2018",
+                  "index": "7"
+                },
+                "sensorKind": "co2",
+                "unit": "ppm",
+                "grentonUnit": null,
+                "valueType": null,
+                "precision": null
+              },
+              {
+                "kind": "sensor",
+                "id": "ms000001_sound",
+                "name": "Air",
+                "state": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_A",
+                  "objectName": "OBJ2015",
+                  "index": "3"
+                },
+                "sensorKind": "soundPressure",
+                "unit": "dB",
+                "grentonUnit": null,
+                "valueType": null,
+                "precision": null
+              },
+              {
+                "kind": "sensor",
+                "id": "ms000001_air_voc",
+                "name": "Air",
+                "state": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_A",
+                  "objectName": "OBJ2021",
+                  "index": "3"
+                },
+                "sensorKind": "voc",
+                "unit": "ppb",
+                "grentonUnit": null,
+                "valueType": null,
+                "precision": null
+              },
+              {
+                "kind": "sensor",
+                "id": "ms000001_light",
+                "name": "Air",
+                "state": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_A",
+                  "objectName": "OBJ2019",
+                  "index": "3"
+                },
+                "sensorKind": "illuminance",
+                "unit": "lx",
+                "grentonUnit": null,
+                "valueType": null,
+                "precision": null
+              },
+              {
+                "kind": "sensor",
+                "id": "ms000001_pressure",
+                "name": "Air",
+                "state": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_A",
+                  "objectName": "OBJ2016",
+                  "index": "1"
+                },
+                "sensorKind": "pressure",
+                "unit": "hPa",
+                "grentonUnit": null,
+                "valueType": null,
+                "precision": null
+              },
+              {
+                "kind": "sensor",
+                "id": "ms000001_humidity",
+                "name": "Air",
+                "state": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_A",
+                  "objectName": "OBJ2020",
+                  "index": "4"
+                },
+                "sensorKind": "humidity",
+                "unit": "%",
+                "grentonUnit": null,
+                "valueType": null,
+                "precision": null
+              },
+              {
+                "kind": "sensor",
+                "id": "ms000001_temperature",
+                "name": "Air",
+                "state": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_A",
+                  "objectName": "OBJ2017",
+                  "index": "14"
+                },
+                "sensorKind": "temperature",
+                "unit": "°C",
+                "grentonUnit": null,
+                "valueType": null,
+                "precision": null
+              }
+            ]
+          },
+          {
+            "id": "rs000001",
+            "widgetType": "ROLLER_SHUTTER",
+            "kind": "cover",
+            "name": "Blind button",
+            "page": {
+              "index": 2,
+              "name": "More widgets"
+            },
+            "entities": [
+              {
+                "kind": "stateSensor",
+                "id": "rs000001_sensor",
+                "name": "Blind button",
+                "state": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_A",
+                  "objectName": "OBJ2023",
+                  "index": "5"
+                }
+              },
+              {
+                "kind": "trigger",
+                "id": "rs000001_button",
+                "name": "Blind button",
+                "action": {
+                  "callType": "METHOD",
+                  "cluId": "CLU_A",
+                  "objectName": "OBJ2022",
+                  "event": "CLICK",
+                  "value": "",
+                  "index": "0"
+                }
+              }
+            ]
+          },
+          {
+            "id": "omp-5009",
+            "widgetType": "SLIDER",
+            "kind": "numberSetting",
+            "name": "Never sent",
+            "page": {
+              "index": 2,
+              "name": "More widgets"
+            },
+            "entities": [
+              {
+                "kind": "numberSetting",
+                "id": "omp-5009_slider",
+                "name": "Never sent",
+                "state": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_A",
+                  "objectName": "OBJ2025",
+                  "index": "3"
+                },
+                "setValueAction": {
+                  "callType": "METHOD",
+                  "cluId": "CLU_A",
+                  "objectName": "OBJ2024",
+                  "event": "CLICK",
+                  "value": "",
+                  "index": "0"
+                },
+                "min": 0,
+                "max": 1,
+                "precision": 2
+              }
+            ]
+          },
+          {
+            "id": "le000004",
+            "widgetType": "LED",
+            "kind": "hsbLight",
+            "name": "Strip power",
+            "page": {
+              "index": 2,
+              "name": "More widgets"
+            },
+            "entities": [
+              {
+                "kind": "hsbLight",
+                "id": "le000004_0",
+                "name": "Strip power",
+                "powerState": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_A",
+                  "objectName": "OBJ2006",
+                  "index": "1"
+                },
+                "onAction": {
+                  "callType": "METHOD",
+                  "cluId": "CLU_A",
+                  "objectName": "OBJ2007",
+                  "event": "ON",
+                  "value": "",
+                  "index": "0"
+                },
+                "offAction": {
+                  "callType": "METHOD",
+                  "cluId": "CLU_A",
+                  "objectName": "OBJ2005",
+                  "event": "OFF",
+                  "value": "",
+                  "index": "1"
+                },
+                "hue": {
+                  "state": {
+                    "callType": "ATTRIBUTE",
+                    "cluId": "CLU_A",
+                    "objectName": "OBJ2004",
+                    "index": "1"
+                  },
+                  "setAction": {
+                    "callType": "METHOD",
+                    "cluId": "CLU_A",
+                    "objectName": "OBJ2003",
+                    "event": "CLICK",
+                    "value": "",
+                    "index": "0"
+                  },
+                  "range": {
+                    "min": 0,
+                    "max": 360
+                  }
+                },
+                "saturation": {
+                  "state": {
+                    "callType": "ATTRIBUTE",
+                    "cluId": "CLU_A",
+                    "objectName": "OBJ2009",
+                    "index": "1"
+                  },
+                  "setAction": {
+                    "callType": "METHOD",
+                    "cluId": "CLU_A",
+                    "objectName": "OBJ2008",
+                    "event": "CLICK",
+                    "value": "",
+                    "index": "0"
+                  },
+                  "range": {
+                    "min": 0,
+                    "max": 1
+                  }
+                },
+                "brightness": {
+                  "state": {
+                    "callType": "ATTRIBUTE",
+                    "cluId": "CLU_A",
+                    "objectName": "OBJ2002",
+                    "index": "1"
+                  },
+                  "setAction": {
+                    "callType": "METHOD",
+                    "cluId": "CLU_A",
+                    "objectName": "OBJ2001",
+                    "event": "CLICK",
+                    "value": "",
+                    "index": "0"
+                  },
+                  "range": {
+                    "min": 0,
+                    "max": 1
+                  }
+                }
+              }
+            ]
           }
         ],
         "physicalObjects": [
@@ -751,6 +1304,348 @@
                 ]
               }
             ]
+          },
+          {
+            "key": {
+              "cluId": "CLU_A",
+              "kind": "object",
+              "name": "OBJ2006",
+              "index": "1"
+            },
+            "widgets": [
+              {
+                "deviceId": "le000002",
+                "widgetType": "LED",
+                "name": "Strip power",
+                "page": {
+                  "index": 2,
+                  "name": "More widgets"
+                },
+                "entityIds": [
+                  "le000002_0"
+                ]
+              },
+              {
+                "deviceId": "le000004",
+                "widgetType": "LED",
+                "name": "Strip power",
+                "page": {
+                  "index": 2,
+                  "name": "More widgets"
+                },
+                "entityIds": [
+                  "le000004_0"
+                ]
+              }
+            ]
+          },
+          {
+            "key": {
+              "cluId": "CLU_A",
+              "kind": "object",
+              "name": "OBJ2010",
+              "index": "6"
+            },
+            "widgets": [
+              {
+                "deviceId": "cs000001",
+                "widgetType": "CONTACT_SENSOR",
+                "name": "Window",
+                "page": {
+                  "index": 2,
+                  "name": "More widgets"
+                },
+                "entityIds": [
+                  "cs000001_binary_sensor"
+                ]
+              }
+            ]
+          },
+          {
+            "key": {
+              "cluId": "CLU_A",
+              "kind": "object",
+              "name": "OBJ2011",
+              "index": "1"
+            },
+            "widgets": [
+              {
+                "deviceId": "cs000002",
+                "widgetType": "CONTACT_SENSOR_DOUBLE",
+                "name": "Left door / Right door",
+                "page": {
+                  "index": 2,
+                  "name": "More widgets"
+                },
+                "entityIds": [
+                  "cs000002_binary_sensor_left"
+                ]
+              }
+            ]
+          },
+          {
+            "key": {
+              "cluId": "CLU_A",
+              "kind": "object",
+              "name": "OBJ2012",
+              "index": "1"
+            },
+            "widgets": [
+              {
+                "deviceId": "cs000002",
+                "widgetType": "CONTACT_SENSOR_DOUBLE",
+                "name": "Left door / Right door",
+                "page": {
+                  "index": 2,
+                  "name": "More widgets"
+                },
+                "entityIds": [
+                  "cs000002_binary_sensor_right"
+                ]
+              }
+            ]
+          },
+          {
+            "key": {
+              "cluId": "CLU_A",
+              "kind": "object",
+              "name": "OBJ2014",
+              "index": "3"
+            },
+            "widgets": [
+              {
+                "deviceId": "sl000001",
+                "widgetType": "SLIDER",
+                "name": "Volume",
+                "page": {
+                  "index": 2,
+                  "name": "More widgets"
+                },
+                "entityIds": [
+                  "sl000001_slider"
+                ]
+              }
+            ]
+          },
+          {
+            "key": {
+              "cluId": "CLU_A",
+              "kind": "object",
+              "name": "OBJ2018",
+              "index": "7"
+            },
+            "widgets": [
+              {
+                "deviceId": "ms000001",
+                "widgetType": "MULTISENSOR",
+                "name": "Air",
+                "page": {
+                  "index": 2,
+                  "name": "More widgets"
+                },
+                "entityIds": [
+                  "ms000001_air_co2"
+                ]
+              }
+            ]
+          },
+          {
+            "key": {
+              "cluId": "CLU_A",
+              "kind": "object",
+              "name": "OBJ2015",
+              "index": "3"
+            },
+            "widgets": [
+              {
+                "deviceId": "ms000001",
+                "widgetType": "MULTISENSOR",
+                "name": "Air",
+                "page": {
+                  "index": 2,
+                  "name": "More widgets"
+                },
+                "entityIds": [
+                  "ms000001_sound"
+                ]
+              }
+            ]
+          },
+          {
+            "key": {
+              "cluId": "CLU_A",
+              "kind": "object",
+              "name": "OBJ2021",
+              "index": "3"
+            },
+            "widgets": [
+              {
+                "deviceId": "ms000001",
+                "widgetType": "MULTISENSOR",
+                "name": "Air",
+                "page": {
+                  "index": 2,
+                  "name": "More widgets"
+                },
+                "entityIds": [
+                  "ms000001_air_voc"
+                ]
+              }
+            ]
+          },
+          {
+            "key": {
+              "cluId": "CLU_A",
+              "kind": "object",
+              "name": "OBJ2019",
+              "index": "3"
+            },
+            "widgets": [
+              {
+                "deviceId": "ms000001",
+                "widgetType": "MULTISENSOR",
+                "name": "Air",
+                "page": {
+                  "index": 2,
+                  "name": "More widgets"
+                },
+                "entityIds": [
+                  "ms000001_light"
+                ]
+              }
+            ]
+          },
+          {
+            "key": {
+              "cluId": "CLU_A",
+              "kind": "object",
+              "name": "OBJ2016",
+              "index": "1"
+            },
+            "widgets": [
+              {
+                "deviceId": "ms000001",
+                "widgetType": "MULTISENSOR",
+                "name": "Air",
+                "page": {
+                  "index": 2,
+                  "name": "More widgets"
+                },
+                "entityIds": [
+                  "ms000001_pressure"
+                ]
+              }
+            ]
+          },
+          {
+            "key": {
+              "cluId": "CLU_A",
+              "kind": "object",
+              "name": "OBJ2020",
+              "index": "4"
+            },
+            "widgets": [
+              {
+                "deviceId": "ms000001",
+                "widgetType": "MULTISENSOR",
+                "name": "Air",
+                "page": {
+                  "index": 2,
+                  "name": "More widgets"
+                },
+                "entityIds": [
+                  "ms000001_humidity"
+                ]
+              }
+            ]
+          },
+          {
+            "key": {
+              "cluId": "CLU_A",
+              "kind": "object",
+              "name": "OBJ2017",
+              "index": "14"
+            },
+            "widgets": [
+              {
+                "deviceId": "ms000001",
+                "widgetType": "MULTISENSOR",
+                "name": "Air",
+                "page": {
+                  "index": 2,
+                  "name": "More widgets"
+                },
+                "entityIds": [
+                  "ms000001_temperature"
+                ]
+              }
+            ]
+          },
+          {
+            "key": {
+              "cluId": "CLU_A",
+              "kind": "object",
+              "name": "OBJ2023",
+              "index": "5"
+            },
+            "widgets": [
+              {
+                "deviceId": "rs000001",
+                "widgetType": "ROLLER_SHUTTER",
+                "name": "Blind button",
+                "page": {
+                  "index": 2,
+                  "name": "More widgets"
+                },
+                "entityIds": [
+                  "rs000001_sensor"
+                ]
+              }
+            ]
+          },
+          {
+            "key": {
+              "cluId": "CLU_A",
+              "kind": "object",
+              "name": "OBJ2022",
+              "index": "0"
+            },
+            "widgets": [
+              {
+                "deviceId": "rs000001",
+                "widgetType": "ROLLER_SHUTTER",
+                "name": "Blind button",
+                "page": {
+                  "index": 2,
+                  "name": "More widgets"
+                },
+                "entityIds": [
+                  "rs000001_button"
+                ]
+              }
+            ]
+          },
+          {
+            "key": {
+              "cluId": "CLU_A",
+              "kind": "object",
+              "name": "OBJ2025",
+              "index": "3"
+            },
+            "widgets": [
+              {
+                "deviceId": "omp-5009",
+                "widgetType": "SLIDER",
+                "name": "Never sent",
+                "page": {
+                  "index": 2,
+                  "name": "More widgets"
+                },
+                "entityIds": [
+                  "omp-5009_slider"
+                ]
+              }
+            ]
           }
         ],
         "skippedWidgets": [
@@ -759,6 +1654,12 @@
             "EVENT_SCHEDULER",
             "LED",
             "ON_OFF"
+          ],
+          [
+            "TV_REMOTE_CONTROL",
+            "LED",
+            "ROLLER_SHUTTER",
+            "CAMERA"
           ]
         ]
       }

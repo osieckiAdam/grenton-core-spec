@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "suiteVersion": "0.9.1",
-  "specVersion": "0.9.1",
+  "suiteVersion": "0.10.0",
+  "specVersion": "0.10.0",
   "profiles": {
     "mapping": [
       "mapping.interface"
@@ -590,6 +590,11 @@
       "sha256": "a64f847da755c429addb5e644bc8a4b18b1dfec41baa8652af0c82eb2f88437c"
     },
     {
+      "id": "provisioning.omp.duplicate-widget-id",
+      "path": "cases/project/provisioning.omp.duplicate-widget-id.json",
+      "sha256": "110507822dcd4f88307eff9d78a434c7c95c0b12405875585b716e6693a478f4"
+    },
+    {
       "id": "provisioning.omp.missing-system-xml",
       "path": "cases/project/provisioning.omp.missing-system-xml.json",
       "sha256": "678a0504f727a5d6acf8d43f6a462fc6957e199e2b7f3bc562b84daee5e1db89"
@@ -622,7 +627,7 @@
     {
       "id": "provisioning.omp.select-by-id",
       "path": "cases/project/provisioning.omp.select-by-id.json",
-      "sha256": "c44e4276da0dda39cb0f716b40eb468bc96af8e9240bbf56e809ce0e49f835e7"
+      "sha256": "b84ee61c45b9db7a8f36afd6323c3b1fc5974e2c28895f1c3aaa4ecbb54c2049"
     },
     {
       "id": "provisioning.omp.unknown-id",
@@ -1253,6 +1258,10 @@
       "sha256": "ef908c5e4db44df3a410c7691348a7612d754d5f181ceae27dcd241ae62e922b"
     },
     {
+      "path": "fixtures/projects/duplicate-widget-id.omp",
+      "sha256": "6f3a4e82cd8eeca2b297550253d56c8f2878c4843a576a4c78d1dafb1bf84dbf"
+    },
+    {
       "path": "fixtures/projects/missing-system.omp",
       "sha256": "13e701600c548891ee97afd2511376981a720acef163acad3761018bbdcc3658"
     },
@@ -1270,7 +1279,7 @@
     },
     {
       "path": "fixtures/projects/two-interfaces.omp",
-      "sha256": "c036b22183e47b8236497bc8cf752b7079a4fa925cb1953d8dcc711af55bc2b5"
+      "sha256": "8e1aec461c49c630181b23a32c85911c00450ac2d3dd9c7f64da25f2e415027b"
     },
     {
       "path": "fixtures/projects/utf16-doctype.omp",

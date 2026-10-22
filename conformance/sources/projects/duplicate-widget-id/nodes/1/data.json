@@ -1,0 +1,52 @@
+{
+  "id": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+  "label": "Single",
+  "icon": "home_2",
+  "theme": "red",
+  "blockCloud": true,
+  "cloudSharing": null,
+  "darkLogoPath": null,
+  "lightLogoPath": null,
+  "pushNotifications": null,
+  "pages": [
+    {
+      "id": 1016,
+      "label": "Only page",
+      "icon": "star",
+      "widgets": [
+        {
+          "id": 1017,
+          "type": "VALUE_V2",
+          "dtoId": "va000003",
+          "unit": "UNKNOWN",
+          "valueType": "INTEGER",
+          "precision": 0,
+          "icon": "info",
+          "label": "Counter",
+          "value": {
+            "cluId": "CLU_C",
+            "objectName": "X_COUNT",
+            "index": "X_COUNT",
+            "callType": "VARIABLE"
+          }
+        },
+        {
+          "id": 1018,
+          "type": "VALUE_V2",
+          "dtoId": "va000003",
+          "unit": "UNKNOWN",
+          "valueType": "INTEGER",
+          "precision": 0,
+          "icon": "info",
+          "label": "Counter",
+          "value": {
+            "cluId": "CLU_C",
+            "objectName": "X_COUNT",
+            "index": "X_COUNT",
+            "callType": "VARIABLE"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -290,6 +290,45 @@ def value_fields(c):
     return out
 
 
+# Editor key -> mobile key; the editor spells the VOC channel `objectAirVco`.
+MULTISENSOR_CHANNELS = [
+    ("objectAirCo2", "objectAirCo2"), ("objectSound", "objectSound"), ("objectAirVco", "objectAirVoc"),
+    ("objectLight", "objectLight"), ("objectPressure", "objectPressure"), ("objectHumidity", "objectHumidity"),
+    ("objectTemperature", "objectTemperature"),
+]
+
+
+def refs_only(obj):
+    """Every member that is an existing reference, under its own name."""
+    out = {}
+    for name, value in obj.items():
+        converted = ref(value)
+        if converted is not None:
+            out[name] = converted
+    return out
+
+
+def led_slider(s):
+    out = {}
+    for k in ("unit", "label", "type", "rowId"):
+        out.update(present(s, k))
+    rng = {}
+    for k in ("min", "max"):
+        rng.update(present(s, k))
+    out["range"] = rng
+    with_ref(out, "state", s.get("state"))
+    out["actions"] = [x for x in (action(s.get("actionClick")),) if x]
+    return out
+
+
+def contact_fields(c):
+    out = {}
+    for k in ("icon", "label", "onIndication", "offIndication", "reverseState"):
+        out.update(present(c, k))
+    out["object"] = object_block(need(c, "object", dict))
+    return out
+
+
 def object_block(obj):
     """O of §4.5.6. A field already named as its target (a reference, or an
     action ending in Action) wins over a bare-named action, whatever the
@@ -317,11 +356,22 @@ def object_block(obj):
     return out
 
 
+def widget_id(w):
+    """§4.5.6: `dtoId` when it is a non-empty string; otherwise (a widget
+    never sent to a phone) `omp-` + the decimal text of the editor's integer
+    `id`. The prefix keeps a stand-in from ever equalling a real dtoId."""
+    if is_str(w.get("dtoId")) and w["dtoId"] != "":
+        return w["dtoId"]
+    if is_int(w.get("id")) and w["id"] >= 0:
+        return f"omp-{w['id']}"
+    return None
+
+
 def convert_widget(w):
-    t, dto_id = need(w, "type"), need(w, "dtoId")
-    if not is_str(t) or not is_str(dto_id):
+    t, wid = need(w, "type"), widget_id(w)
+    if not is_str(t) or wid is None:
         raise Missing()
-    out = {"id": dto_id, "type": t}
+    out = {"id": wid, "type": t}
     if t == "HEADER":
         text = need(w, "text", dict)
         component = {"unit": "UNKNOWN"}
@@ -357,6 +407,49 @@ def convert_widget(w):
         out["object"] = object_block(need(w, "object", dict))
     elif t in ("ROLLER_SHUTTER_V3", "EVENT_SCHEDULER"):
         for k in ("icon", "label"):
+            out.update(present(w, k))
+        out["object"] = object_block(need(w, "object", dict))
+    elif t == "CAMERA":
+        c = need(w, "cameraStream", dict)
+        component = {"unit": "UNKNOWN"}
+        for k in ("image", "label", "type", "rowId"):
+            component.update(present(c, k))
+        if "url" in c:
+            component["value"] = c["url"]
+        out["components"] = [component]
+    elif t == "LED":
+        components = [bistable(need(w, "buttonBistable", dict))]
+        for key in ("sliderHue", "sliderSaturation", "sliderBrightness"):
+            components.append(led_slider(need(w, key, dict)))
+        out["components"] = components
+    elif t == "CONTACT_SENSOR":
+        out.update(contact_fields(w))
+    elif t == "CONTACT_SENSOR_DOUBLE":
+        out["componentLeft"] = contact_fields(need(w, "componentLeft", dict))
+        out["componentRight"] = contact_fields(need(w, "componentRight", dict))
+    elif t == "SLIDER":
+        for k in ("unit", "min", "max", "precision", "icon", "label"):
+            out.update(present(w, k))
+        out["object"] = object_block(need(w, "object", dict))
+    elif t == "MULTISENSOR":
+        for k in ("icon", "label", "labelVisible"):
+            out.update(present(w, k))
+        for editor_key, mobile_key in MULTISENSOR_CHANNELS:
+            channel = w.get(editor_key)
+            if isinstance(channel, dict):
+                out[mobile_key] = refs_only(channel)
+    elif t == "ROLLER_SHUTTER":
+        b = need(w, "buttonBistableClick", dict)
+        component = {"unit": "UNKNOWN"}
+        for k in ("image", "label", "indication", "rowId"):
+            component.update(present(b, k))
+        with_ref(component, "state", b.get("state"))
+        if "type" in b:
+            component["type"] = "BUTTON_BISTABLE" if b["type"] == "BUTTON_BISTABLE_CLICK" else b["type"]
+        component["actions"] = [x for x in (action(b.get("actionClick")),) if x]
+        out["components"] = [component]
+    elif t == "TV_REMOTE_CONTROL":
+        for k in ("vodLabel", "icon", "label"):
             out.update(present(w, k))
         out["object"] = object_block(need(w, "object", dict))
     else:
@@ -403,6 +496,9 @@ VALUE_TYPES = {"STRING", "FLOAT", "INTEGER"}
 # the list-based ones); the parser of §3.6 pt 3 rejects a widget without them.
 REQUIRED = {
     "VALUE_V2": ("label", "icon", "unit", "valueType", "precision"),
+    "CONTACT_SENSOR": ("label", "icon", "onIndication", "offIndication", "reverseState"),
+    "SLIDER": ("label", "icon", "unit", "min", "max", "precision"),
+    "MULTISENSOR": ("label", "icon", "labelVisible"),
     "DIMMER_V2": ("label", "icon", "min", "max", "precision"),
     "THERMOSTAT_V2": ("label",),
     "ROLLER_SHUTTER_V3": ("icon", "label"),
@@ -413,14 +509,26 @@ COMPONENT_REQUIRED = {
     "ON_OFF_DOUBLE": ("label", "rowId", "unit", "state", "actions", "onIndication", "offIndication"),
     "SCENE": ("label", "rowId", "unit", "actions"),
     "SCENE_DOUBLE": ("label", "rowId", "unit", "actions"),
+    "CAMERA": ("label", "rowId", "unit", "image", "value"),
+    "ROLLER_SHUTTER": ("label", "rowId", "unit", "image", "state", "indication", "actions"),
+    "LED": ("label", "rowId", "unit", "state", "actions"),
 }
+# The component type §3.5 names for list-based widgets (LED: a union).
+COMPONENT_TYPE = {"CAMERA": {"CAMERA_STREAM"}, "ROLLER_SHUTTER": {"BUTTON_BISTABLE"}}
+LED_VARIANT_REQUIRED = {"BUTTON_BISTABLE": ("image", "onIndication", "offIndication")}
 OBJECT_REQUIRED = {
     "VALUE_V2": ("value",),
     "DIMMER_V2": ("value", "setValueAction", "onAction", "offAction"),
     "THERMOSTAT_V2": ("currentTemperature", "targetTemperature", "setTargetTemperatureAction"),
     "ROLLER_SHUTTER_V3": ("state", "position", "lamelPosition", "setPositionAction", "setLamelPositionAction",
                           "moveUpAction", "moveDownAction", "startAction", "setRollerBlockedAction"),
+    "CONTACT_SENSOR": ("value",),
+    "SLIDER": ("value", "setValueAction"),
 }
+MULTISENSOR_KEYS = ("objectAirCo2", "objectSound", "objectAirVoc", "objectLight", "objectPressure",
+                    "objectHumidity", "objectTemperature")
+LED_TYPES = ("BUTTON_BISTABLE", "SLIDER_HUE", "SLIDER_SATURATION", "SLIDER_BRIGHTNESS")
+INDICATIONS = {"ON_OFF", "OPEN_CLOSED", "OPEN_LOCKED", "UP_DOWN"}
 
 
 def has_required(w):
@@ -439,6 +547,45 @@ def has_required(w):
         for side in ("componentLeft", "componentRight"):
             c = w.get(side, {})
             if any(c.get(k) is None for k in REQUIRED["VALUE_V2"]) or "value" not in c.get("object", {}):
+                return False
+    if t == "CONTACT_SENSOR_DOUBLE":
+        for side in ("componentLeft", "componentRight"):
+            c = w.get(side, {})
+            if any(c.get(k) is None for k in REQUIRED["CONTACT_SENSOR"]) or "value" not in c.get("object", {}):
+                return False
+            if not isinstance(c.get("reverseState"), bool):
+                return False
+    if t == "CONTACT_SENSOR" and not isinstance(w.get("reverseState"), bool):
+        return False
+    if t == "MULTISENSOR":
+        if not isinstance(w.get("labelVisible"), bool):
+            return False
+        if any(not valid_ref(w.get(k, {}).get("value")) for k in MULTISENSOR_KEYS):
+            return False
+    for c in w.get("components", []):
+        if t in COMPONENT_TYPE and c.get("type") not in COMPONENT_TYPE[t]:
+            return False
+    if t == "LED":
+        # a union by `type` (§3.6 pt 1): every component one of the four kinds,
+        # each with its own fields; completeness is the mapping's concern (§6.3.3)
+        for c in w.get("components", []):
+            kind = c.get("type")
+            if not is_str(kind) or kind not in LED_TYPES:
+                return False
+            if any(c.get(k) is None for k in LED_VARIANT_REQUIRED.get(kind, ())):
+                return False
+            if kind != "BUTTON_BISTABLE":
+                rng = c.get("range")
+                if not isinstance(rng, dict) or not is_int(rng.get("min")) or not is_int(rng.get("max")):
+                    return False
+    if t == "ROLLER_SHUTTER":
+        for c in w.get("components", []):
+            if not is_str(c.get("indication")) or c["indication"] not in INDICATIONS:
+                return False
+    if t == "MULTISENSOR":
+        for k in MULTISENSOR_KEYS:
+            channel = w.get(k)
+            if isinstance(channel, dict) and not all(valid_ref(v) for v in channel.values()):
                 return False
     return True
 
@@ -485,8 +632,8 @@ def widget(w):
     except Missing:
         stub = {}
         if isinstance(w, dict):
-            if isinstance(w.get("dtoId"), str):
-                stub["id"] = w["dtoId"]
+            if widget_id(w) is not None:
+                stub["id"] = widget_id(w)
             if isinstance(w.get("type"), str):
                 stub["type"] = w["type"]
         stub[CONFORMANCE_SKIP] = True
@@ -595,6 +742,9 @@ def import_project(data, interface_id=None):
     if not isinstance(editor.get("icon"), str) or not isinstance(editor.get("theme"), str):
         raise invalid()
     pages = [page(p) for p in editor["pages"]]
+    ids = [w["id"] for p in pages for w in p["widgets"] if "id" in w]
+    if len(set(ids)) != len(ids):
+        raise invalid()      # §4.5.6: two widgets with one id
     return {
         "id": editor["id"], "version": 0, "name": editor["label"], "icon": editor["icon"],
         "theme": editor["theme"].upper(),
