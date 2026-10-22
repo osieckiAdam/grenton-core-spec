@@ -3,8 +3,8 @@
 | | |
 |---|---|
 | **Status** | Projekt (do implementacji) |
-| **Wersja** | 0.10.0 |
-| **Data** | 2026-10-21 |
+| **Wersja** | 0.10.1 |
+| **Data** | 2026-10-22 |
 | **Implementacja referencyjna** | `homeassistant-grenton` (Python, integracja Home Assistant) |
 | **Przeznaczenie** | Specyfikacja niezależna od języka — podstawa dla portów (pierwszy: Swift) |
 | **Zestaw zgodności** | `conformance/` + kontrakt w [`conformance.md`](conformance.md) |
@@ -583,6 +583,7 @@ Reguły:
 - `stop()` najpierw kończy oczekujące żądania błędem `ConnectionClosed`, potem wysyła `clientDestroy(0,0,i)` dla każdego zapamiętanego chunka (§5.3.2, bez czekania na odpowiedź), zamyka socket główny i zapomina chunki. Po ponownym `start()` lista chunków jest pusta — subskrypcje zakłada na nowo warstwa wyżej przez `register(keys)`.
 - Operacje wieloetapowe (`start`, `register`, `stop`) są **wzajemnie zserializowane** — nie mogą się przeplatać (np. dwie rejestracje mieszające numery chunków). Wywołanie w trakcie trwającej operacji czeka lub jest łączone z bieżącą.
 - Błąd `connect`/pierwszego pinga nie jest fatalny dla całego systemu — pozostałe CLU działają; sesja wchodzi w `degraded`, a pętla pingów pełni rolę retry (kolejny udany ping → re-rejestracja → `ready`). Wartości z tej re-rejestracji trafiają do warstwy wyżej ścieżką raportu (§5.4.3), jak z każdego chunka; chunk, który zawiódł, wnosi `failed` na swoich pozycjach. Jeżeli w `degraded` **socket główny nie istnieje** (jego utworzenie zawiodło albo socket uległ awarii, §5.4.1 pkt 4), każdy tik pingu najpierw ponawia otwarcie socketu głównego, a dopiero potem wysyła ping. Nowy socket główny to dla CLU nowy adres: subskrypcje założone ze starego socketu wygasają same, a re-rejestracja po udanym pingu zakłada je na nowo.
+- **Rejestracja z nieudanym chunkiem zostawia sesję do odzyskania**, także gdy sesja pozostaje `ready` (CLU odpowiadał na pingi, a nie odpowiedział na jeden chunk): CLU ma wtedy niekompletną listę, więc najbliższy udany ping — jawny albo z pętli — rejestruje całą listę ponownie jak przy odzyskaniu, z wartościami ścieżką raportu, i dopiero rejestracja bez nieudanego chunka kończy ponawianie. Chunk, który zawiódł, nie zmienia stanu sesji; o `degraded` decydują tylko pingi.
 - `execute` bez otwartego socketu głównego (`idle`, `stopped`, `degraded` bez socketu) kończy się błędem `SessionError.notConnected` i niczego nie wysyła. Akcja nie otwiera socketu sama; robi to `start()` albo ping.
 - `ping()` i `register(keys)` w stanie `idle` albo `stopped` niczego nie wysyłają i nie zmieniają sesji: `ping()` zwraca porażkę, `register` zwraca same `failed` i **nie zapamiętuje kluczy** ani nie uruchamia pętli. Tylko `start()` otwiera sesję; wywołanie `register` w trakcie `start()` czeka na jego koniec (serializacja), a potem działa normalnie.
 - **Trzy kolejne nieudane pingi** zamykają socket główny: oczekujące żądania kończą się `ConnectionClosed`, sesja jest `degraded` bez socketu, a najbliższy ping otwiera nowy (reguła wyżej) i udany ping wyzwala re-rejestrację. Licznik należy do socketu głównego: liczy **próby na drucie** (każdy wysłany `checkAlive()`, z pętli, jawny albo początkowy ze `start()`, liczony raz niezależnie od liczby wywołujących, którzy na niego czekają), które skończyły się timeoutem od otwarcia tego socketu albo od ostatniego udanego pingu; udany ping zeruje go, a nowy socket (po wymianie, po awarii, po `start()`) zaczyna od zera, więc dostaje własne trzy próby. Powód: transport, który stracił sieć (np. Wi-Fi), może trzymać socket w stanie, w którym wysyłki nigdy się nie kończą; nowy socket to nowy port i czyste subskrypcje.

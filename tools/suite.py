@@ -34,8 +34,8 @@ FIXTURES = os.path.join(CONFORMANCE, "fixtures")
 MANIFEST = os.path.join(CONFORMANCE, "manifest.json")
 
 SCHEMA_VERSION = 1
-SUITE_VERSION = "0.10.0"
-SPEC_VERSION = "0.10.0"
+SUITE_VERSION = "0.10.1"
+SPEC_VERSION = "0.10.1"
 
 # operation -> (profile, required input keys, optional input keys)
 OPERATIONS = {

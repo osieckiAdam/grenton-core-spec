@@ -1,5 +1,16 @@
 # Changelog
 
+## Spec 0.10.1, suite 0.10.1 — 2026-10-22
+
+Two gaps a test audit of the Swift port found: a rule the port followed that the spec did not state, and leftovers no scenario could see.
+
+Spec:
+
+- §5.4.5: a registration with a failed chunk leaves the session to be recovered even while it stays `ready`; the next answered ping registers the whole list again (values through the report path), until a registration has no failed chunk. A failed chunk never changes the state; only pings make a session `degraded`.
+- conformance.md §4b: a scenario ends with an implicit `expectQuiet` and `expectNoReport` before the runner stops the session, so a datagram or report no step checked fails the run; the stop's own `clientDestroy` comes after that check.
+
+Suite (232 cases; 51 session scenarios): `a-failed-chunk-is-re-registered-by-the-next-ping`.
+
 ## Spec 0.10.0, suite 0.10.0 — 2026-10-21
 
 The `.omp` import now converts every widget type of §3.5, plus the new `TV_REMOTE_CONTROL`, and imports widgets never sent to a phone.

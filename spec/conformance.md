@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Wersja zestawu** | 0.10.0 (specyfikacja 0.10.0, schemat przypadków 1) |
+| **Wersja zestawu** | 0.10.1 (specyfikacja 0.10.1, schemat przypadków 1) |
 | **Dotyczy** | `spec/grenton-core-design.md` §9 |
 
 Zestaw zgodności to **dane, nie kod**: każdy przypadek to plik JSON w `conformance/cases/`. Port dostarcza cienki runner, który wczytuje przypadki, wywołuje produkcyjne API portu i porównuje obserwację z oczekiwaniem. Dopisanie przypadku raz obejmuje wszystkie porty.
@@ -138,6 +138,8 @@ Operacja `session.scenario` sprawdza jedną sesję CLU (spec §5.3–§5.4) w ro
 **Wirtualny czas.** Zegar sesji należy do runnera i stoi, dopóki krok `advance` go nie przesunie. Timeout odpowiedzi (§5.4.1) i interwały pętli (§5.4.4) upływają wyłącznie przez `advance`. `advance` przesuwa zegar jednym skokiem; scenariusz dobiera kroki tak, by w jednym `advance` upływał co najwyżej jeden termin każdego timera i by terminy różnych timerów nie wypadały w tej samej chwili, bo ich kolejność nie jest określona.
 
 **Bariera.** Po każdym kroku runner czeka, aż sesja przestanie wykonywać pracę możliwą bez czasu i bez nowych datagramów (w praktyce: aż zaplanowane zadania się wykonają), łącznie z dostarczeniem raportów do strumienia, który runner subskrybuje przed pierwszym krokiem. Dopiero wtedy sprawdza oczekiwania. `expectSent` czeka na datagram najdłużej ustaloną przez runnera chwilę realnego czasu.
+
+**Koniec scenariusza.** Po ostatnim kroku, zanim runner sam zatrzyma sesję, obowiązuje niejawne `expectQuiet` i `expectNoReport`: datagram wysłany albo raport dostarczony, którego żaden krok nie sprawdził, czyni przebieg nieudanym (`failedStep` równy liczbie kroków). Scenariusz, który kończy się z zarejestrowanymi chunkami, nie musi sprawdzać `clientDestroy` zatrzymania — wysyła je dopiero zatrzymanie przez runnera, po tej kontroli.
 
 **Asercje negatywne.** `expectQuiet` i `expectNoReport` stwierdzają brak zdarzenia, więc po barierze runner obserwuje dodatkowo **okno ciszy: co najmniej 200 ms realnego czasu**, i dopiero wtedy uznaje brak za potwierdzony. To gwarancja probabilistyczna: port, który opóźnia pracę dłużej niż okno bez udziału zegara sesji, może ją przejść. Runner, którego środowisko pozwala wykryć bezczynność deterministycznie (własny executor, jawne opróżnienie kolejek), może to zrobić zamiast okna.
 

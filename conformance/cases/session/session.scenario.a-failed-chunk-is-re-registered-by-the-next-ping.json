@@ -1,0 +1,227 @@
+{
+  "schemaVersion": 1,
+  "id": "session.scenario.a-failed-chunk-is-re-registered-by-the-next-ping",
+  "specRefs": [
+    "session.lifecycle",
+    "session.chunking",
+    "session.keepalive"
+  ],
+  "description": "A registration whose second chunk got no reply yields a failed slot and leaves the session ready; the next answered ping registers both chunks again and reports their values, and a ping after a clean registration registers nothing.",
+  "provenance": "spec §5.3–§5.4 text, conformance.md §4b",
+  "operation": "session.scenario",
+  "input": {
+    "clu": {
+      "id": "CLU_1",
+      "ip": "10.0.0.1",
+      "port": 1234
+    },
+    "responseTimeoutMs": 5000,
+    "pingIntervalMs": 3600000,
+    "registerIntervalMs": 3600000,
+    "registerFrameLimitBytes": 50,
+    "steps": [
+      {
+        "call": "start",
+        "as": "start"
+      },
+      {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "checkAlive()"
+        }
+      },
+      {
+        "respond": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "1"
+        }
+      },
+      {
+        "await": "start",
+        "result": null
+      },
+      {
+        "expectState": "ready"
+      },
+      {
+        "call": "register",
+        "keys": [
+          {
+            "type": "variable",
+            "name": "x_a"
+          },
+          {
+            "type": "attribute",
+            "objectName": "DOU1001",
+            "index": "0"
+          }
+        ],
+        "as": "r1"
+      },
+      {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$a1",
+          "payload": "SYSTEM:clientRegister(0,0,1,{\"x_a\"})"
+        }
+      },
+      {
+        "respond": {
+          "socket": "@main",
+          "msgId": "$a1",
+          "payload": "clientReport:1:{1}"
+        }
+      },
+      {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$a2",
+          "payload": "SYSTEM:clientRegister(0,0,2,{{DOU1001,0}})"
+        }
+      },
+      {
+        "advance": 5000
+      },
+      {
+        "await": "r1",
+        "result": {
+          "slots": [
+            {
+              "type": "int",
+              "value": "1"
+            },
+            {
+              "failed": true
+            }
+          ]
+        }
+      },
+      {
+        "expectState": "ready"
+      },
+      {
+        "call": "ping",
+        "as": "p"
+      },
+      {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "checkAlive()"
+        }
+      },
+      {
+        "respond": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "1"
+        }
+      },
+      {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$b1",
+          "payload": "SYSTEM:clientRegister(0,0,1,{\"x_a\"})"
+        }
+      },
+      {
+        "respond": {
+          "socket": "@main",
+          "msgId": "$b1",
+          "payload": "clientReport:1:{1}"
+        }
+      },
+      {
+        "expectReport": {
+          "keys": [
+            {
+              "type": "variable",
+              "name": "x_a"
+            }
+          ],
+          "values": [
+            {
+              "type": "int",
+              "value": "1"
+            }
+          ]
+        }
+      },
+      {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$b2",
+          "payload": "SYSTEM:clientRegister(0,0,2,{{DOU1001,0}})"
+        }
+      },
+      {
+        "respond": {
+          "socket": "@main",
+          "msgId": "$b2",
+          "payload": "clientReport:2:{7}"
+        }
+      },
+      {
+        "expectReport": {
+          "keys": [
+            {
+              "type": "attribute",
+              "objectName": "DOU1001",
+              "index": "0"
+            }
+          ],
+          "values": [
+            {
+              "type": "int",
+              "value": "7"
+            }
+          ]
+        }
+      },
+      {
+        "await": "p",
+        "result": {
+          "ok": true
+        }
+      },
+      {
+        "expectState": "ready"
+      },
+      {
+        "call": "ping",
+        "as": "p2"
+      },
+      {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "checkAlive()"
+        }
+      },
+      {
+        "respond": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "1"
+        }
+      },
+      {
+        "await": "p2",
+        "result": {
+          "ok": true
+        }
+      },
+      {
+        "expectQuiet": true
+      }
+    ]
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "completed": true
+    }
+  }
+}

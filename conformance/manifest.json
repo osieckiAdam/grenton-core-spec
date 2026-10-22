@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "suiteVersion": "0.10.0",
-  "specVersion": "0.10.0",
+  "suiteVersion": "0.10.1",
+  "specVersion": "0.10.1",
   "profiles": {
     "mapping": [
       "mapping.interface"
@@ -738,6 +738,11 @@
       "id": "session.scenario.a-changed-key-list-gets-a-new-session",
       "path": "cases/session/session.scenario.a-changed-key-list-gets-a-new-session.json",
       "sha256": "5e4b18724b861241ca1170f2d49baea38a1acb2077617f89f30fa940ba403628"
+    },
+    {
+      "id": "session.scenario.a-failed-chunk-is-re-registered-by-the-next-ping",
+      "path": "cases/session/session.scenario.a-failed-chunk-is-re-registered-by-the-next-ping.json",
+      "sha256": "e3be73bba0ac7620ee41ca101e1c9e94c050d5bb5b2060b2cc32303794a0a679"
     },
     {
       "id": "session.scenario.a-notification-for-a-replaced-number-is-dropped",
