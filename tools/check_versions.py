@@ -36,6 +36,11 @@ if not conformance_header or conformance_header.groups() != (suite_version, spec
                     f"expected suite {suite_version}, spec {spec_version}")
 if spec_version not in newest:
     problems.append(f"newest CHANGELOG entry “{newest}” does not name spec {spec_version}")
+readme = (ROOT / "README.md").read_text()
+readme_line = re.search(r"Version ([0-9.]+) contains \w+ profiles, (\d+) cases in total", readme)
+case_count = len(manifest["cases"])
+if not readme_line or readme_line.group(1) != spec_version or int(readme_line.group(2)) != case_count:
+    problems.append(f"README.md must say “Version {spec_version} contains … profiles, {case_count} cases in total”")
 
 if "--staged" in sys.argv:
     staged = subprocess.run(["git", "diff", "--cached", "--name-only"], capture_output=True, text=True).stdout.split()

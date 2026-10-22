@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "jq -r \".tool_input.command // \\\"\\\"\" | grep -q -e \"--no-verify\" && printf \"%s\" \"{\\\"hookSpecificOutput\\\":{\\\"hookEventName\\\":\\\"PreToolUse\\\",\\\"permissionDecision\\\":\\\"deny\\\",\\\"permissionDecisionReason\\\":\\\"--no-verify bypasses the repository gates (git hooks, scripts/check.sh). Fix the failing check instead; see the grenton-change skill.\\\"}}\" || true",
+            "command": "cmd=$(jq -r '.tool_input.command // \"\"'); if printf '%s' \"$cmd\" | grep -q -e '--no-verify' -e 'core\\.hooksPath' -E -e 'git[[:space:]]+(-[^[:space:]]+[[:space:]]+)*commit([[:space:]]+[^|;&]*)?[[:space:]]-[a-zA-Z]*n' ; then printf '%s' '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"deny\",\"permissionDecisionReason\":\"This bypasses the repository gates (git hooks, scripts/check.sh): --no-verify, commit -n, or changing core.hooksPath. Fix the failing check instead; see the grenton-change skill.\"}}'; fi; true",
             "statusMessage": "Checking for gate bypass"
           }
         ]

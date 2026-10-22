@@ -7,9 +7,11 @@
 
 Identifiers come from a real interface archive, read locally and never
 stored: object names, widget ids, page names, script names, CLU ids, names,
-serial numbers and addresses, and distinctive labels. The archive is, in
-order: $GRENTON_INTERFACE, `git config grenton.interface`, then
-dist/interface.zip of grenton-core-swift.
+serial numbers and addresses, distinctive labels, and the AES key and IV.
+The archive is, in order: $GRENTON_INTERFACE, `git config grenton.interface`,
+then dist/interface.zip of grenton-core-swift. A project file adds its CLU
+and object names and its key: $GRENTON_PROJECT or `git config grenton.project`.
+ZIP and .omp files in the repository are scanned entry by entry.
 
 Without an archive the check fails rather than pass unchecked. Someone with
 no installation declares that once per clone:
@@ -31,13 +33,17 @@ def git_config(key):
 
 
 DECLARED = os.environ.get("GRENTON_INTERFACE", "") or git_config("grenton.interface")
+PROJECT = os.environ.get("GRENTON_PROJECT", "") or git_config("grenton.project")
+TEXT_ENTRY = re.compile(r"\.(json|xml|lua|txt|csv|md|html|js|css)$", re.I)
 CANDIDATES = [DECLARED,
               HERE.parent / "dist" / "interface.zip",
               HERE.parent.parent / "grenton-core-swift" / "dist" / "interface.zip"]
 GENERIC = {"sufit", "kinkiet", "temperatura", "gniazdo", "gniazda", "roleta", "salon", "kuchnia",
            "sypialnia", "łazienka", "korytarz", "garaż", "kotłownia", "pralnia", "wiatrołap",
            "gabinet", "stop", "alarm", "gate", "http", "led", "steruj", "parter", "pietro",
-           "piętro", "modbus"}
+           "piętro", "modbus",
+           # Object Manager's default labels, which every project carries.
+           "contact sensor", "object manager", "mygrenton"}
 
 
 def tokens(archive):
@@ -66,7 +72,70 @@ def tokens(archive):
                 if label:
                     labels.add(label)
     found |= {l for l in labels if " " in l and len(l) >= 6}
+    secrets = {data.get("encryption", {}).get("key"), data.get("encryption", {}).get("iv")}
+    return {t for t in found if isinstance(t, str) and len(t) >= 5 and t.lower() not in GENERIC} \
+        | {s for s in secrets if isinstance(s, str) and s}
+
+
+def project_tokens(archive):
+    """Names, addresses, serials and the key of an Object Manager project."""
+    import xml.etree.ElementTree as ET
+    found = set()
+    with zipfile.ZipFile(archive) as z:
+        names = set(z.namelist())
+        for member in ("system.xml", "properties.xml"):
+            if member not in names:
+                continue
+            for element in ET.fromstring(z.read(member)).iter():
+                tag = element.tag.split("}")[-1]
+                text = (element.text or "").strip()
+                if not text:
+                    continue
+                # `name` is left out: the project names every feature and
+                # module ("State", "Brightness"), which are not identifiers.
+                if tag in ("nameOnCLU", "ipAddress", "serialNumber", "keyBytes", "ivBytes"):
+                    found.add(text)
+        for member in names:
+            if re.fullmatch(r"nodes/\d+/data\.json", member):
+                try:
+                    doc = json.loads(z.read(member).decode("utf-8"))
+                except ValueError:
+                    continue
+                if isinstance(doc, dict) and isinstance(doc.get("pages"), list):
+                    labels = {doc.get("label")}
+                    found.add(doc.get("id"))
+                    for page in doc["pages"]:
+                        if not isinstance(page, dict):
+                            continue
+                        found.add(page.get("label"))
+                        for widget in page.get("widgets") or []:
+                            if isinstance(widget, dict):
+                                found.add(widget.get("dtoId"))
+                                labels.add(widget.get("label"))
+                                for value in widget.values():
+                                    if isinstance(value, dict):
+                                        found.add(value.get("objectName"))
+                                        labels.add(value.get("label"))
+                    # Labels as for the interface: only distinctive, multi-word ones.
+                    found |= {l for l in labels if isinstance(l, str) and " " in l and len(l) >= 6}
     return {t for t in found if isinstance(t, str) and len(t) >= 5 and t.lower() not in GENERIC}
+
+
+def zip_lines(blob, label):
+    """Text entries of a ZIP (an interface archive, a project), line by line."""
+    try:
+        with zipfile.ZipFile(io.BytesIO(blob)) as z:
+            for member in z.namelist():
+                if not TEXT_ENTRY.search(member):
+                    continue
+                try:
+                    text = z.read(member).decode("utf-8")
+                except (UnicodeDecodeError, zipfile.BadZipFile, RuntimeError):
+                    continue
+                for line in text.split("\n"):
+                    yield f"{label}:{member}", line
+    except zipfile.BadZipFile:
+        return
 
 
 def texts(mode, argument):
@@ -78,15 +147,26 @@ def texts(mode, argument):
                 file = line[6:]
             elif line.startswith("+") and not line.startswith("+++"):
                 yield file, line[1:]
+        # Staged archives have no text diff: scan what is in the index.
+        staged = subprocess.run(["git", "diff", "--cached", "--name-only", "--diff-filter=AM"],
+                                capture_output=True, text=True).stdout.split()
+        for file in staged:
+            if file.lower().endswith((".zip", ".omp")):
+                blob = subprocess.run(["git", "show", f":{file}"], capture_output=True).stdout
+                yield from zip_lines(blob, file)
     elif mode == "--all":
         for file in subprocess.run(["git", "ls-files"], capture_output=True, text=True).stdout.split("\n"):
             path = pathlib.Path(file)
-            if file and path.is_file():
-                try:
-                    for line in path.read_text(encoding="utf-8").split("\n"):
-                        yield file, line
-                except UnicodeDecodeError:
-                    pass
+            if not file or not path.is_file():
+                continue
+            if file.lower().endswith((".zip", ".omp")):
+                yield from zip_lines(path.read_bytes(), file)
+                continue
+            try:
+                for line in path.read_text(encoding="utf-8").split("\n"):
+                    yield file, line
+            except UnicodeDecodeError:
+                pass
     elif mode == "--message":
         for line in pathlib.Path(argument).read_text().split("\n"):
             if not line.startswith("#"):
@@ -106,6 +186,12 @@ if archive is None:
           "  Or, with none:    git config grenton.interface none")
     sys.exit(1)
 known = tokens(archive)
+project = pathlib.Path(PROJECT).expanduser() if PROJECT and PROJECT != "none" else None
+if project is not None:
+    if not project.is_file():
+        print(f"installation data: project file {project} not found (grenton.project)")
+        sys.exit(1)
+    known |= project_tokens(project)
 pattern = re.compile(r"(?<![\w])(" + "|".join(re.escape(t) for t in sorted(known, key=len, reverse=True)) + r")(?![\w])")
 hits = []
 for file, line in texts(sys.argv[1] if len(sys.argv) > 1 else "", sys.argv[2] if len(sys.argv) > 2 else ""):
@@ -114,5 +200,6 @@ for file, line in texts(sys.argv[1] if len(sys.argv) > 1 else "", sys.argv[2] if
         hits.append(f"{file}: “{match.group(1)}” in: {line.strip()[:100]}")
 for hit in hits:
     print("installation identifier:", hit)
-print(f"installation data: {len(hits)} identifier(s) found ({len(known)} known from {archive.name})")
+sources = archive.name + (f" and {project.name}" if project is not None else "")
+print(f"installation data: {len(hits)} identifier(s) found ({len(known)} known from {sources})")
 sys.exit(1 if hits else 0)

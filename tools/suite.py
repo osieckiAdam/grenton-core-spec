@@ -3,6 +3,7 @@
 
     python3 tools/suite.py check      validate every case, verify the manifest
     python3 tools/suite.py manifest   rewrite conformance/manifest.json
+    python3 tools/suite.py bump X.Y.Z  set the spec and suite version everywhere
     python3 tools/suite.py fixtures   rebuild conformance/fixtures/projects/*.omp
                                       from conformance/sources/projects/*/
 
@@ -18,6 +19,7 @@ of truth.
 import base64
 import hashlib
 import io
+import datetime
 import json
 import os
 import re
@@ -646,8 +648,49 @@ def build_manifest():
     }
 
 
+def hooks_installed(errors):
+    """The gates run from tools/hooks only once a clone has enabled them."""
+    result = subprocess.run(["git", "config", "--get", "core.hooksPath"], capture_output=True, text=True, cwd=ROOT)
+    if result.stdout.strip() != "tools/hooks":
+        errors.append("git hooks are not enabled in this clone: run `git config core.hooksPath tools/hooks`")
+
+
+def bump(version):
+    """Every place a spec/suite version lives, in one step; the CHANGELOG
+    heading is printed, because its entry needs a human."""
+    if not re.fullmatch(r"\d+\.\d+\.\d+", version):
+        raise SystemExit("usage: python3 tools/suite.py bump <major.minor.patch>")
+    edits = [
+        (os.path.join(ROOT, "spec", "grenton-core-design.md"),
+         [(r"\| \*\*Wersja\*\* \| [0-9.]+ \|", f"| **Wersja** | {version} |"),
+          (r"\| \*\*Data\*\* \| [0-9-]+ \|", f"| **Data** | {datetime.date.today().isoformat()} |")]),
+        (os.path.join(ROOT, "spec", "conformance.md"),
+         [(r"\| \*\*Wersja zestawu\*\* \| [0-9.]+ \(specyfikacja [0-9.]+,",
+           f"| **Wersja zestawu** | {version} (specyfikacja {version},")]),
+        (os.path.join(ROOT, "tools", "suite.py"),
+         [(r'SUITE_VERSION = "[0-9.]+"', f'SUITE_VERSION = "{version}"'),
+          (r'SPEC_VERSION = "[0-9.]+"', f'SPEC_VERSION = "{version}"')]),
+    ]
+    for path, pairs in edits:
+        with open(path, encoding="utf-8") as f:
+            text = f.read()
+        for pattern, replacement in pairs:
+            text, n = re.subn(pattern, replacement, text, count=1)
+            if n != 1:
+                raise SystemExit(f"{os.path.relpath(path, ROOT)}: pattern not found: {pattern}")
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(text)
+        print(f"bumped {os.path.relpath(path, ROOT)}")
+    print(f"now add to CHANGELOG.md, above the newest entry:\n\n"
+          f"## Spec {version}, suite {version} — {datetime.date.today().isoformat()}\n\n"
+          f"then run: python3 tools/suite.py manifest")
+
+
 def main():
     command = sys.argv[1] if len(sys.argv) > 1 else "check"
+    if command == "bump":
+        bump(sys.argv[2] if len(sys.argv) > 2 else "")
+        return 0
     if command == "manifest":
         with open(MANIFEST, "w", encoding="utf-8") as f:
             json.dump(build_manifest(), f, indent=2)
@@ -666,6 +709,7 @@ def main():
         return 2
 
     errors, ids, referenced = [], set(), set()
+    hooks_installed(errors)
     for path in case_files():
         doc = validate(path, errors)
         if doc:

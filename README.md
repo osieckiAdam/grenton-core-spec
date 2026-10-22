@@ -47,7 +47,7 @@ Expected values never come from a port. They come from the spec text,
 Python derivation written from the spec (`tools/oracles/`).
 `tools/suite.py check` re-derives them wherever such an oracle exists.
 
-Version 0.10.0 contains four profiles, 231 cases in total:
+Version 0.10.1 contains four profiles, 232 cases in total:
 
 - `stateless` (162 cases): AES-CBC, frames, payloads (registration, one-shot
   read, actions, reports), value casting, the Object Manager URL and PIN,
@@ -56,7 +56,7 @@ Version 0.10.0 contains four profiles, 231 cases in total:
   entities, completeness rules, widget-level tolerance, normative order,
   thermostats and double scenes, and devices grouped by the CLU object
   they operate.
-- `session` (50 scenarios): one CLU session against a CLU played by the
+- `session` (51 scenarios): one CLU session against a CLU played by the
   runner on a virtual clock — correlation and timeouts, keep-alive,
   sequential chunked registration on one socket, report routing by
   subscription number, unregistering, lifecycle,

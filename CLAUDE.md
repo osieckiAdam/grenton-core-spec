@@ -19,6 +19,8 @@ vendor this repository and must pass the suite.
 
 - The spec states rules, plus a one-line reason when a rule looks arbitrary. Dates, runs, observed values and "verified live" notes go in CHANGELOG.md.
 - Expected values never come from a port. They come from the spec text, `openssl`, the reference's Python semantics, or `tools/oracles/`.
-- Every spec or suite change bumps the version and adds a CHANGELOG entry. The pre-commit hook enforces the entry.
+- Every spec or suite change bumps the version and adds a CHANGELOG entry: `python3 tools/suite.py bump X.Y.Z` sets the version in the spec header, `spec/conformance.md`, `SPEC_VERSION` and `SUITE_VERSION`; the CHANGELOG entry starts `## Spec X.Y.Z, suite X.Y.Z — <date>`; `README.md` must name the version and the case count. `tools/check_versions.py` enforces all of it.
+- Commit messages: one imperative sentence naming the change, ending with `(spec X.Y.Z, suite X.Y.Z)` for a spec or suite change, then a paragraph on what the rules now say and why.
+- Standing decisions and the measurements behind them are in `docs/decisions.md`; a new finding that changes a rule goes there as well as into the CHANGELOG.
 - No identifiers of a real installation. Fixtures are synthetic.
 - After pushing, the Swift port must follow: move its submodule and update `port.json`.
