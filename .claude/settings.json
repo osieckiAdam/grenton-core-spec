@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cmd=$(jq -r '.tool_input.command // \"\"'); if printf '%s' \"$cmd\" | grep -q -e '--no-verify' -e 'core\\.hooksPath' -E -e 'git[[:space:]]+(-[^[:space:]]+[[:space:]]+)*commit([[:space:]]+[^|;&]*)?[[:space:]]-[a-zA-Z]*n' ; then printf '%s' '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"deny\",\"permissionDecisionReason\":\"This bypasses the repository gates (git hooks, scripts/check.sh): --no-verify, commit -n, or changing core.hooksPath. Fix the failing check instead; see the grenton-change skill.\"}}'; fi; true",
+            "command": "cmd=$(jq -r '.tool_input.command // \"\"'); if printf '%s' \"$cmd\" | grep -q -i -E -e '--no-v' -e 'hookspath' -e 'git_config_' -e 'git[[:space:]]+(-[^[:space:]]+[[:space:]]+)*commit([[:space:]]+[^|;&]*)?[[:space:]]-[a-z]*n'; then printf '%s' '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"deny\",\"permissionDecisionReason\":\"This bypasses the repository gates (git hooks, scripts/check.sh): --no-verify, commit -n, or changing the hooks path or git config through the environment. Fix the failing check instead; see the grenton-change skill.\"}}'; fi; true",
             "statusMessage": "Checking for gate bypass"
           }
         ]
