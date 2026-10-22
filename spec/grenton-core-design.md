@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Status** | Projekt (do implementacji) |
-| **Wersja** | 0.10.1 |
+| **Wersja** | 0.11.0 |
 | **Data** | 2026-10-22 |
 | **Implementacja referencyjna** | `homeassistant-grenton` (Python, integracja Home Assistant) |
 | **Przeznaczenie** | Specyfikacja niezależna od języka — podstawa dla portów (pierwszy: Swift) |
@@ -73,6 +73,7 @@ Zasady:
 - **Runtime przyjmuje sparsowany `MobileInterface` jako wejście** i nie wie, skąd pochodzi. Provisioning jest jednym z możliwych źródeł (inne: plik, backend aplikacji, QR); sam ma dwa: pobranie z OM (§4.1–§4.3) i plik projektu (§4.5).
 - Wszystkie efekty uboczne (sieć, czas, losowość, logi) wchodzą przez **kontrakt portu** (§7) — interfejsy implementowane per platforma. Dzięki temu logika jest testowalna deterministycznie.
 - Nazwy API w tym dokumencie (np. `CluSession`, `StateStore`, `GrentonValue`) są **nazwami referencyjnymi na potrzeby specyfikacji i testów zgodności** — wiążąca jest semantyka i zachowanie, nie brzmienie nazw; port może użyć nazw idiomatycznych dla swojego języka, dokumentując mapowanie.
+- Port **może** dodać piąty moduł-parasol zależny od wszystkich czterech, z wygodami, które łączą ich granice (np. „pobierz interfejs i uruchom system" — Provisioning plus Devices — albo diagnostyka całej instalacji). Parasol nie zawiera reguł z tego dokumentu: wszystko, co specyfikują §3–§6, mieszka w swoim module, a parasol tylko to składa i re-eksportuje. Moduły poniżej nie zależą od parasola, więc aplikacja może wziąć sam Devices albo sam Provisioning.
 
 ---
 
@@ -588,6 +589,7 @@ Reguły:
 - `ping()` i `register(keys)` w stanie `idle` albo `stopped` niczego nie wysyłają i nie zmieniają sesji: `ping()` zwraca porażkę, `register` zwraca same `failed` i **nie zapamiętuje kluczy** ani nie uruchamia pętli. Tylko `start()` otwiera sesję; wywołanie `register` w trakcie `start()` czeka na jego koniec (serializacja), a potem działa normalnie.
 - **Trzy kolejne nieudane pingi** zamykają socket główny: oczekujące żądania kończą się `ConnectionClosed`, sesja jest `degraded` bez socketu, a najbliższy ping otwiera nowy (reguła wyżej) i udany ping wyzwala re-rejestrację. Licznik należy do socketu głównego: liczy **próby na drucie** (każdy wysłany `checkAlive()`, z pętli, jawny albo początkowy ze `start()`, liczony raz niezależnie od liczby wywołujących, którzy na niego czekają), które skończyły się timeoutem od otwarcia tego socketu albo od ostatniego udanego pingu; udany ping zeruje go, a nowy socket (po wymianie, po awarii, po `start()`) zaczyna od zera, więc dostaje własne trzy próby. Powód: transport, który stracił sieć (np. Wi-Fi), może trzymać socket w stanie, w którym wysyłki nigdy się nie kończą; nowy socket to nowy port i czyste subskrypcje.
 - Rejestracja przerwana przez `stop()` kończy się jak chunk, który zawiódł: `failed` na pozycjach niedokończonych chunków (§5.4.2 pkt 4). Chunk, którego żądanie już wyszło, jest wyrejestrowany jak każdy inny.
+- **Migawka diagnostyczna.** Sesja udostępnia synchronicznie, w każdym stanie (także `idle`), niezmienną migawkę: stan (§5.4.5), chwilę jej pobrania, chwilę ostatniej **zaakceptowanej** odpowiedzi skorelowanej (§5.4.1; odpowiedź spóźniona, odrzucona albo niedeszyfrowalna nie liczy się), chwilę ostatniej zaakceptowanej notyfikacji (§5.4.3; raport odrzucony nie liczy się), czas obiegu ostatniego udanego pinga (od oddania ramki transportowi do dopasowania odpowiedzi, zegar monotoniczny), liczbę kluczy zapamiętanej listy (§5.4.2 — lista żądana, nie potwierdzona), czy lista czeka na ponowną rejestrację (chunk, który zawiódł, albo `degraded`), oraz licznik kolejnych nieudanych pingów na bieżącym sockecie (reguła wyżej; bez socketu — licznik ostatniego). Chwile są `nil`, dopóki nic takiego nie zaszło od `start()`; `stop()` i ponowny `start()` zaczynają je od nowa. Migawka jest obserwacją jednej sesji; migawki wielu CLU pobrane po kolei nie są spójnym obrazem całej instalacji. Powód: aplikacja pokazuje użytkownikowi, czy dom „odpowiada", bez sięgania do ramek; nazwy pól są sprawą portu (§2).
 - `fetch` przerwany przez `stop()` kończy się tak samo: `stop()` nie czeka na chunki odczytu — żądanie w locie kończy się `ConnectionClosed` i daje `failed`, kolejne chunki nie są wysyłane i też dają `failed`, a sloty chunków już odebranych zostają; `fetch` wraca z tą listą.
 
 ### 5.5 Magazyn stanu — `StateStore`
@@ -604,7 +606,7 @@ Operacje:
 - `updateKeys(keys, slots)` — pozycyjne nadpisanie; sloty `failed` są **pomijane**, sloty `value(v)` nadpisują — **w tym `value(null)`** (prawdziwy `nil` z CLU ustawia stan na `null`). **Δ** Referencja pomija każdy `None`, więc `nil` nigdy nie nadpisywał wartości; dzięki jawnemu typowi slotu (§5.4.2) Core może to poprawnie rozróżnić. Wartości z notyfikacji `clientReport` są zawsze slotami `value(…)`.
 - `get(ValueRef) -> GrentonValue?` — odczyt bieżącej wartości (`nil`/„nieznane" rozróżnialne od `value(null)`).
 
-**Δ Zdarzenia.** Implementacja referencyjna emituje jedno globalne „coś się zmieniło" (broadcast koordynatora HA). Core specyfikuje zdarzenia granularne: `StateChanged(cluId, key, oldValue, newValue)` emitowane tylko dla faktycznych zmian wartości. Wymagania wobec mechanizmu dostarczania: (a) **wielu niezależnych subskrybentów** — subskrypcja tworzy własny strumień/rejestrację, nie współdzieloną kolejkę jednego konsumenta; (b) zdefiniowana polityka buforowania wolnego subskrybenta (zalecane: bufor ograniczony, najnowsze wygrywają — konsument i tak czyta świeży stan ze store'a); (c) anulowanie subskrypcji sprząta zasoby. To umożliwia tanie bindowanie per urządzenie w adapterach.
+**Δ Zdarzenia.** Implementacja referencyjna emituje jedno globalne „coś się zmieniło" (broadcast koordynatora HA). Core specyfikuje zdarzenia granularne: `StateChanged(cluId, key, oldValue, newValue)` emitowane tylko dla faktycznych zmian wartości. Wymagania wobec mechanizmu dostarczania: (a) **wielu niezależnych subskrybentów** — subskrypcja tworzy własny strumień/rejestrację, nie współdzieloną kolejkę jednego konsumenta; (b) zdefiniowana i udokumentowana polityka buforowania wolnego subskrybenta (zalecane: bufor ograniczony, najnowsze wygrywają — konsument i tak czyta świeży stan ze store'a), przy czym strumień surowych zmian jest **stratny** i nie zastępuje odczytu ze store'a; (c) subskrypcja **ograniczona do zbioru kluczy** filtruje przed buforowaniem, nie po nim — bufor wspólnego strumienia nie może wyprzeć zmiany klucza, na który subskrybent czeka, zmianami innych kluczy (odpowiedź na rejestrację wnosi naraz tyle zmian, ile ma kluczy); (d) anulowanie subskrypcji sprząta zasoby. To umożliwia tanie bindowanie per urządzenie w adapterach.
 
 ### 5.6 Model współbieżności (wymagania semantyczne)
 
@@ -774,6 +776,8 @@ Adaptery pozwalają użytkownikowi doprecyzować prezentację (device class, jed
 ### 6.5 Zdarzenia urządzeń
 
 Devices subskrybuje granularne `StateChanged` z Runtime (§5.5 Δ) i tłumaczy je na `DeviceStateChanged(deviceId, entityId)` — emitowane tylko, gdy zmiana dotyczy `ValueRef` danej encji. Adapter binduje encję do jej strumienia i odczytuje świeży stan znormalizowany.
+
+Sygnał encji jest **flagą „stan się zmienił", nie historią**: dwie zmiany, zanim adapter odczyta, mogą zlać się w jeden sygnał, ale po każdej zmianie wartości którejkolwiek referencji encji adapter dostaje **co najmniej jeden** sygnał, niezależnie od liczby zmian innych kluczy w tym czasie (§5.5 Δ pkt c). Sygnał zgubiony zostawiłby widok nieaktualny aż do następnej zmiany tej samej wartości, czego adapter nie ma jak wykryć.
 
 ### 6.6 Obiekty fizyczne
 

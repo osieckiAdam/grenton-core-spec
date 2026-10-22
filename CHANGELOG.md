@@ -1,5 +1,17 @@
 # Changelog
 
+## Spec 0.11.0, suite 0.11.0 — 2026-10-22
+
+Three rules the Swift port's API review (Codex) showed the spec did not state. Text only: no profile covers store events or module layout, so the suite is unchanged (232 cases; 51 session scenarios).
+
+Evidence: in the Swift port, the per-entity update signal was a filter on top of the shared change stream, whose bounded buffer (64 newest) is filled by a single registration reply of more keys than that — an entity whose key came early in the list never got its signal and its view stayed stale until the next change of the same value; §5.5 Δ (b) recommended exactly that buffer and nothing required the signal to survive. The port's device module had also come to depend on the provisioning module (for a "download and start" convenience), against the table in §2. And a health read-out for apps needed one definition of "last reply" so that ports agree.
+
+Spec:
+
+- §6.5: an entity's update signal is a "changed" flag, not a history — changes may coalesce, but at least one signal follows every change of any of the entity's references, however many other keys changed meanwhile. §5.5 Δ: a key-filtered subscription filters before buffering; the raw change stream is lossy and never replaces reading the store.
+- §5.4.5: a session exposes a synchronous, immutable diagnostic snapshot in every state (state, sampling time, last accepted correlated reply, last accepted notification, last ping round-trip, requested key count, whether a re-registration is pending, the consecutive-ping-timeout streak of the current socket); times restart with `start()`; snapshots of several CLUs are not one consistent picture.
+- §2: a port may add a fifth umbrella module that depends on all four and holds cross-boundary conveniences and re-exports; no rule of §3–§6 lives there, and the four modules never depend on it.
+
 ## Spec 0.10.1, suite 0.10.1 — 2026-10-22
 
 Two gaps a test audit of the Swift port found: a rule the port followed that the spec did not state, and leftovers no scenario could see.

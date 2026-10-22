@@ -136,6 +136,13 @@ lowercase msg_ids, and any positive subscription number.
 - Action values stay quoted, the response timeout stays 5 s (0.9.0):
   measured as equivalent to the app's forms; the app's 15 s is a cloud
   allowance.
+- Entity update signals are flags, filtered before any buffer (0.11.0): a
+  bounded shared stream filtered afterwards loses a key's only change
+  under a large registration reply, and a view then stays stale with no
+  way to notice; the raw change stream stays lossy and documented so.
+- A port may add an umbrella module (0.11.0): the Swift port needed a
+  home for "download and start" without making Devices depend on
+  Provisioning, which §2 forbids.
 - The `.omp` is the second provisioning source (0.8.0, 0.10.0): the
   converter reproduces the downloaded interface field for field on a real
   project; widgets never sent to a phone get `omp-<editor id>`.
