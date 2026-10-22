@@ -1,5 +1,15 @@
 # Changelog
 
+## Spec 0.11.1, suite 0.11.1 — 2026-10-22
+
+Wording of the three 0.11.0 rules, after a review (Codex, 8 findings, all taken). No rule changed; the suite is unchanged (232 cases; 51 session scenarios).
+
+- §6.5: the entity signal guarantee now says when it holds (per active subscription, from its activation, while the subscriber keeps receiving), that the store already holds the write when the signal is observed, and that a change after a delivered signal needs another one.
+- §5.5 Δ: (c) states the property — other keys' changes cannot lose a pending notification of a subscribed key, over the whole delivery path — instead of prescribing where to filter; (b) says the raw stream guarantees no complete history rather than calling it lossy.
+- §5.4.5: the snapshot's fields are defined one by one — last reply counts at correlation (even if the payload then fails the chunk), last notification counts only accepted reports (a registration reply is not one), requested key count is the full list of the last started `register`, the re-registration flag's set and clear conditions, the timeout streak without a socket and after `stop()`; synchronous access is no longer required, a single snapshot is consistent, and idempotent `start()` or a socket swap does not reset the times.
+- §2: helper modules may depend on any subset of the four, a simulation module depending on Devices alone is an example, UI stays outside Core (§1.2).
+- 0.11.0 changelog, corrected: the old §5.5 Δ (b) recommended a bounded newest-wins buffer, not its size nor filtering after it; the Swift port lost entity signals when the producer outran the consumer; the diagnostic times are also cleared by `stop()`.
+
 ## Spec 0.11.0, suite 0.11.0 — 2026-10-22
 
 Three rules the Swift port's API review (Codex) showed the spec did not state. Text only: no profile covers store events or module layout, so the suite is unchanged (232 cases; 51 session scenarios).

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "suiteVersion": "0.11.0",
-  "specVersion": "0.11.0",
+  "suiteVersion": "0.11.1",
+  "specVersion": "0.11.1",
   "profiles": {
     "mapping": [
       "mapping.interface"

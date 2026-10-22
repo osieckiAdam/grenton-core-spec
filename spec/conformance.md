@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Wersja zestawu** | 0.11.0 (specyfikacja 0.11.0, schemat przypadków 1) |
+| **Wersja zestawu** | 0.11.1 (specyfikacja 0.11.1, schemat przypadków 1) |
 | **Dotyczy** | `spec/grenton-core-design.md` §9 |
 
 Zestaw zgodności to **dane, nie kod**: każdy przypadek to plik JSON w `conformance/cases/`. Port dostarcza cienki runner, który wczytuje przypadki, wywołuje produkcyjne API portu i porównuje obserwację z oczekiwaniem. Dopisanie przypadku raz obejmuje wszystkie porty.
