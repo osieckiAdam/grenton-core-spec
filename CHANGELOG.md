@@ -1,5 +1,9 @@
 # Changelog
 
+## Spec 0.12.1, suite 0.12.1 — 2026-10-25
+
+The `schedule.rules` projection lists `days` ascending (0–6); the `list` case had one rule's days in another order. No rule changed.
+
 ## Spec 0.12.0, suite 0.12.0 — 2026-10-25
 
 The two widget types v1 left out are mapped: `EVENT_SCHEDULER` (the EventScheduler virtual object: up to 16 CRON rules) and `TV_REMOTE_CONTROL` (a remote: a set of button actions). Finding them live showed a protocol fact the parser did not handle.

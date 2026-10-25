@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Suite version** | 0.12.0 (specification 0.12.0, case schema 1) |
+| **Suite version** | 0.12.1 (specification 0.12.1, case schema 1) |
 | **Applies to** | `spec/grenton-core-design.md` §9 |
 
 The conformance suite is **data, not code**: every case is a JSON file in `conformance/cases/`. The port supplies a thin runner that loads the cases, calls the port's production API and compares the observation with the expectation. Adding a case once covers all ports.
@@ -76,7 +76,7 @@ Comparison of `ok.value`: structural JSON equality, object key order is irreleva
 | `coercion.boolFromOnOff` | `value` | `result` (`true`/`false`/`null` = unknown) | |
 | `coercion.truthy` | `value` | `result` | |
 | `number.format` | `value` (double), `precision` | `text` | |
-| `schedule.rules` | `text` — the value of an event scheduler's `ruleList`, `nextRule` or `currentRule` | `rules` (a list of `{id, isEnabled, cron, hour, minute, days}`, `hour`/`minute`/`days` `null` for an unsupported rule) or `null` (no rules known, §6.3.13) | |
+| `schedule.rules` | `text` — the value of an event scheduler's `ruleList`, `nextRule` or `currentRule` | `rules` (a list of `{id, isEnabled, cron, hour, minute, days}` with `days` ascending 0–6; `hour`/`minute`/`days` `null` for an unsupported rule) or `null` (no rules known, §6.3.13) | |
 | `schedule.cron` | `hour`, `minute`, `days[]` (weekdays 0–6, 0 = Sunday) | `text` — the CRON text `addRule` sends | `reject` (hour, minute or days out of range, empty days) |
 
 `mapping` profile:
