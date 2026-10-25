@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Suite version** | 0.11.3 (specification 0.11.3, case schema 1) |
+| **Suite version** | 0.12.0 (specification 0.12.0, case schema 1) |
 | **Applies to** | `spec/grenton-core-design.md` §9 |
 
 The conformance suite is **data, not code**: every case is a JSON file in `conformance/cases/`. The port supplies a thin runner that loads the cases, calls the port's production API and compares the observation with the expectation. Adding a case once covers all ports.
@@ -76,6 +76,8 @@ Comparison of `ok.value`: structural JSON equality, object key order is irreleva
 | `coercion.boolFromOnOff` | `value` | `result` (`true`/`false`/`null` = unknown) | |
 | `coercion.truthy` | `value` | `result` | |
 | `number.format` | `value` (double), `precision` | `text` | |
+| `schedule.rules` | `text` — the value of an event scheduler's `ruleList`, `nextRule` or `currentRule` | `rules` (a list of `{id, isEnabled, cron, hour, minute, days}`, `hour`/`minute`/`days` `null` for an unsupported rule) or `null` (no rules known, §6.3.13) | |
+| `schedule.cron` | `hour`, `minute`, `days[]` (weekdays 0–6, 0 = Sunday) | `text` — the CRON text `addRule` sends | `reject` (hour, minute or days out of range, empty days) |
 
 `mapping` profile:
 
@@ -126,6 +128,8 @@ Decryption returns **bytes**; UTF-8 decoding and whitespace trimming belong to t
 | `trigger`, `sceneTrigger` | `action` |
 | `camera` | `streamUrl` |
 | `thermostat` | `currentTemperature`, `targetTemperature`, `setTargetTemperatureAction`, `minTemperature`, `maxTemperature`, `output` (`null` when absent), `mode` / `power` (`{state, setAction}` or `null`) |
+| `eventSchedule` | `state`, `ruleList`, `addRuleAction`, `deleteRuleAction`, and `ruleCount`, `ruleSpace`, `nextRule`, `currentRule`, `startAction`, `stopAction`, `enableRuleAction`, `disableRuleAction` (`null` when absent) |
+| `tvRemote` | `buttons` — an object of button name → `ActionRef`, only the buttons present (an empty object for a remote without buttons) |
 
 **Fixtures** live in `conformance/fixtures/` and are listed in the manifest with a SHA-256 checksum (the runner verifies them just like cases). A widget that **must** be skipped because of a missing field or an unknown enum is marked in the fixture with the field `"x-conformance-expect-skip": true`. Ports ignore it (unknown fields, §3.6 item 4); only the oracle `tools/oracles/mapping.py` reads it, because §3.5 does not give the full field schema of every widget.
 
@@ -228,6 +232,7 @@ The suite is versioned together with the specification in the `grenton-core-spec
 | `payload.action` | §5.3.4 |
 | `payload.fetch` | §5.3.2 |
 | `payload.values` | §5.3.2 |
+| `devices.schedule` | §6.3.13 |
 | `model.cast` | §3.1 |
 | `model.action-ref` | §3.3, §3.6 |
 | `provisioning.url` | §4.1 |

@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "schedule.rules.single",
+  "specRefs": [
+    "devices.schedule"
+  ],
+  "description": "NextRule and CurrentRule carry one row without the outer braces.",
+  "provenance": "spec §6.3.13",
+  "operation": "schedule.rules",
+  "input": {
+    "text": "{2, 1, \"0 20 * * *\"}"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "rules": [
+        {
+          "id": 2,
+          "isEnabled": true,
+          "cron": "0 20 * * *",
+          "hour": 20,
+          "minute": 0,
+          "days": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ]
+        }
+      ]
+    }
+  }
+}

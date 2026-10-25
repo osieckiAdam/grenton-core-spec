@@ -46,6 +46,12 @@ and two third-party clients run or read against the same CLUs.
   same way and fractions are truncated by the CLU. `set` on a method's
   index replies `nil` and changes nothing: `callType` decides, quoting
   does not. Core keeps the reference's quoted form.
+- **Quoted tables** (2026-10-25). A scheduler's `RuleList` arrives as a
+  Lua table serialized into a quoted string with quotes inside
+  (`"{{2, 1, "0 20 * * *"},{1, 1, "0 23 * * 6,0"}}"`); the 0.9.0 reading
+  split it at the inner commas. Spec 0.12.0 reads `"{` to the balancing
+  brace. The app writes weekdays as a list with Sunday = 0, and the CLU
+  orders rules by their next firing time.
 - **Report values** (app analysis, 2026-10-20). The official app splits a
   report on commas outside quotes and keeps a nested `{…}` block whole;
   the reference splits on every comma. Spec 0.9.0 adopted the app's

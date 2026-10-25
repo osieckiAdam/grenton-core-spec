@@ -1,5 +1,22 @@
 # Changelog
 
+## Spec 0.12.0, suite 0.12.0 — 2026-10-25
+
+The two widget types v1 left out are mapped: `EVENT_SCHEDULER` (the EventScheduler virtual object: up to 16 CRON rules) and `TV_REMOTE_CONTROL` (a remote: a set of button actions). Finding them live showed a protocol fact the parser did not handle.
+
+Evidence (one installation; the Grenton manual "The EventScheduler virtual object"; the myGrenton app on a phone): a scheduler's `RuleList` reaches the client as a **Lua table serialized into a quoted string**, `"{{2, 1, "0 20 * * *"},{1, 1, "0 23 * * 6,0"}}"`, with quotes and commas inside the quotes. The 0.9.0 rules read the inner quotes as text boundaries, so a weekday list with a comma made the value count wrong and the whole reply was rejected — a one-off read of any scheduler with a rule on chosen days failed. The app writes Sunday as `0` and Saturday as `6` (`6,0`), Monday to Friday as the list `1,2,3,4,5` (the manual's example uses the range `1-5`), minutes freely; the CLU lists rules by their next firing time, not by id, answers `N/A` for `CurrentRule` when nothing runs, and `AddRule` returns the new id.
+
+Spec:
+
+- §5.3.2 pt 2: text beginning with `"{` is a quoted table — it extends to the brace that balances its first one, ignoring quotes in between, and must be followed by `"`; without such a brace the plain rule applies. §5.3.2 pt 4 and §10 pt 2 narrowed accordingly.
+- §3.5: `EVENT_SCHEDULER` (required `state`, `ruleList`, `addRuleAction`, `deleteRuleAction`) and `TV_REMOTE_CONTROL` (`vodLabel` and a map of up to 21 named button actions, possibly empty) join the catalog; 18 supported types.
+- §6.1: kinds `eventSchedule` and `tvRemote`; both take the widget `label` as the name.
+- §6.3.13 `EventSchedule`: subscribed states, the CRON subset Core reads and writes (`minute hour * * days`, weekdays 0–6 with 0 = Sunday, ranges and 7 accepted on read, unsupported rules keep their text), the rule-list parsing (`nil` when no rules are known), `isActive`, `rules`, `ruleCount`, `freeRuleSlots`, `nextRule`, `currentRule`, and the intents `setActive`, `addRule(hour, minute, days)` (sent quoted, as the app does), `deleteRule`, `enableRule`, `disableRule`.
+- §6.3.14 `TvRemote`: the entity exists even without buttons; `buttons`, `press(button)`; not grouped into physical objects (§6.6); `eventSchedule` groups by `state`.
+- conformance.md: operations `schedule.rules` and `schedule.cron`; projection fields of the two kinds; requirement id `devices.schedule`.
+
+Suite (249 cases): `payload.values.quoted-table` (the live frame shape), `payload.report.quoted-table`, `payload.values.quoted-table-fallback`, `payload.report.reject-quoted-table-unclosed`; `schedule.rules.{list,single,unsupported,none,empty-table}`; `schedule.cron.{weekend,weekdays,every-day,reject-hour,reject-no-days,reject-day}`; `mapping.interface.scheduler-tv-remote` on a new fixture; `provisioning.omp.select-by-id` re-derived (its scheduler and remote are now devices; the remote's unassigned buttons drop out). The mapping and `.omp` oracles map both types.
+
 ## Spec 0.11.3, suite 0.11.3 — 2026-10-25
 
 The specification and the conformance contract are now in English; no rule changed and the suite is unchanged (233 cases). Section numbers, identifiers, wire text and the Δ markers are the same, so references from ports and cases still hold. The version tools and the release workflow read the English headers (`| **Version** |`, `| **Suite version** |`). Fixture labels keep their Polish names: they are test data of Polish installations.

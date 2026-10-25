@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "schedule.cron.reject-no-days",
+  "specRefs": [
+    "devices.schedule"
+  ],
+  "description": "An empty day set is rejected.",
+  "provenance": "spec §6.3.13",
+  "operation": "schedule.cron",
+  "input": {
+    "hour": 8,
+    "minute": 0,
+    "days": []
+  },
+  "expect": {
+    "outcome": "reject"
+  }
+}

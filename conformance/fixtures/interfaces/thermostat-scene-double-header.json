@@ -468,6 +468,7 @@
           "label": "Harmonogram",
           "id": "es-1",
           "type": "EVENT_SCHEDULER",
+          "x-conformance-expect-skip": true,
           "object": {
             "state": {
               "cluId": "CLU_501234567",

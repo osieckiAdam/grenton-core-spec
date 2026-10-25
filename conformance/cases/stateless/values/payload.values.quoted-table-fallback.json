@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "payload.values.quoted-table-fallback",
+  "specRefs": [
+    "payload.values"
+  ],
+  "description": "Text that starts with a brace but is no serialized table — no balancing brace followed by a quote — is read by the plain rule, up to the next quote.",
+  "provenance": "spec §5.3.2 pt 2 (quoted table, fallback)",
+  "operation": "payload.values",
+  "input": {
+    "payload": "values:{\"{abc\",7}"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "values": [
+        {
+          "type": "string",
+          "value": "{abc"
+        },
+        {
+          "type": "int",
+          "value": "7"
+        }
+      ]
+    }
+  }
+}

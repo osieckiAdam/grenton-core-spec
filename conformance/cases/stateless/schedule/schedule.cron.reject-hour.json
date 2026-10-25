@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "schedule.cron.reject-hour",
+  "specRefs": [
+    "devices.schedule"
+  ],
+  "description": "An hour outside 0–23 is rejected; nothing would be sent.",
+  "provenance": "spec §6.3.13",
+  "operation": "schedule.cron",
+  "input": {
+    "hour": 24,
+    "minute": 0,
+    "days": [
+      1
+    ]
+  },
+  "expect": {
+    "outcome": "reject"
+  }
+}
