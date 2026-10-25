@@ -1,0 +1,32 @@
+name: release
+# Every merge into main is a release: the spec version in the header gets
+# its tag. A merge that leaves the version at an already tagged number
+# fails here — bump the version (python3 tools/suite.py bump X.Y.Z) in
+# the pull request instead.
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - name: Read the version
+        id: version
+        run: |
+          v=$(python3 -c "import re;print(re.search(r'\| \*\*Wersja\*\* \| ([0-9.]+) \|', open('spec/grenton-core-design.md').read()).group(1))")
+          echo "version=$v" >> "$GITHUB_OUTPUT"
+      - name: Tag it, once
+        env: { V: "${{ steps.version.outputs.version }}" }
+        run: |
+          if git rev-parse -q --verify "refs/tags/$V" >/dev/null; then
+            echo "::error::spec $V is already tagged; a merge into main must bump the version (tools/suite.py bump)"
+            exit 1
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a "$V" -m "Spec $V, suite $V"
+          git push origin "refs/tags/$V"

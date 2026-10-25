@@ -23,4 +23,5 @@ vendor this repository and must pass the suite.
 - Commit messages: one imperative sentence naming the change, ending with `(spec X.Y.Z, suite X.Y.Z)` for a spec or suite change, then a paragraph on what the rules now say and why.
 - Standing decisions and the measurements behind them are in `docs/decisions.md`; a new finding that changes a rule goes there as well as into the CHANGELOG.
 - No identifiers of a real installation. Fixtures are synthetic.
-- After pushing, the Swift port must follow: move its submodule and update `port.json`.
+- `main` takes changes only through a pull request; the `check` workflow must pass. Work on a branch (`spec-X.Y.Z`), push it, open the PR with `gh pr create`, merge with `gh pr merge --squash --delete-branch`. **Every merge into main is a release**: the `release` workflow tags the version in the header, and fails when that version is already tagged — so a PR always bumps the version, also for a text-only change.
+- After the merge, the Swift port must follow: move its submodule and update `port.json`.
