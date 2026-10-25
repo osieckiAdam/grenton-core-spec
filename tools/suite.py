@@ -649,7 +649,10 @@ def build_manifest():
 
 
 def hooks_installed(errors):
-    """The gates run from tools/hooks only once a clone has enabled them."""
+    """The gates run from tools/hooks only once a clone has enabled them.
+    CI has no hooks and runs the gates itself."""
+    if os.environ.get("CI"):
+        return
     result = subprocess.run(["git", "config", "--get", "core.hooksPath"], capture_output=True, text=True, cwd=ROOT)
     if result.stdout.strip() != "tools/hooks":
         errors.append("git hooks are not enabled in this clone: run `git config core.hooksPath tools/hooks`")
