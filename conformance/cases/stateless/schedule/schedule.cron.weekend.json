@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "schedule.cron.weekend",
+  "specRefs": [
+    "devices.schedule"
+  ],
+  "description": "Saturday and Sunday in week order, Sunday as 0 — the text the app sends.",
+  "provenance": "spec §6.3.13",
+  "operation": "schedule.cron",
+  "input": {
+    "hour": 23,
+    "minute": 0,
+    "days": [
+      0,
+      6
+    ]
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "text": "0 23 * * 6,0"
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "schedule.cron.reject-day",
+  "specRefs": [
+    "devices.schedule"
+  ],
+  "description": "7 is accepted on read only; on write days are 0–6.",
+  "provenance": "spec §6.3.13",
+  "operation": "schedule.cron",
+  "input": {
+    "hour": 8,
+    "minute": 0,
+    "days": [
+      7
+    ]
+  },
+  "expect": {
+    "outcome": "reject"
+  }
+}

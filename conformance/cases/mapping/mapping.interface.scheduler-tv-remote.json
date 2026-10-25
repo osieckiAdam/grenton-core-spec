@@ -1,0 +1,297 @@
+{
+  "schemaVersion": 1,
+  "id": "mapping.interface.scheduler-tv-remote",
+  "specRefs": [
+    "model.widget-tolerance",
+    "devices.mapping",
+    "devices.order",
+    "devices.physical-objects"
+  ],
+  "description": "EVENT_SCHEDULER with every control, with the required fields only, and without ruleList (skipped); TV_REMOTE_CONTROL with four buttons plus an unknown name and an entry that is not an action (both left out), and one without any button (still an entity). The remote is not grouped; the schedulers group by their state feature.",
+  "provenance": "tools/oracles/mapping.py — independent derivation from spec §3.5, §6.1, §6.3.13, §6.3.14, §6.6",
+  "operation": "mapping.interface",
+  "input": {
+    "fixture": "fixtures/interfaces/scheduler-tv-remote.json"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "devices": [
+        {
+          "id": "w-sched-full",
+          "widgetType": "EVENT_SCHEDULER",
+          "kind": "eventSchedule",
+          "name": "Nocne",
+          "page": {
+            "index": 0,
+            "name": "Harmonogramy"
+          },
+          "entities": [
+            {
+              "kind": "eventSchedule",
+              "id": "w-sched-full_0",
+              "name": "Nocne",
+              "state": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "EVE1",
+                "index": "5"
+              },
+              "ruleList": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "EVE1",
+                "index": "0"
+              },
+              "addRuleAction": {
+                "callType": "METHOD",
+                "cluId": "CLU_501234567",
+                "objectName": "EVE1",
+                "event": "CLICK",
+                "value": "$value$",
+                "index": "2"
+              },
+              "deleteRuleAction": {
+                "callType": "METHOD",
+                "cluId": "CLU_501234567",
+                "objectName": "EVE1",
+                "event": "CLICK",
+                "value": "$value$",
+                "index": "3"
+              },
+              "ruleCount": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "EVE1",
+                "index": "3"
+              },
+              "ruleSpace": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "EVE1",
+                "index": "4"
+              },
+              "nextRule": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "EVE1",
+                "index": "2"
+              },
+              "currentRule": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "EVE1",
+                "index": "1"
+              },
+              "startAction": {
+                "callType": "METHOD",
+                "cluId": "CLU_501234567",
+                "objectName": "EVE1",
+                "event": "CLICK",
+                "value": "",
+                "index": "0"
+              },
+              "stopAction": {
+                "callType": "METHOD",
+                "cluId": "CLU_501234567",
+                "objectName": "EVE1",
+                "event": "CLICK",
+                "value": "",
+                "index": "1"
+              },
+              "enableRuleAction": {
+                "callType": "METHOD",
+                "cluId": "CLU_501234567",
+                "objectName": "EVE1",
+                "event": "CLICK",
+                "value": "$value$",
+                "index": "5"
+              },
+              "disableRuleAction": {
+                "callType": "METHOD",
+                "cluId": "CLU_501234567",
+                "objectName": "EVE1",
+                "event": "CLICK",
+                "value": "$value$",
+                "index": "6"
+              }
+            }
+          ]
+        },
+        {
+          "id": "w-sched-min",
+          "widgetType": "EVENT_SCHEDULER",
+          "kind": "eventSchedule",
+          "name": "Dzienne",
+          "page": {
+            "index": 0,
+            "name": "Harmonogramy"
+          },
+          "entities": [
+            {
+              "kind": "eventSchedule",
+              "id": "w-sched-min_0",
+              "name": "Dzienne",
+              "state": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "EVE2",
+                "index": "5"
+              },
+              "ruleList": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "EVE2",
+                "index": "0"
+              },
+              "addRuleAction": {
+                "callType": "METHOD",
+                "cluId": "CLU_501234567",
+                "objectName": "EVE2",
+                "event": "CLICK",
+                "value": "$value$",
+                "index": "2"
+              },
+              "deleteRuleAction": {
+                "callType": "METHOD",
+                "cluId": "CLU_501234567",
+                "objectName": "EVE2",
+                "event": "CLICK",
+                "value": "$value$",
+                "index": "3"
+              },
+              "ruleCount": null,
+              "ruleSpace": null,
+              "nextRule": null,
+              "currentRule": null,
+              "startAction": null,
+              "stopAction": null,
+              "enableRuleAction": null,
+              "disableRuleAction": null
+            }
+          ]
+        },
+        {
+          "id": "w-tv",
+          "widgetType": "TV_REMOTE_CONTROL",
+          "kind": "tvRemote",
+          "name": "Telewizor",
+          "page": {
+            "index": 0,
+            "name": "Harmonogramy"
+          },
+          "entities": [
+            {
+              "kind": "tvRemote",
+              "id": "w-tv_0",
+              "name": "Telewizor",
+              "buttons": {
+                "on": {
+                  "callType": "METHOD",
+                  "cluId": "CLU_501234567",
+                  "objectName": "TVR1",
+                  "event": "CLICK",
+                  "value": "1",
+                  "index": "0"
+                },
+                "off": {
+                  "callType": "METHOD",
+                  "cluId": "CLU_501234567",
+                  "objectName": "TVR1",
+                  "event": "CLICK",
+                  "value": "1",
+                  "index": "1"
+                },
+                "volumeUp": {
+                  "callType": "METHOD",
+                  "cluId": "CLU_501234567",
+                  "objectName": "TVR1",
+                  "event": "CLICK",
+                  "value": "1",
+                  "index": "2"
+                },
+                "mute": {
+                  "callType": "METHOD",
+                  "cluId": "CLU_501234567",
+                  "objectName": "TVR1",
+                  "event": "CLICK",
+                  "value": "1",
+                  "index": "3"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "w-tv-empty",
+          "widgetType": "TV_REMOTE_CONTROL",
+          "kind": "tvRemote",
+          "name": "Pusty pilot",
+          "page": {
+            "index": 0,
+            "name": "Harmonogramy"
+          },
+          "entities": [
+            {
+              "kind": "tvRemote",
+              "id": "w-tv-empty_0",
+              "name": "Pusty pilot",
+              "buttons": {}
+            }
+          ]
+        }
+      ],
+      "physicalObjects": [
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "object",
+            "name": "EVE1",
+            "index": "5"
+          },
+          "widgets": [
+            {
+              "deviceId": "w-sched-full",
+              "widgetType": "EVENT_SCHEDULER",
+              "name": "Nocne",
+              "page": {
+                "index": 0,
+                "name": "Harmonogramy"
+              },
+              "entityIds": [
+                "w-sched-full_0"
+              ]
+            }
+          ]
+        },
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "object",
+            "name": "EVE2",
+            "index": "5"
+          },
+          "widgets": [
+            {
+              "deviceId": "w-sched-min",
+              "widgetType": "EVENT_SCHEDULER",
+              "name": "Dzienne",
+              "page": {
+                "index": 0,
+                "name": "Harmonogramy"
+              },
+              "entityIds": [
+                "w-sched-min_0"
+              ]
+            }
+          ]
+        }
+      ],
+      "skippedWidgets": [
+        [
+          "EVENT_SCHEDULER"
+        ]
+      ]
+    }
+  }
+}

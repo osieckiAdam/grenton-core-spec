@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "schedule.rules.unsupported",
+  "specRefs": [
+    "devices.schedule"
+  ],
+  "description": "A rule outside the app's subset keeps its text and gets no time and no days: a day of month, a step, a list in the hour field.",
+  "provenance": "spec §6.3.13",
+  "operation": "schedule.rules",
+  "input": {
+    "text": "{{1, 1, \"0 8 15 * *\"},{2, 1, \"*/5 8 * * *\"},{3, 1, \"0 8,20 * * *\"}}"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "rules": [
+        {
+          "id": 1,
+          "isEnabled": true,
+          "cron": "0 8 15 * *",
+          "hour": null,
+          "minute": null,
+          "days": null
+        },
+        {
+          "id": 2,
+          "isEnabled": true,
+          "cron": "*/5 8 * * *",
+          "hour": null,
+          "minute": null,
+          "days": null
+        },
+        {
+          "id": 3,
+          "isEnabled": true,
+          "cron": "0 8,20 * * *",
+          "hour": null,
+          "minute": null,
+          "days": null
+        }
+      ]
+    }
+  }
+}

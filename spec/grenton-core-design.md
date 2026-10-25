@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Status** | Design (for implementation) |
-| **Version** | 0.11.3 |
+| **Version** | 0.12.0 |
 | **Date** | 2026-10-25 |
 | **Reference implementation** | `homeassistant-grenton` (Python, Home Assistant integration) |
 | **Purpose** | Language-agnostic specification — the basis for ports (first: Swift) |
@@ -159,7 +159,7 @@ Page (`page`): `name`, `icon`, `isFullscreenWidget: bool`, `widgets: []`.
 
 ### 3.5 Widget catalog
 
-Every widget has an `id: string` and a `type` discriminator. 16 supported types (plus `HEADER`, below):
+Every widget has an `id: string` and a `type` discriminator. 18 supported types (plus `HEADER`, below):
 
 | `type` | Key fields |
 |---|---|
@@ -179,10 +179,12 @@ Every widget has an `id: string` and a `type` discriminator. 16 supported types 
 | `SCENE` | `components[]` of type `BUTTON_MONOSTABLE`: `label, rowId, unit, actions: ActionRef[]` |
 | `SCENE_DOUBLE` | like `SCENE` (usually 2 components, **both with `rowId` 0**); optional `background` (presentational) |
 | `THERMOSTAT_V2` | `label`, `icon?`, `no_of_fan_speeds?`, `object`: required `currentTemperature`, `targetTemperature`, `setTargetTemperatureAction`; optional `minTemperature`, `maxTemperature`, `mode` + `setModeAction`, `state` + `setStateAction`, `controlOutValue`, `setMin/MaxTemperatureAction`, `scheduleData` + `setScheduleDataAction` |
+| `EVENT_SCHEDULER` | `label`, `icon`, `object`: required `state`, `ruleList`, `addRuleAction`, `deleteRuleAction`; optional `ruleCount`, `ruleSpace`, `nextRule`, `currentRule`, `startAction`, `stopAction`, `enableRuleAction`, `disableRuleAction`, `getRuleAction` |
+| `TV_REMOTE_CONTROL` | `label`, `icon`, `vodLabel`, `object`: a map of button name → `ActionRef`, any subset of `on, off, up, down, left, right, ok, menu, back, guide, play, pause, fastForward, fastRewind, nextChannel, previousChannel, volumeUp, volumeDown, mute, vod, init` — **also empty** (a remote whose buttons were never assigned in Object Manager); other names are ignored |
 
 **Presentational widgets:** `HEADER` (a section header: `components[]` with only a `label`) is recognized, **does not create a device and is not reported as skipped** (§3.6) — it is UI layout, not an error.
 
-**Known, unsupported in v1:** `EVENT_SCHEDULER` (event scheduler: a list of rules, add/remove) and `TV_REMOTE_CONTROL` (TV remote: `vodLabel`, `icon`, `label`, `object` with button actions) — skipped like an unknown type.
+**Δ** The reference implementation does not know `EVENT_SCHEDULER` and `TV_REMOTE_CONTROL`; Core maps them (§6.3.13, §6.3.14).
 
 Common base of list components: `label: string`, `rowId: int`, `unit: enum {UNKNOWN, PERCENT, DEGREE}`.
 
@@ -422,9 +424,9 @@ clientReport:{session}:{v1,v2,...,vn}
 The values `vi` are in the order of the request's keys; they are the **initial values** of the subscribed states. Parsing the payload:
 
 1. Prefix `clientReport:`; the second field = int — the subscription number. The response to a registration is correlated by `msg_id` (§5.4.1), so the number in the response **is not checked**.
-2. The third part must start with `{` and end with `}` (the outer braces; absence of either → item 3). The content between them is split into elements **on commas outside quotes and outside nested braces**: `"` opens and closes text (no escaping), `{` and `}` outside text increase and decrease the depth, and elements are separated only by a comma outside text at depth 0. A nested `{…}` block is a single element and after `castString` remains a string with the braces (e.g. `{0,{1,2},3}` → `0`, `{1,2}`, `3`). Each element: trim + strip quotes + `castString` (§3.1). Text not closed at the end of the content, a depth other than 0 at the end, or a `}` at depth 0 (the depth never drops below zero) → payload rejected as in item 3.
+2. The third part must start with `{` and end with `}` (the outer braces; absence of either → item 3). The content between them is split into elements **on commas outside quotes and outside nested braces**: `"` opens and closes text (no escaping), `{` and `}` outside text increase and decrease the depth, and elements are separated only by a comma outside text at depth 0. A nested `{…}` block is a single element and after `castString` remains a string with the braces (e.g. `{0,{1,2},3}` → `0`, `{1,2}`, `3`). **A quoted table:** text that begins with `"{` is a Lua table the CLU serialized into a string (the `RuleList` of an event scheduler is `"{{2, 1, "0 20 * * *"},{1, 1, "0 23 * * 6,0"}}"`): the text extends to the `}` that balances its first `{`, counting braces and ignoring quotes in between, and that `}` must be followed by `"`, which closes the text. When no such balancing `}` followed by `"` exists before the end of the content, the text is read by the plain rule (up to the next `"`). Each element: trim + strip quotes + `castString` (§3.1); a quoted table stays a string with its braces and inner quotes. Text not closed at the end of the content, a depth other than 0 at the end, or a `}` at depth 0 (the depth never drops below zero) → payload rejected as in item 3.
 3. **Semantics of parse errors:** a payload without the prefix / with an invalid number / with unclosed text or an unbalanced brace inside the content → payload rejected (for a registration response: **the chunk is considered failed**, §5.4.2; for a notification — ignored with a log). A correct prefix and number, but a third part without `{` at the start or without `}` at the end (including a truncated one, e.g. `{1,2`) or with empty content → **an empty value list**: for a registration response the chunk failed (value count ≠ key count), for a notification — the report is ignored with a log, with no state update.
-4. **Known protocol limitation:** no escaping — a string value containing a quote will derail positional parsing (a comma inside text and nested braces are handled by item 2). Recorded as a limitation (§10).
+4. **Known protocol limitation:** no escaping — a string value containing a quote will derail positional parsing, unless it is a quoted table (a comma inside text, nested braces and quoted tables are handled by item 2). Recorded as a limitation (§10).
 
 **Deregistration** (`clientDestroy`), fresh random `msg_id`:
 
@@ -651,8 +653,10 @@ Technology-neutral (actor / serial queue / mutex — the port's choice):
   | `SCENE`, `SCENE_DOUBLE` | `scene` |
   | `THERMOSTAT_V2` | `thermostat` |
   | `CAMERA` | `camera` |
+  | `EVENT_SCHEDULER` | `eventSchedule` |
+  | `TV_REMOTE_CONTROL` | `tvRemote` |
 
-- **The device `name`:** the widget's `label`, if the type has one (`VALUE_V2`, `DIMMER_V2`, `CONTACT_SENSOR`, `SLIDER`, `MULTISENSOR`, `ROLLER_SHUTTER_V3`, `THERMOSTAT_V2`). Otherwise the non-empty `label`s of the components in order, joined with `" / "` (`VALUE_DOUBLE`, `CONTACT_SENSOR_DOUBLE`: left, right; widgets with `components[]`: list order). Exception: `LED` → the `label` of the first `BUTTON_BISTABLE` component. No labels → `""`. Entity names are independent (§6.3).
+- **The device `name`:** the widget's `label`, if the type has one (`VALUE_V2`, `DIMMER_V2`, `CONTACT_SENSOR`, `SLIDER`, `MULTISENSOR`, `ROLLER_SHUTTER_V3`, `THERMOSTAT_V2`, `EVENT_SCHEDULER`, `TV_REMOTE_CONTROL`). Otherwise the non-empty `label`s of the components in order, joined with `" / "` (`VALUE_DOUBLE`, `CONTACT_SENSOR_DOUBLE`: left, right; widgets with `components[]`: list order). Exception: `LED` → the `label` of the first `BUTTON_BISTABLE` component. No labels → `""`. Entity names are independent (§6.3).
 - **Order is part of the contract:** devices in the order `pages[]` → `widgets[]` (skipped widgets do not create devices); a device's entities in the order given in §6.3 (components in list order; `CONTACT_SENSOR_DOUBLE`: left sensor, left button, right sensor, right button; `MULTISENSOR`: the order of the table in §6.3.6; sensor/slider before button).
 - **Completeness rules:** a widget that does not meet the requirements of its mapping (missing action, missing component) produces a device **without entities** or omits the given entity — never an error for the whole.
 - An entity reads state through `StateStore.get(valueRef)` and exposes a **normalized state**; commands translate canonical values into the device format and execute the `ActionRef` through the session. All of this translation (coercions, ranges, inversions of scale, rounding) lives in Core — adapters **do not reimplement** it.
@@ -776,6 +780,35 @@ The widget of the Grenton Thermostat virtual object. Feature semantics according
 - Numeric values: temperatures arrive as `int` or `double` (`"20"` → `int`, `"19.8"` → `double`), including fractional setpoint temperatures (`21.5`) — the read treats both types as a number (§6.2). The `min/max` limits come from the CLU; do not assume the range from the manual.
 - In manual mode `targetTemperature` takes the value written by `setTargetTemperature`.
 
+#### 6.3.13 `EventSchedule` — from `EVENT_SCHEDULER`
+
+The widget of the Grenton `EventScheduler` virtual object (CLU Z-Wave firmware 5.09.02 and Object Manager 1.6.1 or newer): up to 16 rules, each a time of day on chosen weekdays, firing the object's `OnEvent`. Feature and method semantics according to the Grenton manual ("The EventScheduler virtual object"); **Δ** the reference implementation does not support this widget.
+
+- One entity; suffix `_0`. Completeness: the required fields from §3.5 (if missing → the widget is skipped); each optional control exists when its field is present.
+- **Subscribed states:** `state`, `ruleList`, and whichever of `ruleCount`, `ruleSpace`, `nextRule`, `currentRule` are present.
+- **A rule** is a CRON text of five space-separated fields, `minute hour * * days`, as the object's `AddRule` takes it and `RuleList` returns it. Core reads and writes the subset the myGrenton app uses: `minute` 0–59, `hour` 0–23, the third and fourth field `*`, `days` either `*` (every day) or a comma-separated list of weekdays **0–6 with 0 = Sunday** (the app writes `6,0` for Saturday and Sunday and `1,2,3,4,5` for Monday to Friday); on read a range `a-b` (the Object Manager manual's `1-5`) and `7` for Sunday are accepted too. A rule outside this subset (any other third or fourth field, a step `*/n`, a list in the minute or hour field) is **unsupported**: Core keeps its text and gives it no time and no days. Core writes days in week order Monday to Sunday (`1,2,3,4,5,6,0`), and all seven days as `*`.
+- **The rule list** value (`ruleList`) is the text `{{id, enabled, "cron"},…}` — a Lua table serialized by the CLU (§5.3.2 item 2): Core splits it into rules in the CLU's order (the CLU lists them by the next time they fire, not by id), each `{id: int, isEnabled: enabled == 1, cron}` with the cron parsed as above; a text that is not such a table (also `N/A` and an empty table) → **no rules known** (`nil`), not an empty list. `nextRule` and `currentRule` hold one such `{id, enabled, "cron"}` or `N/A` (no rule due or running) → `nil`.
+- State:
+  - `isActive = truthy(state)` — the State feature: 1 = the scheduler fires its rules, 0 = stopped;
+  - `rules` — the parsed rule list (or `nil`);
+  - `ruleCount`, `freeRuleSlots` (`ruleSpace` — the object's `RuleAvailableCount`) — ints when present;
+  - `nextRule`, `currentRule` — a rule or `nil`.
+- Intents (actions with `$value$` take a value, §3.3; a missing control → the intent is a no-op):
+  - `setActive(true)` → `startAction`, `setActive(false)` → `stopAction` (no value);
+  - `addRule(hour, minute, days)` → `addRuleAction` with the CRON text as the value: it is a string with spaces and commas, so it goes through §5.3.4 quoted — `execute(2, "25 22 * * 1,2,3")` — exactly as the app sends it. Hour outside 0–23, minute outside 0–59 or an empty day set → rejected by the entity, nothing is sent. The CLU answers the new rule's id, which Core does not surface: the rule appears in the next `ruleList` report;
+  - `deleteRule(id)`, `enableRule(id)`, `disableRule(id)` → the respective actions with the id (1–16) as the value;
+  - `getRuleAction` is not used: the list carries every rule.
+
+#### 6.3.14 `TvRemote` — from `TV_REMOTE_CONTROL`
+
+A remote control for a TV: a set of buttons, each an action on the CLU (typically an IR or network command). **Δ** the reference implementation does not support this widget.
+
+- One entity; suffix `_0`; it exists **also when the widget has no buttons** — Object Manager creates the widget before any button is assigned, and the app shows it.
+- `buttons` — the set of button names (§3.5) whose entry in `object` parses as an `ActionRef`; an entry that does not parse is left out, not an error; names outside §3.5 are ignored.
+- No state; nothing is subscribed.
+- Intent: `press(button)` — executes that button's action with its `value` from the widget; a button that is not in `buttons` → the intent is a no-op.
+- Physical objects (§6.6): a remote is not grouped — its buttons may each drive a different object.
+
 ### 6.4 User metadata (user config)
 
 Adapters let the user refine the presentation (device class, unit, slider mode). Since Core **neither interprets nor persists** this data, **it does not store it at all**: the user configuration lives entirely on the adapter's side as its own `entityId → config` map, keyed by the stable entity identifier (§6.1). Core's only guarantee is the **stability of entity identifiers** across runs and ports. Thanks to this, HA configuration keys (e.g. `device_class`) do not leak into Core, another adapter (HomeKit) keeps its own — and Core's entities remain immutable.
@@ -794,7 +827,7 @@ A device corresponds to a **widget**, not to hardware: the same CLU object is so
   - `object` — a feature/method of an object (`THE1001` / `14`, `ROL1001` / `…`), `name` = `objectName`, `index` = the feature index (or the method index for stateless entities). **The index is part of the key:** one LED module controls separate strips on separate channels (`LED1001` / `3` and `/ 4` are two different devices), while both thermostat widgets read the same feature (`THE1001` / `14`);
   - `variable` — a CLU global variable, `name` = the variable name, `index` = `null`;
   - `script` — a Lua script (scenes), `name` = the `objectName` of the `SCRIPT` action, `index` = `null`.
-- **Every entity belongs to exactly one object** — by its primary reference: `switch`, `dimmableLight`, `contactSensor`, `sensor`, `numberSetting`, `stateSensor` → `state`; `hsbLight` → `powerState`; `cover` → `position`; `thermostat` → `currentTemperature`; stateless entities (`trigger`, `sceneTrigger`) → their action (`VARIABLE` → variable, `SCRIPT` → script, others → object). `camera` does not touch the CLU and is not grouped.
+- **Every entity belongs to exactly one object** — by its primary reference: `switch`, `dimmableLight`, `contactSensor`, `sensor`, `numberSetting`, `stateSensor` → `state`; `hsbLight` → `powerState`; `cover` → `position`; `thermostat` → `currentTemperature`; `eventSchedule` → `state`; stateless entities (`trigger`, `sceneTrigger`) → their action (`VARIABLE` → variable, `SCRIPT` → script, others → object). `camera` does not touch the CLU and `tvRemote` drives many objects: neither is grouped.
 - A widget may therefore belong to several objects (`ON_OFF_DOUBLE` → two relays; a contact sensor with a button on a variable → the sensor's object and the variable) — with the appropriate entities at each.
 - **Result:** a list of objects in order of first use (devices in the order of §6.1, entities in their order); each object: `key` and `widgets[]` in device order, each entry: `deviceId`, `widgetType`, `name` (the device name), `page`, `entityIds[]` (the entities of this widget belonging to the object).
 - The choice of name and area (e.g. room page vs function page) belongs to the adapter — Core provides them all.
@@ -938,7 +971,7 @@ The session integration tests run against it: chunked registration (a key list a
 ## 10. Known limitations and decisions
 
 1. **Static IV / no MAC** — imposed by the CLU protocol; cannot be fixed on the client side (§5.1).
-2. **Positional pairing without escaping** — a string containing a quotation mark will derail the report (§5.3.2). A comma inside text and nested braces parse correctly since 0.9.0; the protocol does not escape the quotation mark, so there is no workaround here. The risk is real only for text variables.
+2. **Positional pairing without escaping** — a string containing a quotation mark will derail the report (§5.3.2). A comma inside text and nested braces parse correctly since 0.9.0, and a Lua table serialized into a string (an event scheduler's rule list) since 0.12.0; the protocol does not escape the quotation mark, so a plain string with one inside has no workaround. The risk is real only for text variables.
 3. **Number format in action payloads:** the reference implementation sends Python's `str(round(v, p))` (e.g. `5.0` at precision 0). **The default behavior of Core is the format matching the reference implementation** (the CLU accepts it, e.g. `"22.0"`). The format without `.0` is available only behind a flag — its acceptance by the CLU is not confirmed. Quotation marks around a number are irrelevant to the CLU (§5.3.4 Δ).
 4. **Registration frame limit of 1471 B** (§5.3.2) — in bytes, not a number of keys: a key count does not protect against long variable names. It follows from the 1500 MTU, so the port may allow it to be lowered when a smaller MTU is on the path; it may not raise it, because some CLUs do not reassemble IP fragments.
 5. **No verification of the datagram sender** in the reference implementation; Core permits filtering by the CLU address (Δ §7.1).

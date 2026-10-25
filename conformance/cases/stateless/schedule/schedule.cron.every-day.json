@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "schedule.cron.every-day",
+  "specRefs": [
+    "devices.schedule"
+  ],
+  "description": "All seven days become *.",
+  "provenance": "spec §6.3.13",
+  "operation": "schedule.cron",
+  "input": {
+    "hour": 8,
+    "minute": 5,
+    "days": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ]
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "text": "5 8 * * *"
+    }
+  }
+}

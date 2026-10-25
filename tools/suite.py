@@ -36,8 +36,8 @@ FIXTURES = os.path.join(CONFORMANCE, "fixtures")
 MANIFEST = os.path.join(CONFORMANCE, "manifest.json")
 
 SCHEMA_VERSION = 1
-SUITE_VERSION = "0.11.3"
-SPEC_VERSION = "0.11.3"
+SUITE_VERSION = "0.12.0"
+SPEC_VERSION = "0.12.0"
 
 # operation -> (profile, required input keys, optional input keys)
 OPERATIONS = {
@@ -55,6 +55,8 @@ OPERATIONS = {
     "coercion.boolFromOnOff": ("stateless", {"value"}, set()),
     "coercion.truthy": ("stateless", {"value"}, set()),
     "number.format": ("stateless", {"value", "precision"}, set()),
+    "schedule.rules": ("stateless", {"text"}, set()),
+    "schedule.cron": ("stateless", {"hour", "minute", "days"}, set()),
     "mapping.interface": ("mapping", {"fixture"}, set()),
     "provisioning.omp": ("project", {"fixture"}, {"interfaceId"}),
     "session.scenario": ("session", {"clu", "responseTimeoutMs", "steps"}, {"pingIntervalMs", "registerIntervalMs", "registerFrameLimitBytes"}),
@@ -69,7 +71,7 @@ REQUIREMENTS = {
     "model.cast": "§3.1", "model.action-ref": "§3.3, §3.6",
     "provisioning.url": "§4.1", "provisioning.pin": "§4.1",
     "provisioning.omp": "§4.5", "provisioning.omp-selection": "§4.5.2", "provisioning.omp-archive": "§4.5.1",
-    "devices.coercion": "§6.2", "devices.number-format": "§10 pt 3",
+    "devices.coercion": "§6.2", "devices.number-format": "§10 pt 3", "devices.schedule": "§6.3.13",
     "model.widget-tolerance": "§3.6", "devices.mapping": "§6.1, §6.3", "devices.order": "§6.1", "devices.physical-objects": "§6.6",
     "session.correlation": "§5.4.1", "session.chunking": "§5.4.2, §5.3.2",
     "session.report-routing": "§5.4.3, §5.3.3", "session.keepalive": "§5.3.1",

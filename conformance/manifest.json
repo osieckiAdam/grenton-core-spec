@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "suiteVersion": "0.11.3",
-  "specVersion": "0.11.3",
+  "suiteVersion": "0.12.0",
+  "specVersion": "0.12.0",
   "profiles": {
     "mapping": [
       "mapping.interface"
@@ -24,6 +24,8 @@
       "payload.report",
       "payload.values",
       "provisioning.url",
+      "schedule.cron",
+      "schedule.rules",
       "value.cast",
       "wire.request",
       "wire.response"
@@ -38,6 +40,7 @@
     "devices.number-format": "\u00a710 pt 3",
     "devices.order": "\u00a76.1",
     "devices.physical-objects": "\u00a76.6",
+    "devices.schedule": "\u00a76.3.13",
     "model.action-ref": "\u00a73.3, \u00a73.6",
     "model.cast": "\u00a73.1",
     "model.widget-tolerance": "\u00a73.6",
@@ -300,6 +303,11 @@
       "sha256": "456152728a0cb04a59491e84139af8e9d926e92c87852a654a62e12abb047838"
     },
     {
+      "id": "mapping.interface.scheduler-tv-remote",
+      "path": "cases/mapping/mapping.interface.scheduler-tv-remote.json",
+      "sha256": "34abf3393f659de8f54c22690a6204ce5be896f5d658be0cc5acbe4cf1599fdd"
+    },
+    {
       "id": "mapping.interface.shared-objects",
       "path": "cases/mapping/mapping.interface.shared-objects.json",
       "sha256": "19732f8975c77f805571905a9642a2dd8dd231189ad0ce0ddf033b2d30d78cdf"
@@ -510,6 +518,11 @@
       "sha256": "503326197629eecd1dd60f710cb62ca12f70c0dc379ea4a98347594c5abde58a"
     },
     {
+      "id": "payload.report.quoted-table",
+      "path": "cases/stateless/report/payload.report.quoted-table.json",
+      "sha256": "67d55d868c18e1ce5025a8d73e1545bf68f4188856d3341556166c662e4fb7d5"
+    },
+    {
       "id": "payload.report.registration-reply",
       "path": "cases/stateless/report/payload.report.registration-reply.json",
       "sha256": "3d88f436f9fe548b066278bd6c54af2b96e889b42d0b38a018759bb0eb6e061d"
@@ -528,6 +541,11 @@
       "id": "payload.report.reject-non-integer-session-id",
       "path": "cases/stateless/report/payload.report.reject-non-integer-session-id.json",
       "sha256": "cc33edb2104b8d852a2a9c66272658e2b408dfe47472a64a9eb7a4d10e5b2db0"
+    },
+    {
+      "id": "payload.report.reject-quoted-table-unclosed",
+      "path": "cases/stateless/report/payload.report.reject-quoted-table-unclosed.json",
+      "sha256": "95a1e3ad443ff258495eb11227eac4de9e20fca345301bb1134ede6973b6010e"
     },
     {
       "id": "payload.report.reject-reversed-braces",
@@ -563,6 +581,16 @@
       "id": "payload.values.nil-for-unknown-key",
       "path": "cases/stateless/values/payload.values.nil-for-unknown-key.json",
       "sha256": "aa924b59f45d91ae52a9ced489e8b1d63281e6017cf02a610018b8d1ec29a3af"
+    },
+    {
+      "id": "payload.values.quoted-table",
+      "path": "cases/stateless/values/payload.values.quoted-table.json",
+      "sha256": "0bab4ddc8ce59af894e9d215bbb81f4852e5480de0e2c32da8491882e041c911"
+    },
+    {
+      "id": "payload.values.quoted-table-fallback",
+      "path": "cases/stateless/values/payload.values.quoted-table-fallback.json",
+      "sha256": "e89adb9b03f29b99e28d7997771c3c5b01e063615f86b988d7e7c82e199cbb9a"
     },
     {
       "id": "payload.values.reject-malformed-empty",
@@ -632,7 +660,7 @@
     {
       "id": "provisioning.omp.select-by-id",
       "path": "cases/project/provisioning.omp.select-by-id.json",
-      "sha256": "b84ee61c45b9db7a8f36afd6323c3b1fc5974e2c28895f1c3aaa4ecbb54c2049"
+      "sha256": "c752497096756ded5da3ddc3235e70ec37be86debe90143802eb762dd3e6a5ff"
     },
     {
       "id": "provisioning.omp.unknown-id",
@@ -738,6 +766,61 @@
       "id": "provisioning.url.pin-zero-width-space-kept",
       "path": "cases/stateless/provisioning-url/provisioning.url.pin-zero-width-space-kept.json",
       "sha256": "a4365bf4fd21929e63bdc62ac2e776888d0f9e7d203ece02aa34ab3f031a6bc4"
+    },
+    {
+      "id": "schedule.cron.every-day",
+      "path": "cases/stateless/schedule/schedule.cron.every-day.json",
+      "sha256": "97c33030e718d08646a577094fa96197f12d5baaaa598e8f49f86243feeda57a"
+    },
+    {
+      "id": "schedule.cron.reject-day",
+      "path": "cases/stateless/schedule/schedule.cron.reject-day.json",
+      "sha256": "66e0ae9f66aceefce3d0ef6ffd5a39d1e6933fcbfed9fb2c2e32ebb229cec9cb"
+    },
+    {
+      "id": "schedule.cron.reject-hour",
+      "path": "cases/stateless/schedule/schedule.cron.reject-hour.json",
+      "sha256": "2976a40d12a141d4d2f83d40e4ba1dae265210b6324cf153d88a7eef6d449abe"
+    },
+    {
+      "id": "schedule.cron.reject-no-days",
+      "path": "cases/stateless/schedule/schedule.cron.reject-no-days.json",
+      "sha256": "57d1e0fc89342ae78f78bba4c0b201a6c9a859abdb4b46f4c2ef9f71e26b0570"
+    },
+    {
+      "id": "schedule.cron.weekdays",
+      "path": "cases/stateless/schedule/schedule.cron.weekdays.json",
+      "sha256": "5b14c1d024f717b702fae95ccc5cdcd64843fadb4fc68f4c7a1734f463e5fc3b"
+    },
+    {
+      "id": "schedule.cron.weekend",
+      "path": "cases/stateless/schedule/schedule.cron.weekend.json",
+      "sha256": "4ea8622cedc0ceb508eb2def568d4ed4b23897738c48caf84e3637a32e23151a"
+    },
+    {
+      "id": "schedule.rules.empty-table",
+      "path": "cases/stateless/schedule/schedule.rules.empty-table.json",
+      "sha256": "b6e6f3a01bb19c0b728e0635445536c93ea45fbcee06d76bd9aadeb47dcc859a"
+    },
+    {
+      "id": "schedule.rules.list",
+      "path": "cases/stateless/schedule/schedule.rules.list.json",
+      "sha256": "b4918518fc08a51871ee867d93f408d0a011c9df39a57923dedec4bc93189765"
+    },
+    {
+      "id": "schedule.rules.none",
+      "path": "cases/stateless/schedule/schedule.rules.none.json",
+      "sha256": "f126c8a6c7e858225abeaeb289d2cca9c513f7b74c032cc105e5f65ef3f76b06"
+    },
+    {
+      "id": "schedule.rules.single",
+      "path": "cases/stateless/schedule/schedule.rules.single.json",
+      "sha256": "14992c64845ac65c138b00f24cefba4785c1c5c602640a80246961b6136dab7f"
+    },
+    {
+      "id": "schedule.rules.unsupported",
+      "path": "cases/stateless/schedule/schedule.rules.unsupported.json",
+      "sha256": "3cb5bd8dfb14e4b4b713b44a0fc6d1230881b43b12896715ba8371397a526098"
     },
     {
       "id": "session.scenario.a-changed-key-list-gets-a-new-session",
@@ -1244,12 +1327,16 @@
       "sha256": "53c22613e1770e3b7015cdefeeff8c01404718b3761495c15304b88d1116527e"
     },
     {
+      "path": "fixtures/interfaces/scheduler-tv-remote.json",
+      "sha256": "4d75490f14c274da024d74c619b0aff7fd901e6014b2fe2965f600f6c1686fa4"
+    },
+    {
       "path": "fixtures/interfaces/shared-objects.json",
       "sha256": "4b0b13fc703bdaf63f474c006efa70751e9203cf5309b12b8b9904ac2da12d30"
     },
     {
       "path": "fixtures/interfaces/thermostat-scene-double-header.json",
-      "sha256": "2cdaadf025dd246513f03b01440bf8b74a89d91cef14b20457a7eb4cce0acbf3"
+      "sha256": "b6c39c288e179d551cc88affd0ea3cc64c373b1ae6b437578579256721ec9b36"
     },
     {
       "path": "fixtures/interfaces/widget-tolerance.json",

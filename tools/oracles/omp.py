@@ -527,6 +527,8 @@ REQUIRED = {
     "DIMMER_V2": ("label", "icon", "min", "max", "precision"),
     "THERMOSTAT_V2": ("label",),
     "ROLLER_SHUTTER_V3": ("icon", "label"),
+    "EVENT_SCHEDULER": ("label", "icon"),
+    "TV_REMOTE_CONTROL": ("label", "icon", "vodLabel"),
 }
 COMPONENT_REQUIRED = {
     "HEADER": ("label",),
@@ -549,6 +551,8 @@ OBJECT_REQUIRED = {
                           "moveUpAction", "moveDownAction", "startAction", "setRollerBlockedAction"),
     "CONTACT_SENSOR": ("value",),
     "SLIDER": ("value", "setValueAction"),
+    "EVENT_SCHEDULER": ("state", "ruleList", "addRuleAction", "deleteRuleAction"),
+    "TV_REMOTE_CONTROL": (),
 }
 MULTISENSOR_KEYS = ("objectAirCo2", "objectSound", "objectAirVoc", "objectLight", "objectPressure",
                     "objectHumidity", "objectTemperature")

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "schedule.rules.empty-table",
+  "specRefs": [
+    "devices.schedule"
+  ],
+  "description": "An empty table: no rules known.",
+  "provenance": "spec §6.3.13",
+  "operation": "schedule.rules",
+  "input": {
+    "text": "{}"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "rules": null
+    }
+  }
+}

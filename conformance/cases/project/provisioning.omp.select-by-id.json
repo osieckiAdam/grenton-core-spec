@@ -4,7 +4,7 @@
   "specRefs": [
     "provisioning.omp"
   ],
-  "description": "The main interface of a two-interface project whose archive lists the second one first: every specified widget type; refs and actions without an object dropped; Action suffixes, with an explicit *Action winning over a bare name; PSEUDO_METHOD as ATTRIBUTE; a script action without index; upper-case theme and scene colours; CLUs filtered to the ones used, in document order although CLU_B is used first, including one used only by an action and excluding one used only by a stub, with a serial read through an XML reference; push objects including one through a reference and one outside any CLU; an LED without its editor fields and a broken ON_OFF passed on as {id, type} and skipped; a third page with every type confirmed in 0.10.0 (CAMERA, LED, CONTACT_SENSOR, CONTACT_SENSOR_DOUBLE, SLIDER, MULTISENSOR with the objectAirVco spelling, the legacy ROLLER_SHUTTER), a TV_REMOTE_CONTROL that parsing skips, a widget never sent to a phone whose editor id stands in as omp-…, an LED missing a slider, an LED whose slider kinds are swapped (still a light: a union by type), a legacy roller whose indication is not a string and a camera whose component is not a CAMERA_STREAM (both skipped).",
+  "description": "The main interface of a two-interface project whose archive lists the second one first: every specified widget type, the EVENT_SCHEDULER mapped to a schedule; refs and actions without an object dropped; Action suffixes, with an explicit *Action winning over a bare name; PSEUDO_METHOD as ATTRIBUTE; a script action without index; upper-case theme and scene colours; CLUs filtered to the ones used, in document order although CLU_B is used first, including one used only by an action and excluding one used only by a stub, with a serial read through an XML reference; push objects including one through a reference and one outside any CLU; an LED without its editor fields and a broken ON_OFF passed on as {id, type} and skipped; a third page with every type confirmed in 0.10.0 (CAMERA, LED, CONTACT_SENSOR, CONTACT_SENSOR_DOUBLE, SLIDER, MULTISENSOR with the objectAirVco spelling, the legacy ROLLER_SHUTTER), a TV_REMOTE_CONTROL mapped to a remote with its buttons, a widget never sent to a phone whose editor id stands in as omp-…, an LED missing a slider, an LED whose slider kinds are swapped (still a light: a union by type), a legacy roller whose indication is not a string and a camera whose component is not a CAMERA_STREAM (both skipped).",
   "provenance": "spec §4.5 text; expectations re-derived by tools/oracles/omp.py and tools/oracles/mapping.py",
   "operation": "provisioning.omp",
   "input": {
@@ -124,6 +124,10 @@
               {
                 "id": "ro000001",
                 "type": "ROLLER_SHUTTER_V3"
+              },
+              {
+                "id": "ev000001",
+                "type": "EVENT_SCHEDULER"
               }
             ]
           },
@@ -159,6 +163,10 @@
               {
                 "id": "rs000001",
                 "type": "ROLLER_SHUTTER"
+              },
+              {
+                "id": "tv000001",
+                "type": "TV_REMOTE_CONTROL"
               },
               {
                 "id": "omp-5009",
@@ -574,6 +582,107 @@
             ]
           },
           {
+            "id": "ev000001",
+            "widgetType": "EVENT_SCHEDULER",
+            "kind": "eventSchedule",
+            "name": "Schedule",
+            "page": {
+              "index": 1,
+              "name": "Climate"
+            },
+            "entities": [
+              {
+                "kind": "eventSchedule",
+                "id": "ev000001_0",
+                "name": "Schedule",
+                "state": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_A",
+                  "objectName": "EVE1001",
+                  "index": "5"
+                },
+                "ruleList": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_A",
+                  "objectName": "EVE1001",
+                  "index": "0"
+                },
+                "addRuleAction": {
+                  "callType": "METHOD",
+                  "cluId": "CLU_A",
+                  "objectName": "EVE1001",
+                  "event": "CLICK",
+                  "value": "$value$",
+                  "index": "2"
+                },
+                "deleteRuleAction": {
+                  "callType": "METHOD",
+                  "cluId": "CLU_A",
+                  "objectName": "EVE1001",
+                  "event": "CLICK",
+                  "value": "$value$",
+                  "index": "3"
+                },
+                "ruleCount": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_A",
+                  "objectName": "EVE1001",
+                  "index": "3"
+                },
+                "ruleSpace": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_A",
+                  "objectName": "EVE1001",
+                  "index": "4"
+                },
+                "nextRule": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_A",
+                  "objectName": "EVE1001",
+                  "index": "2"
+                },
+                "currentRule": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_A",
+                  "objectName": "EVE1001",
+                  "index": "1"
+                },
+                "startAction": {
+                  "callType": "METHOD",
+                  "cluId": "CLU_A",
+                  "objectName": "EVE1001",
+                  "event": "CLICK",
+                  "value": "",
+                  "index": "0"
+                },
+                "stopAction": {
+                  "callType": "METHOD",
+                  "cluId": "CLU_A",
+                  "objectName": "EVE1001",
+                  "event": "CLICK",
+                  "value": "",
+                  "index": "1"
+                },
+                "enableRuleAction": {
+                  "callType": "METHOD",
+                  "cluId": "CLU_A",
+                  "objectName": "EVE1001",
+                  "event": "CLICK",
+                  "value": "$value$",
+                  "index": "5"
+                },
+                "disableRuleAction": {
+                  "callType": "METHOD",
+                  "cluId": "CLU_A",
+                  "objectName": "EVE1001",
+                  "event": "CLICK",
+                  "value": "$value$",
+                  "index": "6"
+                }
+              }
+            ]
+          },
+          {
             "id": "ca000001",
             "widgetType": "CAMERA",
             "kind": "camera",
@@ -951,6 +1060,24 @@
             ]
           },
           {
+            "id": "tv000001",
+            "widgetType": "TV_REMOTE_CONTROL",
+            "kind": "tvRemote",
+            "name": "TV",
+            "page": {
+              "index": 2,
+              "name": "More widgets"
+            },
+            "entities": [
+              {
+                "kind": "tvRemote",
+                "id": "tv000001_0",
+                "name": "TV",
+                "buttons": {}
+              }
+            ]
+          },
+          {
             "id": "omp-5009",
             "widgetType": "SLIDER",
             "kind": "numberSetting",
@@ -1309,6 +1436,28 @@
             "key": {
               "cluId": "CLU_A",
               "kind": "object",
+              "name": "EVE1001",
+              "index": "5"
+            },
+            "widgets": [
+              {
+                "deviceId": "ev000001",
+                "widgetType": "EVENT_SCHEDULER",
+                "name": "Schedule",
+                "page": {
+                  "index": 1,
+                  "name": "Climate"
+                },
+                "entityIds": [
+                  "ev000001_0"
+                ]
+              }
+            ]
+          },
+          {
+            "key": {
+              "cluId": "CLU_A",
+              "kind": "object",
               "name": "OBJ2006",
               "index": "1"
             },
@@ -1651,12 +1800,10 @@
         "skippedWidgets": [
           [],
           [
-            "EVENT_SCHEDULER",
             "LED",
             "ON_OFF"
           ],
           [
-            "TV_REMOTE_CONTROL",
             "LED",
             "ROLLER_SHUTTER",
             "CAMERA"

@@ -11,8 +11,13 @@ SUPPORTED = {
     "VALUE_V2", "VALUE_DOUBLE", "ON_OFF", "ON_OFF_DOUBLE", "DIMMER_V2", "LED",
     "CONTACT_SENSOR", "CONTACT_SENSOR_DOUBLE", "SLIDER", "MULTISENSOR",
     "ROLLER_SHUTTER", "ROLLER_SHUTTER_V3", "CAMERA", "SCENE",
-    "SCENE_DOUBLE", "THERMOSTAT_V2",
+    "SCENE_DOUBLE", "THERMOSTAT_V2", "EVENT_SCHEDULER", "TV_REMOTE_CONTROL",
 }
+
+# §3.5: the button names of a TV remote.
+TV_BUTTONS = ["on", "off", "up", "down", "left", "right", "ok", "menu", "back", "guide", "play", "pause",
+              "fastForward", "fastRewind", "nextChannel", "previousChannel", "volumeUp", "volumeDown",
+              "mute", "vod", "init"]
 
 # §3.5: known layout-only widgets — no device, not reported as skipped.
 PRESENTATIONAL = {"HEADER"}
@@ -24,7 +29,7 @@ DEVICE_KIND = {
     "VALUE_V2": "sensor", "VALUE_DOUBLE": "sensor", "MULTISENSOR": "multisensor",
     "SLIDER": "numberSetting", "ROLLER_SHUTTER": "cover", "ROLLER_SHUTTER_V3": "cover",
     "SCENE": "scene", "SCENE_DOUBLE": "scene", "CAMERA": "camera",
-    "THERMOSTAT_V2": "thermostat",
+    "THERMOSTAT_V2": "thermostat", "EVENT_SCHEDULER": "eventSchedule", "TV_REMOTE_CONTROL": "tvRemote",
 }
 
 # §6.3.6: suffix, channel field, canonical kind, unit — in table order.
@@ -64,7 +69,7 @@ def joined(labels):
 def device_name(w):
     t = w["type"]
     if t in ("VALUE_V2", "DIMMER_V2", "CONTACT_SENSOR", "SLIDER", "MULTISENSOR", "ROLLER_SHUTTER_V3",
-             "THERMOSTAT_V2"):
+             "THERMOSTAT_V2", "EVENT_SCHEDULER", "TV_REMOTE_CONTROL"):
         return w["label"]
     if t in ("VALUE_DOUBLE", "CONTACT_SENSOR_DOUBLE"):
         return joined([w["componentLeft"]["label"], w["componentRight"]["label"]])
@@ -204,6 +209,28 @@ def entities(w):
                  "minTemperature": optional_ref("minTemperature"), "maxTemperature": optional_ref("maxTemperature"),
                  "mode": control("mode", "setModeAction"), "power": control("state", "setStateAction"),
                  "output": optional_ref("controlOutValue")}]
+    if t == "EVENT_SCHEDULER":
+        o = w["object"]
+        # §6.3.13: the required fields of §3.5 parse the widget; each optional
+        # control exists when its field is present.
+        out = {"kind": "eventSchedule", "id": f"{wid}_0", "name": w["label"],
+               "state": value_ref(o["state"]), "ruleList": value_ref(o["ruleList"]),
+               "addRuleAction": action_ref(o["addRuleAction"]), "deleteRuleAction": action_ref(o["deleteRuleAction"])}
+        for key in ("ruleCount", "ruleSpace", "nextRule", "currentRule"):
+            out[key] = value_ref(o[key]) if o.get(key) else None
+        for key in ("startAction", "stopAction", "enableRuleAction", "disableRuleAction"):
+            out[key] = action_ref(o[key]) if o.get(key) else None
+        return [out]
+    if t == "TV_REMOTE_CONTROL":
+        # §6.3.14: the entity exists even without buttons; only the names of
+        # §3.5 whose entry parses as an action count.
+        buttons = {}
+        for name in TV_BUTTONS:
+            a = w["object"].get(name)
+            if isinstance(a, dict) and {"cluId", "objectName", "event", "value", "callType"} <= set(a) \
+                    and (a["callType"] == "SCRIPT" or "index" in a):
+                buttons[name] = action_ref(a)
+        return [{"kind": "tvRemote", "id": f"{wid}_0", "name": w["label"], "buttons": buttons}]
     raise AssertionError(t)
 
 
@@ -211,7 +238,7 @@ def entities(w):
 PRIMARY_REF = {
     "switch": "state", "dimmableLight": "state", "hsbLight": "powerState", "contactSensor": "state",
     "sensor": "state", "numberSetting": "state", "cover": "position", "stateSensor": "state",
-    "thermostat": "currentTemperature",
+    "thermostat": "currentTemperature", "eventSchedule": "state",
 }
 PRIMARY_ACTION = {"trigger": "action", "sceneTrigger": "action"}
 
