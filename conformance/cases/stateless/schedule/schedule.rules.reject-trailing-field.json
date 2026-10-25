@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "schedule.rules.reject-trailing-field",
+  "specRefs": [
+    "devices.schedule"
+  ],
+  "description": "A fourth field after the cron is not the table shape of §6.3.13.",
+  "provenance": "spec §6.3.13",
+  "operation": "schedule.rules",
+  "input": {
+    "text": "{{1, 1, \"0 20 * * *\", 5}}"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "rules": null
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "schedule.rules.reject-malformed-row",
+  "specRefs": [
+    "devices.schedule"
+  ],
+  "description": "A row is exactly {id, enabled, \"cron\"}: a missing separator, an empty field or anything after the cron makes the whole text no rule list — null, also when another row is fine.",
+  "provenance": "spec §6.3.13",
+  "operation": "schedule.rules",
+  "input": {
+    "text": "{{2, 1, \"0 20 * * *\"},{1, 1 \"0 23 * * *\"}}"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "rules": null
+    }
+  }
+}

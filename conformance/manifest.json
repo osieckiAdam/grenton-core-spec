@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "suiteVersion": "0.12.1",
-  "specVersion": "0.12.1",
+  "suiteVersion": "0.12.2",
+  "specVersion": "0.12.2",
   "profiles": {
     "mapping": [
       "mapping.interface"
@@ -813,6 +813,21 @@
       "sha256": "f126c8a6c7e858225abeaeb289d2cca9c513f7b74c032cc105e5f65ef3f76b06"
     },
     {
+      "id": "schedule.rules.reject-empty-field",
+      "path": "cases/stateless/schedule/schedule.rules.reject-empty-field.json",
+      "sha256": "651ddb4e777a85430c8031a354bf31a76c268c819c55208e83438c489528de33"
+    },
+    {
+      "id": "schedule.rules.reject-malformed-row",
+      "path": "cases/stateless/schedule/schedule.rules.reject-malformed-row.json",
+      "sha256": "cc910121e0c0a38524df8f8f8da72ecaf1744b09d66fd2736c1cf9b1117c9dc0"
+    },
+    {
+      "id": "schedule.rules.reject-trailing-field",
+      "path": "cases/stateless/schedule/schedule.rules.reject-trailing-field.json",
+      "sha256": "571cee5f636acddf62ec36923462c75e1909e7d197efb13052a3b1dace60d056"
+    },
+    {
       "id": "schedule.rules.single",
       "path": "cases/stateless/schedule/schedule.rules.single.json",
       "sha256": "14992c64845ac65c138b00f24cefba4785c1c5c602640a80246961b6136dab7f"
@@ -821,6 +836,16 @@
       "id": "schedule.rules.unsupported",
       "path": "cases/stateless/schedule/schedule.rules.unsupported.json",
       "sha256": "3cb5bd8dfb14e4b4b713b44a0fc6d1230881b43b12896715ba8371397a526098"
+    },
+    {
+      "id": "schedule.rules.unsupported-day-list",
+      "path": "cases/stateless/schedule/schedule.rules.unsupported-day-list.json",
+      "sha256": "fa9922e8cb5af6cb14db9324b2b4a6b543a481171407ea941df775fa402b14a8"
+    },
+    {
+      "id": "schedule.rules.whitespace",
+      "path": "cases/stateless/schedule/schedule.rules.whitespace.json",
+      "sha256": "a6706b5d4e97910f3653eb2348cca8eff6476f3e1d0e4a1ed30eba3ba567df78"
     },
     {
       "id": "session.scenario.a-changed-key-list-gets-a-new-session",

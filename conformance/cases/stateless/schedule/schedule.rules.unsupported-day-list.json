@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "schedule.rules.unsupported-day-list",
+  "specRefs": [
+    "devices.schedule"
+  ],
+  "description": "A weekday list with an empty item, or a leading or trailing comma, is outside the subset: the rule keeps its text and gets no time and no days.",
+  "provenance": "spec §6.3.13",
+  "operation": "schedule.rules",
+  "input": {
+    "text": "{{1, 1, \"0 20 * * 1,,2\"},{2, 1, \"0 20 * * ,1\"},{3, 1, \"0 20 * * 1,\"}}"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "rules": [
+        {
+          "id": 1,
+          "isEnabled": true,
+          "cron": "0 20 * * 1,,2",
+          "hour": null,
+          "minute": null,
+          "days": null
+        },
+        {
+          "id": 2,
+          "isEnabled": true,
+          "cron": "0 20 * * ,1",
+          "hour": null,
+          "minute": null,
+          "days": null
+        },
+        {
+          "id": 3,
+          "isEnabled": true,
+          "cron": "0 20 * * 1,",
+          "hour": null,
+          "minute": null,
+          "days": null
+        }
+      ]
+    }
+  }
+}

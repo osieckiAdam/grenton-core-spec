@@ -46,9 +46,9 @@ Expected values never come from a port. They come from the spec text,
 Python derivation written from the spec (`tools/oracles/`).
 `tools/suite.py check` re-derives them wherever such an oracle exists.
 
-Version 0.12.1 contains four profiles, 249 cases in total:
+Version 0.12.2 contains four profiles, 254 cases in total:
 
-- `stateless` (177 cases): AES-CBC, frames, payloads (registration, one-shot
+- `stateless` (182 cases): AES-CBC, frames, payloads (registration, one-shot
   read, actions, reports), value casting, the Object Manager URL and PIN,
   coercions, number formatting.
 - `mapping` (7 cases on 7 interface fixtures): `data.json` → devices and

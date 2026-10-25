@@ -1,5 +1,11 @@
 # Changelog
 
+## Spec 0.12.2, suite 0.12.2 — 2026-10-26
+
+The rule-list shape of §6.3.13, pinned after a review of the Swift port found its parser accepting rows with a missing separator, an empty field or a trailing field, and weekday lists with empty items. No rule changed in intent; the text now says a row is exactly `{int, int, "text"}` with whitespace allowed outside the quotes, and that an empty item in the day field makes the rule unsupported.
+
+Suite (254 cases): `schedule.rules.{whitespace,reject-malformed-row,reject-trailing-field,reject-empty-field,unsupported-day-list}`.
+
 ## Spec 0.12.1, suite 0.12.1 — 2026-10-25
 
 The `schedule.rules` projection lists `days` ascending (0–6); the `list` case had one rule's days in another order. No rule changed.
