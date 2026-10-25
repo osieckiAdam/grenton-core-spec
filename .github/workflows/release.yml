@@ -3,7 +3,8 @@ name: release
 # its tag. A merge that leaves the version at an already tagged number
 # fails here — bump the version (python3 tools/suite.py bump X.Y.Z) in
 # the pull request instead. A merge that changes only the workflows under
-# .github/ is not a release and needs no tag.
+# .github/, docs/, README.md or CLAUDE.md is not a release and needs no
+# tag: the specification and the suite did not change.
 on:
   push:
     branches: [main]
@@ -24,8 +25,8 @@ jobs:
         env: { V: "${{ steps.version.outputs.version }}" }
         run: |
           if git rev-parse -q --verify "refs/tags/$V" >/dev/null; then
-            if [ -z "$(git diff --name-only "$V" HEAD | grep -v '^\.github/')" ]; then
-              echo "only .github/ changed since $V: not a release, nothing to tag"
+            if [ -z "$(git diff --name-only "$V" HEAD | grep -vE '^(\.github/|docs/|README\.md$|CLAUDE\.md$)')" ]; then
+              echo "only workflows, notes or README changed since $V: not a release, nothing to tag"
               exit 0
             fi
             echo "::error::spec $V is already tagged; a merge into main must bump the version (tools/suite.py bump)"
