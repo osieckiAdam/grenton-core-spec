@@ -5,8 +5,7 @@ Grenton smart-home "mobile interface" protocol, together with the
 **conformance suite** every implementation must pass.
 
 The specification covers provisioning from Object Manager, the encrypted UDP
-protocol of CLU controllers, and a canonical device model. It is written in
-Polish.
+protocol of CLU controllers, and a canonical device model.
 
 | | |
 |---|---|
@@ -20,7 +19,7 @@ Polish.
 
 | Port | Suite version | Profiles |
 |---|---|---|
-| [grenton-core-swift](https://github.com/osieckiAdam/grenton-core-swift) | 0.9.1 | `stateless`, `mapping`, `session`, `project` |
+| [grenton-core-swift](https://github.com/osieckiAdam/grenton-core-swift) | 0.11.2 | `stateless`, `mapping`, `session`, `project` |
 
 ## Conformance suite
 
@@ -47,7 +46,7 @@ Expected values never come from a port. They come from the spec text,
 Python derivation written from the spec (`tools/oracles/`).
 `tools/suite.py check` re-derives them wherever such an oracle exists.
 
-Version 0.11.2 contains four profiles, 233 cases in total:
+Version 0.11.3 contains four profiles, 233 cases in total:
 
 - `stateless` (162 cases): AES-CBC, frames, payloads (registration, one-shot
   read, actions, reports), value casting, the Object Manager URL and PIN,

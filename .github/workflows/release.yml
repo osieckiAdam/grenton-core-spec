@@ -17,7 +17,7 @@ jobs:
       - name: Read the version
         id: version
         run: |
-          v=$(python3 -c "import re;print(re.search(r'\| \*\*Wersja\*\* \| ([0-9.]+) \|', open('spec/grenton-core-design.md').read()).group(1))")
+          v=$(python3 -c "import re;print(re.search(r'\| \*\*Version\*\* \| ([0-9.]+) \|', open('spec/grenton-core-design.md').read()).group(1))")
           echo "version=$v" >> "$GITHUB_OUTPUT"
       - name: Tag it, once
         env: { V: "${{ steps.version.outputs.version }}" }

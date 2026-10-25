@@ -1,6 +1,6 @@
 # grenton-core-spec
 
-Language-agnostic Grenton Core specification (`spec/`, in Polish) and its
+Language-agnostic Grenton Core specification (`spec/`) and its
 conformance suite (`conformance/`). Ports, starting with grenton-core-swift,
 vendor this repository and must pass the suite.
 
