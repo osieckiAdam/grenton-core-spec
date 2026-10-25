@@ -5,7 +5,7 @@
     python3 tools/check_versions.py --staged   also: staged spec/suite changes
                                                come with a staged CHANGELOG entry
 
-The spec header (| **Wersja** |), the conformance.md header, SPEC_VERSION in
+The spec header (| **Version** |), the conformance.md header, SPEC_VERSION in
 tools/suite.py and the newest CHANGELOG heading must name the same spec version; SUITE_VERSION must
 match conformance/manifest.json (tools/suite.py check verifies the manifest).
 """
@@ -18,7 +18,7 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 problems = []
 
-header = re.search(r"\| \*\*Wersja\*\* \| ([0-9.]+) \|", (ROOT / "spec/grenton-core-design.md").read_text())
+header = re.search(r"\| \*\*Version\*\* \| ([0-9.]+) \|", (ROOT / "spec/grenton-core-design.md").read_text())
 suite_py = (ROOT / "tools/suite.py").read_text()
 spec_version = re.search(r'SPEC_VERSION = "([0-9.]+)"', suite_py).group(1)
 suite_version = re.search(r'SUITE_VERSION = "([0-9.]+)"', suite_py).group(1)
@@ -29,7 +29,7 @@ if not header or header.group(1) != spec_version:
     problems.append(f"spec header says {header.group(1) if header else '?'}, tools/suite.py SPEC_VERSION says {spec_version}")
 if manifest["specVersion"] != spec_version or manifest["suiteVersion"] != suite_version:
     problems.append("manifest.json versions differ from tools/suite.py — run: python3 tools/suite.py manifest")
-conformance_header = re.search(r"\| \*\*Wersja zestawu\*\* \| ([0-9.]+) \(specyfikacja ([0-9.]+)",
+conformance_header = re.search(r"\| \*\*Suite version\*\* \| ([0-9.]+) \(specification ([0-9.]+)",
                                (ROOT / "spec/conformance.md").read_text())
 if not conformance_header or conformance_header.groups() != (suite_version, spec_version):
     problems.append(f"spec/conformance.md header says {conformance_header.groups() if conformance_header else '?'}, "

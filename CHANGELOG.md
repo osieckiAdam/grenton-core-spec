@@ -1,5 +1,9 @@
 # Changelog
 
+## Spec 0.11.3, suite 0.11.3 — 2026-10-25
+
+The specification and the conformance contract are now in English; no rule changed and the suite is unchanged (233 cases). Section numbers, identifiers, wire text and the Δ markers are the same, so references from ports and cases still hold. The version tools and the release workflow read the English headers (`| **Version** |`, `| **Suite version** |`). Fixture labels keep their Polish names: they are test data of Polish installations.
+
 ## Spec 0.11.2, suite 0.11.2 — 2026-10-25
 
 Two rules the Swift port's review and a new toolchain showed to be missing.
@@ -80,7 +84,7 @@ Suite (230 cases; 50 session scenarios): `ping-before-start-sends-nothing`, `reg
 
 Report parsing that respects quotes and nesting, the one-shot read `fetchValues`, and notes from the mobile app.
 
-Evidence (one installation, two CLU firmware generations; a static analysis of the official Android app 1.17.8 with jadx, a packet capture of the iOS app, and live probes in the Swift port's `Examples/probe-register`, phases J and K):
+Evidence (one installation, two CLU firmware generations; an analysis of the behaviour of the official Android app 1.17.8, a packet capture of the iOS app, and live probes in the Swift port's `Examples/probe-register`, phases J and K):
 
 - The app splits a report on commas outside quotes and keeps a nested `{…}` block whole; the reference splits on every comma, which the 0.8.0 text had copied as an unfixable limitation. Only a quote inside a string stays unrecoverable.
 - `SYSTEM:fetchValues({keys})` is one of the three `SYSTEM:` commands the app has (with `clientRegister` and `mqttRegister`; it has no `clientDestroy`). The app uses it to read one widget's values when a schedule editor opens. Live, on both firmware generations: the reply is `values:{…}` with no subscription number, 30 keys answer, an unknown object gives `nil`, an empty list gives the malformed `values:}`, no notification follows for 20 s, and a second read after a wall switch returns the new value.

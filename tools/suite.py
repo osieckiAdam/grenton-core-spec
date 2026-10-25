@@ -36,8 +36,8 @@ FIXTURES = os.path.join(CONFORMANCE, "fixtures")
 MANIFEST = os.path.join(CONFORMANCE, "manifest.json")
 
 SCHEMA_VERSION = 1
-SUITE_VERSION = "0.11.2"
-SPEC_VERSION = "0.11.2"
+SUITE_VERSION = "0.11.3"
+SPEC_VERSION = "0.11.3"
 
 # operation -> (profile, required input keys, optional input keys)
 OPERATIONS = {
@@ -665,11 +665,11 @@ def bump(version):
         raise SystemExit("usage: python3 tools/suite.py bump <major.minor.patch>")
     edits = [
         (os.path.join(ROOT, "spec", "grenton-core-design.md"),
-         [(r"\| \*\*Wersja\*\* \| [0-9.]+ \|", f"| **Wersja** | {version} |"),
-          (r"\| \*\*Data\*\* \| [0-9-]+ \|", f"| **Data** | {datetime.date.today().isoformat()} |")]),
+         [(r"\| \*\*Version\*\* \| [0-9.]+ \|", f"| **Version** | {version} |"),
+          (r"\| \*\*Date\*\* \| [0-9-]+ \|", f"| **Date** | {datetime.date.today().isoformat()} |")]),
         (os.path.join(ROOT, "spec", "conformance.md"),
-         [(r"\| \*\*Wersja zestawu\*\* \| [0-9.]+ \(specyfikacja [0-9.]+,",
-           f"| **Wersja zestawu** | {version} (specyfikacja {version},")]),
+         [(r"\| \*\*Suite version\*\* \| [0-9.]+ \(specification [0-9.]+,",
+           f"| **Suite version** | {version} (specification {version},")]),
         (os.path.join(ROOT, "tools", "suite.py"),
          [(r'SUITE_VERSION = "[0-9.]+"', f'SUITE_VERSION = "{version}"'),
           (r'SPEC_VERSION = "[0-9.]+"', f'SPEC_VERSION = "{version}"')]),

@@ -66,7 +66,7 @@ and two third-party clients run or read against the same CLUs.
   `req_get_measurementkey::<id>` once per CLU after a start is the key of
   the cloud statistics service; 2.03 CLUs answer `nil`, 5.78 CLUs do not
   answer.
-- **Android app 1.17.8** (static analysis with jadx, 2026-10-20; a
+- **Android app 1.17.8** (analysis of the app's behaviour, 2026-10-20; a
   different codebase from the iOS app): `req:<wlan ip>:<msgid lowercase>`,
   `clientRegister(0,0,69,…)` with a constant 69, re-registration every
   40 s on a new socket each time, ping 5 s with a 5 s timeout, 15 s
