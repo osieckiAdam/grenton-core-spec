@@ -134,6 +134,31 @@ def hex_number(text):
 
 
 def strict_json(raw):
+    # §4.5.1 pt 5: nesting beyond the limit is invalidData, never a crash.
+    # The oracle's limit is 64; a pre-scan keeps json.loads (recursive)
+    # away from input that would exhaust Python's stack.
+    try:
+        text = raw.decode("utf-8")
+    except UnicodeDecodeError:
+        raise invalid()
+    depth, in_string, escaped = 0, False, False
+    for ch in text:
+        if in_string:
+            if escaped:
+                escaped = False
+            elif ch == "\\":
+                escaped = True
+            elif ch == '"':
+                in_string = False
+        elif ch == '"':
+            in_string = True
+        elif ch in "[{":
+            depth += 1
+            if depth > 64:
+                raise invalid()
+        elif ch in "]}":
+            depth -= 1
+
     def pairs(items):
         out = {}
         for k, v in items:

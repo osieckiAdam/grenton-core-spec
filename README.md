@@ -47,7 +47,7 @@ Expected values never come from a port. They come from the spec text,
 Python derivation written from the spec (`tools/oracles/`).
 `tools/suite.py check` re-derives them wherever such an oracle exists.
 
-Version 0.11.1 contains four profiles, 232 cases in total:
+Version 0.11.2 contains four profiles, 233 cases in total:
 
 - `stateless` (162 cases): AES-CBC, frames, payloads (registration, one-shot
   read, actions, reports), value casting, the Object Manager URL and PIN,
@@ -61,7 +61,7 @@ Version 0.11.1 contains four profiles, 232 cases in total:
   sequential chunked registration on one socket, report routing by
   subscription number, unregistering, lifecycle,
   recovery, actions, and the periodic ping and re-registration loops.
-- `project` (13 cases on 10 project fixtures): importing a mobile interface
+- `project` (14 cases on 11 project fixtures): importing a mobile interface
   from an Object Manager project file (`.omp`) — interface selection,
   key, CLUs and push objects, the editor-to-interface conversion of every
   widget type (stand-in ids for widgets never sent to a phone), checked

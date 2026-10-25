@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "suiteVersion": "0.11.1",
-  "specVersion": "0.11.1",
+  "suiteVersion": "0.11.2",
+  "specVersion": "0.11.2",
   "profiles": {
     "mapping": [
       "mapping.interface"
@@ -583,6 +583,11 @@
       "id": "provisioning.omp.bad-node-json",
       "path": "cases/project/provisioning.omp.bad-node-json.json",
       "sha256": "dae4c4ddfcb5dacf8877239efe30d0c7371a89240c3df75563c333667c9cbc31"
+    },
+    {
+      "id": "provisioning.omp.deep-nesting",
+      "path": "cases/project/provisioning.omp.deep-nesting.json",
+      "sha256": "a49447f43dc1fdfcca89b8dd481d07446211888958a3622fa5afb6fc83201a81"
     },
     {
       "id": "provisioning.omp.doctype-rejected",
@@ -1257,6 +1262,10 @@
     {
       "path": "fixtures/projects/bad-number.omp",
       "sha256": "66375e5bd0d1fab470379fc9dd960d4e0e8e18a62458c5ebba1f0106966615c2"
+    },
+    {
+      "path": "fixtures/projects/deep-nesting.omp",
+      "sha256": "10c83b6ecc6a702e844f11cbf9952050dad2c799206291ace3593c9253e9e553"
     },
     {
       "path": "fixtures/projects/doctype.omp",

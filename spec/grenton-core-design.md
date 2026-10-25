@@ -3,8 +3,8 @@
 | | |
 |---|---|
 | **Status** | Projekt (do implementacji) |
-| **Wersja** | 0.11.1 |
-| **Data** | 2026-10-22 |
+| **Wersja** | 0.11.2 |
+| **Data** | 2026-10-25 |
 | **Implementacja referencyjna** | `homeassistant-grenton` (Python, integracja Home Assistant) |
 | **Przeznaczenie** | Specyfikacja niezależna od języka — podstawa dla portów (pierwszy: Swift) |
 | **Zestaw zgodności** | `conformance/` + kontrakt w [`conformance.md`](conformance.md) |
@@ -247,7 +247,7 @@ Wszystkie błędy importu to `ProvisioningError` (§8). Kolejność sprawdzania,
 2. Używane wpisy (nazwa dopasowywana w całości): **`properties.xml`**, **`system.xml`** i każdy wpis o nazwie dokładnie `nodes/{n}/data.json`, gdzie `{n}` to niepusty ciąg cyfr ASCII. Brak `properties.xml` lub `system.xml` → `invalidData`. Pozostałe wpisy (skrypty, diagnostyka) są ignorowane — nie czyta się ich.
 3. **Limity zasobów:** rozmiar pliku, rozmiar każdego używanego wpisu po dekompresji i łączny rozmiar używanych wpisów po dekompresji — każdy co najwyżej 64 MiB (zalecane); liczba wpisów archiwum co najwyżej 10 000. Przekroczenie → `invalidData`. Limit jest wyższy niż w §4.3, bo `system.xml` dużej instalacji ma kilka megabajtów.
 4. **XML bez DTD.** Dokument z deklaracją typu dokumentu (`<!DOCTYPE …>`) w dowolnym kodowaniu → `invalidData`; o kodowaniu decyduje parser XML (deklaracja `encoding`, BOM), nie wyszukiwanie bajtów. Bez DTD nie ma encji, więc nie ma XXE ani „billion laughs". Błąd składni XML → `invalidData`.
-5. **JSON ścisły.** Wpis `nodes/{n}/data.json` czyta się jako UTF-8; niepoprawny UTF-8, niepoprawny JSON, wartości spoza JSON (`NaN`, `Infinity`), liczba całkowita spoza zakresu 64-bitowego ze znakiem, liczba, która jako double nie jest skończona (`1e400`), albo powtórzony klucz w obiekcie → `invalidData`, także gdy wpis nie okaże się interfejsem.
+5. **JSON ścisły.** Wpis `nodes/{n}/data.json` czyta się jako UTF-8; niepoprawny UTF-8, niepoprawny JSON, wartości spoza JSON (`NaN`, `Infinity`), liczba całkowita spoza zakresu 64-bitowego ze znakiem, liczba, która jako double nie jest skończona (`1e400`), albo powtórzony klucz w obiekcie → `invalidData`, także gdy wpis nie okaże się interfejsem. **Zagnieżdżenie** tablic i obiektów głębsze niż limit portu → `invalidData`; limit wynosi co najmniej 32 i co najwyżej 1024 poziomy (prawdziwe węzły mają ich około dziesięciu), a parser nie może zależeć od stosu rosnącego z głębokością wejścia poza ten limit: wpis o dziesięciu tysiącach poziomów kończy się `invalidData`, nie awarią procesu.
 6. **Referencje XML** (serializacja OM). Element z atrybutem `reference="{r}"` oznacza element z atrybutem `id="{r}"`. Każdy element czytany w §4.5.4–§4.5.5 — `TreeObject`, `specificObject`, `children` i pola tekstowe — który ma `reference`, zastępuje się celem; cel z własnym `reference` rozwiązuje się dalej. Brak celu, cykl referencji albo dwa elementy o tym samym `id` → `invalidData`.
 7. **Tekst pola XML** to treść elementu z obciętymi białymi znakami na początku i końcu; element pusty albo zawierający same białe znaki traktuje się jak brak pola. **Liczba szesnastkowa** to 1–8 cyfr `0-9a-fA-F`, bez znaku, prefiksu i separatorów.
 
@@ -580,6 +580,7 @@ idle ──start()──► starting ──► ready ◄──► degraded ─�
 
 Reguły:
 
+- Sesja w stanie `stopped` **nie przyjmuje żadnego datagramu**: to, co przyjdzie w trakcie sprzątania albo po nim (np. raport z subskrypcji, której `clientDestroy` jeszcze nie doszedł), nie zmienia stanu, magazynu ani migawki diagnostycznej; stary socket zamyka się bez czytania reszty.
 - `start()` i `stop()` są **idempotentne**; po `stop()` wolno wywołać `start()` ponownie na tej samej instancji (wymóg cyklu tło/pierwszy plan na mobile).
 - `stop()` najpierw kończy oczekujące żądania błędem `ConnectionClosed`, potem wysyła `clientDestroy(0,0,i)` dla każdego zapamiętanego chunka (§5.3.2, bez czekania na odpowiedź), zamyka socket główny i zapomina chunki. Po ponownym `start()` lista chunków jest pusta — subskrypcje zakłada na nowo warstwa wyżej przez `register(keys)`.
 - Operacje wieloetapowe (`start`, `register`, `stop`) są **wzajemnie zserializowane** — nie mogą się przeplatać (np. dwie rejestracje mieszające numery chunków). Wywołanie w trakcie trwającej operacji czeka lub jest łączone z bieżącą.

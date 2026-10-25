@@ -145,6 +145,9 @@ lowercase msg_ids, and any positive subscription number.
 - A port may add an umbrella module (0.11.0): the Swift port needed a
   home for "download and start" without making Devices depend on
   Provisioning, which §2 forbids.
+- A JSON nesting limit of 32–1024 for project nodes (0.11.2): a crafted
+  project file with thousands of levels crashed a recursive parser in a
+  debug build before a 512 limit was reached; real nodes nest ten deep.
 - The `.omp` is the second provisioning source (0.8.0, 0.10.0): the
   converter reproduces the downloaded interface field for field on a real
   project; widgets never sent to a phone get `omp-<editor id>`.

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "provisioning.omp.deep-nesting",
+  "specRefs": [
+    "provisioning.omp-archive"
+  ],
+  "description": "A node JSON of ten thousand nested arrays fails the import as invalidData; a port must refuse it, not run out of stack.",
+  "provenance": "spec \u00a74.5.1 pt 5 text; expectations re-derived by tools/oracles/omp.py and tools/oracles/mapping.py",
+  "operation": "provisioning.omp",
+  "input": {
+    "fixture": "fixtures/projects/deep-nesting.omp"
+  },
+  "expect": {
+    "outcome": "error",
+    "code": "provisioning.invalidData"
+  }
+}

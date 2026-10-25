@@ -1,5 +1,18 @@
 # Changelog
 
+## Spec 0.11.2, suite 0.11.2 — 2026-10-25
+
+Two rules the Swift port's review and a new toolchain showed to be missing.
+
+Evidence: in the Swift port a report that arrived while `stop()` was draining its sends still reached the session and set the diagnostic times `stop()` had just cleared (review finding); and the project-file JSON parser accepted 512 levels of nesting, which a crafted `.omp` used to overflow the stack of a secondary thread in a debug build before the limit was reached (found when the test suite first ran under Swift 6.4).
+
+Spec:
+
+- §5.4.5: a `stopped` session accepts no datagram — nothing that arrives during or after the teardown changes the state, the store or the diagnostic snapshot.
+- §4.5.1 pt 5: nesting of a node's JSON beyond the port's limit is `invalidData`; the limit is between 32 and 1024 levels (real nodes have about ten), and the parser may not depend on a stack that grows with the input beyond it — ten thousand levels end in `invalidData`, not a crash.
+
+Suite (233 cases; 14 project cases on 11 fixtures): `provisioning.omp.deep-nesting` (a node of 10 000 nested arrays). The `.omp` oracle rejects nesting beyond 64 levels before parsing.
+
 ## Spec 0.11.1, suite 0.11.1 — 2026-10-22
 
 Wording of the three 0.11.0 rules, after a review (Codex, 8 findings, all taken). No rule changed; the suite is unchanged (232 cases; 51 session scenarios).
