@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Status** | Design (for implementation) |
-| **Version** | 0.12.0 |
+| **Version** | 0.12.1 |
 | **Date** | 2026-10-25 |
 | **Reference implementation** | `homeassistant-grenton` (Python, Home Assistant integration) |
 | **Purpose** | Language-agnostic specification — the basis for ports (first: Swift) |

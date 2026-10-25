@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "suiteVersion": "0.12.0",
-  "specVersion": "0.12.0",
+  "suiteVersion": "0.12.1",
+  "specVersion": "0.12.1",
   "profiles": {
     "mapping": [
       "mapping.interface"
@@ -805,7 +805,7 @@
     {
       "id": "schedule.rules.list",
       "path": "cases/stateless/schedule/schedule.rules.list.json",
-      "sha256": "b4918518fc08a51871ee867d93f408d0a011c9df39a57923dedec4bc93189765"
+      "sha256": "fe6731417454d852aa5ce325ce4d1db25bb45bb2caa27584d327551f8490041e"
     },
     {
       "id": "schedule.rules.none",
