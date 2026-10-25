@@ -24,6 +24,10 @@ jobs:
         env: { V: "${{ steps.version.outputs.version }}" }
         run: |
           if git rev-parse -q --verify "refs/tags/$V" >/dev/null; then
+            if [ -z "$(git diff --name-only "$V" HEAD | grep -v '^\.github/')" ]; then
+              echo "only .github/ changed since $V: not a release, nothing to tag"
+              exit 0
+            fi
             echo "::error::spec $V is already tagged; a merge into main must bump the version (tools/suite.py bump)"
             exit 1
           fi
