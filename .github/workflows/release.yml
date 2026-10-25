@@ -2,7 +2,8 @@ name: release
 # Every merge into main is a release: the spec version in the header gets
 # its tag. A merge that leaves the version at an already tagged number
 # fails here — bump the version (python3 tools/suite.py bump X.Y.Z) in
-# the pull request instead.
+# the pull request instead. A merge that changes only the workflows under
+# .github/ is not a release and needs no tag.
 on:
   push:
     branches: [main]
