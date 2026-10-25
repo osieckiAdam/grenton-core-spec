@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Suite version** | 0.12.1 (specification 0.12.1, case schema 1) |
+| **Suite version** | 0.12.2 (specification 0.12.2, case schema 1) |
 | **Applies to** | `spec/grenton-core-design.md` §9 |
 
 The conformance suite is **data, not code**: every case is a JSON file in `conformance/cases/`. The port supplies a thin runner that loads the cases, calls the port's production API and compares the observation with the expectation. Adding a case once covers all ports.

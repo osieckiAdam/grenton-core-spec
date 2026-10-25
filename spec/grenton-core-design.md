@@ -3,8 +3,8 @@
 | | |
 |---|---|
 | **Status** | Design (for implementation) |
-| **Version** | 0.12.1 |
-| **Date** | 2026-10-25 |
+| **Version** | 0.12.2 |
+| **Date** | 2026-10-26 |
 | **Reference implementation** | `homeassistant-grenton` (Python, Home Assistant integration) |
 | **Purpose** | Language-agnostic specification — the basis for ports (first: Swift) |
 | **Conformance suite** | `conformance/` + the contract in [`conformance.md`](conformance.md) |
@@ -787,7 +787,7 @@ The widget of the Grenton `EventScheduler` virtual object (CLU Z-Wave firmware 5
 - One entity; suffix `_0`. Completeness: the required fields from §3.5 (if missing → the widget is skipped); each optional control exists when its field is present.
 - **Subscribed states:** `state`, `ruleList`, and whichever of `ruleCount`, `ruleSpace`, `nextRule`, `currentRule` are present.
 - **A rule** is a CRON text of five space-separated fields, `minute hour * * days`, as the object's `AddRule` takes it and `RuleList` returns it. Core reads and writes the subset the myGrenton app uses: `minute` 0–59, `hour` 0–23, the third and fourth field `*`, `days` either `*` (every day) or a comma-separated list of weekdays **0–6 with 0 = Sunday** (the app writes `6,0` for Saturday and Sunday and `1,2,3,4,5` for Monday to Friday); on read a range `a-b` (the Object Manager manual's `1-5`) and `7` for Sunday are accepted too. A rule outside this subset (any other third or fourth field, a step `*/n`, a list in the minute or hour field) is **unsupported**: Core keeps its text and gives it no time and no days. Core writes days in week order Monday to Sunday (`1,2,3,4,5,6,0`), and all seven days as `*`.
-- **The rule list** value (`ruleList`) is the text `{{id, enabled, "cron"},…}` — a Lua table serialized by the CLU (§5.3.2 item 2): Core splits it into rules in the CLU's order (the CLU lists them by the next time they fire, not by id), each `{id: int, isEnabled: enabled == 1, cron}` with the cron parsed as above; a text that is not such a table (also `N/A` and an empty table) → **no rules known** (`nil`), not an empty list. `nextRule` and `currentRule` hold one such `{id, enabled, "cron"}` or `N/A` (no rule due or running) → `nil`.
+- **The rule list** value (`ruleList`) is the text `{{id, enabled, "cron"},…}` — a Lua table serialized by the CLU (§5.3.2 item 2): Core splits it into rules in the CLU's order (the CLU lists them by the next time they fire, not by id), each `{id: int, isEnabled: enabled == 1, cron}` with the cron parsed as above — a row is exactly those three fields, two integers and a quoted text, separated by commas, with whitespace allowed anywhere outside the quotes; a text that is not such a table (also `N/A`, an empty table, and a table with any row of another shape) → **no rules known** (`nil`), not an empty list. In the day field an empty item (`1,,2`, `,1`, `1,`) puts the rule outside the subset. `nextRule` and `currentRule` hold one such `{id, enabled, "cron"}` or `N/A` (no rule due or running) → `nil`.
 - State:
   - `isActive = truthy(state)` — the State feature: 1 = the scheduler fires its rules, 0 = stopped;
   - `rules` — the parsed rule list (or `nil`);
