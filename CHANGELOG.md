@@ -1,5 +1,9 @@
 # Changelog
 
+## Spec 0.13.1, suite 0.13.1 — 2026-10-26
+
+`mapping.interface.reject-missing-encryption` expects `reject` again: 0.13.0 re-derived every mapping expectation with the oracle, which maps any JSON, and turned this one into `ok`. `suite.py check` now refuses a `reject` whose fixture has every root field of §3.4, so the oracle can never paper over a rejection again. No rule changed.
+
 ## Spec 0.13.0, suite 0.13.0 — 2026-10-26
 
 A device knows the section it is shown under. The first app built on the Swift port (a macOS menu-bar app) wanted the layout of the myGrenton app — page, section header, widgets — and found it only in the interface DTO, beside the device model.
