@@ -191,6 +191,10 @@
               "index": 0,
               "name": "Ground floor"
             },
+            "section": {
+              "id": "hdr00001",
+              "title": "Section"
+            },
             "entities": [
               {
                 "kind": "sensor",
@@ -234,6 +238,10 @@
               "index": 0,
               "name": "Ground floor"
             },
+            "section": {
+              "id": "hdr00001",
+              "title": "Section"
+            },
             "entities": [
               {
                 "kind": "switch",
@@ -274,6 +282,10 @@
             "page": {
               "index": 0,
               "name": "Ground floor"
+            },
+            "section": {
+              "id": "hdr00001",
+              "title": "Section"
             },
             "entities": [
               {
@@ -316,6 +328,10 @@
               "index": 0,
               "name": "Ground floor"
             },
+            "section": {
+              "id": "hdr00001",
+              "title": "Section"
+            },
             "entities": [
               {
                 "kind": "sceneTrigger",
@@ -340,6 +356,10 @@
               "index": 0,
               "name": "Ground floor"
             },
+            "section": {
+              "id": "hdr00001",
+              "title": "Section"
+            },
             "entities": [
               {
                 "kind": "sceneTrigger",
@@ -363,6 +383,10 @@
             "page": {
               "index": 0,
               "name": "Ground floor"
+            },
+            "section": {
+              "id": "hdr00001",
+              "title": "Section"
             },
             "entities": [
               {
@@ -392,6 +416,7 @@
               "index": 1,
               "name": "Climate"
             },
+            "section": null,
             "entities": [
               {
                 "kind": "dimmableLight",
@@ -442,6 +467,7 @@
               "index": 1,
               "name": "Climate"
             },
+            "section": null,
             "entities": [
               {
                 "kind": "thermostat",
@@ -529,6 +555,7 @@
               "index": 1,
               "name": "Climate"
             },
+            "section": null,
             "entities": [
               {
                 "kind": "cover",
@@ -590,6 +617,7 @@
               "index": 1,
               "name": "Climate"
             },
+            "section": null,
             "entities": [
               {
                 "kind": "eventSchedule",
@@ -691,6 +719,7 @@
               "index": 2,
               "name": "More widgets"
             },
+            "section": null,
             "entities": [
               {
                 "kind": "camera",
@@ -709,6 +738,7 @@
               "index": 2,
               "name": "More widgets"
             },
+            "section": null,
             "entities": [
               {
                 "kind": "hsbLight",
@@ -808,6 +838,7 @@
               "index": 2,
               "name": "More widgets"
             },
+            "section": null,
             "entities": [
               {
                 "kind": "contactSensor",
@@ -834,6 +865,7 @@
               "index": 2,
               "name": "More widgets"
             },
+            "section": null,
             "entities": [
               {
                 "kind": "contactSensor",
@@ -874,6 +906,7 @@
               "index": 2,
               "name": "More widgets"
             },
+            "section": null,
             "entities": [
               {
                 "kind": "numberSetting",
@@ -908,6 +941,7 @@
               "index": 2,
               "name": "More widgets"
             },
+            "section": null,
             "entities": [
               {
                 "kind": "sensor",
@@ -1032,6 +1066,7 @@
               "index": 2,
               "name": "More widgets"
             },
+            "section": null,
             "entities": [
               {
                 "kind": "stateSensor",
@@ -1068,6 +1103,7 @@
               "index": 2,
               "name": "More widgets"
             },
+            "section": null,
             "entities": [
               {
                 "kind": "tvRemote",
@@ -1086,6 +1122,7 @@
               "index": 2,
               "name": "More widgets"
             },
+            "section": null,
             "entities": [
               {
                 "kind": "numberSetting",
@@ -1120,6 +1157,7 @@
               "index": 2,
               "name": "More widgets"
             },
+            "section": null,
             "entities": [
               {
                 "kind": "hsbLight",

@@ -26,6 +26,7 @@
             "index": 0,
             "name": "Salon"
           },
+          "section": null,
           "entities": [
             {
               "kind": "sensor",
@@ -54,6 +55,7 @@
             "index": 0,
             "name": "Salon"
           },
+          "section": null,
           "entities": [
             {
               "kind": "sensor",
@@ -98,6 +100,7 @@
             "index": 0,
             "name": "Salon"
           },
+          "section": null,
           "entities": [
             {
               "kind": "switch",
@@ -167,6 +170,7 @@
             "index": 0,
             "name": "Salon"
           },
+          "section": null,
           "entities": [
             {
               "kind": "switch",
@@ -237,6 +241,7 @@
             "index": 0,
             "name": "Salon"
           },
+          "section": null,
           "entities": [
             {
               "kind": "dimmableLight",
@@ -287,6 +292,7 @@
             "index": 0,
             "name": "Salon"
           },
+          "section": null,
           "entities": [
             {
               "kind": "hsbLight",
@@ -386,6 +392,7 @@
             "index": 0,
             "name": "Salon"
           },
+          "section": null,
           "entities": [
             {
               "kind": "contactSensor",
@@ -425,6 +432,7 @@
             "index": 0,
             "name": "Salon"
           },
+          "section": null,
           "entities": [
             {
               "kind": "contactSensor",
@@ -478,6 +486,7 @@
             "index": 0,
             "name": "Salon"
           },
+          "section": null,
           "entities": [
             {
               "kind": "numberSetting",
@@ -512,6 +521,7 @@
             "index": 0,
             "name": "Salon"
           },
+          "section": null,
           "entities": [
             {
               "kind": "sensor",
@@ -636,6 +646,7 @@
             "index": 0,
             "name": "Salon"
           },
+          "section": null,
           "entities": [
             {
               "kind": "stateSensor",
@@ -672,6 +683,7 @@
             "index": 0,
             "name": "Salon"
           },
+          "section": null,
           "entities": [
             {
               "kind": "cover",
@@ -733,6 +745,7 @@
             "index": 0,
             "name": "Salon"
           },
+          "section": null,
           "entities": [
             {
               "kind": "camera",
@@ -751,6 +764,7 @@
             "index": 0,
             "name": "Salon"
           },
+          "section": null,
           "entities": [
             {
               "kind": "sceneTrigger",

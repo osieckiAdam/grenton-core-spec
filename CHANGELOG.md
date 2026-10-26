@@ -1,5 +1,17 @@
 # Changelog
 
+## Spec 0.13.0, suite 0.13.0 — 2026-10-26
+
+A device knows the section it is shown under. The first app built on the Swift port (a macOS menu-bar app) wanted the layout of the myGrenton app — page, section header, widgets — and found it only in the interface DTO, beside the device model.
+
+Spec:
+
+- §6.1: every device carries `section` — `{id, title}` of the nearest `HEADER` widget above it on the same page, `null` above the first header or on a page without one; a header that does not parse starts no section.
+- §3.5: a `HEADER` is its `id` and the first component's `label`; without either it is skipped like any widget.
+- conformance.md §4a: `section` in the device projection.
+
+Suite (254 cases, expectations re-derived): every mapping case and the `.omp` project cases now carry `section`; the fixtures with headers (`thermostat-scene-double-header`, `widget-tolerance`, the two-interfaces project) cover a device before the first header, under a header, and after a second one.
+
 ## Spec 0.12.2, suite 0.12.2 — 2026-10-26
 
 The rule-list shape of §6.3.13, pinned after a review of the Swift port found its parser accepting rows with a missing separator, an empty field or a trailing field, and weekday lists with empty items. No rule changed in intent; the text now says a row is exactly `{int, int, "text"}` with whitespace allowed outside the quotes, and that an empty item in the day field makes the rule unsupported.

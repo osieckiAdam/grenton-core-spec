@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Status** | Design (for implementation) |
-| **Version** | 0.12.2 |
+| **Version** | 0.13.0 |
 | **Date** | 2026-10-26 |
 | **Reference implementation** | `homeassistant-grenton` (Python, Home Assistant integration) |
 | **Purpose** | Language-agnostic specification — the basis for ports (first: Swift) |
@@ -182,7 +182,7 @@ Every widget has an `id: string` and a `type` discriminator. 18 supported types 
 | `EVENT_SCHEDULER` | `label`, `icon`, `object`: required `state`, `ruleList`, `addRuleAction`, `deleteRuleAction`; optional `ruleCount`, `ruleSpace`, `nextRule`, `currentRule`, `startAction`, `stopAction`, `enableRuleAction`, `disableRuleAction`, `getRuleAction` |
 | `TV_REMOTE_CONTROL` | `label`, `icon`, `vodLabel`, `object`: a map of button name → `ActionRef`, any subset of `on, off, up, down, left, right, ok, menu, back, guide, play, pause, fastForward, fastRewind, nextChannel, previousChannel, volumeUp, volumeDown, mute, vod, init` — **also empty** (a remote whose buttons were never assigned in Object Manager); other names are ignored |
 
-**Presentational widgets:** `HEADER` (a section header: `components[]` with only a `label`) is recognized, **does not create a device and is not reported as skipped** (§3.6) — it is UI layout, not an error.
+**Presentational widgets:** `HEADER` (a section header: `id` and `components[]` whose first `label` is the title) is recognized, **does not create a device and is not reported as skipped** (§3.6) — it is UI layout, not an error; the devices after it on the page carry it as their `section` (§6.1). A header without `id` or without a label is skipped like any widget.
 
 **Δ** The reference implementation does not know `EVENT_SCHEDULER` and `TV_REMOTE_CONTROL`; Core maps them (§6.3.13, §6.3.14).
 
@@ -637,7 +637,7 @@ Technology-neutral (actor / serial queue / mutex — the port's choice):
   2. **Binding** (a factory in the Runtime/system): `DeviceDescriptor + StateStore + CluSession → live entities` with state reads and intents.
   The separation is mandatory — a consumer may use the descriptors alone (e.g. to display a list of devices without connecting to the CLU).
 - Pages serve only as a container — Core does not model the UI layout.
-- Every device has: `id` (= `widget.id`), `widgetType` (= `widget.type`), `kind` (the canonical kind), `name`, `page` (`{index, name}` of the page on which the widget lies) and a list of **canonical entities** (one device may have several, e.g. a double relay → 2 switches). Entity identifier: `{widget.id}_{suffix}` — the suffixes are given below per type (they are a **stable contract** — adapters build unique_id on them). Devices controlling the same CLU object are grouped by §6.6.
+- Every device has: `id` (= `widget.id`), `widgetType` (= `widget.type`), `kind` (the canonical kind), `name`, `page` (`{index, name}` of the page on which the widget lies), `section` (`{id, title}` of the nearest `HEADER` widget above it on the same page — the section the app shows it under; `null` for a device above the page's first header or on a page without headers; a header that does not parse, §3.5, starts no section) and a list of **canonical entities** (one device may have several, e.g. a double relay → 2 switches). Entity identifier: `{widget.id}_{suffix}` — the suffixes are given below per type (they are a **stable contract** — adapters build unique_id on them). Devices controlling the same CLU object are grouped by §6.6.
 - **The device `kind`** says what the device is, independently of the entities it exposes (a contact sensor with a button is still a `contactSensor`). Fixed per widget type:
 
   | `widget.type` | `kind` |

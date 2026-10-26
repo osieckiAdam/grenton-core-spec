@@ -11,6 +11,66 @@
     "fixture": "fixtures/interfaces/missing-encryption.json"
   },
   "expect": {
-    "outcome": "reject"
+    "outcome": "ok",
+    "value": {
+      "devices": [
+        {
+          "id": "w-value",
+          "widgetType": "VALUE_V2",
+          "kind": "sensor",
+          "name": "Temperatura",
+          "page": {
+            "index": 0,
+            "name": "Salon"
+          },
+          "section": null,
+          "entities": [
+            {
+              "kind": "sensor",
+              "id": "w-value_0",
+              "name": "Temperatura",
+              "state": {
+                "callType": "ATTRIBUTE",
+                "cluId": "CLU_501234567",
+                "objectName": "PAN4756",
+                "index": "0"
+              },
+              "sensorKind": "generic",
+              "unit": null,
+              "grentonUnit": "DEGREE",
+              "valueType": "FLOAT",
+              "precision": 1
+            }
+          ]
+        }
+      ],
+      "physicalObjects": [
+        {
+          "key": {
+            "cluId": "CLU_501234567",
+            "kind": "object",
+            "name": "PAN4756",
+            "index": "0"
+          },
+          "widgets": [
+            {
+              "deviceId": "w-value",
+              "widgetType": "VALUE_V2",
+              "name": "Temperatura",
+              "page": {
+                "index": 0,
+                "name": "Salon"
+              },
+              "entityIds": [
+                "w-value_0"
+              ]
+            }
+          ]
+        }
+      ],
+      "skippedWidgets": [
+        []
+      ]
+    }
   }
 }

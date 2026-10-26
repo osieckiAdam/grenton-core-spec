@@ -26,6 +26,7 @@
             "index": 0,
             "name": "Harmonogramy"
           },
+          "section": null,
           "entities": [
             {
               "kind": "eventSchedule",
@@ -127,6 +128,7 @@
             "index": 0,
             "name": "Harmonogramy"
           },
+          "section": null,
           "entities": [
             {
               "kind": "eventSchedule",
@@ -180,6 +182,7 @@
             "index": 0,
             "name": "Harmonogramy"
           },
+          "section": null,
           "entities": [
             {
               "kind": "tvRemote",
@@ -231,6 +234,7 @@
             "index": 0,
             "name": "Harmonogramy"
           },
+          "section": null,
           "entities": [
             {
               "kind": "tvRemote",

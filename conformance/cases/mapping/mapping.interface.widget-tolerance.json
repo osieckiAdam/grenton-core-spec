@@ -26,6 +26,7 @@
             "index": 0,
             "name": "Strona A"
           },
+          "section": null,
           "entities": [
             {
               "kind": "sensor",
@@ -54,6 +55,7 @@
             "index": 0,
             "name": "Strona A"
           },
+          "section": null,
           "entities": [
             {
               "kind": "switch",

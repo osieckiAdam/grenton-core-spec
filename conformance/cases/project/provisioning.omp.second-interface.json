@@ -81,6 +81,7 @@
               "index": 0,
               "name": "Only page"
             },
+            "section": null,
             "entities": [
               {
                 "kind": "sensor",
