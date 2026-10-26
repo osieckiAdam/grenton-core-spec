@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Suite version** | 0.13.1 (specification 0.13.1, case schema 1) |
+| **Suite version** | 0.14.0 (specification 0.14.0, case schema 1) |
 | **Applies to** | `spec/grenton-core-design.md` §9 |
 
 The conformance suite is **data, not code**: every case is a JSON file in `conformance/cases/`. The port supplies a thin runner that loads the cases, calls the port's production API and compares the observation with the expectation. Adding a case once covers all ports.
@@ -94,9 +94,9 @@ Decryption returns **bytes**; UTF-8 decoding and whitespace trimming belong to t
 ```json
 {
   "devices": [
-    { "id": "w-onoff", "widgetType": "ON_OFF", "kind": "switch", "name": "Lampa / Kinkiet",
-      "page": { "index": 0, "name": "Salon" }, "section": { "id": "h-1", "title": "Oświetlenie" },
-      "entities": [ { "kind": "switch", "id": "w-onoff_0", "name": "Lampa", "state": { … }, "onAction": { … }, … } ] }
+    { "id": "w-onoff", "widgetType": "ON_OFF", "kind": "switch", "name": "Lampa / Kinkiet", "icon": null,
+      "page": { "index": 0, "name": "Salon", "icon": "home" }, "section": { "id": "h-1", "title": "Oświetlenie" },
+      "entities": [ { "kind": "switch", "id": "w-onoff_0", "name": "Lampa", "icon": "bulb", "state": { … }, "onAction": { … }, … } ] }
   ],
   "physicalObjects": [
     { "key": { "cluId": "CLU_1", "kind": "object", "name": "DOU8272", "index": "0" },
@@ -109,6 +109,7 @@ Decryption returns **bytes**; UTF-8 decoding and whitespace trimming belong to t
 
 - `devices` — in normative order (spec §6.1); compared positionally, including devices without entities.
 - `physicalObjects` — the grouping of §6.6, in order of first use; compared positionally.
+- `icon` — the widget's icon name or `null`; `page.icon` — the page's; every entity's `icon` — its component's `image`/`icon`, else the widget's, else `null` (§6.1).
 - `section` — `{id, title}` of the device's section header (§6.1), or `null`.
 - `skippedWidgets` — one list per page: the `type` of the skipped widgets in order (`null` when there is no `type`). The text of the reason is not compared — error messages are language-specific.
 - `ValueRef`: `{"callType":"VARIABLE","cluId","index"}` or `{"callType":"ATTRIBUTE","cluId","objectName","index"}` (a variable's `objectName` is logically ignored, §3.2).
@@ -116,7 +117,7 @@ Decryption returns **bytes**; UTF-8 decoding and whitespace trimming belong to t
 - Numbers from `data.json` (`min`, `max`, `precision`, `range`) — plain JSON numbers: they come from JSON, so they parse identically in every language.
 - Entity fields by `kind`:
 
-| Entity `kind` | Fields (besides `kind`, `id`, `name`) |
+| Entity `kind` | Fields (besides `kind`, `id`, `name`, `icon`) |
 |---|---|
 | `switch` | `state`, `onAction`, `offAction`, `onIndication`, `offIndication` |
 | `dimmableLight` | `state`, `min`, `max`, `precision`, `onAction`, `offAction`, `setValueAction` |

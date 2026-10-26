@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Status** | Design (for implementation) |
-| **Version** | 0.13.1 |
+| **Version** | 0.14.0 |
 | **Date** | 2026-10-26 |
 | **Reference implementation** | `homeassistant-grenton` (Python, Home Assistant integration) |
 | **Purpose** | Language-agnostic specification — the basis for ports (first: Swift) |
@@ -165,7 +165,7 @@ Every widget has an `id: string` and a `type` discriminator. 18 supported types 
 |---|---|
 | `VALUE_V2` | `label`, `icon`, `unit`, `valueType` (`STRING\|FLOAT\|INTEGER`), `precision:int`, `object.value: ValueRef` |
 | `VALUE_DOUBLE` | `componentLeft` and `componentRight`, each: `label, icon, unit, valueType, precision, object.value` |
-| `ON_OFF` | `components[]` of type `BUTTON_BISTABLE`: `label, rowId:int, unit, state: ValueRef, actions: ActionRef[], onIndication, offIndication` |
+| `ON_OFF` | `components[]` of type `BUTTON_BISTABLE`: `label, rowId:int, unit, image?, state: ValueRef, actions: ActionRef[], onIndication, offIndication` (`image` — the icon chosen in Object Manager, e.g. `bulb`, `power_socket`; Object Manager always writes it) |
 | `ON_OFF_DOUBLE` | `components[]` of type `BUTTON_BISTABLE_V2` (fields as above) |
 | `DIMMER_V2` | `label, icon, min:double, max:double, precision:int`, `object: {value, setValueAction, onAction, offAction}` |
 | `LED` | `components[]` — a union over `type`: `BUTTON_BISTABLE` (`image, onIndication, offIndication`), `SLIDER_HUE`, `SLIDER_SATURATION`, `SLIDER_BRIGHTNESS` (each slider: `range:{min:int,max:int}`); all have `state` and `actions[]` |
@@ -637,7 +637,7 @@ Technology-neutral (actor / serial queue / mutex — the port's choice):
   2. **Binding** (a factory in the Runtime/system): `DeviceDescriptor + StateStore + CluSession → live entities` with state reads and intents.
   The separation is mandatory — a consumer may use the descriptors alone (e.g. to display a list of devices without connecting to the CLU).
 - Pages serve only as a container — Core does not model the UI layout.
-- Every device has: `id` (= `widget.id`), `widgetType` (= `widget.type`), `kind` (the canonical kind), `name`, `page` (`{index, name}` of the page on which the widget lies), `section` (`{id, title}` of the nearest `HEADER` widget above it on the same page — the section the app shows it under; `null` for a device above the page's first header or on a page without headers; a header that does not parse, §3.5, starts no section) and a list of **canonical entities** (one device may have several, e.g. a double relay → 2 switches). Entity identifier: `{widget.id}_{suffix}` — the suffixes are given below per type (they are a **stable contract** — adapters build unique_id on them). Devices controlling the same CLU object are grouped by §6.6.
+- Every device has: `id` (= `widget.id`), `widgetType` (= `widget.type`), `kind` (the canonical kind), `name`, `icon` (the widget's `icon`, the name of the icon chosen in Object Manager, for the types of §3.5 that have one; `null` otherwise), `page` (`{index, name, icon}` of the page on which the widget lies), `section` (`{id, title}` of the nearest `HEADER` widget above it on the same page — the section the app shows it under; `null` for a device above the page's first header or on a page without headers; a header that does not parse, §3.5, starts no section) and a list of **canonical entities** (one device may have several, e.g. a double relay → 2 switches). Entity identifier: `{widget.id}_{suffix}` — the suffixes are given below per type (they are a **stable contract** — adapters build unique_id on them). Every entity has `icon`: its component's `image` or `icon` when it comes from a component (the two switches of `ON_OFF_DOUBLE`, the button of `LED`, the sides of the double widgets, a camera stream…), else the widget's `icon`, else `null`. **The protocol has no device class** — a relay behind a lamp and one behind a pump are the same `switch` — and the icon the installer chose in Object Manager is the only hint of what a device is; Core passes it on and does not interpret it. Devices controlling the same CLU object are grouped by §6.6.
 - **The device `kind`** says what the device is, independently of the entities it exposes (a contact sensor with a button is still a `contactSensor`). Fixed per widget type:
 
   | `widget.type` | `kind` |

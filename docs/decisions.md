@@ -151,6 +151,12 @@ lowercase msg_ids, and any positive subscription number.
 - A port may add an umbrella module (0.11.0): the Swift port needed a
   home for "download and start" without making Devices depend on
   Provisioning, which §2 forbids.
+- A device carries its section header (0.13.0) and its icon (0.14.0): the
+  first app on the Swift port, a macOS menu-bar app, wanted the myGrenton
+  layout (page, header, widgets) and a list of lights only. The headers
+  were only in the DTO, and the icon chosen in Object Manager — the sole
+  hint of what a relay drives, since the protocol has no device class —
+  was dropped by the device model.
 - A JSON nesting limit of 32–1024 for project nodes (0.11.2): a crafted
   project file with thousands of levels crashed a recursive parser in a
   debug build before a 512 limit was reached; real nodes nest ten deep.

@@ -78,43 +78,54 @@ def device_name(w):
     return joined([c["label"] for c in w["components"]])
 
 
-def sensor(id, name, state, sensor_kind="generic", unit=None, grenton_unit=None, value_type=None, precision=None):
-    return {"kind": "sensor", "id": id, "name": name, "state": value_ref(state), "sensorKind": sensor_kind,
+def icon_of(w, c=None):
+    """§6.1: the component's image or icon when the entity comes from a
+    component, else the widget's icon, else null."""
+    if c is not None:
+        for key in ("image", "icon"):
+            if isinstance(c.get(key), str):
+                return c[key]
+    return w.get("icon") if isinstance(w.get("icon"), str) else None
+
+
+def sensor(id, name, state, sensor_kind="generic", unit=None, grenton_unit=None, value_type=None, precision=None, icon=None):
+    return {"kind": "sensor", "id": id, "name": name, "icon": icon, "state": value_ref(state), "sensorKind": sensor_kind,
             "unit": unit, "grentonUnit": grenton_unit, "valueType": value_type, "precision": precision}
 
 
-def switch(wid, c):
+def switch(w, c):
+    wid = w["id"]
     on, off = first(c["actions"], "ON"), first(c["actions"], "OFF")
     if not on or not off:
         return None  # §6.3.1: component skipped
-    return {"kind": "switch", "id": f"{wid}_{c['rowId']}", "name": c["label"], "state": value_ref(c["state"]),
+    return {"kind": "switch", "id": f"{wid}_{c['rowId']}", "name": c["label"], "icon": icon_of(w, c), "state": value_ref(c["state"]),
             "onAction": action_ref(on), "offAction": action_ref(off),
             "onIndication": c["onIndication"], "offIndication": c["offIndication"]}
 
 
-def contact(id, label, part):
-    return {"kind": "contactSensor", "id": id, "name": label, "state": value_ref(part["object"]["value"]),
+def contact(id, label, part, icon=None):
+    return {"kind": "contactSensor", "id": id, "name": label, "icon": icon, "state": value_ref(part["object"]["value"]),
             "reversed": part["reverseState"], "onIndication": part["onIndication"], "offIndication": part["offIndication"]}
 
 
-def trigger(id, name, action):
-    return {"kind": "trigger", "id": id, "name": name, "action": action_ref(action)}
+def trigger(id, name, action, icon=None):
+    return {"kind": "trigger", "id": id, "name": name, "icon": icon, "action": action_ref(action)}
 
 
 def entities(w):
     t, wid = w["type"], w["id"]
     if t == "VALUE_V2":
         return [sensor(f"{wid}_0", w["label"], w["object"]["value"], grenton_unit=w["unit"],
-                       value_type=w["valueType"], precision=w["precision"])]
+                       value_type=w["valueType"], precision=w["precision"], icon=icon_of(w))]
     if t == "VALUE_DOUBLE":
         return [sensor(f"{wid}_{n}", c["label"], c["object"]["value"], grenton_unit=c["unit"],
-                       value_type=c["valueType"], precision=c["precision"])
+                       value_type=c["valueType"], precision=c["precision"], icon=icon_of(w, c))
                 for n, c in enumerate([w["componentLeft"], w["componentRight"]])]
     if t in ("ON_OFF", "ON_OFF_DOUBLE"):
-        return [e for e in (switch(wid, c) for c in w["components"]) if e]
+        return [e for e in (switch(w, c) for c in w["components"]) if e]
     if t == "DIMMER_V2":
         o = w["object"]
-        return [{"kind": "dimmableLight", "id": f"{wid}_0", "name": w["label"], "state": value_ref(o["value"]),
+        return [{"kind": "dimmableLight", "id": f"{wid}_0", "name": w["label"], "icon": icon_of(w), "state": value_ref(o["value"]),
                  "min": w["min"], "max": w["max"], "precision": w["precision"],
                  "onAction": action_ref(o["onAction"]), "offAction": action_ref(o["offAction"]),
                  "setValueAction": action_ref(o["setValueAction"])}]
@@ -134,54 +145,54 @@ def entities(w):
             return {"state": value_ref(s["state"]), "setAction": action_ref(s["actions"][0]),
                     "range": {"min": s["range"]["min"], "max": s["range"]["max"]}}
         hue, sat, bri = sliders
-        return [{"kind": "hsbLight", "id": f"{wid}_0", "name": button["label"], "powerState": value_ref(button["state"]),
+        return [{"kind": "hsbLight", "id": f"{wid}_0", "name": button["label"], "icon": icon_of(w, button), "powerState": value_ref(button["state"]),
                  "onAction": action_ref(on), "offAction": action_ref(off),
                  "hue": channel(hue), "saturation": channel(sat), "brightness": channel(bri)}]
     if t == "CONTACT_SENSOR":
-        out = [contact(f"{wid}_binary_sensor", w["label"], w)]
+        out = [contact(f"{wid}_binary_sensor", w["label"], w, icon=icon_of(w))]
         if w["object"].get("clickAction"):
-            out.append(trigger(f"{wid}_button", w["label"], w["object"]["clickAction"]))
+            out.append(trigger(f"{wid}_button", w["label"], w["object"]["clickAction"], icon=icon_of(w)))
         return out
     if t == "CONTACT_SENSOR_DOUBLE":
         out = []
         for side in ("left", "right"):
             c = w["component" + side.capitalize()]
-            out.append(contact(f"{wid}_binary_sensor_{side}", c["label"], c))
+            out.append(contact(f"{wid}_binary_sensor_{side}", c["label"], c, icon=icon_of(w, c)))
             if c["object"].get("clickAction"):
-                out.append(trigger(f"{wid}_button_{side}", c["label"], c["object"]["clickAction"]))
+                out.append(trigger(f"{wid}_button_{side}", c["label"], c["object"]["clickAction"], icon=icon_of(w, c)))
         return out
     if t == "SLIDER":
         o = w["object"]
-        out = [{"kind": "numberSetting", "id": f"{wid}_slider", "name": w["label"], "state": value_ref(o["value"]),
+        out = [{"kind": "numberSetting", "id": f"{wid}_slider", "name": w["label"], "icon": icon_of(w), "state": value_ref(o["value"]),
                 "setValueAction": action_ref(o["setValueAction"]), "min": w["min"], "max": w["max"],
                 "precision": w["precision"]}]
         if o.get("clickAction"):
-            out.append(trigger(f"{wid}_button", w["label"], o["clickAction"]))
+            out.append(trigger(f"{wid}_button", w["label"], o["clickAction"], icon=icon_of(w)))
         return out
     if t == "MULTISENSOR":
-        return [sensor(f"{wid}_{suffix}", w["label"], w[field]["value"], sensor_kind=kind, unit=unit)
+        return [sensor(f"{wid}_{suffix}", w["label"], w[field]["value"], sensor_kind=kind, unit=unit, icon=icon_of(w))
                 for suffix, field, kind, unit in MULTISENSOR_CHANNELS]
     if t == "ROLLER_SHUTTER":
         comps = w["components"]
         if not comps or not comps[0]["actions"]:
             return []  # §6.3.9 completeness
         c = comps[0]
-        return [{"kind": "stateSensor", "id": f"{wid}_sensor", "name": c["label"], "state": value_ref(c["state"])},
-                trigger(f"{wid}_button", c["label"], c["actions"][0])]
+        return [{"kind": "stateSensor", "id": f"{wid}_sensor", "name": c["label"], "icon": icon_of(w, c), "state": value_ref(c["state"])},
+                trigger(f"{wid}_button", c["label"], c["actions"][0], icon=icon_of(w, c))]
     if t == "ROLLER_SHUTTER_V3":
         o = w["object"]
         tilt = None
         if "lamelMoveTimeout" in o and o["lamelMoveTimeout"] is not None:
             tilt = {"position": value_ref(o["lamelPosition"]), "setAction": action_ref(o["setLamelPositionAction"])}
         stop = action_ref(o["stopAction"]) if o.get("stopAction") else None
-        return [{"kind": "cover", "id": wid, "name": w["label"], "motionState": value_ref(o["state"]),
+        return [{"kind": "cover", "id": wid, "name": w["label"], "icon": icon_of(w), "motionState": value_ref(o["state"]),
                  "position": value_ref(o["position"]), "setPositionAction": action_ref(o["setPositionAction"]),
                  "tilt": tilt, "stopAction": stop}]
     if t == "CAMERA":
         if not w["components"]:
             return []  # §6.3.11 completeness
         c = w["components"][0]
-        return [{"kind": "camera", "id": f"{wid}_0", "name": c["label"], "streamUrl": c["value"]}]
+        return [{"kind": "camera", "id": f"{wid}_0", "name": c["label"], "icon": icon_of(w, c), "streamUrl": c["value"]}]
     if t in ("SCENE", "SCENE_DOUBLE"):
         out = []
         for position, c in enumerate(w["components"]):
@@ -189,7 +200,7 @@ def entities(w):
             if script:
                 # SCENE: suffix rowId (reference contract); SCENE_DOUBLE: list position (rowIds repeat).
                 suffix = c["rowId"] if t == "SCENE" else position
-                out.append({"kind": "sceneTrigger", "id": f"{wid}_{suffix}", "name": c["label"],
+                out.append({"kind": "sceneTrigger", "id": f"{wid}_{suffix}", "name": c["label"], "icon": icon_of(w, c),
                             "action": action_ref(script)})
         return out
     if t == "THERMOSTAT_V2":
@@ -202,7 +213,7 @@ def entities(w):
             if not o.get(state_key) or not o.get(action_key):
                 return None
             return {"state": value_ref(o[state_key]), "setAction": action_ref(o[action_key])}
-        return [{"kind": "thermostat", "id": f"{wid}_0", "name": w["label"],
+        return [{"kind": "thermostat", "id": f"{wid}_0", "name": w["label"], "icon": icon_of(w),
                  "currentTemperature": value_ref(o["currentTemperature"]),
                  "targetTemperature": value_ref(o["targetTemperature"]),
                  "setTargetTemperatureAction": action_ref(o["setTargetTemperatureAction"]),
@@ -213,7 +224,7 @@ def entities(w):
         o = w["object"]
         # §6.3.13: the required fields of §3.5 parse the widget; each optional
         # control exists when its field is present.
-        out = {"kind": "eventSchedule", "id": f"{wid}_0", "name": w["label"],
+        out = {"kind": "eventSchedule", "id": f"{wid}_0", "name": w["label"], "icon": icon_of(w),
                "state": value_ref(o["state"]), "ruleList": value_ref(o["ruleList"]),
                "addRuleAction": action_ref(o["addRuleAction"]), "deleteRuleAction": action_ref(o["deleteRuleAction"])}
         for key in ("ruleCount", "ruleSpace", "nextRule", "currentRule"):
@@ -230,7 +241,7 @@ def entities(w):
             if isinstance(a, dict) and {"cluId", "objectName", "event", "value", "callType"} <= set(a) \
                     and (a["callType"] == "SCRIPT" or "index" in a):
                 buttons[name] = action_ref(a)
-        return [{"kind": "tvRemote", "id": f"{wid}_0", "name": w["label"], "buttons": buttons}]
+        return [{"kind": "tvRemote", "id": f"{wid}_0", "name": w["label"], "icon": icon_of(w), "buttons": buttons}]
     raise AssertionError(t)
 
 
@@ -299,7 +310,8 @@ def map_interface(data):
                 page_skipped.append(t)
                 continue
             devices.append({"id": w["id"], "widgetType": t, "kind": DEVICE_KIND[t], "name": device_name(w),
-                            "page": {"index": page_index, "name": page["name"]}, "section": section,
+                            "icon": w.get("icon") if isinstance(w.get("icon"), str) else None,
+                            "page": {"index": page_index, "name": page["name"], "icon": page["icon"]}, "section": section,
                             "entities": entities(w)})
         skipped.append(page_skipped)
     return {"devices": devices, "physicalObjects": physical_objects(devices), "skippedWidgets": skipped}

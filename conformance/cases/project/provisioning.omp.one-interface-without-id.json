@@ -72,9 +72,11 @@
             "widgetType": "VALUE_V2",
             "kind": "sensor",
             "name": "Counter",
+            "icon": "info",
             "page": {
               "index": 0,
-              "name": "Only page"
+              "name": "Only page",
+              "icon": "star"
             },
             "section": null,
             "entities": [
@@ -82,6 +84,7 @@
                 "kind": "sensor",
                 "id": "va000003_0",
                 "name": "Counter",
+                "icon": "info",
                 "state": {
                   "callType": "VARIABLE",
                   "cluId": "CLU_C",
@@ -111,7 +114,8 @@
                 "name": "Counter",
                 "page": {
                   "index": 0,
-                  "name": "Only page"
+                  "name": "Only page",
+                  "icon": "star"
                 },
                 "entityIds": [
                   "va000003_0"

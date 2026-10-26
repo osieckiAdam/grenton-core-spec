@@ -22,9 +22,11 @@
           "widgetType": "ON_OFF",
           "kind": "switch",
           "name": "Pełny / Bez OFF",
+          "icon": null,
           "page": {
             "index": 0,
-            "name": "Kompletność"
+            "name": "Kompletność",
+            "icon": "home"
           },
           "section": null,
           "entities": [
@@ -32,6 +34,7 @@
               "kind": "switch",
               "id": "c-switch-missing-off_0",
               "name": "Pełny",
+              "icon": null,
               "state": {
                 "callType": "ATTRIBUTE",
                 "cluId": "CLU_501234567",
@@ -64,9 +67,11 @@
           "widgetType": "ON_OFF",
           "kind": "switch",
           "name": "Dwie akcje ON",
+          "icon": null,
           "page": {
             "index": 0,
-            "name": "Kompletność"
+            "name": "Kompletność",
+            "icon": "home"
           },
           "section": null,
           "entities": [
@@ -74,6 +79,7 @@
               "kind": "switch",
               "id": "c-switch-first-action-wins_3",
               "name": "Dwie akcje ON",
+              "icon": null,
               "state": {
                 "callType": "ATTRIBUTE",
                 "cluId": "CLU_501234567",
@@ -106,9 +112,11 @@
           "widgetType": "ON_OFF",
           "kind": "switch",
           "name": "Zmienna",
+          "icon": null,
           "page": {
             "index": 0,
-            "name": "Kompletność"
+            "name": "Kompletność",
+            "icon": "home"
           },
           "section": null,
           "entities": [
@@ -116,6 +124,7 @@
               "kind": "switch",
               "id": "c-switch-variable-state_0",
               "name": "Zmienna",
+              "icon": null,
               "state": {
                 "callType": "VARIABLE",
                 "cluId": "CLU_501234567",
@@ -147,9 +156,11 @@
           "widgetType": "ON_OFF",
           "kind": "switch",
           "name": "",
+          "icon": null,
           "page": {
             "index": 0,
-            "name": "Kompletność"
+            "name": "Kompletność",
+            "icon": "home"
           },
           "section": null,
           "entities": []
@@ -159,9 +170,11 @@
           "widgetType": "LED",
           "kind": "hsbLight",
           "name": "Taśma LED",
+          "icon": null,
           "page": {
             "index": 0,
-            "name": "Kompletność"
+            "name": "Kompletność",
+            "icon": "home"
           },
           "section": null,
           "entities": []
@@ -171,9 +184,11 @@
           "widgetType": "LED",
           "kind": "hsbLight",
           "name": "Taśma LED",
+          "icon": null,
           "page": {
             "index": 0,
-            "name": "Kompletność"
+            "name": "Kompletność",
+            "icon": "home"
           },
           "section": null,
           "entities": []
@@ -183,9 +198,11 @@
           "widgetType": "LED",
           "kind": "hsbLight",
           "name": "Taśma LED",
+          "icon": null,
           "page": {
             "index": 0,
-            "name": "Kompletność"
+            "name": "Kompletność",
+            "icon": "home"
           },
           "section": null,
           "entities": []
@@ -195,9 +212,11 @@
           "widgetType": "CONTACT_SENSOR",
           "kind": "contactSensor",
           "name": "Drzwi wejściowe",
+          "icon": "door",
           "page": {
             "index": 0,
-            "name": "Kompletność"
+            "name": "Kompletność",
+            "icon": "home"
           },
           "section": null,
           "entities": [
@@ -205,6 +224,7 @@
               "kind": "contactSensor",
               "id": "c-contact-without-click_binary_sensor",
               "name": "Drzwi wejściowe",
+              "icon": "door",
               "state": {
                 "callType": "ATTRIBUTE",
                 "cluId": "CLU_501234567",
@@ -222,9 +242,11 @@
           "widgetType": "CONTACT_SENSOR_DOUBLE",
           "kind": "contactSensor",
           "name": "Okno lewe / Okno prawe",
+          "icon": null,
           "page": {
             "index": 0,
-            "name": "Kompletność"
+            "name": "Kompletność",
+            "icon": "home"
           },
           "section": null,
           "entities": [
@@ -232,6 +254,7 @@
               "kind": "contactSensor",
               "id": "c-contact-double-right-click_binary_sensor_left",
               "name": "Okno lewe",
+              "icon": "window",
               "state": {
                 "callType": "ATTRIBUTE",
                 "cluId": "CLU_501234567",
@@ -246,6 +269,7 @@
               "kind": "contactSensor",
               "id": "c-contact-double-right-click_binary_sensor_right",
               "name": "Okno prawe",
+              "icon": "window",
               "state": {
                 "callType": "ATTRIBUTE",
                 "cluId": "CLU_501234567",
@@ -260,6 +284,7 @@
               "kind": "trigger",
               "id": "c-contact-double-right-click_button_right",
               "name": "Okno prawe",
+              "icon": "window",
               "action": {
                 "callType": "VARIABLE",
                 "cluId": "CLU_501234567",
@@ -276,9 +301,11 @@
           "widgetType": "SLIDER",
           "kind": "numberSetting",
           "name": "Temperatura zadana",
+          "icon": "thermostat",
           "page": {
             "index": 0,
-            "name": "Kompletność"
+            "name": "Kompletność",
+            "icon": "home"
           },
           "section": null,
           "entities": [
@@ -286,6 +313,7 @@
               "kind": "numberSetting",
               "id": "c-slider-with-click_slider",
               "name": "Temperatura zadana",
+              "icon": "thermostat",
               "state": {
                 "callType": "ATTRIBUTE",
                 "cluId": "CLU_501234567",
@@ -308,6 +336,7 @@
               "kind": "trigger",
               "id": "c-slider-with-click_button",
               "name": "Temperatura zadana",
+              "icon": "thermostat",
               "action": {
                 "callType": "METHOD",
                 "cluId": "CLU_501234567",
@@ -324,9 +353,11 @@
           "widgetType": "ROLLER_SHUTTER",
           "kind": "cover",
           "name": "",
+          "icon": null,
           "page": {
             "index": 0,
-            "name": "Kompletność"
+            "name": "Kompletność",
+            "icon": "home"
           },
           "section": null,
           "entities": []
@@ -336,9 +367,11 @@
           "widgetType": "ROLLER_SHUTTER",
           "kind": "cover",
           "name": "Bez akcji",
+          "icon": null,
           "page": {
             "index": 0,
-            "name": "Kompletność"
+            "name": "Kompletność",
+            "icon": "home"
           },
           "section": null,
           "entities": []
@@ -348,9 +381,11 @@
           "widgetType": "ROLLER_SHUTTER_V3",
           "kind": "cover",
           "name": "Roleta sypialnia",
+          "icon": "shutter",
           "page": {
             "index": 0,
-            "name": "Kompletność"
+            "name": "Kompletność",
+            "icon": "home"
           },
           "section": null,
           "entities": [
@@ -358,6 +393,7 @@
               "kind": "cover",
               "id": "c-cover-no-tilt-no-stop",
               "name": "Roleta sypialnia",
+              "icon": "shutter",
               "motionState": {
                 "callType": "ATTRIBUTE",
                 "cluId": "CLU_501234567",
@@ -388,9 +424,11 @@
           "widgetType": "ROLLER_SHUTTER_V3",
           "kind": "cover",
           "name": "Roleta sypialnia",
+          "icon": "shutter",
           "page": {
             "index": 0,
-            "name": "Kompletność"
+            "name": "Kompletność",
+            "icon": "home"
           },
           "section": null,
           "entities": [
@@ -398,6 +436,7 @@
               "kind": "cover",
               "id": "c-cover-with-stop",
               "name": "Roleta sypialnia",
+              "icon": "shutter",
               "motionState": {
                 "callType": "ATTRIBUTE",
                 "cluId": "CLU_501234567",
@@ -450,9 +489,11 @@
           "widgetType": "CAMERA",
           "kind": "camera",
           "name": "",
+          "icon": null,
           "page": {
             "index": 0,
-            "name": "Kompletność"
+            "name": "Kompletność",
+            "icon": "home"
           },
           "section": null,
           "entities": []
@@ -462,9 +503,11 @@
           "widgetType": "SCENE",
           "kind": "scene",
           "name": "Klik bez skryptu / Skrypt na ON / Właściwa",
+          "icon": null,
           "page": {
             "index": 0,
-            "name": "Kompletność"
+            "name": "Kompletność",
+            "icon": "home"
           },
           "section": null,
           "entities": [
@@ -472,6 +515,7 @@
               "kind": "sceneTrigger",
               "id": "c-scene-filtering_2",
               "name": "Właściwa",
+              "icon": null,
               "action": {
                 "callType": "SCRIPT",
                 "cluId": "CLU_501234567",
@@ -487,9 +531,11 @@
           "widgetType": "VALUE_V2",
           "kind": "sensor",
           "name": "Temperatura",
+          "icon": "temp",
           "page": {
             "index": 1,
-            "name": "Druga strona"
+            "name": "Druga strona",
+            "icon": "home"
           },
           "section": null,
           "entities": [
@@ -497,6 +543,7 @@
               "kind": "sensor",
               "id": "w-value_0",
               "name": "Temperatura",
+              "icon": "temp",
               "state": {
                 "callType": "ATTRIBUTE",
                 "cluId": "CLU_501234567",
@@ -527,7 +574,8 @@
               "name": "Pełny / Bez OFF",
               "page": {
                 "index": 0,
-                "name": "Kompletność"
+                "name": "Kompletność",
+                "icon": "home"
               },
               "entityIds": [
                 "c-switch-missing-off_0"
@@ -549,7 +597,8 @@
               "name": "Dwie akcje ON",
               "page": {
                 "index": 0,
-                "name": "Kompletność"
+                "name": "Kompletność",
+                "icon": "home"
               },
               "entityIds": [
                 "c-switch-first-action-wins_3"
@@ -571,7 +620,8 @@
               "name": "Zmienna",
               "page": {
                 "index": 0,
-                "name": "Kompletność"
+                "name": "Kompletność",
+                "icon": "home"
               },
               "entityIds": [
                 "c-switch-variable-state_0"
@@ -593,7 +643,8 @@
               "name": "Drzwi wejściowe",
               "page": {
                 "index": 0,
-                "name": "Kompletność"
+                "name": "Kompletność",
+                "icon": "home"
               },
               "entityIds": [
                 "c-contact-without-click_binary_sensor"
@@ -615,7 +666,8 @@
               "name": "Okno lewe / Okno prawe",
               "page": {
                 "index": 0,
-                "name": "Kompletność"
+                "name": "Kompletność",
+                "icon": "home"
               },
               "entityIds": [
                 "c-contact-double-right-click_binary_sensor_left"
@@ -637,7 +689,8 @@
               "name": "Okno lewe / Okno prawe",
               "page": {
                 "index": 0,
-                "name": "Kompletność"
+                "name": "Kompletność",
+                "icon": "home"
               },
               "entityIds": [
                 "c-contact-double-right-click_binary_sensor_right"
@@ -659,7 +712,8 @@
               "name": "Okno lewe / Okno prawe",
               "page": {
                 "index": 0,
-                "name": "Kompletność"
+                "name": "Kompletność",
+                "icon": "home"
               },
               "entityIds": [
                 "c-contact-double-right-click_button_right"
@@ -681,7 +735,8 @@
               "name": "Temperatura zadana",
               "page": {
                 "index": 0,
-                "name": "Kompletność"
+                "name": "Kompletność",
+                "icon": "home"
               },
               "entityIds": [
                 "c-slider-with-click_slider"
@@ -703,7 +758,8 @@
               "name": "Temperatura zadana",
               "page": {
                 "index": 0,
-                "name": "Kompletność"
+                "name": "Kompletność",
+                "icon": "home"
               },
               "entityIds": [
                 "c-slider-with-click_button"
@@ -725,7 +781,8 @@
               "name": "Roleta sypialnia",
               "page": {
                 "index": 0,
-                "name": "Kompletność"
+                "name": "Kompletność",
+                "icon": "home"
               },
               "entityIds": [
                 "c-cover-no-tilt-no-stop"
@@ -737,7 +794,8 @@
               "name": "Roleta sypialnia",
               "page": {
                 "index": 0,
-                "name": "Kompletność"
+                "name": "Kompletność",
+                "icon": "home"
               },
               "entityIds": [
                 "c-cover-with-stop"
@@ -759,7 +817,8 @@
               "name": "Klik bez skryptu / Skrypt na ON / Właściwa",
               "page": {
                 "index": 0,
-                "name": "Kompletność"
+                "name": "Kompletność",
+                "icon": "home"
               },
               "entityIds": [
                 "c-scene-filtering_2"
@@ -781,7 +840,8 @@
               "name": "Temperatura",
               "page": {
                 "index": 1,
-                "name": "Druga strona"
+                "name": "Druga strona",
+                "icon": "home"
               },
               "entityIds": [
                 "w-value_0"
