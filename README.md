@@ -19,7 +19,7 @@ protocol of CLU controllers, and a canonical device model.
 
 | Port | Suite version | Profiles |
 |---|---|---|
-| [grenton-core-swift](https://github.com/osieckiAdam/grenton-core-swift) ([documentation](https://osieckiadam.github.io/grenton-core-swift/)) | 0.12.2 | `stateless`, `mapping`, `session`, `project` |
+| [grenton-core-swift](https://github.com/osieckiAdam/grenton-core-swift) ([documentation](https://osieckiadam.github.io/grenton-core-swift/)) | 0.13.1 | `stateless`, `mapping`, `session`, `project` |
 
 ## Conformance suite
 
