@@ -21,9 +21,11 @@
           "widgetType": "THERMOSTAT_V2",
           "kind": "thermostat",
           "name": "Temperatura",
+          "icon": "temperature",
           "page": {
             "index": 0,
-            "name": "SALON"
+            "name": "SALON",
+            "icon": "home"
           },
           "section": null,
           "entities": [
@@ -31,6 +33,7 @@
               "kind": "thermostat",
               "id": "sh-thermo-room_0",
               "name": "Temperatura",
+              "icon": "temperature",
               "currentTemperature": {
                 "callType": "ATTRIBUTE",
                 "cluId": "CLU_501234567",
@@ -109,9 +112,11 @@
           "widgetType": "VALUE_V2",
           "kind": "sensor",
           "name": "Temperatura",
+          "icon": "temp",
           "page": {
             "index": 0,
-            "name": "SALON"
+            "name": "SALON",
+            "icon": "home"
           },
           "section": null,
           "entities": [
@@ -119,6 +124,7 @@
               "kind": "sensor",
               "id": "sh-thermo-temp_0",
               "name": "Temperatura",
+              "icon": "temp",
               "state": {
                 "callType": "ATTRIBUTE",
                 "cluId": "CLU_501234567",
@@ -138,9 +144,11 @@
           "widgetType": "ROLLER_SHUTTER_V3",
           "kind": "cover",
           "name": "Roleta",
+          "icon": "shutter",
           "page": {
             "index": 0,
-            "name": "SALON"
+            "name": "SALON",
+            "icon": "home"
           },
           "section": null,
           "entities": [
@@ -148,6 +156,7 @@
               "kind": "cover",
               "id": "sh-shutter-room",
               "name": "Roleta",
+              "icon": "shutter",
               "motionState": {
                 "callType": "ATTRIBUTE",
                 "cluId": "CLU_501234567",
@@ -200,9 +209,11 @@
           "widgetType": "ON_OFF_DOUBLE",
           "kind": "switch",
           "name": "Gniazdko A / Gniazdko B",
+          "icon": null,
           "page": {
             "index": 0,
-            "name": "SALON"
+            "name": "SALON",
+            "icon": "home"
           },
           "section": null,
           "entities": [
@@ -210,6 +221,7 @@
               "kind": "switch",
               "id": "w-onoff-double_0",
               "name": "Gniazdko A",
+              "icon": null,
               "state": {
                 "callType": "ATTRIBUTE",
                 "cluId": "CLU_501234567",
@@ -239,6 +251,7 @@
               "kind": "switch",
               "id": "w-onoff-double_1",
               "name": "Gniazdko B",
+              "icon": null,
               "state": {
                 "callType": "ATTRIBUTE",
                 "cluId": "CLU_501234567",
@@ -271,9 +284,11 @@
           "widgetType": "SCENE",
           "kind": "scene",
           "name": "Wieczorny chill",
+          "icon": null,
           "page": {
             "index": 0,
-            "name": "SALON"
+            "name": "SALON",
+            "icon": "home"
           },
           "section": null,
           "entities": [
@@ -281,6 +296,7 @@
               "kind": "sceneTrigger",
               "id": "sh-scene-room_0",
               "name": "Wieczorny chill",
+              "icon": null,
               "action": {
                 "callType": "SCRIPT",
                 "cluId": "CLU_501234567",
@@ -296,9 +312,11 @@
           "widgetType": "CAMERA",
           "kind": "camera",
           "name": "Kamera wejście",
+          "icon": null,
           "page": {
             "index": 0,
-            "name": "SALON"
+            "name": "SALON",
+            "icon": "home"
           },
           "section": null,
           "entities": [
@@ -306,6 +324,7 @@
               "kind": "camera",
               "id": "sh-camera_0",
               "name": "Kamera wejście",
+              "icon": "cam",
               "streamUrl": "rtsp://192.168.1.20:554/stream1"
             }
           ]
@@ -315,9 +334,11 @@
           "widgetType": "THERMOSTAT_V2",
           "kind": "thermostat",
           "name": "Salon",
+          "icon": "temperature",
           "page": {
             "index": 1,
-            "name": "OGRZEWANIE"
+            "name": "OGRZEWANIE",
+            "icon": "home"
           },
           "section": null,
           "entities": [
@@ -325,6 +346,7 @@
               "kind": "thermostat",
               "id": "sh-thermo-heating_0",
               "name": "Salon",
+              "icon": "temperature",
               "currentTemperature": {
                 "callType": "ATTRIBUTE",
                 "cluId": "CLU_501234567",
@@ -403,9 +425,11 @@
           "widgetType": "ROLLER_SHUTTER_V3",
           "kind": "cover",
           "name": "Roleta salon",
+          "icon": "shutter",
           "page": {
             "index": 2,
-            "name": "WSZYSTKO"
+            "name": "WSZYSTKO",
+            "icon": "home"
           },
           "section": null,
           "entities": [
@@ -413,6 +437,7 @@
               "kind": "cover",
               "id": "sh-shutter-all",
               "name": "Roleta salon",
+              "icon": "shutter",
               "motionState": {
                 "callType": "ATTRIBUTE",
                 "cluId": "CLU_501234567",
@@ -465,9 +490,11 @@
           "widgetType": "ON_OFF",
           "kind": "switch",
           "name": "Gniazdko A osobno",
+          "icon": null,
           "page": {
             "index": 2,
-            "name": "WSZYSTKO"
+            "name": "WSZYSTKO",
+            "icon": "home"
           },
           "section": null,
           "entities": [
@@ -475,6 +502,7 @@
               "kind": "switch",
               "id": "sh-socket-a_0",
               "name": "Gniazdko A osobno",
+              "icon": null,
               "state": {
                 "callType": "ATTRIBUTE",
                 "cluId": "CLU_501234567",
@@ -507,9 +535,11 @@
           "widgetType": "SCENE",
           "kind": "scene",
           "name": "Wieczorny chill",
+          "icon": null,
           "page": {
             "index": 2,
-            "name": "WSZYSTKO"
+            "name": "WSZYSTKO",
+            "icon": "home"
           },
           "section": null,
           "entities": [
@@ -517,6 +547,7 @@
               "kind": "sceneTrigger",
               "id": "sh-scene-all_0",
               "name": "Wieczorny chill",
+              "icon": null,
               "action": {
                 "callType": "SCRIPT",
                 "cluId": "CLU_501234567",
@@ -532,9 +563,11 @@
           "widgetType": "CONTACT_SENSOR",
           "kind": "contactSensor",
           "name": "Drzwi wejściowe",
+          "icon": "door",
           "page": {
             "index": 2,
-            "name": "WSZYSTKO"
+            "name": "WSZYSTKO",
+            "icon": "home"
           },
           "section": null,
           "entities": [
@@ -542,6 +575,7 @@
               "kind": "contactSensor",
               "id": "sh-contact_binary_sensor",
               "name": "Drzwi wejściowe",
+              "icon": "door",
               "state": {
                 "callType": "ATTRIBUTE",
                 "cluId": "CLU_501234567",
@@ -556,6 +590,7 @@
               "kind": "trigger",
               "id": "sh-contact_button",
               "name": "Drzwi wejściowe",
+              "icon": "door",
               "action": {
                 "callType": "VARIABLE",
                 "cluId": "CLU_501234567",
@@ -572,9 +607,11 @@
           "widgetType": "ON_OFF",
           "kind": "switch",
           "name": "Lampa sufitowa / Kinkiet",
+          "icon": null,
           "page": {
             "index": 2,
-            "name": "WSZYSTKO"
+            "name": "WSZYSTKO",
+            "icon": "home"
           },
           "section": null,
           "entities": [
@@ -582,6 +619,7 @@
               "kind": "switch",
               "id": "sh-onoff-var_0",
               "name": "Lampa sufitowa",
+              "icon": null,
               "state": {
                 "callType": "ATTRIBUTE",
                 "cluId": "CLU_501234567",
@@ -611,6 +649,7 @@
               "kind": "switch",
               "id": "sh-onoff-var_1",
               "name": "Kinkiet",
+              "icon": null,
               "state": {
                 "callType": "VARIABLE",
                 "cluId": "CLU_501234567",
@@ -642,9 +681,11 @@
           "widgetType": "DIMMER_V2",
           "kind": "dimmableLight",
           "name": "Taśma A",
+          "icon": "bulb",
           "page": {
             "index": 2,
-            "name": "WSZYSTKO"
+            "name": "WSZYSTKO",
+            "icon": "home"
           },
           "section": null,
           "entities": [
@@ -652,6 +693,7 @@
               "kind": "dimmableLight",
               "id": "sh-led-ch3_0",
               "name": "Taśma A",
+              "icon": "bulb",
               "state": {
                 "callType": "ATTRIBUTE",
                 "cluId": "CLU_501234567",
@@ -693,9 +735,11 @@
           "widgetType": "DIMMER_V2",
           "kind": "dimmableLight",
           "name": "Taśma B",
+          "icon": "bulb",
           "page": {
             "index": 2,
-            "name": "WSZYSTKO"
+            "name": "WSZYSTKO",
+            "icon": "home"
           },
           "section": null,
           "entities": [
@@ -703,6 +747,7 @@
               "kind": "dimmableLight",
               "id": "sh-led-ch4_0",
               "name": "Taśma B",
+              "icon": "bulb",
               "state": {
                 "callType": "ATTRIBUTE",
                 "cluId": "CLU_501234567",
@@ -755,7 +800,8 @@
               "name": "Temperatura",
               "page": {
                 "index": 0,
-                "name": "SALON"
+                "name": "SALON",
+                "icon": "home"
               },
               "entityIds": [
                 "sh-thermo-room_0"
@@ -767,7 +813,8 @@
               "name": "Temperatura",
               "page": {
                 "index": 0,
-                "name": "SALON"
+                "name": "SALON",
+                "icon": "home"
               },
               "entityIds": [
                 "sh-thermo-temp_0"
@@ -779,7 +826,8 @@
               "name": "Salon",
               "page": {
                 "index": 1,
-                "name": "OGRZEWANIE"
+                "name": "OGRZEWANIE",
+                "icon": "home"
               },
               "entityIds": [
                 "sh-thermo-heating_0"
@@ -801,7 +849,8 @@
               "name": "Roleta",
               "page": {
                 "index": 0,
-                "name": "SALON"
+                "name": "SALON",
+                "icon": "home"
               },
               "entityIds": [
                 "sh-shutter-room"
@@ -813,7 +862,8 @@
               "name": "Roleta salon",
               "page": {
                 "index": 2,
-                "name": "WSZYSTKO"
+                "name": "WSZYSTKO",
+                "icon": "home"
               },
               "entityIds": [
                 "sh-shutter-all"
@@ -835,7 +885,8 @@
               "name": "Gniazdko A / Gniazdko B",
               "page": {
                 "index": 0,
-                "name": "SALON"
+                "name": "SALON",
+                "icon": "home"
               },
               "entityIds": [
                 "w-onoff-double_0"
@@ -847,7 +898,8 @@
               "name": "Gniazdko A osobno",
               "page": {
                 "index": 2,
-                "name": "WSZYSTKO"
+                "name": "WSZYSTKO",
+                "icon": "home"
               },
               "entityIds": [
                 "sh-socket-a_0"
@@ -869,7 +921,8 @@
               "name": "Gniazdko A / Gniazdko B",
               "page": {
                 "index": 0,
-                "name": "SALON"
+                "name": "SALON",
+                "icon": "home"
               },
               "entityIds": [
                 "w-onoff-double_1"
@@ -891,7 +944,8 @@
               "name": "Wieczorny chill",
               "page": {
                 "index": 0,
-                "name": "SALON"
+                "name": "SALON",
+                "icon": "home"
               },
               "entityIds": [
                 "sh-scene-room_0"
@@ -903,7 +957,8 @@
               "name": "Wieczorny chill",
               "page": {
                 "index": 2,
-                "name": "WSZYSTKO"
+                "name": "WSZYSTKO",
+                "icon": "home"
               },
               "entityIds": [
                 "sh-scene-all_0"
@@ -925,7 +980,8 @@
               "name": "Drzwi wejściowe",
               "page": {
                 "index": 2,
-                "name": "WSZYSTKO"
+                "name": "WSZYSTKO",
+                "icon": "home"
               },
               "entityIds": [
                 "sh-contact_binary_sensor"
@@ -947,7 +1003,8 @@
               "name": "Drzwi wejściowe",
               "page": {
                 "index": 2,
-                "name": "WSZYSTKO"
+                "name": "WSZYSTKO",
+                "icon": "home"
               },
               "entityIds": [
                 "sh-contact_button"
@@ -969,7 +1026,8 @@
               "name": "Lampa sufitowa / Kinkiet",
               "page": {
                 "index": 2,
-                "name": "WSZYSTKO"
+                "name": "WSZYSTKO",
+                "icon": "home"
               },
               "entityIds": [
                 "sh-onoff-var_0"
@@ -991,7 +1049,8 @@
               "name": "Lampa sufitowa / Kinkiet",
               "page": {
                 "index": 2,
-                "name": "WSZYSTKO"
+                "name": "WSZYSTKO",
+                "icon": "home"
               },
               "entityIds": [
                 "sh-onoff-var_1"
@@ -1013,7 +1072,8 @@
               "name": "Taśma A",
               "page": {
                 "index": 2,
-                "name": "WSZYSTKO"
+                "name": "WSZYSTKO",
+                "icon": "home"
               },
               "entityIds": [
                 "sh-led-ch3_0"
@@ -1035,7 +1095,8 @@
               "name": "Taśma B",
               "page": {
                 "index": 2,
-                "name": "WSZYSTKO"
+                "name": "WSZYSTKO",
+                "icon": "home"
               },
               "entityIds": [
                 "sh-led-ch4_0"

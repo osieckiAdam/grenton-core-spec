@@ -22,9 +22,11 @@
           "widgetType": "EVENT_SCHEDULER",
           "kind": "eventSchedule",
           "name": "Nocne",
+          "icon": "scheduler",
           "page": {
             "index": 0,
-            "name": "Harmonogramy"
+            "name": "Harmonogramy",
+            "icon": "star"
           },
           "section": null,
           "entities": [
@@ -32,6 +34,7 @@
               "kind": "eventSchedule",
               "id": "w-sched-full_0",
               "name": "Nocne",
+              "icon": "scheduler",
               "state": {
                 "callType": "ATTRIBUTE",
                 "cluId": "CLU_501234567",
@@ -124,9 +127,11 @@
           "widgetType": "EVENT_SCHEDULER",
           "kind": "eventSchedule",
           "name": "Dzienne",
+          "icon": "scheduler",
           "page": {
             "index": 0,
-            "name": "Harmonogramy"
+            "name": "Harmonogramy",
+            "icon": "star"
           },
           "section": null,
           "entities": [
@@ -134,6 +139,7 @@
               "kind": "eventSchedule",
               "id": "w-sched-min_0",
               "name": "Dzienne",
+              "icon": "scheduler",
               "state": {
                 "callType": "ATTRIBUTE",
                 "cluId": "CLU_501234567",
@@ -178,9 +184,11 @@
           "widgetType": "TV_REMOTE_CONTROL",
           "kind": "tvRemote",
           "name": "Telewizor",
+          "icon": "tv",
           "page": {
             "index": 0,
-            "name": "Harmonogramy"
+            "name": "Harmonogramy",
+            "icon": "star"
           },
           "section": null,
           "entities": [
@@ -188,6 +196,7 @@
               "kind": "tvRemote",
               "id": "w-tv_0",
               "name": "Telewizor",
+              "icon": "tv",
               "buttons": {
                 "on": {
                   "callType": "METHOD",
@@ -230,9 +239,11 @@
           "widgetType": "TV_REMOTE_CONTROL",
           "kind": "tvRemote",
           "name": "Pusty pilot",
+          "icon": "tv",
           "page": {
             "index": 0,
-            "name": "Harmonogramy"
+            "name": "Harmonogramy",
+            "icon": "star"
           },
           "section": null,
           "entities": [
@@ -240,6 +251,7 @@
               "kind": "tvRemote",
               "id": "w-tv-empty_0",
               "name": "Pusty pilot",
+              "icon": "tv",
               "buttons": {}
             }
           ]
@@ -260,7 +272,8 @@
               "name": "Nocne",
               "page": {
                 "index": 0,
-                "name": "Harmonogramy"
+                "name": "Harmonogramy",
+                "icon": "star"
               },
               "entityIds": [
                 "w-sched-full_0"
@@ -282,7 +295,8 @@
               "name": "Dzienne",
               "page": {
                 "index": 0,
-                "name": "Harmonogramy"
+                "name": "Harmonogramy",
+                "icon": "star"
               },
               "entityIds": [
                 "w-sched-min_0"

@@ -187,9 +187,11 @@
             "widgetType": "VALUE_DOUBLE",
             "kind": "sensor",
             "name": "Humidity / Mode",
+            "icon": null,
             "page": {
               "index": 0,
-              "name": "Ground floor"
+              "name": "Ground floor",
+              "icon": "floor_0"
             },
             "section": {
               "id": "hdr00001",
@@ -200,6 +202,7 @@
                 "kind": "sensor",
                 "id": "va000002_0",
                 "name": "Humidity",
+                "icon": "humidity",
                 "state": {
                   "callType": "ATTRIBUTE",
                   "cluId": "CLU_B",
@@ -216,6 +219,7 @@
                 "kind": "sensor",
                 "id": "va000002_1",
                 "name": "Mode",
+                "icon": "info",
                 "state": {
                   "callType": "VARIABLE",
                   "cluId": "CLU_B",
@@ -234,9 +238,11 @@
             "widgetType": "ON_OFF",
             "kind": "switch",
             "name": "Lamp",
+            "icon": null,
             "page": {
               "index": 0,
-              "name": "Ground floor"
+              "name": "Ground floor",
+              "icon": "floor_0"
             },
             "section": {
               "id": "hdr00001",
@@ -247,6 +253,7 @@
                 "kind": "switch",
                 "id": "sw000001_0",
                 "name": "Lamp",
+                "icon": "lamp",
                 "state": {
                   "callType": "ATTRIBUTE",
                   "cluId": "CLU_A",
@@ -279,9 +286,11 @@
             "widgetType": "ON_OFF_DOUBLE",
             "kind": "switch",
             "name": "Left / Right",
+            "icon": null,
             "page": {
               "index": 0,
-              "name": "Ground floor"
+              "name": "Ground floor",
+              "icon": "floor_0"
             },
             "section": {
               "id": "hdr00001",
@@ -292,6 +301,7 @@
                 "kind": "switch",
                 "id": "sw000002_0",
                 "name": "Left",
+                "icon": "socket",
                 "state": {
                   "callType": "ATTRIBUTE",
                   "cluId": "CLU_A",
@@ -324,9 +334,11 @@
             "widgetType": "SCENE",
             "kind": "scene",
             "name": "Morning",
+            "icon": null,
             "page": {
               "index": 0,
-              "name": "Ground floor"
+              "name": "Ground floor",
+              "icon": "floor_0"
             },
             "section": {
               "id": "hdr00001",
@@ -337,6 +349,7 @@
                 "kind": "sceneTrigger",
                 "id": "sc000001_0",
                 "name": "Morning",
+                "icon": null,
                 "action": {
                   "callType": "SCRIPT",
                   "cluId": "CLU_D",
@@ -352,9 +365,11 @@
             "widgetType": "SCENE_DOUBLE",
             "kind": "scene",
             "name": "Open / Close",
+            "icon": null,
             "page": {
               "index": 0,
-              "name": "Ground floor"
+              "name": "Ground floor",
+              "icon": "floor_0"
             },
             "section": {
               "id": "hdr00001",
@@ -365,6 +380,7 @@
                 "kind": "sceneTrigger",
                 "id": "sc000002_0",
                 "name": "Open",
+                "icon": null,
                 "action": {
                   "callType": "SCRIPT",
                   "cluId": "CLU_B",
@@ -380,9 +396,11 @@
             "widgetType": "VALUE_V2",
             "kind": "sensor",
             "name": "Temperature",
+            "icon": "temperature",
             "page": {
               "index": 0,
-              "name": "Ground floor"
+              "name": "Ground floor",
+              "icon": "floor_0"
             },
             "section": {
               "id": "hdr00001",
@@ -393,6 +411,7 @@
                 "kind": "sensor",
                 "id": "va000001_0",
                 "name": "Temperature",
+                "icon": "temperature",
                 "state": {
                   "callType": "ATTRIBUTE",
                   "cluId": "CLU_A",
@@ -412,9 +431,11 @@
             "widgetType": "DIMMER_V2",
             "kind": "dimmableLight",
             "name": "Dimmer",
+            "icon": "dimmer",
             "page": {
               "index": 1,
-              "name": "Climate"
+              "name": "Climate",
+              "icon": "climate"
             },
             "section": null,
             "entities": [
@@ -422,6 +443,7 @@
                 "kind": "dimmableLight",
                 "id": "di000001_0",
                 "name": "Dimmer",
+                "icon": "dimmer",
                 "state": {
                   "callType": "ATTRIBUTE",
                   "cluId": "CLU_A",
@@ -463,9 +485,11 @@
             "widgetType": "THERMOSTAT_V2",
             "kind": "thermostat",
             "name": "Thermostat",
+            "icon": "temperature",
             "page": {
               "index": 1,
-              "name": "Climate"
+              "name": "Climate",
+              "icon": "climate"
             },
             "section": null,
             "entities": [
@@ -473,6 +497,7 @@
                 "kind": "thermostat",
                 "id": "th000001_0",
                 "name": "Thermostat",
+                "icon": "temperature",
                 "currentTemperature": {
                   "callType": "ATTRIBUTE",
                   "cluId": "CLU_A",
@@ -551,9 +576,11 @@
             "widgetType": "ROLLER_SHUTTER_V3",
             "kind": "cover",
             "name": "Blinds",
+            "icon": "blinds",
             "page": {
               "index": 1,
-              "name": "Climate"
+              "name": "Climate",
+              "icon": "climate"
             },
             "section": null,
             "entities": [
@@ -561,6 +588,7 @@
                 "kind": "cover",
                 "id": "ro000001",
                 "name": "Blinds",
+                "icon": "blinds",
                 "motionState": {
                   "callType": "ATTRIBUTE",
                   "cluId": "CLU_A",
@@ -613,9 +641,11 @@
             "widgetType": "EVENT_SCHEDULER",
             "kind": "eventSchedule",
             "name": "Schedule",
+            "icon": "scheduler",
             "page": {
               "index": 1,
-              "name": "Climate"
+              "name": "Climate",
+              "icon": "climate"
             },
             "section": null,
             "entities": [
@@ -623,6 +653,7 @@
                 "kind": "eventSchedule",
                 "id": "ev000001_0",
                 "name": "Schedule",
+                "icon": "scheduler",
                 "state": {
                   "callType": "ATTRIBUTE",
                   "cluId": "CLU_A",
@@ -715,9 +746,11 @@
             "widgetType": "CAMERA",
             "kind": "camera",
             "name": "Camera",
+            "icon": null,
             "page": {
               "index": 2,
-              "name": "More widgets"
+              "name": "More widgets",
+              "icon": "star"
             },
             "section": null,
             "entities": [
@@ -725,6 +758,7 @@
                 "kind": "camera",
                 "id": "ca000001_0",
                 "name": "Camera",
+                "icon": "camera",
                 "streamUrl": "rtsp://10.0.0.50:554/stream1"
               }
             ]
@@ -734,9 +768,11 @@
             "widgetType": "LED",
             "kind": "hsbLight",
             "name": "Strip power",
+            "icon": null,
             "page": {
               "index": 2,
-              "name": "More widgets"
+              "name": "More widgets",
+              "icon": "star"
             },
             "section": null,
             "entities": [
@@ -744,6 +780,7 @@
                 "kind": "hsbLight",
                 "id": "le000002_0",
                 "name": "Strip power",
+                "icon": "rgb",
                 "powerState": {
                   "callType": "ATTRIBUTE",
                   "cluId": "CLU_A",
@@ -834,9 +871,11 @@
             "widgetType": "CONTACT_SENSOR",
             "kind": "contactSensor",
             "name": "Window",
+            "icon": "lock",
             "page": {
               "index": 2,
-              "name": "More widgets"
+              "name": "More widgets",
+              "icon": "star"
             },
             "section": null,
             "entities": [
@@ -844,6 +883,7 @@
                 "kind": "contactSensor",
                 "id": "cs000001_binary_sensor",
                 "name": "Window",
+                "icon": "lock",
                 "state": {
                   "callType": "ATTRIBUTE",
                   "cluId": "CLU_A",
@@ -861,9 +901,11 @@
             "widgetType": "CONTACT_SENSOR_DOUBLE",
             "kind": "contactSensor",
             "name": "Left door / Right door",
+            "icon": null,
             "page": {
               "index": 2,
-              "name": "More widgets"
+              "name": "More widgets",
+              "icon": "star"
             },
             "section": null,
             "entities": [
@@ -871,6 +913,7 @@
                 "kind": "contactSensor",
                 "id": "cs000002_binary_sensor_left",
                 "name": "Left door",
+                "icon": "lock",
                 "state": {
                   "callType": "ATTRIBUTE",
                   "cluId": "CLU_A",
@@ -885,6 +928,7 @@
                 "kind": "contactSensor",
                 "id": "cs000002_binary_sensor_right",
                 "name": "Right door",
+                "icon": "lock",
                 "state": {
                   "callType": "ATTRIBUTE",
                   "cluId": "CLU_A",
@@ -902,9 +946,11 @@
             "widgetType": "SLIDER",
             "kind": "numberSetting",
             "name": "Volume",
+            "icon": "volume_circle",
             "page": {
               "index": 2,
-              "name": "More widgets"
+              "name": "More widgets",
+              "icon": "star"
             },
             "section": null,
             "entities": [
@@ -912,6 +958,7 @@
                 "kind": "numberSetting",
                 "id": "sl000001_slider",
                 "name": "Volume",
+                "icon": "volume_circle",
                 "state": {
                   "callType": "ATTRIBUTE",
                   "cluId": "CLU_A",
@@ -937,9 +984,11 @@
             "widgetType": "MULTISENSOR",
             "kind": "multisensor",
             "name": "Air",
+            "icon": "multisensor",
             "page": {
               "index": 2,
-              "name": "More widgets"
+              "name": "More widgets",
+              "icon": "star"
             },
             "section": null,
             "entities": [
@@ -947,6 +996,7 @@
                 "kind": "sensor",
                 "id": "ms000001_air_co2",
                 "name": "Air",
+                "icon": "multisensor",
                 "state": {
                   "callType": "ATTRIBUTE",
                   "cluId": "CLU_A",
@@ -963,6 +1013,7 @@
                 "kind": "sensor",
                 "id": "ms000001_sound",
                 "name": "Air",
+                "icon": "multisensor",
                 "state": {
                   "callType": "ATTRIBUTE",
                   "cluId": "CLU_A",
@@ -979,6 +1030,7 @@
                 "kind": "sensor",
                 "id": "ms000001_air_voc",
                 "name": "Air",
+                "icon": "multisensor",
                 "state": {
                   "callType": "ATTRIBUTE",
                   "cluId": "CLU_A",
@@ -995,6 +1047,7 @@
                 "kind": "sensor",
                 "id": "ms000001_light",
                 "name": "Air",
+                "icon": "multisensor",
                 "state": {
                   "callType": "ATTRIBUTE",
                   "cluId": "CLU_A",
@@ -1011,6 +1064,7 @@
                 "kind": "sensor",
                 "id": "ms000001_pressure",
                 "name": "Air",
+                "icon": "multisensor",
                 "state": {
                   "callType": "ATTRIBUTE",
                   "cluId": "CLU_A",
@@ -1027,6 +1081,7 @@
                 "kind": "sensor",
                 "id": "ms000001_humidity",
                 "name": "Air",
+                "icon": "multisensor",
                 "state": {
                   "callType": "ATTRIBUTE",
                   "cluId": "CLU_A",
@@ -1043,6 +1098,7 @@
                 "kind": "sensor",
                 "id": "ms000001_temperature",
                 "name": "Air",
+                "icon": "multisensor",
                 "state": {
                   "callType": "ATTRIBUTE",
                   "cluId": "CLU_A",
@@ -1062,9 +1118,11 @@
             "widgetType": "ROLLER_SHUTTER",
             "kind": "cover",
             "name": "Blind button",
+            "icon": null,
             "page": {
               "index": 2,
-              "name": "More widgets"
+              "name": "More widgets",
+              "icon": "star"
             },
             "section": null,
             "entities": [
@@ -1072,6 +1130,7 @@
                 "kind": "stateSensor",
                 "id": "rs000001_sensor",
                 "name": "Blind button",
+                "icon": "blinds",
                 "state": {
                   "callType": "ATTRIBUTE",
                   "cluId": "CLU_A",
@@ -1083,6 +1142,7 @@
                 "kind": "trigger",
                 "id": "rs000001_button",
                 "name": "Blind button",
+                "icon": "blinds",
                 "action": {
                   "callType": "METHOD",
                   "cluId": "CLU_A",
@@ -1099,9 +1159,11 @@
             "widgetType": "TV_REMOTE_CONTROL",
             "kind": "tvRemote",
             "name": "TV",
+            "icon": "tv",
             "page": {
               "index": 2,
-              "name": "More widgets"
+              "name": "More widgets",
+              "icon": "star"
             },
             "section": null,
             "entities": [
@@ -1109,6 +1171,7 @@
                 "kind": "tvRemote",
                 "id": "tv000001_0",
                 "name": "TV",
+                "icon": "tv",
                 "buttons": {}
               }
             ]
@@ -1118,9 +1181,11 @@
             "widgetType": "SLIDER",
             "kind": "numberSetting",
             "name": "Never sent",
+            "icon": "volume_circle",
             "page": {
               "index": 2,
-              "name": "More widgets"
+              "name": "More widgets",
+              "icon": "star"
             },
             "section": null,
             "entities": [
@@ -1128,6 +1193,7 @@
                 "kind": "numberSetting",
                 "id": "omp-5009_slider",
                 "name": "Never sent",
+                "icon": "volume_circle",
                 "state": {
                   "callType": "ATTRIBUTE",
                   "cluId": "CLU_A",
@@ -1153,9 +1219,11 @@
             "widgetType": "LED",
             "kind": "hsbLight",
             "name": "Strip power",
+            "icon": null,
             "page": {
               "index": 2,
-              "name": "More widgets"
+              "name": "More widgets",
+              "icon": "star"
             },
             "section": null,
             "entities": [
@@ -1163,6 +1231,7 @@
                 "kind": "hsbLight",
                 "id": "le000004_0",
                 "name": "Strip power",
+                "icon": "rgb",
                 "powerState": {
                   "callType": "ATTRIBUTE",
                   "cluId": "CLU_A",
@@ -1264,7 +1333,8 @@
                 "name": "Humidity / Mode",
                 "page": {
                   "index": 0,
-                  "name": "Ground floor"
+                  "name": "Ground floor",
+                  "icon": "floor_0"
                 },
                 "entityIds": [
                   "va000002_0"
@@ -1286,7 +1356,8 @@
                 "name": "Humidity / Mode",
                 "page": {
                   "index": 0,
-                  "name": "Ground floor"
+                  "name": "Ground floor",
+                  "icon": "floor_0"
                 },
                 "entityIds": [
                   "va000002_1"
@@ -1308,7 +1379,8 @@
                 "name": "Lamp",
                 "page": {
                   "index": 0,
-                  "name": "Ground floor"
+                  "name": "Ground floor",
+                  "icon": "floor_0"
                 },
                 "entityIds": [
                   "sw000001_0"
@@ -1330,7 +1402,8 @@
                 "name": "Left / Right",
                 "page": {
                   "index": 0,
-                  "name": "Ground floor"
+                  "name": "Ground floor",
+                  "icon": "floor_0"
                 },
                 "entityIds": [
                   "sw000002_0"
@@ -1352,7 +1425,8 @@
                 "name": "Morning",
                 "page": {
                   "index": 0,
-                  "name": "Ground floor"
+                  "name": "Ground floor",
+                  "icon": "floor_0"
                 },
                 "entityIds": [
                   "sc000001_0"
@@ -1374,7 +1448,8 @@
                 "name": "Open / Close",
                 "page": {
                   "index": 0,
-                  "name": "Ground floor"
+                  "name": "Ground floor",
+                  "icon": "floor_0"
                 },
                 "entityIds": [
                   "sc000002_0"
@@ -1396,7 +1471,8 @@
                 "name": "Temperature",
                 "page": {
                   "index": 0,
-                  "name": "Ground floor"
+                  "name": "Ground floor",
+                  "icon": "floor_0"
                 },
                 "entityIds": [
                   "va000001_0"
@@ -1418,7 +1494,8 @@
                 "name": "Dimmer",
                 "page": {
                   "index": 1,
-                  "name": "Climate"
+                  "name": "Climate",
+                  "icon": "climate"
                 },
                 "entityIds": [
                   "di000001_0"
@@ -1440,7 +1517,8 @@
                 "name": "Thermostat",
                 "page": {
                   "index": 1,
-                  "name": "Climate"
+                  "name": "Climate",
+                  "icon": "climate"
                 },
                 "entityIds": [
                   "th000001_0"
@@ -1462,7 +1540,8 @@
                 "name": "Blinds",
                 "page": {
                   "index": 1,
-                  "name": "Climate"
+                  "name": "Climate",
+                  "icon": "climate"
                 },
                 "entityIds": [
                   "ro000001"
@@ -1484,7 +1563,8 @@
                 "name": "Schedule",
                 "page": {
                   "index": 1,
-                  "name": "Climate"
+                  "name": "Climate",
+                  "icon": "climate"
                 },
                 "entityIds": [
                   "ev000001_0"
@@ -1506,7 +1586,8 @@
                 "name": "Strip power",
                 "page": {
                   "index": 2,
-                  "name": "More widgets"
+                  "name": "More widgets",
+                  "icon": "star"
                 },
                 "entityIds": [
                   "le000002_0"
@@ -1518,7 +1599,8 @@
                 "name": "Strip power",
                 "page": {
                   "index": 2,
-                  "name": "More widgets"
+                  "name": "More widgets",
+                  "icon": "star"
                 },
                 "entityIds": [
                   "le000004_0"
@@ -1540,7 +1622,8 @@
                 "name": "Window",
                 "page": {
                   "index": 2,
-                  "name": "More widgets"
+                  "name": "More widgets",
+                  "icon": "star"
                 },
                 "entityIds": [
                   "cs000001_binary_sensor"
@@ -1562,7 +1645,8 @@
                 "name": "Left door / Right door",
                 "page": {
                   "index": 2,
-                  "name": "More widgets"
+                  "name": "More widgets",
+                  "icon": "star"
                 },
                 "entityIds": [
                   "cs000002_binary_sensor_left"
@@ -1584,7 +1668,8 @@
                 "name": "Left door / Right door",
                 "page": {
                   "index": 2,
-                  "name": "More widgets"
+                  "name": "More widgets",
+                  "icon": "star"
                 },
                 "entityIds": [
                   "cs000002_binary_sensor_right"
@@ -1606,7 +1691,8 @@
                 "name": "Volume",
                 "page": {
                   "index": 2,
-                  "name": "More widgets"
+                  "name": "More widgets",
+                  "icon": "star"
                 },
                 "entityIds": [
                   "sl000001_slider"
@@ -1628,7 +1714,8 @@
                 "name": "Air",
                 "page": {
                   "index": 2,
-                  "name": "More widgets"
+                  "name": "More widgets",
+                  "icon": "star"
                 },
                 "entityIds": [
                   "ms000001_air_co2"
@@ -1650,7 +1737,8 @@
                 "name": "Air",
                 "page": {
                   "index": 2,
-                  "name": "More widgets"
+                  "name": "More widgets",
+                  "icon": "star"
                 },
                 "entityIds": [
                   "ms000001_sound"
@@ -1672,7 +1760,8 @@
                 "name": "Air",
                 "page": {
                   "index": 2,
-                  "name": "More widgets"
+                  "name": "More widgets",
+                  "icon": "star"
                 },
                 "entityIds": [
                   "ms000001_air_voc"
@@ -1694,7 +1783,8 @@
                 "name": "Air",
                 "page": {
                   "index": 2,
-                  "name": "More widgets"
+                  "name": "More widgets",
+                  "icon": "star"
                 },
                 "entityIds": [
                   "ms000001_light"
@@ -1716,7 +1806,8 @@
                 "name": "Air",
                 "page": {
                   "index": 2,
-                  "name": "More widgets"
+                  "name": "More widgets",
+                  "icon": "star"
                 },
                 "entityIds": [
                   "ms000001_pressure"
@@ -1738,7 +1829,8 @@
                 "name": "Air",
                 "page": {
                   "index": 2,
-                  "name": "More widgets"
+                  "name": "More widgets",
+                  "icon": "star"
                 },
                 "entityIds": [
                   "ms000001_humidity"
@@ -1760,7 +1852,8 @@
                 "name": "Air",
                 "page": {
                   "index": 2,
-                  "name": "More widgets"
+                  "name": "More widgets",
+                  "icon": "star"
                 },
                 "entityIds": [
                   "ms000001_temperature"
@@ -1782,7 +1875,8 @@
                 "name": "Blind button",
                 "page": {
                   "index": 2,
-                  "name": "More widgets"
+                  "name": "More widgets",
+                  "icon": "star"
                 },
                 "entityIds": [
                   "rs000001_sensor"
@@ -1804,7 +1898,8 @@
                 "name": "Blind button",
                 "page": {
                   "index": 2,
-                  "name": "More widgets"
+                  "name": "More widgets",
+                  "icon": "star"
                 },
                 "entityIds": [
                   "rs000001_button"
@@ -1826,7 +1921,8 @@
                 "name": "Never sent",
                 "page": {
                   "index": 2,
-                  "name": "More widgets"
+                  "name": "More widgets",
+                  "icon": "star"
                 },
                 "entityIds": [
                   "omp-5009_slider"

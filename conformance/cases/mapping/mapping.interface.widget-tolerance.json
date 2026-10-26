@@ -22,9 +22,11 @@
           "widgetType": "VALUE_V2",
           "kind": "sensor",
           "name": "Temperatura",
+          "icon": "temp",
           "page": {
             "index": 0,
-            "name": "Strona A"
+            "name": "Strona A",
+            "icon": "home"
           },
           "section": null,
           "entities": [
@@ -32,6 +34,7 @@
               "kind": "sensor",
               "id": "s-extra-fields-ignored_0",
               "name": "Temperatura",
+              "icon": "temp",
               "state": {
                 "callType": "ATTRIBUTE",
                 "cluId": "CLU_501234567",
@@ -51,9 +54,11 @@
           "widgetType": "ON_OFF",
           "kind": "switch",
           "name": "Dobry",
+          "icon": null,
           "page": {
             "index": 0,
-            "name": "Strona A"
+            "name": "Strona A",
+            "icon": "home"
           },
           "section": null,
           "entities": [
@@ -61,6 +66,7 @@
               "kind": "switch",
               "id": "s-valid-switch_0",
               "name": "Dobry",
+              "icon": null,
               "state": {
                 "callType": "ATTRIBUTE",
                 "cluId": "CLU_501234567",
@@ -104,7 +110,8 @@
               "name": "Temperatura",
               "page": {
                 "index": 0,
-                "name": "Strona A"
+                "name": "Strona A",
+                "icon": "home"
               },
               "entityIds": [
                 "s-extra-fields-ignored_0"
@@ -126,7 +133,8 @@
               "name": "Dobry",
               "page": {
                 "index": 0,
-                "name": "Strona A"
+                "name": "Strona A",
+                "icon": "home"
               },
               "entityIds": [
                 "s-valid-switch_0"

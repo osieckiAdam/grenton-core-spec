@@ -22,9 +22,11 @@
           "widgetType": "THERMOSTAT_V2",
           "kind": "thermostat",
           "name": "Kotłownia",
+          "icon": "temperature",
           "page": {
             "index": 0,
-            "name": "Ogrzewanie"
+            "name": "Ogrzewanie",
+            "icon": "home"
           },
           "section": {
             "id": "h-1",
@@ -35,6 +37,7 @@
               "kind": "thermostat",
               "id": "t-full_0",
               "name": "Kotłownia",
+              "icon": "temperature",
               "currentTemperature": {
                 "callType": "ATTRIBUTE",
                 "cluId": "CLU_501234567",
@@ -113,9 +116,11 @@
           "widgetType": "THERMOSTAT_V2",
           "kind": "thermostat",
           "name": "Łazienka",
+          "icon": null,
           "page": {
             "index": 0,
-            "name": "Ogrzewanie"
+            "name": "Ogrzewanie",
+            "icon": "home"
           },
           "section": {
             "id": "h-1",
@@ -126,6 +131,7 @@
               "kind": "thermostat",
               "id": "t-minimal_0",
               "name": "Łazienka",
+              "icon": null,
               "currentTemperature": {
                 "callType": "ATTRIBUTE",
                 "cluId": "CLU_501234567",
@@ -159,9 +165,11 @@
           "widgetType": "THERMOSTAT_V2",
           "kind": "thermostat",
           "name": "Salon",
+          "icon": "temperature",
           "page": {
             "index": 0,
-            "name": "Ogrzewanie"
+            "name": "Ogrzewanie",
+            "icon": "home"
           },
           "section": {
             "id": "h-1",
@@ -172,6 +180,7 @@
               "kind": "thermostat",
               "id": "t-mode-without-setter_0",
               "name": "Salon",
+              "icon": "temperature",
               "currentTemperature": {
                 "callType": "ATTRIBUTE",
                 "cluId": "CLU_501234567",
@@ -235,9 +244,11 @@
           "widgetType": "SCENE_DOUBLE",
           "kind": "scene",
           "name": "Start / STOP",
+          "icon": null,
           "page": {
             "index": 1,
-            "name": "Brama"
+            "name": "Brama",
+            "icon": "home"
           },
           "section": {
             "id": "h-2",
@@ -248,6 +259,7 @@
               "kind": "sceneTrigger",
               "id": "sd-gate_0",
               "name": "Start",
+              "icon": null,
               "action": {
                 "callType": "SCRIPT",
                 "cluId": "CLU_501234567",
@@ -260,6 +272,7 @@
               "kind": "sceneTrigger",
               "id": "sd-gate_1",
               "name": "STOP",
+              "icon": null,
               "action": {
                 "callType": "SCRIPT",
                 "cluId": "CLU_501234567",
@@ -275,9 +288,11 @@
           "widgetType": "SCENE_DOUBLE",
           "kind": "scene",
           "name": "Nie skrypt / Skrypt",
+          "icon": null,
           "page": {
             "index": 1,
-            "name": "Brama"
+            "name": "Brama",
+            "icon": "home"
           },
           "section": {
             "id": "h-2",
@@ -288,6 +303,7 @@
               "kind": "sceneTrigger",
               "id": "sd-first-not-script_1",
               "name": "Skrypt",
+              "icon": null,
               "action": {
                 "callType": "SCRIPT",
                 "cluId": "CLU_501234567",
@@ -314,7 +330,8 @@
               "name": "Kotłownia",
               "page": {
                 "index": 0,
-                "name": "Ogrzewanie"
+                "name": "Ogrzewanie",
+                "icon": "home"
               },
               "entityIds": [
                 "t-full_0"
@@ -336,7 +353,8 @@
               "name": "Łazienka",
               "page": {
                 "index": 0,
-                "name": "Ogrzewanie"
+                "name": "Ogrzewanie",
+                "icon": "home"
               },
               "entityIds": [
                 "t-minimal_0"
@@ -358,7 +376,8 @@
               "name": "Salon",
               "page": {
                 "index": 0,
-                "name": "Ogrzewanie"
+                "name": "Ogrzewanie",
+                "icon": "home"
               },
               "entityIds": [
                 "t-mode-without-setter_0"
@@ -380,7 +399,8 @@
               "name": "Start / STOP",
               "page": {
                 "index": 1,
-                "name": "Brama"
+                "name": "Brama",
+                "icon": "home"
               },
               "entityIds": [
                 "sd-gate_0"
@@ -402,7 +422,8 @@
               "name": "Start / STOP",
               "page": {
                 "index": 1,
-                "name": "Brama"
+                "name": "Brama",
+                "icon": "home"
               },
               "entityIds": [
                 "sd-gate_1"
@@ -424,7 +445,8 @@
               "name": "Nie skrypt / Skrypt",
               "page": {
                 "index": 1,
-                "name": "Brama"
+                "name": "Brama",
+                "icon": "home"
               },
               "entityIds": [
                 "sd-first-not-script_1"
