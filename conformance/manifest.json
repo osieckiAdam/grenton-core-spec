@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "suiteVersion": "0.13.0",
-  "specVersion": "0.13.0",
+  "suiteVersion": "0.13.1",
+  "specVersion": "0.13.1",
   "profiles": {
     "mapping": [
       "mapping.interface"
@@ -300,7 +300,7 @@
     {
       "id": "mapping.interface.reject-missing-encryption",
       "path": "cases/mapping/mapping.interface.reject-missing-encryption.json",
-      "sha256": "9c856ac94895c922ec90a3696a522f1d21579d563e7c6b5811e27cc11c46c489"
+      "sha256": "456152728a0cb04a59491e84139af8e9d926e92c87852a654a62e12abb047838"
     },
     {
       "id": "mapping.interface.scheduler-tv-remote",

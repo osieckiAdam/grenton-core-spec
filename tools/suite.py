@@ -36,8 +36,8 @@ FIXTURES = os.path.join(CONFORMANCE, "fixtures")
 MANIFEST = os.path.join(CONFORMANCE, "manifest.json")
 
 SCHEMA_VERSION = 1
-SUITE_VERSION = "0.13.0"
-SPEC_VERSION = "0.13.0"
+SUITE_VERSION = "0.13.1"
+SPEC_VERSION = "0.13.1"
 
 # operation -> (profile, required input keys, optional input keys)
 OPERATIONS = {
@@ -512,6 +512,13 @@ def oracle(doc, errors):
                 got = map_interface(json.load(f))
             if got != exp["value"]:
                 errors.append(f"{where}: the mapping oracle disagrees with the expected value")
+        elif exp["outcome"] == "reject":
+            # The oracle maps any JSON; a reject must come from the fixture
+            # failing to decode as an interface at all (§3.4 root fields).
+            with open(path, encoding="utf-8") as f:
+                root = json.load(f)
+            if all(k in root for k in ("id", "version", "name", "icon", "theme", "encryption", "clus", "pages")):
+                errors.append(f"{where}: expects reject, but the fixture has every root field of §3.4")
     if op in ("coercion.boolFromOnOff", "coercion.truthy"):
         # The reference's own Python expressions, run on the decoded value.
         v = python_value(inp["value"])
