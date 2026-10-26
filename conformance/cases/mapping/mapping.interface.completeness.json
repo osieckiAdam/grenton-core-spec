@@ -26,6 +26,7 @@
             "index": 0,
             "name": "Kompletność"
           },
+          "section": null,
           "entities": [
             {
               "kind": "switch",
@@ -67,6 +68,7 @@
             "index": 0,
             "name": "Kompletność"
           },
+          "section": null,
           "entities": [
             {
               "kind": "switch",
@@ -108,6 +110,7 @@
             "index": 0,
             "name": "Kompletność"
           },
+          "section": null,
           "entities": [
             {
               "kind": "switch",
@@ -148,6 +151,7 @@
             "index": 0,
             "name": "Kompletność"
           },
+          "section": null,
           "entities": []
         },
         {
@@ -159,6 +163,7 @@
             "index": 0,
             "name": "Kompletność"
           },
+          "section": null,
           "entities": []
         },
         {
@@ -170,6 +175,7 @@
             "index": 0,
             "name": "Kompletność"
           },
+          "section": null,
           "entities": []
         },
         {
@@ -181,6 +187,7 @@
             "index": 0,
             "name": "Kompletność"
           },
+          "section": null,
           "entities": []
         },
         {
@@ -192,6 +199,7 @@
             "index": 0,
             "name": "Kompletność"
           },
+          "section": null,
           "entities": [
             {
               "kind": "contactSensor",
@@ -218,6 +226,7 @@
             "index": 0,
             "name": "Kompletność"
           },
+          "section": null,
           "entities": [
             {
               "kind": "contactSensor",
@@ -271,6 +280,7 @@
             "index": 0,
             "name": "Kompletność"
           },
+          "section": null,
           "entities": [
             {
               "kind": "numberSetting",
@@ -318,6 +328,7 @@
             "index": 0,
             "name": "Kompletność"
           },
+          "section": null,
           "entities": []
         },
         {
@@ -329,6 +340,7 @@
             "index": 0,
             "name": "Kompletność"
           },
+          "section": null,
           "entities": []
         },
         {
@@ -340,6 +352,7 @@
             "index": 0,
             "name": "Kompletność"
           },
+          "section": null,
           "entities": [
             {
               "kind": "cover",
@@ -379,6 +392,7 @@
             "index": 0,
             "name": "Kompletność"
           },
+          "section": null,
           "entities": [
             {
               "kind": "cover",
@@ -440,6 +454,7 @@
             "index": 0,
             "name": "Kompletność"
           },
+          "section": null,
           "entities": []
         },
         {
@@ -451,6 +466,7 @@
             "index": 0,
             "name": "Kompletność"
           },
+          "section": null,
           "entities": [
             {
               "kind": "sceneTrigger",
@@ -475,6 +491,7 @@
             "index": 1,
             "name": "Druga strona"
           },
+          "section": null,
           "entities": [
             {
               "kind": "sensor",

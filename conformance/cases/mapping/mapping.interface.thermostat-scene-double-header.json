@@ -26,6 +26,10 @@
             "index": 0,
             "name": "Ogrzewanie"
           },
+          "section": {
+            "id": "h-1",
+            "title": "SEKCJA"
+          },
           "entities": [
             {
               "kind": "thermostat",
@@ -113,6 +117,10 @@
             "index": 0,
             "name": "Ogrzewanie"
           },
+          "section": {
+            "id": "h-1",
+            "title": "SEKCJA"
+          },
           "entities": [
             {
               "kind": "thermostat",
@@ -154,6 +162,10 @@
           "page": {
             "index": 0,
             "name": "Ogrzewanie"
+          },
+          "section": {
+            "id": "h-1",
+            "title": "SEKCJA"
           },
           "entities": [
             {
@@ -227,6 +239,10 @@
             "index": 1,
             "name": "Brama"
           },
+          "section": {
+            "id": "h-2",
+            "title": "SEKCJA"
+          },
           "entities": [
             {
               "kind": "sceneTrigger",
@@ -262,6 +278,10 @@
           "page": {
             "index": 1,
             "name": "Brama"
+          },
+          "section": {
+            "id": "h-2",
+            "title": "SEKCJA"
           },
           "entities": [
             {

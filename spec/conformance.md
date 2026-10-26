@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Suite version** | 0.12.2 (specification 0.12.2, case schema 1) |
+| **Suite version** | 0.13.0 (specification 0.13.0, case schema 1) |
 | **Applies to** | `spec/grenton-core-design.md` §9 |
 
 The conformance suite is **data, not code**: every case is a JSON file in `conformance/cases/`. The port supplies a thin runner that loads the cases, calls the port's production API and compares the observation with the expectation. Adding a case once covers all ports.
@@ -95,7 +95,7 @@ Decryption returns **bytes**; UTF-8 decoding and whitespace trimming belong to t
 {
   "devices": [
     { "id": "w-onoff", "widgetType": "ON_OFF", "kind": "switch", "name": "Lampa / Kinkiet",
-      "page": { "index": 0, "name": "Salon" },
+      "page": { "index": 0, "name": "Salon" }, "section": { "id": "h-1", "title": "Oświetlenie" },
       "entities": [ { "kind": "switch", "id": "w-onoff_0", "name": "Lampa", "state": { … }, "onAction": { … }, … } ] }
   ],
   "physicalObjects": [
@@ -109,6 +109,7 @@ Decryption returns **bytes**; UTF-8 decoding and whitespace trimming belong to t
 
 - `devices` — in normative order (spec §6.1); compared positionally, including devices without entities.
 - `physicalObjects` — the grouping of §6.6, in order of first use; compared positionally.
+- `section` — `{id, title}` of the device's section header (§6.1), or `null`.
 - `skippedWidgets` — one list per page: the `type` of the skipped widgets in order (`null` when there is no `type`). The text of the reason is not compared — error messages are language-specific.
 - `ValueRef`: `{"callType":"VARIABLE","cluId","index"}` or `{"callType":"ATTRIBUTE","cluId","objectName","index"}` (a variable's `objectName` is logically ignored, §3.2).
 - `ActionRef`: `{"callType","cluId","objectName","event","value"}` + `index` for variants other than `SCRIPT`.

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "suiteVersion": "0.12.2",
-  "specVersion": "0.12.2",
+  "suiteVersion": "0.13.0",
+  "specVersion": "0.13.0",
   "profiles": {
     "mapping": [
       "mapping.interface"
@@ -290,37 +290,37 @@
     {
       "id": "mapping.interface.all-widget-types",
       "path": "cases/mapping/mapping.interface.all-widget-types.json",
-      "sha256": "977d1bb4e48844867af074c131b7470273412baf1a22a0e6077454a8f871532f"
+      "sha256": "3a4aac8650b3b10fe55ff517b473d504bb39637f38b5b6d5903c894cea1dc37f"
     },
     {
       "id": "mapping.interface.completeness",
       "path": "cases/mapping/mapping.interface.completeness.json",
-      "sha256": "1d7f2e10981cd18aa0821bba644fa9bfe20fd059ab55d1f4286bd7403390c3a2"
+      "sha256": "a9bbc7badd0d4f7022ea3bbb3d49ce1bd0afe598f0eb5ad140dddac8d0b13ba2"
     },
     {
       "id": "mapping.interface.reject-missing-encryption",
       "path": "cases/mapping/mapping.interface.reject-missing-encryption.json",
-      "sha256": "456152728a0cb04a59491e84139af8e9d926e92c87852a654a62e12abb047838"
+      "sha256": "9c856ac94895c922ec90a3696a522f1d21579d563e7c6b5811e27cc11c46c489"
     },
     {
       "id": "mapping.interface.scheduler-tv-remote",
       "path": "cases/mapping/mapping.interface.scheduler-tv-remote.json",
-      "sha256": "34abf3393f659de8f54c22690a6204ce5be896f5d658be0cc5acbe4cf1599fdd"
+      "sha256": "597331faca5958a440c85a26c14e2be4ee20d2a6c6f97d6201510283725a7187"
     },
     {
       "id": "mapping.interface.shared-objects",
       "path": "cases/mapping/mapping.interface.shared-objects.json",
-      "sha256": "19732f8975c77f805571905a9642a2dd8dd231189ad0ce0ddf033b2d30d78cdf"
+      "sha256": "922018fd5d0a36d54ff7c8a0a99195408a21300eb8519b179c4499be385f7131"
     },
     {
       "id": "mapping.interface.thermostat-scene-double-header",
       "path": "cases/mapping/mapping.interface.thermostat-scene-double-header.json",
-      "sha256": "2176e35e35474d014ba81f76b6baf97717e49e186d332cfadbf7f1483d009ec8"
+      "sha256": "8ee48c1f431f1ad8b69123bc9332470c4b9e7595a2e4803d935832328737f819"
     },
     {
       "id": "mapping.interface.widget-tolerance",
       "path": "cases/mapping/mapping.interface.widget-tolerance.json",
-      "sha256": "3b4d15ce46357166475581b848bd64d4ca4f3f69fec7aa47cd82a845a77c85f8"
+      "sha256": "cdacb7158443800fde56dac2dee8e66fa9391882e68adc2d51315b5e030eea28"
     },
     {
       "id": "number.format.binary-rounding-down",
@@ -650,17 +650,17 @@
     {
       "id": "provisioning.omp.one-interface-without-id",
       "path": "cases/project/provisioning.omp.one-interface-without-id.json",
-      "sha256": "377c07390a6136a6f0a7c37e1b8e4fef9e58c65d8b4705d30819306cd9cb93c5"
+      "sha256": "e6c9e0707d3aca70e95fa2b5976c0826e335ac3a907f9db0ef53e47d87f43ac3"
     },
     {
       "id": "provisioning.omp.second-interface",
       "path": "cases/project/provisioning.omp.second-interface.json",
-      "sha256": "aa59a3dbdfc7b3b5273540dda91deb38e3943f5b1d014b0fabb400db1b82ac02"
+      "sha256": "e5cce2d48e26dbbc50a1e26e723133fbe7ddcab58109541eff2601a1d691fccb"
     },
     {
       "id": "provisioning.omp.select-by-id",
       "path": "cases/project/provisioning.omp.select-by-id.json",
-      "sha256": "c752497096756ded5da3ddc3235e70ec37be86debe90143802eb762dd3e6a5ff"
+      "sha256": "f5f3b1e7d2798aacad1f87e366b2881954d2fdec0f6ae612ad2c9d25f769a2d5"
     },
     {
       "id": "provisioning.omp.unknown-id",

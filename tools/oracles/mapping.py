@@ -281,17 +281,25 @@ def map_interface(data):
     devices, skipped = [], []
     for page_index, page in enumerate(data["pages"]):
         page_skipped = []
+        section = None   # §6.1: the nearest parsed HEADER above, per page
         for w in page["widgets"]:
             t = w.get("type") if isinstance(w, dict) else None
             if w.get("x-conformance-expect-skip") if isinstance(w, dict) else False:
                 page_skipped.append(t)   # §3.6: a widget that does not parse, HEADER included
                 continue
             if t in PRESENTATIONAL:
+                # §3.5: id and the first component's label; without either it is skipped.
+                labels = [c.get("label") for c in w.get("components", []) if isinstance(c, dict)]
+                if isinstance(w.get("id"), str) and labels and isinstance(labels[0], str):
+                    section = {"id": w["id"], "title": labels[0]}
+                else:
+                    page_skipped.append(t)
                 continue
             if t not in SUPPORTED:
                 page_skipped.append(t)
                 continue
             devices.append({"id": w["id"], "widgetType": t, "kind": DEVICE_KIND[t], "name": device_name(w),
-                            "page": {"index": page_index, "name": page["name"]}, "entities": entities(w)})
+                            "page": {"index": page_index, "name": page["name"]}, "section": section,
+                            "entities": entities(w)})
         skipped.append(page_skipped)
     return {"devices": devices, "physicalObjects": physical_objects(devices), "skippedWidgets": skipped}
