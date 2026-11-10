@@ -7,11 +7,12 @@ porting by hand should read that file and §1–§5 below.
 How to use: fill in the parameters, then paste everything from
 "You are implementing" to the end into a **fresh** agent session started in
 the folder that holds the sibling checkouts (`grenton-core-spec`,
-`grenton-core-swift`). The prompt assumes nothing from earlier sessions.
+`grenton-core-swift`). The prompt assumes nothing from earlier sessions. `grenton-core-go`
+was started with it, from the spec alone, and passed every case.
 
 ## Parameters
 
-| Parameter | Meaning | Example (Go) |
+| Parameter | Meaning | Example (as used for Go) |
 |---|---|---|
 | `{{LANG}}` | Language of the port | Go |
 | `{{REPO}}` | Repository and folder name | `grenton-core-go` |
@@ -21,6 +22,7 @@ the folder that holds the sibling checkouts (`grenton-core-spec`,
 | `{{DEPENDENCIES}}` | Dependency policy | standard library only, unless the user approves an exception |
 | `{{CONSUMERS}}` | Who will use the library first, so the API fits them | vCLU, a Go automation hub that will use the library as its client of real CLUs |
 | `{{USER_LANGUAGE}}` | Language for talking to the user | Polish |
+| `{{SPEC_REF}}` | The spec the port vendors | the latest tag; or a named unreleased commit when the port is meant to test a spec before its release |
 
 ---
 
@@ -28,9 +30,9 @@ You are implementing **{{REPO}}**, the {{LANG}} port of the Grenton Core
 specification. Grenton Core is a library for the Grenton smart-home "mobile
 interface" protocol: it downloads the interface from Object Manager or imports
 it from an `.omp` project file, keeps encrypted UDP sessions with the CLU
-controllers, and maps widgets to a canonical device model. One port exists
-already, `grenton-core-swift`; you are the second (or later) one, and part of
-your job is to show where the spec is not yet language-neutral.
+controllers, and maps widgets to a canonical device model. Ports exist
+already (`grenton-core-swift`, `grenton-core-go`); part of your job is to
+show where the spec is not yet language-neutral.
 
 - Repository: `{{REPO}}`, a sibling of `grenton-core-spec` on disk.
 - Module coordinates: `{{PACKAGE_ID}}`.
@@ -76,15 +78,16 @@ disagreement.
    says: "in case of a discrepancy the suite decides."
 3. `grenton-core-spec/docs/decisions.md`: why the rules are what they are,
    with the measurements. Read it before you "simplify" a rule.
-   `grenton-core-spec/docs/implementing.md`: where the first port went
+   `grenton-core-spec/docs/implementing.md`: where the earlier ports went
    wrong, and how to test for each. Read it in full (see §6).
 4. `grenton-core-spec/CHANGELOG.md`: history and evidence. Context only.
-5. `grenton-core-swift`: a working port. Read it to see **how** a problem
-   was solved: the conformance runner, the session harness with a virtual
-   clock, the strict JSON parser, the bounded ZIP reader, the transports. It
-   never decides **what** is correct. Never copy an expected value, a
-   threshold or a format from it; if it differs from the spec, the spec wins
-   and you note the difference.
+5. `grenton-core-swift` and `grenton-core-go`: working ports. Read them to
+   see **how** a problem was solved: the conformance runner, the session
+   harness with a virtual clock (Go's has an exact idle barrier), the strict
+   JSON parser, the bounded ZIP reader, the transports. They never decide
+   **what** is correct. Never copy an expected value, a threshold or a
+   format from them; if one differs from the spec, the spec wins and you
+   note the difference.
 
 Other Grenton projects on disk (`vclu`, BSL 1.1; `grenton-native`, GPL-3.0;
 `homeassistant-grenton`, the reference): take **facts only**, never code.
@@ -116,8 +119,11 @@ The spec already carries every fact you need.
 ## 4. Phase 0: read, then plan (no code yet)
 
 1. Vendor the spec: add `grenton-core-spec` as a git submodule at
-   `vendor/grenton-core-spec`, pinned to the latest tag. Note its version.
-   That number is also your port's version (see §8).
+   `vendor/grenton-core-spec`, pinned to {{SPEC_REF}}. Note its version.
+   That number is also your port's version (see §8). With an unreleased
+   commit, the spec-sync check of §8 warns locally instead of failing, and
+   fails in CI until the spec is tagged; the port is released after the
+   spec.
 2. Read the sources in the order of §2. For the Swift port, read at least:
    `docs/grenton-core-swift-port.md` (the plan; Polish), `CLAUDE.md`,
    `.claude/skills/grenton-change/SKILL.md`, `CHANGELOG.md`, and
@@ -180,12 +186,12 @@ re-run, and commit. Report to the user in two or three lines per milestone.
 Declare each profile in `port.json` as soon as it passes, so a regression
 fails the run from then on.
 
-## 6. What the first port learned
+## 6. What the earlier ports learned
 
 Read `grenton-core-spec/docs/implementing.md` in full before the port plan,
 and again before M5 (`.omp`), M6 (session) and M8 (devices). It lists every
-place the Swift port went wrong or nearly did, with the spec section and how
-to test for it, and what the suite does not cover yet. The plan must say,
+place the earlier ports went wrong or nearly did, with the spec section and
+how to test for it, and what the suite does not cover yet. The plan must say,
 for each item, how your design avoids it. The items that bite every port:
 
 - the cast grammar and number format are the spec's, not the language's;
@@ -196,6 +202,10 @@ for each item, how your design avoids it. The items that bite every port:
   operations;
 - any-source mode is one unconnected socket;
 - an entity's update signal is a flag that cannot be lost;
+- a send the transport rejects fails the socket, and concurrent pings share
+  one attempt;
+- never close a socket while holding the session's lock: a transport's
+  `close()` may wait for a reader that waits for that lock;
 - every timer goes through the injected clock.
 
 ## 7. Language traps to check in {{LANG}}
@@ -257,15 +267,26 @@ async/await, actors, `AsyncStream`, Apple frameworks. Or places where it
 says nothing and the Swift port quietly decided. For each one:
 
 1. Write it down in `docs/spec-feedback.md`: the section, the problem, what
-   Swift does, what you propose.
+   the other ports do, what you propose, and **whether a real installation
+   can produce it**. The files come from Object Manager and the datagrams
+   from CLUs; the owner declined every proposal for inputs neither of them
+   produces (other XML encodings, forged ZIP headers, absurd precision,
+   memory caps against crafted files). Such hardening may stay in your port
+   if it costs nothing, but it is not a spec rule. Where the spec is silent,
+   take the strict reading rather than accepting more: the Go port read
+   UTF-16 and replaced lone surrogates, and both were removed again.
 2. If it blocks you, or two readings would produce different wire
    behaviour, stop and ask the user before choosing. Otherwise choose the
    reading closest to the spec's intent, record it in the plan, and go on.
+   A suite gap counts too: when you break your port on purpose and the
+   suite still passes (Go: a timeout streak that never resets), propose
+   the missing case.
 3. Changing the spec follows the spec repo's rules (its `CLAUDE.md` and the
    `grenton-change` skill, step 2): normative text, cases with independent
    expectations, a version bump, a CHANGELOG entry, a PR. Spec first, then
    every port follows. Don't open spec PRs on your own. Propose them in your
-   report.
+   report. Before that, get an independent second opinion on the feedback
+   list itself; for Go it changed two of thirteen proposals.
 
 ## 10. Live runs
 
@@ -274,8 +295,10 @@ says nothing and the Swift port quietly decided. For each one:
   is open. The PIN is the token shown there.
 - On macOS, local-network privacy silently denies UDP to the LAN for
   binaries launched from an IDE or an agent's shell (`EHOSTUNREACH`,
-  "network is down" or similar, while HTTP to the same host works). The
-  user runs live examples in Terminal.app. Linux has no such prompt.
+  "network is down" or similar, while HTTP to the same host works), unless
+  the IDE was granted access. Try one read-only run; on that error
+  signature, the user runs live examples in Terminal.app. Linux has no such
+  prompt.
 - Read-only first: fetch or import, list devices, watch state for a while,
   and read values once. Ask before any example that sends a command.
 - Save the interface archive to `dist/` (git-ignored); it contains the CLU
