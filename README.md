@@ -14,6 +14,9 @@ protocol of CLU controllers, and a canonical device model.
 | [`conformance/`](conformance/) | The suite: `manifest.json`, `cases/`, `fixtures/`, `schemas/` |
 | [`tools/suite.py`](tools/suite.py) | Validates cases and rebuilds the manifest (Python 3, stdlib only) |
 | [`tools/oracles/`](tools/oracles/) | Independent reference derivations used to check expected values |
+| [`docs/decisions.md`](docs/decisions.md) | Why the rules are what they are, with the measurements |
+| [`docs/implementing.md`](docs/implementing.md) | For a new port: where the first port went wrong, and what the suite does not cover yet |
+| [`docs/porting-prompt.md`](docs/porting-prompt.md) | The prompt that starts an agent on a new port |
 
 ## Implementations
 
