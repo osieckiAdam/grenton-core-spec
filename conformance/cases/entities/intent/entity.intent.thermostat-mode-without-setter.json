@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "entity.intent.thermostat-mode-without-setter",
+  "specRefs": [
+    "devices.intents"
+  ],
+  "description": "A mode feature without its action is no control: a no-op.",
+  "provenance": "spec §6.1–§6.3; tools/oracles/entities.py",
+  "operation": "entity.intent",
+  "input": {
+    "fixture": "fixtures/interfaces/thermostat-scene-double-header.json",
+    "entityId": "t-mode-without-setter_0",
+    "values": [],
+    "intent": "setMode",
+    "args": {
+      "mode": "manual"
+    }
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "actions": []
+    }
+  }
+}

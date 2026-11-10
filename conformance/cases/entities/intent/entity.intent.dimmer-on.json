@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "entity.intent.dimmer-on",
+  "specRefs": [
+    "devices.intents"
+  ],
+  "description": "turnOn sends the ON method.",
+  "provenance": "spec §6.1–§6.3; tools/oracles/entities.py",
+  "operation": "entity.intent",
+  "input": {
+    "fixture": "fixtures/interfaces/all-widget-types.json",
+    "entityId": "w-dimmer_0",
+    "values": [],
+    "intent": "turnOn"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "actions": [
+        {
+          "callType": "METHOD",
+          "cluId": "CLU_501234567",
+          "objectName": "DIM3333",
+          "event": "ON",
+          "value": "",
+          "index": "1"
+        }
+      ]
+    }
+  }
+}

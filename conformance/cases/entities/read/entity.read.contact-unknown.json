@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "entity.read.contact-unknown",
+  "specRefs": [
+    "devices.entity-state"
+  ],
+  "description": "A contact never reported is unknown.",
+  "provenance": "spec §6.1–§6.3; tools/oracles/entities.py",
+  "operation": "entity.read",
+  "input": {
+    "fixture": "fixtures/interfaces/all-widget-types.json",
+    "entityId": "w-contact_binary_sensor",
+    "values": []
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "state": {
+        "isActive": null
+      }
+    }
+  }
+}

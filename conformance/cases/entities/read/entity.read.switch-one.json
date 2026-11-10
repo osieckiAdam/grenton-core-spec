@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "id": "entity.read.switch-one",
+  "specRefs": [
+    "devices.entity-state",
+    "devices.coercion"
+  ],
+  "description": "A switch reads the int 1 (relays).",
+  "provenance": "spec §6.1–§6.3; tools/oracles/entities.py",
+  "operation": "entity.read",
+  "input": {
+    "fixture": "fixtures/interfaces/all-widget-types.json",
+    "entityId": "w-onoff_0",
+    "values": [
+      {
+        "key": {
+          "callType": "ATTRIBUTE",
+          "cluId": "CLU_501234567",
+          "objectName": "DOU8272",
+          "index": "0"
+        },
+        "value": {
+          "type": "int",
+          "value": "1"
+        }
+      }
+    ]
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "state": {
+        "isOn": true
+      }
+    }
+  }
+}

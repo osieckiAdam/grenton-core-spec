@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "id": "entity.read.cover-below-range",
+  "specRefs": [
+    "devices.entity-state"
+  ],
+  "description": "A cover: position −5 is clamped to 0 and closed; lamels below 0 clamp tilt to 100.",
+  "provenance": "spec §6.1–§6.3; tools/oracles/entities.py",
+  "operation": "entity.read",
+  "input": {
+    "fixture": "fixtures/interfaces/all-widget-types.json",
+    "entityId": "w-rs3",
+    "values": [
+      {
+        "key": {
+          "callType": "ATTRIBUTE",
+          "cluId": "CLU_501234567",
+          "objectName": "ROL2020",
+          "index": "0"
+        },
+        "value": {
+          "type": "int",
+          "value": "0"
+        }
+      },
+      {
+        "key": {
+          "callType": "ATTRIBUTE",
+          "cluId": "CLU_501234567",
+          "objectName": "ROL2020",
+          "index": "1"
+        },
+        "value": {
+          "type": "int",
+          "value": "-5"
+        }
+      },
+      {
+        "key": {
+          "callType": "ATTRIBUTE",
+          "cluId": "CLU_501234567",
+          "objectName": "ROL2020",
+          "index": "2"
+        },
+        "value": {
+          "type": "int",
+          "value": "-10"
+        }
+      }
+    ]
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "state": {
+        "position": {
+          "type": "int",
+          "value": "0"
+        },
+        "isClosed": true,
+        "motion": "idle",
+        "tilt": {
+          "type": "int",
+          "value": "100"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "entity.intent.trigger-press",
+  "specRefs": [
+    "devices.intents"
+  ],
+  "description": "press sends the button's action.",
+  "provenance": "spec §6.1–§6.3; tools/oracles/entities.py",
+  "operation": "entity.intent",
+  "input": {
+    "fixture": "fixtures/interfaces/all-widget-types.json",
+    "entityId": "w-contact_button",
+    "values": [],
+    "intent": "press"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "actions": [
+        {
+          "callType": "VARIABLE",
+          "cluId": "CLU_501234567",
+          "objectName": "x_drzwi_klik",
+          "event": "CLICK",
+          "value": "1",
+          "index": "x_drzwi_klik"
+        }
+      ]
+    }
+  }
+}

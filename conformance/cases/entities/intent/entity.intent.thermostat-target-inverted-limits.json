@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "id": "entity.intent.thermostat-target-inverted-limits",
+  "specRefs": [
+    "devices.intents"
+  ],
+  "description": "With min > max the value is sent unclamped.",
+  "provenance": "spec §6.1–§6.3; tools/oracles/entities.py",
+  "operation": "entity.intent",
+  "input": {
+    "fixture": "fixtures/interfaces/thermostat-scene-double-header.json",
+    "entityId": "t-full_0",
+    "values": [
+      {
+        "key": {
+          "callType": "ATTRIBUTE",
+          "cluId": "CLU_501234567",
+          "objectName": "THE1001",
+          "index": "10"
+        },
+        "value": {
+          "type": "int",
+          "value": "25"
+        }
+      },
+      {
+        "key": {
+          "callType": "ATTRIBUTE",
+          "cluId": "CLU_501234567",
+          "objectName": "THE1001",
+          "index": "11"
+        },
+        "value": {
+          "type": "int",
+          "value": "20"
+        }
+      }
+    ],
+    "intent": "setTargetTemperature",
+    "args": {
+      "temperature": 40
+    }
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "actions": [
+        {
+          "callType": "ATTRIBUTE",
+          "cluId": "CLU_501234567",
+          "objectName": "THE1001",
+          "event": "CLICK",
+          "value": "40.0",
+          "index": "3"
+        }
+      ]
+    }
+  }
+}

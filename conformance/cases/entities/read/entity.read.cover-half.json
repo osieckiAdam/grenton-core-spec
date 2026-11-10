@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "id": "entity.read.cover-half",
+  "specRefs": [
+    "devices.entity-state"
+  ],
+  "description": "A cover: position 50, opening, lamels 45 of 90 are tilt 50.",
+  "provenance": "spec §6.1–§6.3; tools/oracles/entities.py",
+  "operation": "entity.read",
+  "input": {
+    "fixture": "fixtures/interfaces/all-widget-types.json",
+    "entityId": "w-rs3",
+    "values": [
+      {
+        "key": {
+          "callType": "ATTRIBUTE",
+          "cluId": "CLU_501234567",
+          "objectName": "ROL2020",
+          "index": "0"
+        },
+        "value": {
+          "type": "int",
+          "value": "1"
+        }
+      },
+      {
+        "key": {
+          "callType": "ATTRIBUTE",
+          "cluId": "CLU_501234567",
+          "objectName": "ROL2020",
+          "index": "1"
+        },
+        "value": {
+          "type": "int",
+          "value": "50"
+        }
+      },
+      {
+        "key": {
+          "callType": "ATTRIBUTE",
+          "cluId": "CLU_501234567",
+          "objectName": "ROL2020",
+          "index": "2"
+        },
+        "value": {
+          "type": "int",
+          "value": "45"
+        }
+      }
+    ]
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "state": {
+        "position": {
+          "type": "int",
+          "value": "50"
+        },
+        "isClosed": false,
+        "motion": "opening",
+        "tilt": {
+          "type": "int",
+          "value": "50"
+        }
+      }
+    }
+  }
+}

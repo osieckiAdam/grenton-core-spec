@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "entity.intent.slider-above",
+  "specRefs": [
+    "devices.intents",
+    "devices.number-format"
+  ],
+  "description": "setValue: 40 is clamped to max 28.",
+  "provenance": "spec §6.1–§6.3; tools/oracles/entities.py",
+  "operation": "entity.intent",
+  "input": {
+    "fixture": "fixtures/interfaces/all-widget-types.json",
+    "entityId": "w-slider_slider",
+    "values": [],
+    "intent": "setValue",
+    "args": {
+      "value": 40
+    }
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "actions": [
+        {
+          "callType": "METHOD",
+          "cluId": "CLU_501234567",
+          "objectName": "THE8888",
+          "event": "CLICK",
+          "value": "28.0",
+          "index": "1"
+        }
+      ]
+    }
+  }
+}

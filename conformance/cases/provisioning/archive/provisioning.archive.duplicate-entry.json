@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "provisioning.archive.duplicate-entry",
+  "specRefs": [
+    "provisioning.archive"
+  ],
+  "description": "Two entries named mygrenton/data.json make the archive ambiguous.",
+  "provenance": "spec §4.3; tools/oracles/archive.py",
+  "operation": "provisioning.archive",
+  "input": {
+    "fixture": "fixtures/archives/duplicate-entry.zip"
+  },
+  "expect": {
+    "outcome": "error",
+    "code": "provisioning.invalidData"
+  }
+}

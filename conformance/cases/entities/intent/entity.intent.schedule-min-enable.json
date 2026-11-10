@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "entity.intent.schedule-min-enable",
+  "specRefs": [
+    "devices.intents"
+  ],
+  "description": "Without an enable method enableRule is a no-op.",
+  "provenance": "spec §6.1–§6.3; tools/oracles/entities.py",
+  "operation": "entity.intent",
+  "input": {
+    "fixture": "fixtures/interfaces/scheduler-tv-remote.json",
+    "entityId": "w-sched-min_0",
+    "values": [],
+    "intent": "enableRule",
+    "args": {
+      "id": 1
+    }
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "actions": []
+    }
+  }
+}

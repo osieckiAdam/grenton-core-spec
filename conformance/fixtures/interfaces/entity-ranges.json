@@ -1,0 +1,119 @@
+{
+  "id": "interface-test-entities",
+  "version": 3,
+  "name": "Dom testowy",
+  "icon": "home",
+  "theme": "GRENTON",
+  "encryption": {
+    "key": "AAECAwQFBgcICQoLDA0ODw==",
+    "iv": "EBESExQVFhcYGRobHB0eHw=="
+  },
+  "clus": [
+    {
+      "id": "CLU_501234567",
+      "serialNumber": "501234567",
+      "name": "CLU Parter",
+      "ip": "192.168.1.10",
+      "port": 1234,
+      "connectionType": "LOCAL_ONLY"
+    }
+  ],
+  "pushNotifications": [
+    {
+      "cluId": 501234567,
+      "objectId": "PN_1",
+      "objectType": "PUSH"
+    }
+  ],
+  "pages": [
+    {
+      "name": "Zakresy",
+      "icon": "home",
+      "isFullscreenWidget": false,
+      "widgets": [
+        {
+          "type": "DIMMER_V2",
+          "id": "d-flat",
+          "label": "d-flat",
+          "icon": "bulb",
+          "min": 10,
+          "max": 10,
+          "precision": 0,
+          "object": {
+            "value": {
+              "cluId": "CLU_501234567",
+              "objectName": "DIM5001",
+              "index": "0",
+              "callType": "ATTRIBUTE"
+            },
+            "setValueAction": {
+              "event": "CLICK",
+              "cluId": "CLU_501234567",
+              "objectName": "DIM5001",
+              "index": "0",
+              "value": "0",
+              "callType": "METHOD"
+            },
+            "onAction": {
+              "event": "ON",
+              "cluId": "CLU_501234567",
+              "objectName": "DIM5001",
+              "index": "1",
+              "value": "",
+              "callType": "METHOD"
+            },
+            "offAction": {
+              "event": "OFF",
+              "cluId": "CLU_501234567",
+              "objectName": "DIM5001",
+              "index": "2",
+              "value": "",
+              "callType": "METHOD"
+            }
+          }
+        },
+        {
+          "type": "DIMMER_V2",
+          "id": "d-wide",
+          "label": "d-wide",
+          "icon": "bulb",
+          "min": 0,
+          "max": 255,
+          "precision": 2,
+          "object": {
+            "value": {
+              "cluId": "CLU_501234567",
+              "objectName": "DIM5002",
+              "index": "0",
+              "callType": "ATTRIBUTE"
+            },
+            "setValueAction": {
+              "event": "CLICK",
+              "cluId": "CLU_501234567",
+              "objectName": "DIM5002",
+              "index": "0",
+              "value": "0",
+              "callType": "METHOD"
+            },
+            "onAction": {
+              "event": "ON",
+              "cluId": "CLU_501234567",
+              "objectName": "DIM5002",
+              "index": "1",
+              "value": "",
+              "callType": "METHOD"
+            },
+            "offAction": {
+              "event": "OFF",
+              "cluId": "CLU_501234567",
+              "objectName": "DIM5002",
+              "index": "2",
+              "value": "",
+              "callType": "METHOD"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

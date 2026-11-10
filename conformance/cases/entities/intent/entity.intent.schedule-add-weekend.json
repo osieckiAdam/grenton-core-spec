@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "id": "entity.intent.schedule-add-weekend",
+  "specRefs": [
+    "devices.intents",
+    "devices.schedule"
+  ],
+  "description": "addRule sends the CRON text: Sunday last.",
+  "provenance": "spec §6.1–§6.3; tools/oracles/entities.py",
+  "operation": "entity.intent",
+  "input": {
+    "fixture": "fixtures/interfaces/scheduler-tv-remote.json",
+    "entityId": "w-sched-full_0",
+    "values": [],
+    "intent": "addRule",
+    "args": {
+      "hour": 9,
+      "minute": 0,
+      "days": [
+        0,
+        6
+      ]
+    }
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "actions": [
+        {
+          "callType": "METHOD",
+          "cluId": "CLU_501234567",
+          "objectName": "EVE1",
+          "event": "CLICK",
+          "value": "0 9 * * 6,0",
+          "index": "2"
+        }
+      ]
+    }
+  }
+}

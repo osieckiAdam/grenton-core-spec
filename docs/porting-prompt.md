@@ -45,8 +45,9 @@ and repository documents in English, matching the existing repos.
 
 ## 1. What "done" means
 
-1. The port passes **every case of all four conformance profiles**
-   (`stateless`, `mapping`, `session`, `project`) of the current suite, with
+1. The port passes **every case of every conformance profile** (`stateless`,
+   `mapping`, `session`, `project`, `provisioning`, `entities` as of suite
+   0.15.0; the manifest lists them) of the current suite, with
    an empty `skips` list, run by a runner that follows
    `spec/conformance.md` §5 to the letter.
 2. The full gate (§8 below) is green locally and in CI.
@@ -59,7 +60,8 @@ and repository documents in English, matching the existing repos.
    or listed in your final report with a proposed rule.
 
 Passing the suite is necessary, not sufficient. The suite does not cover
-transports, Object Manager HTTP, entity intents or the system facade.
+the UDP transports, the release of resources after `stop()`, the update
+signals of §6.5 or the system facade over several CLUs (spec §9.5 item 8).
 Those you test yourself, against the spec text.
 
 ## 2. Sources and their authority
@@ -170,8 +172,8 @@ re-run, and commit. Report to the user in two or three lines per milestone.
 | M4 | Device descriptors: widget → device/entity mapping, order, sections, icons, physical objects | §6.1, §6.3, §6.6 | **`mapping` profile** green |
 | M5 | `.omp` import: bounded ZIP, XML without DTDs, strict JSON, interface selection, editor-to-interface conversion | §4.5 | **`project` profile** green |
 | M6 | CLU session and state store: correlation, chunked registration, report routing, keep-alive, loops, recovery, lifecycle, diagnostics | §5.4–§5.6 | **`session` profile** green, also under the race detector or equivalent, repeated ≥20 times without a flake |
-| M7 | Transports: peer-filtered and any-source UDP on loopback; Object Manager client over HTTP with the §4.2–§4.3 limits | §4.1–§4.3, §7 | your own tests: a datagram from a foreign source port reaches the any-source socket; redirects are not followed; an oversized body or entry is `invalidData` while streaming |
-| M8 | Bound devices and entities (state getters, intents, update signals), the system facade, the umbrella module | §6.2–§6.5, §2 | your own tests on a scripted CLU, including the round trips of §9.5 item 6 |
+| M7 | Transports: peer-filtered and any-source UDP on loopback; Object Manager client over HTTP with the §4.2–§4.3 limits | §4.1–§4.3, §7 | **`provisioning` profile** green (the runner serves real HTTP on loopback); your own tests: a datagram from a foreign source port reaches the any-source socket and not the filtered one; no PIN in log lines |
+| M8 | Bound devices and entities (state getters, intents, update signals), the system facade, the umbrella module | §6.2–§6.5, §2 | **`entities` profile** green; your own tests on a scripted CLU for the update signals of §6.5, the facade over several CLUs, and resource release after `stop()` |
 | M9 | Examples and the live run (read-only first) | — | the user ran them; findings recorded |
 | M10 | Public docs, README, CHANGELOG, gate, CI, release workflow | — | §8 gate green in CI |
 

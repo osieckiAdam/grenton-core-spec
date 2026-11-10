@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "entity.intent.thermostat-off",
+  "specRefs": [
+    "devices.intents"
+  ],
+  "description": "turnOff sends State 0.",
+  "provenance": "spec §6.1–§6.3; tools/oracles/entities.py",
+  "operation": "entity.intent",
+  "input": {
+    "fixture": "fixtures/interfaces/thermostat-scene-double-header.json",
+    "entityId": "t-full_0",
+    "values": [],
+    "intent": "turnOff"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "actions": [
+        {
+          "callType": "ATTRIBUTE",
+          "cluId": "CLU_501234567",
+          "objectName": "THE1001",
+          "event": "CLICK",
+          "value": "0",
+          "index": "6"
+        }
+      ]
+    }
+  }
+}

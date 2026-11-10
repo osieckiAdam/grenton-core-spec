@@ -47,7 +47,13 @@
     { "if": { "properties": { "operation": { "const": "provisioning.omp" } } },
       "then": { "properties": { "input": { "$ref": "#/$defs/input.provisioning.omp" } } } },
     { "if": { "properties": { "operation": { "const": "session.scenario" } } },
-      "then": { "properties": { "input": { "$ref": "#/$defs/input.session.scenario" } } } }
+      "then": { "properties": { "input": { "$ref": "#/$defs/input.session.scenario" } } } },
+    { "if": { "properties": { "operation": { "const": "provisioning.archive" } } },
+      "then": { "properties": { "input": { "$ref": "#/$defs/input.provisioning.archive" } } } },
+    { "if": { "properties": { "operation": { "const": "provisioning.fetch" } } },
+      "then": { "properties": { "input": { "$ref": "#/$defs/input.provisioning.fetch" } } } },
+    { "if": { "properties": { "operation": { "enum": ["entity.read", "entity.intent"] } } },
+      "then": { "properties": { "input": { "$ref": "#/$defs/input.entity" } } } }
   ],
   "$defs": {
     "hex": { "type": "string", "pattern": "^([0-9a-f]{2})*$" },
@@ -57,7 +63,7 @@
           "properties": { "outcome": { "const": "ok" }, "value": {} } },
         { "type": "object", "additionalProperties": false, "required": ["outcome", "code"],
           "properties": { "outcome": { "const": "error" },
-                          "code": { "enum": ["crypto.invalidKeyMaterial", "provisioning.connection", "payload.unresolvedPlaceholder", "provisioning.invalidData", "provisioning.interfaceNotFound", "provisioning.interfaceAmbiguous"] } } },
+                          "code": { "enum": ["crypto.invalidKeyMaterial", "provisioning.authenticationFailed", "provisioning.connection", "payload.unresolvedPlaceholder", "provisioning.invalidData", "provisioning.interfaceNotFound", "provisioning.interfaceAmbiguous"] } } },
         { "type": "object", "additionalProperties": false, "required": ["outcome"],
           "properties": { "outcome": { "const": "reject" } } }
       ]
@@ -150,6 +156,53 @@
       "type": "object", "additionalProperties": false, "required": ["fixture"],
       "properties": { "fixture": { "type": "string", "pattern": "^fixtures/projects/.+\\.omp$" },
                       "interfaceId": { "type": "string" } }
+    },
+    "input.provisioning.archive": {
+      "type": "object", "additionalProperties": false, "required": ["fixture"],
+      "properties": { "fixture": { "type": "string", "pattern": "^fixtures/archives/.+\\.zip$" } }
+    },
+    "input.provisioning.fetch": {
+      "type": "object", "additionalProperties": false, "required": ["pin"],
+      "properties": {
+        "pin": { "type": "string" },
+        "unreachable": { "const": true },
+        "response": {
+          "type": "object", "additionalProperties": false, "required": ["status"],
+          "properties": {
+            "status": { "type": "integer", "minimum": 100, "maximum": 599 },
+            "headers": { "type": "object", "additionalProperties": { "type": "string" } },
+            "body": { "oneOf": [
+              { "type": "object", "additionalProperties": false, "required": ["fixture"],
+                "properties": { "fixture": { "type": "string", "pattern": "^fixtures/archives/.+\\.zip$" } } },
+              { "type": "object", "additionalProperties": false, "required": ["zeros"],
+                "properties": { "zeros": { "type": "integer", "minimum": 0 } } }
+            ] }
+          }
+        }
+      }
+    },
+    "valueRef": {
+      "oneOf": [
+        { "type": "object", "additionalProperties": false, "required": ["callType", "cluId", "index"],
+          "properties": { "callType": { "const": "VARIABLE" }, "cluId": { "type": "string" }, "index": { "type": "string" } } },
+        { "type": "object", "additionalProperties": false, "required": ["callType", "cluId", "objectName", "index"],
+          "properties": { "callType": { "const": "ATTRIBUTE" }, "cluId": { "type": "string" }, "objectName": { "type": "string" },
+                          "index": { "type": "string" } } }
+      ]
+    },
+    "input.entity": {
+      "type": "object", "additionalProperties": false, "required": ["fixture", "entityId", "values"],
+      "properties": {
+        "fixture": { "type": "string", "pattern": "^fixtures/interfaces/.+\\.json$" },
+        "entityId": { "type": "string" },
+        "values": { "type": "array", "items": {
+          "type": "object", "additionalProperties": false, "required": ["key", "value"],
+          "properties": { "key": { "$ref": "#/$defs/valueRef" }, "value": { "$ref": "#/$defs/value" } } } },
+        "intent": { "enum": ["turnOn", "turnOff", "setBrightness", "setColor", "setValue", "open", "close", "stop",
+                             "openTilt", "closeTilt", "setPosition", "setTilt", "press", "run", "setTargetTemperature",
+                             "setMode", "setActive", "addRule", "deleteRule", "enableRule", "disableRule"] },
+        "args": { "type": "object" }
+      }
     },
     "input.mapping.interface": {
       "type": "object", "additionalProperties": false, "required": ["fixture"],

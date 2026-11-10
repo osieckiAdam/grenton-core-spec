@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "entity.read.thermostat-minimal",
+  "specRefs": [
+    "devices.entity-state"
+  ],
+  "description": "Without mode and power controls both are unknown.",
+  "provenance": "spec §6.1–§6.3; tools/oracles/entities.py",
+  "operation": "entity.read",
+  "input": {
+    "fixture": "fixtures/interfaces/thermostat-scene-double-header.json",
+    "entityId": "t-minimal_0",
+    "values": []
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "state": {
+        "currentTemperature": null,
+        "targetTemperature": null,
+        "minTemperature": null,
+        "maxTemperature": null,
+        "output": null,
+        "mode": null,
+        "isOn": null
+      }
+    }
+  }
+}

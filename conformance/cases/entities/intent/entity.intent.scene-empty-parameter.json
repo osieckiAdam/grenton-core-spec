@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "entity.intent.scene-empty-parameter",
+  "specRefs": [
+    "devices.intents"
+  ],
+  "description": "An empty parameter is sent as the empty value.",
+  "provenance": "spec §6.1–§6.3; tools/oracles/entities.py",
+  "operation": "entity.intent",
+  "input": {
+    "fixture": "fixtures/interfaces/all-widget-types.json",
+    "entityId": "w-scene_0",
+    "values": [],
+    "intent": "run",
+    "args": {
+      "parameter": ""
+    }
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "actions": [
+        {
+          "callType": "SCRIPT",
+          "cluId": "CLU_501234567",
+          "objectName": "scena_wieczor",
+          "event": "CLICK",
+          "value": ""
+        }
+      ]
+    }
+  }
+}

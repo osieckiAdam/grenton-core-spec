@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "entity.intent.schedule-add-reject-no-days",
+  "specRefs": [
+    "devices.intents",
+    "devices.schedule"
+  ],
+  "description": "addRule refuses an empty day set; nothing is sent.",
+  "provenance": "spec §6.1–§6.3; tools/oracles/entities.py",
+  "operation": "entity.intent",
+  "input": {
+    "fixture": "fixtures/interfaces/scheduler-tv-remote.json",
+    "entityId": "w-sched-full_0",
+    "values": [],
+    "intent": "addRule",
+    "args": {
+      "hour": 7,
+      "minute": 0,
+      "days": []
+    }
+  },
+  "expect": {
+    "outcome": "reject"
+  }
+}

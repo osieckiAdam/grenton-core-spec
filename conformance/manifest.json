@@ -1,13 +1,21 @@
 {
   "schemaVersion": 1,
-  "suiteVersion": "0.14.0",
-  "specVersion": "0.14.0",
+  "suiteVersion": "0.15.0",
+  "specVersion": "0.15.0",
   "profiles": {
+    "entities": [
+      "entity.intent",
+      "entity.read"
+    ],
     "mapping": [
       "mapping.interface"
     ],
     "project": [
       "provisioning.omp"
+    ],
+    "provisioning": [
+      "provisioning.archive",
+      "provisioning.fetch"
     ],
     "session": [
       "session.scenario"
@@ -36,6 +44,9 @@
     "crypto.key-material": "\u00a75.1",
     "crypto.padding": "\u00a75.1",
     "devices.coercion": "\u00a76.2",
+    "devices.entity-state": "\u00a76.1, \u00a76.3",
+    "devices.integer-read": "\u00a76.2",
+    "devices.intents": "\u00a76.1, \u00a76.3",
     "devices.mapping": "\u00a76.1, \u00a76.3",
     "devices.number-format": "\u00a710 pt 3",
     "devices.order": "\u00a76.1",
@@ -49,10 +60,13 @@
     "payload.register": "\u00a75.3.2",
     "payload.report": "\u00a75.3.2",
     "payload.values": "\u00a75.3.2",
+    "provisioning.archive": "\u00a74.3",
     "provisioning.omp": "\u00a74.5",
     "provisioning.omp-archive": "\u00a74.5.1",
     "provisioning.omp-selection": "\u00a74.5.2",
     "provisioning.pin": "\u00a74.1",
+    "provisioning.pin-secrecy": "\u00a74.2",
+    "provisioning.response": "\u00a74.2",
     "provisioning.url": "\u00a74.1",
     "session.actions": "\u00a75.3.4, \u00a73.3",
     "session.chunking": "\u00a75.4.2, \u00a75.3.2",
@@ -286,6 +300,521 @@
       "id": "crypto.encrypt.utf8-plaintext",
       "path": "cases/stateless/crypto/crypto.encrypt.utf8-plaintext.json",
       "sha256": "f21e6763e6019fbdc24e42ceba48ffac3773e8abef47064b411b0715af8b52da"
+    },
+    {
+      "id": "entity.intent.cover-close",
+      "path": "cases/entities/intent/entity.intent.cover-close.json",
+      "sha256": "13c0fd872966c7d7424f9caf50dab188ba47cd5d2ccd94176a43995a71585b38"
+    },
+    {
+      "id": "entity.intent.cover-close-tilt",
+      "path": "cases/entities/intent/entity.intent.cover-close-tilt.json",
+      "sha256": "4450621ad7056912f84c753ac8f0a5df0558c22d2ce051559bf96d061fe7808b"
+    },
+    {
+      "id": "entity.intent.cover-no-stop",
+      "path": "cases/entities/intent/entity.intent.cover-no-stop.json",
+      "sha256": "61a6716feef1e6be44abbfce5d33d26e9acb4296ac37067d13fc8bee951f8979"
+    },
+    {
+      "id": "entity.intent.cover-no-tilt",
+      "path": "cases/entities/intent/entity.intent.cover-no-tilt.json",
+      "sha256": "f169388a1203379ef2a864a664b7811b3283fa6f4bbf77d51352ea83641df044"
+    },
+    {
+      "id": "entity.intent.cover-open",
+      "path": "cases/entities/intent/entity.intent.cover-open.json",
+      "sha256": "785da2ba8b4dc723d7347dbeb2ed5b1b7cb37a2abd3896d59315b594d3729a8f"
+    },
+    {
+      "id": "entity.intent.cover-open-tilt",
+      "path": "cases/entities/intent/entity.intent.cover-open-tilt.json",
+      "sha256": "7b409896bb07d186a9789d0b6bdb5ce03912fd0c4d845cbd77e28650a5c77fcd"
+    },
+    {
+      "id": "entity.intent.cover-position",
+      "path": "cases/entities/intent/entity.intent.cover-position.json",
+      "sha256": "892516b50f698aec586c4db30060ca0f80165d80565023836a48e21ac387568b"
+    },
+    {
+      "id": "entity.intent.cover-position-above",
+      "path": "cases/entities/intent/entity.intent.cover-position-above.json",
+      "sha256": "80d467b95252b90acba078773b94758b229a2f50fb2a5281d755e508773102cc"
+    },
+    {
+      "id": "entity.intent.cover-position-below",
+      "path": "cases/entities/intent/entity.intent.cover-position-below.json",
+      "sha256": "95c796f7cfb8a2228d0e5159a718576bca10d964d782e25dd4d0e0e0565a41b1"
+    },
+    {
+      "id": "entity.intent.cover-stop",
+      "path": "cases/entities/intent/entity.intent.cover-stop.json",
+      "sha256": "5c20b3f8c95178ae4586cd7cd41c61fb1c340a410f26247ed23066c0f2e1d978"
+    },
+    {
+      "id": "entity.intent.cover-tilt-above",
+      "path": "cases/entities/intent/entity.intent.cover-tilt-above.json",
+      "sha256": "2ee46a1563f90e8add033d6173dd04aba8085cdaa95d8206c287ac2a9194484f"
+    },
+    {
+      "id": "entity.intent.cover-tilt-half",
+      "path": "cases/entities/intent/entity.intent.cover-tilt-half.json",
+      "sha256": "d73a47e3eac64fb55763a3d33c2fcf845635408bb1d712efcd15d45ca8eccab4"
+    },
+    {
+      "id": "entity.intent.cover-tilt-truncated",
+      "path": "cases/entities/intent/entity.intent.cover-tilt-truncated.json",
+      "sha256": "e483384f68df9bfe24b514e78f50a84e68a1154bd679c4b1bc566ef2cb37eb5e"
+    },
+    {
+      "id": "entity.intent.dimmer-brightness-above",
+      "path": "cases/entities/intent/entity.intent.dimmer-brightness-above.json",
+      "sha256": "9ca484fb2d4f2378e018415d80f28b0da45c37485fbeae825ac26c95999ba9a8"
+    },
+    {
+      "id": "entity.intent.dimmer-brightness-below",
+      "path": "cases/entities/intent/entity.intent.dimmer-brightness-below.json",
+      "sha256": "35af1f61813e6bd8c41a1707349cd731a9512174a8877cbfcffa36ed694f5036"
+    },
+    {
+      "id": "entity.intent.dimmer-brightness-half",
+      "path": "cases/entities/intent/entity.intent.dimmer-brightness-half.json",
+      "sha256": "d4e148641578c87c2d5e025f8e80e1a5543cdd539f40c1a62735dc8cb76c854d"
+    },
+    {
+      "id": "entity.intent.dimmer-brightness-third",
+      "path": "cases/entities/intent/entity.intent.dimmer-brightness-third.json",
+      "sha256": "aaed8c2a7241bf7386be224ac591d32647900970f3dd8e1c3b92b8aafeb5a748"
+    },
+    {
+      "id": "entity.intent.dimmer-flat",
+      "path": "cases/entities/intent/entity.intent.dimmer-flat.json",
+      "sha256": "3d32358375ef45d31f46327f6f2a179133ad5c2ebf15b1c7ae6a1944aeed3ae4"
+    },
+    {
+      "id": "entity.intent.dimmer-on",
+      "path": "cases/entities/intent/entity.intent.dimmer-on.json",
+      "sha256": "d572d2abbb01d4e2cd68eef710bb51a18c7ca1949f2b5f52db2d94a7e5f164ce"
+    },
+    {
+      "id": "entity.intent.dimmer-wide-precision",
+      "path": "cases/entities/intent/entity.intent.dimmer-wide-precision.json",
+      "sha256": "79e8793a77f1e795d310f6bd91a8c544d29abf8e5c79052561c6616c79d95575"
+    },
+    {
+      "id": "entity.intent.hsb-brightness",
+      "path": "cases/entities/intent/entity.intent.hsb-brightness.json",
+      "sha256": "999b11ccf74c960fe35827d13baa6f937cd5c41763f1b60bfc0043d308dc02a1"
+    },
+    {
+      "id": "entity.intent.hsb-color",
+      "path": "cases/entities/intent/entity.intent.hsb-color.json",
+      "sha256": "816b5bafc281fcd940b061f4927414274e6b492a8e5dc7793d9ef17430b29f4b"
+    },
+    {
+      "id": "entity.intent.hsb-color-clamped",
+      "path": "cases/entities/intent/entity.intent.hsb-color-clamped.json",
+      "sha256": "8f96f3e68bb6ddb962192898f54cbbc4f277f00a5b391a3c3b569c7d955bf3e6"
+    },
+    {
+      "id": "entity.intent.hsb-off",
+      "path": "cases/entities/intent/entity.intent.hsb-off.json",
+      "sha256": "198e8cabc284278ced533022144a9be74106915061d30d447f9391e9658df423"
+    },
+    {
+      "id": "entity.intent.scene-empty-parameter",
+      "path": "cases/entities/intent/entity.intent.scene-empty-parameter.json",
+      "sha256": "b5ff11068a150e5d41e79f89529c3e95a493b27e551c345c720d57b5d7f5d48a"
+    },
+    {
+      "id": "entity.intent.scene-parameter",
+      "path": "cases/entities/intent/entity.intent.scene-parameter.json",
+      "sha256": "ce779931bfee4c4da3ab34888954fa47780a745211709d1d4e1b914ea41ac256"
+    },
+    {
+      "id": "entity.intent.scene-run",
+      "path": "cases/entities/intent/entity.intent.scene-run.json",
+      "sha256": "24aa0570987e7874b3a162cfb21122437b7f42b80f8d4d0c129de9ec3464b197"
+    },
+    {
+      "id": "entity.intent.schedule-add-every-day",
+      "path": "cases/entities/intent/entity.intent.schedule-add-every-day.json",
+      "sha256": "4e30755eb1ab60a1f0ae7db99ce8a3ccc0c4f62b0ce5ae6d9fff10bd8c19ef1b"
+    },
+    {
+      "id": "entity.intent.schedule-add-reject-hour",
+      "path": "cases/entities/intent/entity.intent.schedule-add-reject-hour.json",
+      "sha256": "a0761ec0bc4a502d5f134d98df4ee5b829a9b4f8cb07ac7e21e14b3d8d87ee1f"
+    },
+    {
+      "id": "entity.intent.schedule-add-reject-minute",
+      "path": "cases/entities/intent/entity.intent.schedule-add-reject-minute.json",
+      "sha256": "bfd8c46fe59bb5a244edd30302a4fadcbfd72cf0433314cda171de151b897f9c"
+    },
+    {
+      "id": "entity.intent.schedule-add-reject-no-days",
+      "path": "cases/entities/intent/entity.intent.schedule-add-reject-no-days.json",
+      "sha256": "6e22e1333ba8e5861b0cef05c48e18e3b198bbabeec4e8e295117d9332b307b4"
+    },
+    {
+      "id": "entity.intent.schedule-add-weekdays",
+      "path": "cases/entities/intent/entity.intent.schedule-add-weekdays.json",
+      "sha256": "a33b408943b5118082aee4d5f97325ffef51f891f46f3b95be5d561d72cb71ec"
+    },
+    {
+      "id": "entity.intent.schedule-add-weekend",
+      "path": "cases/entities/intent/entity.intent.schedule-add-weekend.json",
+      "sha256": "07826123093b4356346d388dbfecfe1af7404bcde551fb735f136c551d040a09"
+    },
+    {
+      "id": "entity.intent.schedule-delete",
+      "path": "cases/entities/intent/entity.intent.schedule-delete.json",
+      "sha256": "eb6b34191e339f85d0d727aef9374397026454ba518a60c9e200527e58856167"
+    },
+    {
+      "id": "entity.intent.schedule-disable",
+      "path": "cases/entities/intent/entity.intent.schedule-disable.json",
+      "sha256": "bc2585b2c5641131cae5c0c2f6c983300dce64c3f7c57684bd26a79abf5ad687"
+    },
+    {
+      "id": "entity.intent.schedule-enable",
+      "path": "cases/entities/intent/entity.intent.schedule-enable.json",
+      "sha256": "99d4d8b7d10e9dc59192dfa4d73a1556710b91db63c3a53b17d02298a9c9d644"
+    },
+    {
+      "id": "entity.intent.schedule-min-enable",
+      "path": "cases/entities/intent/entity.intent.schedule-min-enable.json",
+      "sha256": "9e12a2a2e3f09f21ab0dc408a7b2e25af629b50b2158e23f83bd1c5fb084a877"
+    },
+    {
+      "id": "entity.intent.schedule-min-start",
+      "path": "cases/entities/intent/entity.intent.schedule-min-start.json",
+      "sha256": "fda963f6deb220ea228227dd225c1d160e276f2136c8686717dc673dccc8abd9"
+    },
+    {
+      "id": "entity.intent.schedule-start",
+      "path": "cases/entities/intent/entity.intent.schedule-start.json",
+      "sha256": "b50b33e5e9232613ae3849eb1b0262e883c5c578ea64327018caac27d30e78d4"
+    },
+    {
+      "id": "entity.intent.schedule-stop",
+      "path": "cases/entities/intent/entity.intent.schedule-stop.json",
+      "sha256": "5d23c2ebb42bc64f343819daf114ed46da357f943eed3a5c992f5deb90a90665"
+    },
+    {
+      "id": "entity.intent.slider-above",
+      "path": "cases/entities/intent/entity.intent.slider-above.json",
+      "sha256": "fb675f4218b6f5007775b25939f56ef4dae4871fa041481cb55221285cc828ee"
+    },
+    {
+      "id": "entity.intent.slider-below",
+      "path": "cases/entities/intent/entity.intent.slider-below.json",
+      "sha256": "3a6df4352aca3540feb61568988827e2ae669d309849fd0343304a3f235a37c1"
+    },
+    {
+      "id": "entity.intent.slider-half-even",
+      "path": "cases/entities/intent/entity.intent.slider-half-even.json",
+      "sha256": "3c0603f0d86b4a22e60e00b4167242edea1ecfb2de01d55ef4a4bbfe64f3694c"
+    },
+    {
+      "id": "entity.intent.switch-off",
+      "path": "cases/entities/intent/entity.intent.switch-off.json",
+      "sha256": "1532dde21087f42e485d4ca70332355f4a11a94805954853c67224b1b38a120a"
+    },
+    {
+      "id": "entity.intent.switch-on",
+      "path": "cases/entities/intent/entity.intent.switch-on.json",
+      "sha256": "5aff61a4baea1cd3a45dc4421e4abb80622ef3a4825358ffc0313cd0978ef55e"
+    },
+    {
+      "id": "entity.intent.thermostat-integer-target",
+      "path": "cases/entities/intent/entity.intent.thermostat-integer-target.json",
+      "sha256": "885857d26e9949c6343cab8bdad3ba7dd6562913df4ac6d45831f56449b17ab9"
+    },
+    {
+      "id": "entity.intent.thermostat-mode",
+      "path": "cases/entities/intent/entity.intent.thermostat-mode.json",
+      "sha256": "294d601e112c66ba5c0f75f3b393bc986b08c917bba16477f3e0b657d5dc0e39"
+    },
+    {
+      "id": "entity.intent.thermostat-mode-without-setter",
+      "path": "cases/entities/intent/entity.intent.thermostat-mode-without-setter.json",
+      "sha256": "e1d110b78212387e1447dec3f5007fb8789e0b35a49091287e78680239b89cad"
+    },
+    {
+      "id": "entity.intent.thermostat-no-power",
+      "path": "cases/entities/intent/entity.intent.thermostat-no-power.json",
+      "sha256": "0142faa28ed2dc7110fb62a5302edb0d3696cd333e8900b9242516c294512bbc"
+    },
+    {
+      "id": "entity.intent.thermostat-off",
+      "path": "cases/entities/intent/entity.intent.thermostat-off.json",
+      "sha256": "bd3a7b612a42dc027f61e78c012c886b8b154b215ad5b1902902c31d6ed026c5"
+    },
+    {
+      "id": "entity.intent.thermostat-on",
+      "path": "cases/entities/intent/entity.intent.thermostat-on.json",
+      "sha256": "aaba9f7c238d1171fb0b1a5dfb7ea88d530f88a94ad5bd488e86158c26154549"
+    },
+    {
+      "id": "entity.intent.thermostat-target",
+      "path": "cases/entities/intent/entity.intent.thermostat-target.json",
+      "sha256": "b97396bee37a7492df2ec6d432a13a62965ede6e9512149517e2b11173bf47e4"
+    },
+    {
+      "id": "entity.intent.thermostat-target-clamped",
+      "path": "cases/entities/intent/entity.intent.thermostat-target-clamped.json",
+      "sha256": "55457e7392efe541c35e7f32f63533ec39939b29db601f137dc24e7efb99736d"
+    },
+    {
+      "id": "entity.intent.thermostat-target-inverted-limits",
+      "path": "cases/entities/intent/entity.intent.thermostat-target-inverted-limits.json",
+      "sha256": "4e80c23cf4ff5a8ac5c25c2ae3e85dbe283672f4c4ae0c5df8eb6e49c7cbdecb"
+    },
+    {
+      "id": "entity.intent.thermostat-target-no-limits",
+      "path": "cases/entities/intent/entity.intent.thermostat-target-no-limits.json",
+      "sha256": "f5601b1a3872bad013eb7f6316e5394de3e381a8b3238874fba911be2a169d11"
+    },
+    {
+      "id": "entity.intent.trigger-press",
+      "path": "cases/entities/intent/entity.intent.trigger-press.json",
+      "sha256": "c2916ec8ae1a50a6c8e20621057f9f02e0c43a64ae1495d463886e751da17146"
+    },
+    {
+      "id": "entity.intent.tv-absent-button",
+      "path": "cases/entities/intent/entity.intent.tv-absent-button.json",
+      "sha256": "930248b691350860e50040fc29ab6a1b98a8d402318987527fdf65aa36e4f50e"
+    },
+    {
+      "id": "entity.intent.tv-empty",
+      "path": "cases/entities/intent/entity.intent.tv-empty.json",
+      "sha256": "e8c2ec2a68c672fa81fa6e2826c671ef39129a5fb76c537fbfc36b15ecf0cb44"
+    },
+    {
+      "id": "entity.intent.tv-press",
+      "path": "cases/entities/intent/entity.intent.tv-press.json",
+      "sha256": "10a6672d293e45e0a4268864015bcb0d8d04edf651c8d82bc514050d398b53ec"
+    },
+    {
+      "id": "entity.read.contact-reversed-empty",
+      "path": "cases/entities/read/entity.read.contact-reversed-empty.json",
+      "sha256": "7333dcb17db80b3f32e29e900231be4eb7496e8b710840039ba871d681e46286"
+    },
+    {
+      "id": "entity.read.contact-reversed-one",
+      "path": "cases/entities/read/entity.read.contact-reversed-one.json",
+      "sha256": "25f15ff5f9532de142e571cd8a60528dd1ebb4c1406e06f56a4f970cf39dc3e9"
+    },
+    {
+      "id": "entity.read.contact-unknown",
+      "path": "cases/entities/read/entity.read.contact-unknown.json",
+      "sha256": "b49ab0143a5f08b766808c5d97c6ddcd23ed5b0113e36c9321160665ef9700b7"
+    },
+    {
+      "id": "entity.read.cover-above-range",
+      "path": "cases/entities/read/entity.read.cover-above-range.json",
+      "sha256": "edc3293f14808d3642cac950ecab78c89f9ab615dc4cf97ad4c082a34186213c"
+    },
+    {
+      "id": "entity.read.cover-below-range",
+      "path": "cases/entities/read/entity.read.cover-below-range.json",
+      "sha256": "6e7826f710d8006c6e48e8718c0480ce7166befd1d1f4d96c849f325aeff1e05"
+    },
+    {
+      "id": "entity.read.cover-closed",
+      "path": "cases/entities/read/entity.read.cover-closed.json",
+      "sha256": "f9e165e9f4c8396f990a7fe2ff7b3fd774cae7380e6c2327c2220680edf7dc27"
+    },
+    {
+      "id": "entity.read.cover-fractional",
+      "path": "cases/entities/read/entity.read.cover-fractional.json",
+      "sha256": "2de0e688a4e9082c88607cad142aeb709f20bed9421795c3b9a8c88b130c4956"
+    },
+    {
+      "id": "entity.read.cover-half",
+      "path": "cases/entities/read/entity.read.cover-half.json",
+      "sha256": "f26754ab8b91d67df905721339a1b601cebba6744ddfc090b19da4057e4a0083"
+    },
+    {
+      "id": "entity.read.cover-lamel-one",
+      "path": "cases/entities/read/entity.read.cover-lamel-one.json",
+      "sha256": "ef48182fc22e084aafbc52cdc44ec9268a9d562e7cc4bcffe6c1df3fcb6d1e08"
+    },
+    {
+      "id": "entity.read.cover-negative-zero",
+      "path": "cases/entities/read/entity.read.cover-negative-zero.json",
+      "sha256": "d8a46d6330bfb3c68bfcc867c332e82d22d7be3c46619cb76243a90972fe2980"
+    },
+    {
+      "id": "entity.read.cover-no-tilt",
+      "path": "cases/entities/read/entity.read.cover-no-tilt.json",
+      "sha256": "cf8fb86403a18246764f1c39b39f38b0e05ae71fa021b1eac78ca5ea09627a2f"
+    },
+    {
+      "id": "entity.read.cover-strings",
+      "path": "cases/entities/read/entity.read.cover-strings.json",
+      "sha256": "f3951b76a6b91347e55477b666d50c7914e19c19bdb05a1b923f5abf3d747a4e"
+    },
+    {
+      "id": "entity.read.cover-unknown-motion",
+      "path": "cases/entities/read/entity.read.cover-unknown-motion.json",
+      "sha256": "0d7e4fa7e6d1096bef97f96f638344c57210c8b1a0c005c4b7ed566b312856bf"
+    },
+    {
+      "id": "entity.read.cover-wide-double",
+      "path": "cases/entities/read/entity.read.cover-wide-double.json",
+      "sha256": "e940d16e4f34eec047f0bbc7a06391e1bb99ce74c9d8ccfb4fc60c4eee68b998"
+    },
+    {
+      "id": "entity.read.dimmer-above-range",
+      "path": "cases/entities/read/entity.read.dimmer-above-range.json",
+      "sha256": "67bef77f3be7141b801403d82c7ea40d35ad551289d84e6b90af3fab5e7b98d1"
+    },
+    {
+      "id": "entity.read.dimmer-below-range",
+      "path": "cases/entities/read/entity.read.dimmer-below-range.json",
+      "sha256": "023d994d10ccd45ea9eac41f74496db7bbc1ee2581ac8330c821cdd09c4374ff"
+    },
+    {
+      "id": "entity.read.dimmer-flat-range",
+      "path": "cases/entities/read/entity.read.dimmer-flat-range.json",
+      "sha256": "e3732866203c4957f96479a31c426c6313814f67e351c7b0e0730fd8af28423d"
+    },
+    {
+      "id": "entity.read.dimmer-half",
+      "path": "cases/entities/read/entity.read.dimmer-half.json",
+      "sha256": "6be2b4e5bb5e14c96a24b529b049c88a5f8d3e78a34b77203982f3b98904fe8f"
+    },
+    {
+      "id": "entity.read.dimmer-off",
+      "path": "cases/entities/read/entity.read.dimmer-off.json",
+      "sha256": "3fb566102ecbcc20a2ceba3f863ffa4eafc7e40d67e8e5b9e102037237534fa3"
+    },
+    {
+      "id": "entity.read.dimmer-string",
+      "path": "cases/entities/read/entity.read.dimmer-string.json",
+      "sha256": "87d6428f38a53ca0e4be34c135d77e870d493a9df9822f0929a8c6093c9bf219"
+    },
+    {
+      "id": "entity.read.dimmer-wide-range",
+      "path": "cases/entities/read/entity.read.dimmer-wide-range.json",
+      "sha256": "3afcd0337f0f0e2addc84017ece16160a027129dd3bf0c099d0e917a04fad86e"
+    },
+    {
+      "id": "entity.read.hsb-all",
+      "path": "cases/entities/read/entity.read.hsb-all.json",
+      "sha256": "74b21c3823a6b85f906a084c94c2b599e4053ceea9177e054eaae8724589432c"
+    },
+    {
+      "id": "entity.read.hsb-clamped",
+      "path": "cases/entities/read/entity.read.hsb-clamped.json",
+      "sha256": "3bb37b2d4e1b92d86a1fce466c72719319994145ebf4801323c480aa3cff880a"
+    },
+    {
+      "id": "entity.read.hsb-partial",
+      "path": "cases/entities/read/entity.read.hsb-partial.json",
+      "sha256": "e1cde01fb5892ee85446f9dbc3794e77ec3cbe15bcf6909502a9e163cb8c3e94"
+    },
+    {
+      "id": "entity.read.legacy-shutter-double",
+      "path": "cases/entities/read/entity.read.legacy-shutter-double.json",
+      "sha256": "82295d56ec7f56c2c0ff8617844a02e3955f0d7cdc067fe6a00f221fb307c3c4"
+    },
+    {
+      "id": "entity.read.legacy-shutter-locked",
+      "path": "cases/entities/read/entity.read.legacy-shutter-locked.json",
+      "sha256": "062082fe43228005d21c24b1057fe75fd31826df53ee8e7311dc006d7e965e84"
+    },
+    {
+      "id": "entity.read.legacy-shutter-other",
+      "path": "cases/entities/read/entity.read.legacy-shutter-other.json",
+      "sha256": "11e32b1b5140b9a441436b1f18d0268f1833921c71d243819db67feae0d5af75"
+    },
+    {
+      "id": "entity.read.legacy-shutter-unknown",
+      "path": "cases/entities/read/entity.read.legacy-shutter-unknown.json",
+      "sha256": "f8f4aafd29bbd85e9dd9b5fc812c0f0e51794e75404793dc830adbb1dca8d787"
+    },
+    {
+      "id": "entity.read.schedule-full",
+      "path": "cases/entities/read/entity.read.schedule-full.json",
+      "sha256": "f9da4a2d0d55a6f2f152054fc2534a1f34e80473a501fb30ae380346f613c36e"
+    },
+    {
+      "id": "entity.read.schedule-not-text",
+      "path": "cases/entities/read/entity.read.schedule-not-text.json",
+      "sha256": "fc1bb15b937dc56a804c3a7bcb2b7a5f762b635162515d747f9010fdffaa1d46"
+    },
+    {
+      "id": "entity.read.sensor-double",
+      "path": "cases/entities/read/entity.read.sensor-double.json",
+      "sha256": "037019255743c9cbf542d627da3330169c8df15481ebd6023b057d301b47bc64"
+    },
+    {
+      "id": "entity.read.sensor-null",
+      "path": "cases/entities/read/entity.read.sensor-null.json",
+      "sha256": "065d35f03903eea4b2249a1591212941c30a42d6a49afe049ceb6c63afafc910"
+    },
+    {
+      "id": "entity.read.sensor-unknown",
+      "path": "cases/entities/read/entity.read.sensor-unknown.json",
+      "sha256": "589ca5014ede668594f388a381ccaeb15a559384c8efcaac79bb8a03da18f501"
+    },
+    {
+      "id": "entity.read.slider-int",
+      "path": "cases/entities/read/entity.read.slider-int.json",
+      "sha256": "8f62b3ace71af337f8ec8a548424f3a6ecb8e75e52c901eddd7019f9b5aff977"
+    },
+    {
+      "id": "entity.read.switch-on-string",
+      "path": "cases/entities/read/entity.read.switch-on-string.json",
+      "sha256": "0d1419bdf33c9100b3c0fb778a036ec51ae33d6b6fea2a33556c359a6c79749b"
+    },
+    {
+      "id": "entity.read.switch-one",
+      "path": "cases/entities/read/entity.read.switch-one.json",
+      "sha256": "15c8520f5873d6d33967443f5564e62163d07f0f3822386bcadc38fc3020b02c"
+    },
+    {
+      "id": "entity.read.switch-one-double",
+      "path": "cases/entities/read/entity.read.switch-one-double.json",
+      "sha256": "30d9bd8155f4e61f5f4485c3e40a76797230c48e3319c650eef7066115a4cd2f"
+    },
+    {
+      "id": "entity.read.switch-stored-null",
+      "path": "cases/entities/read/entity.read.switch-stored-null.json",
+      "sha256": "d78322207fe81d2464ab5be568fec32b0625a2ed40c0b808b9957dfc58dbc3f6"
+    },
+    {
+      "id": "entity.read.switch-string-one",
+      "path": "cases/entities/read/entity.read.switch-string-one.json",
+      "sha256": "e28d17e36f1deff7feabeb71eaf81a3e9109ef6ae78d052026b7f376d41acb37"
+    },
+    {
+      "id": "entity.read.switch-unknown",
+      "path": "cases/entities/read/entity.read.switch-unknown.json",
+      "sha256": "76cd5043c2da430104a713b79081d2f4bcc5e40cb5edd65425a4737fdc7f78ba"
+    },
+    {
+      "id": "entity.read.switch-zero",
+      "path": "cases/entities/read/entity.read.switch-zero.json",
+      "sha256": "5485ccfcf960cea5c0895b16f5c67d414377fc3d8ddaeef7f4f38032a29df060"
+    },
+    {
+      "id": "entity.read.thermostat-full",
+      "path": "cases/entities/read/entity.read.thermostat-full.json",
+      "sha256": "b08d8aefe8c4a48700bcfa9abdecb429e4750db876118732bea8149d0563cbea"
+    },
+    {
+      "id": "entity.read.thermostat-minimal",
+      "path": "cases/entities/read/entity.read.thermostat-minimal.json",
+      "sha256": "fbe5455995e81bba8da681c0bcdff616ba79027e3f45bc706bb6c49ef1082b79"
+    },
+    {
+      "id": "entity.read.thermostat-wide-mode",
+      "path": "cases/entities/read/entity.read.thermostat-wide-mode.json",
+      "sha256": "f2dede0db508bb4e7fb9251bdd31b539c060e83e47297f6c0bc33775cd364b7b"
     },
     {
       "id": "mapping.interface.all-widget-types",
@@ -601,6 +1130,136 @@
       "id": "payload.values.reject-no-prefix",
       "path": "cases/stateless/values/payload.values.reject-no-prefix.json",
       "sha256": "66a7d2f6e271838d6268246dbcba8752a7ec25c09c0f74ae6db7a5d99abbc604"
+    },
+    {
+      "id": "provisioning.archive.at-limit",
+      "path": "cases/provisioning/archive/provisioning.archive.at-limit.json",
+      "sha256": "9303e608b0d55305a8f5466773ee88d86b00cce354823c5b1a16a8efbe3a9e93"
+    },
+    {
+      "id": "provisioning.archive.bad-crc",
+      "path": "cases/provisioning/archive/provisioning.archive.bad-crc.json",
+      "sha256": "52e03dee6cb205c747c07e53967c20cd85a5765cce5d5d2feb5290c1c477f3c8"
+    },
+    {
+      "id": "provisioning.archive.bad-json",
+      "path": "cases/provisioning/archive/provisioning.archive.bad-json.json",
+      "sha256": "1dee4890af827a10d753b4610549f7e733fa96318e4bc543170023a28bfe7258"
+    },
+    {
+      "id": "provisioning.archive.bomb",
+      "path": "cases/provisioning/archive/provisioning.archive.bomb.json",
+      "sha256": "4faa6b44e8b753b77a8ad47f377fe94d509ae8695be412f7a00213c9a40cfdd4"
+    },
+    {
+      "id": "provisioning.archive.declared-larger",
+      "path": "cases/provisioning/archive/provisioning.archive.declared-larger.json",
+      "sha256": "b3582fc904f2796400ac2561c94fffd18acf06bd18c045068790e6d958cd6dab"
+    },
+    {
+      "id": "provisioning.archive.declared-smaller",
+      "path": "cases/provisioning/archive/provisioning.archive.declared-smaller.json",
+      "sha256": "f82ae36c2a6650a3f697f45703bf0cdf55ed6ea228d2558fa83bb352615759b3"
+    },
+    {
+      "id": "provisioning.archive.duplicate-entry",
+      "path": "cases/provisioning/archive/provisioning.archive.duplicate-entry.json",
+      "sha256": "dce6c6a8bb78fdcb6de99ef7a69d74837c06dba59ff7c9145752f574d02a1ce8"
+    },
+    {
+      "id": "provisioning.archive.extra-entries",
+      "path": "cases/provisioning/archive/provisioning.archive.extra-entries.json",
+      "sha256": "00e8912cff1ee791d70935b90a3dbd7f6cf7f6f2a08ebd9991f3587d7dd5fd28"
+    },
+    {
+      "id": "provisioning.archive.interface",
+      "path": "cases/provisioning/archive/provisioning.archive.interface.json",
+      "sha256": "02ab9d5252895e62d83a4db27b6f8ecab95ef340b21c66793800909c79614a10"
+    },
+    {
+      "id": "provisioning.archive.missing-entry",
+      "path": "cases/provisioning/archive/provisioning.archive.missing-entry.json",
+      "sha256": "b0af60c9e1ff6efa0e56f1d093a3bbda968b1e0fc8913f20cfb5f54c7dd0b10b"
+    },
+    {
+      "id": "provisioning.archive.not-a-zip",
+      "path": "cases/provisioning/archive/provisioning.archive.not-a-zip.json",
+      "sha256": "da773f7dcef77ad97f3c9d576532d600ca0c38f88c03466fa384156207cb3a0d"
+    },
+    {
+      "id": "provisioning.archive.not-interface",
+      "path": "cases/provisioning/archive/provisioning.archive.not-interface.json",
+      "sha256": "3695cff0d4a4cf467f79423c817ddd9aae5d12e09519931f8ca6765304096eea"
+    },
+    {
+      "id": "provisioning.archive.over-limit",
+      "path": "cases/provisioning/archive/provisioning.archive.over-limit.json",
+      "sha256": "a0169c0abd92f4367cbf357993dec7ae757c3e25d98e694bf5384a371661ce30"
+    },
+    {
+      "id": "provisioning.archive.path-variants",
+      "path": "cases/provisioning/archive/provisioning.archive.path-variants.json",
+      "sha256": "399e45765958d5dd53dfcaa272485d86b9200a7feab1cee94faae56a2e670235"
+    },
+    {
+      "id": "provisioning.archive.stored",
+      "path": "cases/provisioning/archive/provisioning.archive.stored.json",
+      "sha256": "85e23da587c40374c3fec3e586baacf066d4bef7c267dfdb9d0b0790036cf979"
+    },
+    {
+      "id": "provisioning.fetch.bomb",
+      "path": "cases/provisioning/fetch/provisioning.fetch.bomb.json",
+      "sha256": "63077ebf1ecded7b3d408f554956b52346664650f89f64d4d632fc8ceb52f3ca"
+    },
+    {
+      "id": "provisioning.fetch.empty-body",
+      "path": "cases/provisioning/fetch/provisioning.fetch.empty-body.json",
+      "sha256": "518e44ab85e4be7a153880fcb03db10dceb99d83b3a1131135754dd6b578998b"
+    },
+    {
+      "id": "provisioning.fetch.garbage-body",
+      "path": "cases/provisioning/fetch/provisioning.fetch.garbage-body.json",
+      "sha256": "c83966be2007243145fce0b828c1aa488986d2fff2f1bd28c0107c09d41df571"
+    },
+    {
+      "id": "provisioning.fetch.not-found",
+      "path": "cases/provisioning/fetch/provisioning.fetch.not-found.json",
+      "sha256": "782708f8c4e2e73fd20c64023d035e34bb1c7d9d9ec5bcbcad94ed51349922fa"
+    },
+    {
+      "id": "provisioning.fetch.ok",
+      "path": "cases/provisioning/fetch/provisioning.fetch.ok.json",
+      "sha256": "9a1045324fe1c7f482c483b6e022b12761333624a01e0f09541f4f754543e3da"
+    },
+    {
+      "id": "provisioning.fetch.pin-encoded",
+      "path": "cases/provisioning/fetch/provisioning.fetch.pin-encoded.json",
+      "sha256": "6df41a0bcffc256818fe6fb6626d7714e2ca9f1de13084887b86f2cb88b19a54"
+    },
+    {
+      "id": "provisioning.fetch.redirect-302",
+      "path": "cases/provisioning/fetch/provisioning.fetch.redirect-302.json",
+      "sha256": "4c7c1089c843f10e67987d2d04dad2973576f3a62c70d7ab321d274c7de2dce5"
+    },
+    {
+      "id": "provisioning.fetch.redirect-307",
+      "path": "cases/provisioning/fetch/provisioning.fetch.redirect-307.json",
+      "sha256": "541367942711eb0403b3c57a235bf39adc597b2966f5c74f85604290cb81f21c"
+    },
+    {
+      "id": "provisioning.fetch.server-error",
+      "path": "cases/provisioning/fetch/provisioning.fetch.server-error.json",
+      "sha256": "0681810f34cfe847720a26dfa27d3b5b26950543fffd52641982c9c0c232e490"
+    },
+    {
+      "id": "provisioning.fetch.unauthorized",
+      "path": "cases/provisioning/fetch/provisioning.fetch.unauthorized.json",
+      "sha256": "7202c9e826316a2cf306d3314c92964afbd470508008ba994c2ce4df3e20d128"
+    },
+    {
+      "id": "provisioning.fetch.unreachable",
+      "path": "cases/provisioning/fetch/provisioning.fetch.unreachable.json",
+      "sha256": "893ea2d7419de01bd2bd626f17cf660546c3867f72bb68ac9b90b4448dd3c0a1"
     },
     {
       "id": "provisioning.omp.ambiguous-without-id",
@@ -1340,12 +1999,76 @@
   ],
   "fixtures": [
     {
+      "path": "fixtures/archives/at-limit.zip",
+      "sha256": "464636b11117476bf495e71c1a15d560c733bad2cec7ccb56c8be26fb1d44519"
+    },
+    {
+      "path": "fixtures/archives/bad-crc.zip",
+      "sha256": "42ff4f9374d98a0cd775c0ff244319ca2aee15256a6efbae0fb4d06592a1c96f"
+    },
+    {
+      "path": "fixtures/archives/bad-json.zip",
+      "sha256": "ef7cae9b366614fa4da8f7de874a2ef9c55196328b5cc7e13f2e37c3c1d99f19"
+    },
+    {
+      "path": "fixtures/archives/bomb.zip",
+      "sha256": "6b900d54e1eeb91a2258b1ea78827ea05de866428afb06e93346d5aa9d349c57"
+    },
+    {
+      "path": "fixtures/archives/declared-larger.zip",
+      "sha256": "81f5306fcb81bc9fde77971f37bf29e28d0da842960bdffb5fcc73c283f2b251"
+    },
+    {
+      "path": "fixtures/archives/declared-smaller.zip",
+      "sha256": "3b6f081549af6b975ca82c4b827f015a0f4a34e5dad87bedf2522ffcd49e72ae"
+    },
+    {
+      "path": "fixtures/archives/duplicate-entry.zip",
+      "sha256": "39862e1320b87e9d8648383568953462586f201842d6d40c2ea927de11efddb6"
+    },
+    {
+      "path": "fixtures/archives/extra-entries.zip",
+      "sha256": "f2ab48769d26c07f0ea6eb3f81303e916bdfd843afbf6631e294840bc9931654"
+    },
+    {
+      "path": "fixtures/archives/interface.zip",
+      "sha256": "dfe895b713d03becfd24f3f7b217a4fe3abcabe2df739d16e079966dddfef6a0"
+    },
+    {
+      "path": "fixtures/archives/missing-entry.zip",
+      "sha256": "cd279e2d0f5ea5e46d15a33b2717da512d5ecdcd14d83ad51aab350927659c1b"
+    },
+    {
+      "path": "fixtures/archives/not-a-zip.zip",
+      "sha256": "3d1528b773ce1355bc10b7156ced5d381e540a4f98410f48f78cb3e93440cfc1"
+    },
+    {
+      "path": "fixtures/archives/not-interface.zip",
+      "sha256": "8cea9ba381b3d86e0c0bfa3ac992d32d29681f29397dd535b1e814234da7e3a5"
+    },
+    {
+      "path": "fixtures/archives/over-limit.zip",
+      "sha256": "70889d2aff13adf43403dcfa0dfedb7c5231210581beaebbd00432758efd9068"
+    },
+    {
+      "path": "fixtures/archives/path-variants.zip",
+      "sha256": "39803230a273e3b5c6d6242acf4c67573585082680e1f9a1df08be4a8c32910e"
+    },
+    {
+      "path": "fixtures/archives/stored.zip",
+      "sha256": "83f7aecf3e13c0bdae9a428bec4a99e6c9ac3aada80e7d5e6f463e890cd0984f"
+    },
+    {
       "path": "fixtures/interfaces/all-widget-types.json",
       "sha256": "c8cecd1332d7d9fefb0bcd7ea3244ca85e7c5da04a43ae7f58fdcec9fcc8abbb"
     },
     {
       "path": "fixtures/interfaces/completeness.json",
       "sha256": "a32b38af9ca4ffdfb189bae658004491cf53f1abb11cbb633b538628fc5a3ee2"
+    },
+    {
+      "path": "fixtures/interfaces/entity-ranges.json",
+      "sha256": "e5921eef58bef42cf2bbbbc1f847f78f4ffa58facff308f6eb8aaa11379ef14f"
     },
     {
       "path": "fixtures/interfaces/missing-encryption.json",

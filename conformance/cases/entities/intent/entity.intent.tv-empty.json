@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "entity.intent.tv-empty",
+  "specRefs": [
+    "devices.intents"
+  ],
+  "description": "A remote without buttons does nothing.",
+  "provenance": "spec §6.1–§6.3; tools/oracles/entities.py",
+  "operation": "entity.intent",
+  "input": {
+    "fixture": "fixtures/interfaces/scheduler-tv-remote.json",
+    "entityId": "w-tv-empty_0",
+    "values": [],
+    "intent": "press",
+    "args": {
+      "button": "on"
+    }
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "actions": []
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "provisioning.archive.bad-crc",
+  "specRefs": [
+    "provisioning.archive"
+  ],
+  "description": "The CRC-32 in the headers does not match the inflated bytes.",
+  "provenance": "spec §4.3; tools/oracles/archive.py",
+  "operation": "provisioning.archive",
+  "input": {
+    "fixture": "fixtures/archives/bad-crc.zip"
+  },
+  "expect": {
+    "outcome": "error",
+    "code": "provisioning.invalidData"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "entity.intent.switch-off",
+  "specRefs": [
+    "devices.intents"
+  ],
+  "description": "turnOff sends the OFF action.",
+  "provenance": "spec §6.1–§6.3; tools/oracles/entities.py",
+  "operation": "entity.intent",
+  "input": {
+    "fixture": "fixtures/interfaces/all-widget-types.json",
+    "entityId": "w-onoff_0",
+    "values": [],
+    "intent": "turnOff"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "actions": [
+        {
+          "callType": "ATTRIBUTE",
+          "cluId": "CLU_501234567",
+          "objectName": "DOU8272",
+          "event": "OFF",
+          "value": "0",
+          "index": "0"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "entity.read.cover-no-tilt",
+  "specRefs": [
+    "devices.entity-state"
+  ],
+  "description": "A cover without slats has no tilt.",
+  "provenance": "spec §6.1–§6.3; tools/oracles/entities.py",
+  "operation": "entity.read",
+  "input": {
+    "fixture": "fixtures/interfaces/completeness.json",
+    "entityId": "c-cover-no-tilt-no-stop",
+    "values": []
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "state": {
+        "position": null,
+        "isClosed": null,
+        "motion": "unknown",
+        "tilt": null
+      }
+    }
+  }
+}

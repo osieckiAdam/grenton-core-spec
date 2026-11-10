@@ -17,12 +17,12 @@ section), so a port that passes the suite can still have them.
   `+` or locale separators, and §3.1 accepts none of them. An integer that
   overflows 64 bits falls back to double. *Test:* the `value.cast` cases,
   plus your parser's own extensions fed as wire text.
-- **A double from the wire never traps on the way to an integer.** The
-  Swift port converted a wire double with `Int(d)`. A value beyond Int64
-  (which the cast yields as a double) crashed the process, and the crash
-  was reachable from cover and thermostat entities. *Test:* feed `1e300`,
-  `-1e300` and the largest double below 2^63 to every entity that reads a
-  number.
+- **A double from the wire never traps on the way to an integer** (§6.2,
+  integer reads). The Swift port converted a wire double with `Int(d)`. A
+  value beyond Int64 (which the cast yields as a double) crashed the
+  process, and the crash was reachable from cover and thermostat entities.
+  *Test:* the `entity.read.cover-wide-double` and `thermostat-wide-mode`
+  cases.
 - **Number formatting reproduces Python's `str(round(v, p))`** (§10 item 3):
   round half to even on the binary value, and precision 0 gives `"5.0"`.
   `printf("%.*f")` rounds the binary value too, but it drops the `.0`. *Test:*
@@ -49,12 +49,13 @@ section), so a port that passes the suite can still have them.
 
 ## Provisioning
 
-- **Size limits are enforced while decompressing** (§4.3, §4.5.1). An early
-  check trusted the uncompressed size that the ZIP header declares. An
-  archive that lies about it (a zip bomb) went straight through. Count the
-  bytes the inflater actually produces, stop at the limit, and reject an
-  entry whose final size differs from its header. Bound the number of
-  entries. Match the entry path exactly, without normalizing it.
+- **Size limits are enforced while decompressing** (§4.3 items 4–5,
+  §4.5.1). An early check trusted the uncompressed size that the ZIP header
+  declares. An archive that lies about it (a zip bomb) went straight
+  through. Count the bytes the inflater actually produces, stop at the
+  limit, and reject an entry whose final size or CRC differs from its
+  header. Bound the number of entries. Match the entry path exactly,
+  without normalizing it. *Test:* the `provisioning.archive` cases.
 - **XML: no DTD, detected in the right encoding** (§4.5). Reject any
   `DOCTYPE`. Look for it after decoding the prolog in the encoding the
   parser itself would choose. A byte-level search misses a UTF-16 document
@@ -63,11 +64,14 @@ section), so a port that passes the suite can still have them.
 - **The PIN never appears in an error or a log** (§4.1). It is part of the
   URL, and many HTTP stacks put the URL into their error text. Go's
   `url.Error` and Swift's `URLError` both do. Rebuild transport errors
-  without the URL. *Test:* a connection failure, then search the error text
-  and the log for the PIN.
-- **No redirects.** A 3xx is not followed. 401 is `authenticationFailed`,
-  every other non-200 status is `connection`, and an unreadable body or
-  archive is `invalidData`.
+  without the URL. *Test:* the `provisioning.fetch` error cases check the
+  error texts; check your log lines yourself.
+- **No redirects** (§4.2). A 3xx is not followed. Most HTTP clients follow
+  one by default, and the Swift port needed a delegate that refuses it.
+  401 is `authenticationFailed`, every other non-200 status is
+  `connection`, and an unreadable body or archive is `invalidData`.
+  *Test:* `provisioning.fetch.redirect-302` and `-307` (the runner counts
+  the requests).
 
 ## Session
 
@@ -86,7 +90,7 @@ section), so a port that passes the suite can still have them.
   `register()` before `start()` once left a session that had no loops. A
   datagram that arrives during teardown must not bring times or values back
   into a stopped session. The suite has scenarios for both.
-- **A dropped session cleans up after itself.** Swift needed teardown in
+- **A dropped session cleans up after itself** (§5.4.5). Swift needed teardown in
   `deinit` and weak references from the router back to the session, or an
   application that dropped a system without calling `stop()` kept a socket
   and a receive loop alive for good. In a language without destructors,
@@ -105,7 +109,7 @@ section), so a port that passes the suite can still have them.
 
 ## Transports
 
-- **Any-source mode is one unconnected socket** (§7.1). The Swift port first
+- **Any-source mode is one unconnected socket** (§7.1, now a rule). The Swift port first
   combined a listener with a connected socket on the same port
   (`SO_REUSEPORT`). For datagrams from a foreign source, the kernel picked
   one of the two sockets nondeterministically; the connected one discarded
@@ -184,13 +188,15 @@ section), so a port that passes the suite can still have them.
 
 ## What the suite does not cover yet
 
-A port tests these itself, against the spec text:
+Since 0.15.0 the `provisioning` profile checks the Object Manager download
+and the archive, and the `entities` profile checks entity reads and
+intents. A port still tests these itself, against the spec text (§9.5
+item 8):
 
-- the Object Manager response path: HTTP status, body and ZIP limits
-  (§4.2–§4.3). The `provisioning` profile is planned;
-- entity reads and intents: the normalizations of §6.2–§6.3 (the dimmer
-  and HSB round trips, inverted cover tilt, reversed contact state, the
-  thermostat), and the action each intent sends (§9.5 item 6);
+- the real transports of §7.1: in the any-source mode a datagram from a
+  foreign source port reaches the session, in the filtered mode it does not;
+- the release of resources after `stop()` and for an abandoned session
+  (§5.4.5);
 - the update signals of §6.5, and how several CLU sessions are combined
   behind one system;
-- the real transports of §7.1, including the any-source mode.
+- the PIN in log lines (§4.2), and a response body over 10 MiB.

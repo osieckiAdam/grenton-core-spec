@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "provisioning.archive.bad-json",
+  "specRefs": [
+    "provisioning.archive"
+  ],
+  "description": "data.json is not valid JSON.",
+  "provenance": "spec §4.3; tools/oracles/archive.py",
+  "operation": "provisioning.archive",
+  "input": {
+    "fixture": "fixtures/archives/bad-json.zip"
+  },
+  "expect": {
+    "outcome": "error",
+    "code": "provisioning.invalidData"
+  }
+}

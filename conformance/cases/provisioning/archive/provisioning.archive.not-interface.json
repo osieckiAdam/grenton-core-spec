@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "provisioning.archive.not-interface",
+  "specRefs": [
+    "provisioning.archive"
+  ],
+  "description": "data.json is JSON without the interface root fields.",
+  "provenance": "spec §4.3; tools/oracles/archive.py",
+  "operation": "provisioning.archive",
+  "input": {
+    "fixture": "fixtures/archives/not-interface.zip"
+  },
+  "expect": {
+    "outcome": "error",
+    "code": "provisioning.invalidData"
+  }
+}

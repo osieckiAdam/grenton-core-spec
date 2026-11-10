@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "entity.intent.dimmer-brightness-above",
+  "specRefs": [
+    "devices.intents",
+    "devices.number-format"
+  ],
+  "description": "setBrightness: 1.5 is clamped to 1.",
+  "provenance": "spec §6.1–§6.3; tools/oracles/entities.py",
+  "operation": "entity.intent",
+  "input": {
+    "fixture": "fixtures/interfaces/all-widget-types.json",
+    "entityId": "w-dimmer_0",
+    "values": [],
+    "intent": "setBrightness",
+    "args": {
+      "brightness": 1.5
+    }
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "actions": [
+        {
+          "callType": "METHOD",
+          "cluId": "CLU_501234567",
+          "objectName": "DIM3333",
+          "event": "CLICK",
+          "value": "100.0",
+          "index": "0"
+        }
+      ]
+    }
+  }
+}

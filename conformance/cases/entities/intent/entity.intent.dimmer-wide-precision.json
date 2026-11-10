@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "entity.intent.dimmer-wide-precision",
+  "specRefs": [
+    "devices.intents",
+    "devices.number-format"
+  ],
+  "description": "0.123456 of 0–255 at precision 2.",
+  "provenance": "spec §6.1–§6.3; tools/oracles/entities.py",
+  "operation": "entity.intent",
+  "input": {
+    "fixture": "fixtures/interfaces/entity-ranges.json",
+    "entityId": "d-wide_0",
+    "values": [],
+    "intent": "setBrightness",
+    "args": {
+      "brightness": 0.123456
+    }
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "actions": [
+        {
+          "callType": "METHOD",
+          "cluId": "CLU_501234567",
+          "objectName": "DIM5002",
+          "event": "CLICK",
+          "value": "31.48",
+          "index": "0"
+        }
+      ]
+    }
+  }
+}

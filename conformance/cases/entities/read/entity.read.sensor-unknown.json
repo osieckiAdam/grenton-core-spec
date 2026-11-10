@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "entity.read.sensor-unknown",
+  "specRefs": [
+    "devices.entity-state"
+  ],
+  "description": "A sensor never reported has no value.",
+  "provenance": "spec §6.1–§6.3; tools/oracles/entities.py",
+  "operation": "entity.read",
+  "input": {
+    "fixture": "fixtures/interfaces/all-widget-types.json",
+    "entityId": "w-value_0",
+    "values": []
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "state": {
+        "value": null
+      }
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "entity.intent.tv-absent-button",
+  "specRefs": [
+    "devices.intents"
+  ],
+  "description": "A button the remote does not have is a no-op.",
+  "provenance": "spec §6.1–§6.3; tools/oracles/entities.py",
+  "operation": "entity.intent",
+  "input": {
+    "fixture": "fixtures/interfaces/scheduler-tv-remote.json",
+    "entityId": "w-tv_0",
+    "values": [],
+    "intent": "press",
+    "args": {
+      "button": "volumeDown"
+    }
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "actions": []
+    }
+  }
+}

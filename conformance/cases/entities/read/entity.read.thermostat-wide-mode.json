@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "id": "entity.read.thermostat-wide-mode",
+  "specRefs": [
+    "devices.entity-state",
+    "devices.integer-read"
+  ],
+  "description": "A mode outside Int64 is unknown.",
+  "provenance": "spec §6.1–§6.3; tools/oracles/entities.py",
+  "operation": "entity.read",
+  "input": {
+    "fixture": "fixtures/interfaces/thermostat-scene-double-header.json",
+    "entityId": "t-full_0",
+    "values": [
+      {
+        "key": {
+          "callType": "ATTRIBUTE",
+          "cluId": "CLU_501234567",
+          "objectName": "THE1001",
+          "index": "8"
+        },
+        "value": {
+          "type": "double",
+          "bits": "7e37e43c8800759c",
+          "decimal": "1e+300"
+        }
+      },
+      {
+        "key": {
+          "callType": "ATTRIBUTE",
+          "cluId": "CLU_501234567",
+          "objectName": "THE1001",
+          "index": "6"
+        },
+        "value": {
+          "type": "int",
+          "value": "0"
+        }
+      }
+    ]
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "state": {
+        "currentTemperature": null,
+        "targetTemperature": null,
+        "minTemperature": null,
+        "maxTemperature": null,
+        "output": null,
+        "mode": null,
+        "isOn": false
+      }
+    }
+  }
+}

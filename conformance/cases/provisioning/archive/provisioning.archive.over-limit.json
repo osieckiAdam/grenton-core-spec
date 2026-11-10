@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "provisioning.archive.over-limit",
+  "specRefs": [
+    "provisioning.archive"
+  ],
+  "description": "data.json one byte over 10 MiB after inflating is invalidData.",
+  "provenance": "spec §4.3; tools/oracles/archive.py",
+  "operation": "provisioning.archive",
+  "input": {
+    "fixture": "fixtures/archives/over-limit.zip"
+  },
+  "expect": {
+    "outcome": "error",
+    "code": "provisioning.invalidData"
+  }
+}

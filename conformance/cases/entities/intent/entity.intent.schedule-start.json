@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "entity.intent.schedule-start",
+  "specRefs": [
+    "devices.intents"
+  ],
+  "description": "setActive true sends the start method.",
+  "provenance": "spec §6.1–§6.3; tools/oracles/entities.py",
+  "operation": "entity.intent",
+  "input": {
+    "fixture": "fixtures/interfaces/scheduler-tv-remote.json",
+    "entityId": "w-sched-full_0",
+    "values": [],
+    "intent": "setActive",
+    "args": {
+      "active": true
+    }
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "actions": [
+        {
+          "callType": "METHOD",
+          "cluId": "CLU_501234567",
+          "objectName": "EVE1",
+          "event": "CLICK",
+          "value": "",
+          "index": "0"
+        }
+      ]
+    }
+  }
+}

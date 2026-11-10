@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "id": "entity.read.dimmer-wide-range",
+  "specRefs": [
+    "devices.entity-state"
+  ],
+  "description": "127.5 of 0–255 is brightness 0.5.",
+  "provenance": "spec §6.1–§6.3; tools/oracles/entities.py",
+  "operation": "entity.read",
+  "input": {
+    "fixture": "fixtures/interfaces/entity-ranges.json",
+    "entityId": "d-wide_0",
+    "values": [
+      {
+        "key": {
+          "callType": "ATTRIBUTE",
+          "cluId": "CLU_501234567",
+          "objectName": "DIM5002",
+          "index": "0"
+        },
+        "value": {
+          "type": "double",
+          "bits": "405fe00000000000",
+          "decimal": "127.5"
+        }
+      }
+    ]
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "state": {
+        "isOn": true,
+        "brightness": {
+          "type": "double",
+          "bits": "3fe0000000000000",
+          "decimal": "0.5"
+        }
+      }
+    }
+  }
+}

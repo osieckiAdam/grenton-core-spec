@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "entity.read.legacy-shutter-double",
+  "specRefs": [
+    "devices.entity-state",
+    "devices.integer-read"
+  ],
+  "description": "A legacy shutter state: 1.5 truncates to opening.",
+  "provenance": "spec §6.1–§6.3; tools/oracles/entities.py",
+  "operation": "entity.read",
+  "input": {
+    "fixture": "fixtures/interfaces/all-widget-types.json",
+    "entityId": "w-rs-legacy_sensor",
+    "values": [
+      {
+        "key": {
+          "callType": "ATTRIBUTE",
+          "cluId": "CLU_501234567",
+          "objectName": "ROL1010",
+          "index": "0"
+        },
+        "value": {
+          "type": "double",
+          "bits": "3ff8000000000000",
+          "decimal": "1.5"
+        }
+      }
+    ]
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "state": {
+        "state": "opening"
+      }
+    }
+  }
+}

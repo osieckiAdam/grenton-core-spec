@@ -49,7 +49,7 @@ Expected values never come from a port. They come from the spec text,
 Python derivation written from the spec (`tools/oracles/`).
 `tools/suite.py check` re-derives them wherever such an oracle exists.
 
-Version 0.14.0 contains four profiles, 254 cases in total:
+Version 0.15.0 contains six profiles, 383 cases in total:
 
 - `stateless` (182 cases): AES-CBC, frames, payloads (registration, one-shot
   read, actions, reports), value casting, the Object Manager URL and PIN,
@@ -69,9 +69,16 @@ Version 0.14.0 contains four profiles, 254 cases in total:
   widget type (stand-in ids for widgets never sent to a phone), checked
   through the same device mapping
   as a downloaded interface; and broken archives.
+- `provisioning` (26 cases on 15 archive fixtures): the interface archive
+  (exact entry path, the 10 MiB limit counted while inflating, lying sizes,
+  CRC, duplicates) and the Object Manager download over real HTTP on
+  loopback — status codes, redirects not followed, the PIN in no error text.
+- `entities` (103 cases): entities bound to a state store the runner fills —
+  normalized reads (ranges, clamping, integer reads that never trap,
+  inverted cover tilt, reversed contacts, thermostats, schedules) and the
+  exact actions every intent sends.
 
-The `provisioning` profile is planned. See
-[`spec/conformance.md`](spec/conformance.md) §8 for the open decisions.
+See [`spec/conformance.md`](spec/conformance.md) §8 for the open decisions.
 
 ```sh
 python3 tools/suite.py check      # validate all cases

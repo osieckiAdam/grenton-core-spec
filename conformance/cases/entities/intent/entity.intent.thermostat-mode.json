@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "entity.intent.thermostat-mode",
+  "specRefs": [
+    "devices.intents"
+  ],
+  "description": "setMode holiday sends 1.",
+  "provenance": "spec §6.1–§6.3; tools/oracles/entities.py",
+  "operation": "entity.intent",
+  "input": {
+    "fixture": "fixtures/interfaces/thermostat-scene-double-header.json",
+    "entityId": "t-full_0",
+    "values": [],
+    "intent": "setMode",
+    "args": {
+      "mode": "holiday"
+    }
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "actions": [
+        {
+          "callType": "ATTRIBUTE",
+          "cluId": "CLU_501234567",
+          "objectName": "THE1001",
+          "event": "CLICK",
+          "value": "1",
+          "index": "8"
+        }
+      ]
+    }
+  }
+}

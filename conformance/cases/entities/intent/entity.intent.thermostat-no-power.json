@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "entity.intent.thermostat-no-power",
+  "specRefs": [
+    "devices.intents"
+  ],
+  "description": "Without a power control turnOn is a no-op.",
+  "provenance": "spec §6.1–§6.3; tools/oracles/entities.py",
+  "operation": "entity.intent",
+  "input": {
+    "fixture": "fixtures/interfaces/thermostat-scene-double-header.json",
+    "entityId": "t-minimal_0",
+    "values": [],
+    "intent": "turnOn"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "actions": []
+    }
+  }
+}

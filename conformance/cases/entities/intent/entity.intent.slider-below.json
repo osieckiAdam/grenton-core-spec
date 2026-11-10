@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "entity.intent.slider-below",
+  "specRefs": [
+    "devices.intents",
+    "devices.number-format"
+  ],
+  "description": "setValue: 10 is clamped to min 16.",
+  "provenance": "spec §6.1–§6.3; tools/oracles/entities.py",
+  "operation": "entity.intent",
+  "input": {
+    "fixture": "fixtures/interfaces/all-widget-types.json",
+    "entityId": "w-slider_slider",
+    "values": [],
+    "intent": "setValue",
+    "args": {
+      "value": 10
+    }
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "actions": [
+        {
+          "callType": "METHOD",
+          "cluId": "CLU_501234567",
+          "objectName": "THE8888",
+          "event": "CLICK",
+          "value": "16.0",
+          "index": "1"
+        }
+      ]
+    }
+  }
+}

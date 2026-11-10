@@ -1,0 +1,135 @@
+{
+  "schemaVersion": 1,
+  "id": "entity.read.thermostat-full",
+  "specRefs": [
+    "devices.entity-state"
+  ],
+  "description": "A thermostat reads temperatures, limits, mode, power and output.",
+  "provenance": "spec §6.1–§6.3; tools/oracles/entities.py",
+  "operation": "entity.read",
+  "input": {
+    "fixture": "fixtures/interfaces/thermostat-scene-double-header.json",
+    "entityId": "t-full_0",
+    "values": [
+      {
+        "key": {
+          "callType": "ATTRIBUTE",
+          "cluId": "CLU_501234567",
+          "objectName": "THE1001",
+          "index": "14"
+        },
+        "value": {
+          "type": "double",
+          "bits": "4035800000000000",
+          "decimal": "21.5"
+        }
+      },
+      {
+        "key": {
+          "callType": "ATTRIBUTE",
+          "cluId": "CLU_501234567",
+          "objectName": "THE1001",
+          "index": "12"
+        },
+        "value": {
+          "type": "int",
+          "value": "22"
+        }
+      },
+      {
+        "key": {
+          "callType": "ATTRIBUTE",
+          "cluId": "CLU_501234567",
+          "objectName": "THE1001",
+          "index": "10"
+        },
+        "value": {
+          "type": "int",
+          "value": "5"
+        }
+      },
+      {
+        "key": {
+          "callType": "ATTRIBUTE",
+          "cluId": "CLU_501234567",
+          "objectName": "THE1001",
+          "index": "11"
+        },
+        "value": {
+          "type": "int",
+          "value": "30"
+        }
+      },
+      {
+        "key": {
+          "callType": "ATTRIBUTE",
+          "cluId": "CLU_501234567",
+          "objectName": "THE1001",
+          "index": "8"
+        },
+        "value": {
+          "type": "int",
+          "value": "2"
+        }
+      },
+      {
+        "key": {
+          "callType": "ATTRIBUTE",
+          "cluId": "CLU_501234567",
+          "objectName": "THE1001",
+          "index": "6"
+        },
+        "value": {
+          "type": "int",
+          "value": "1"
+        }
+      },
+      {
+        "key": {
+          "callType": "ATTRIBUTE",
+          "cluId": "CLU_501234567",
+          "objectName": "THE1001",
+          "index": "13"
+        },
+        "value": {
+          "type": "int",
+          "value": "1"
+        }
+      }
+    ]
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "state": {
+        "currentTemperature": {
+          "type": "double",
+          "bits": "4035800000000000",
+          "decimal": "21.5"
+        },
+        "targetTemperature": {
+          "type": "double",
+          "bits": "4036000000000000",
+          "decimal": "22.0"
+        },
+        "minTemperature": {
+          "type": "double",
+          "bits": "4014000000000000",
+          "decimal": "5.0"
+        },
+        "maxTemperature": {
+          "type": "double",
+          "bits": "403e000000000000",
+          "decimal": "30.0"
+        },
+        "output": {
+          "type": "double",
+          "bits": "3ff0000000000000",
+          "decimal": "1.0"
+        },
+        "mode": "schedule",
+        "isOn": true
+      }
+    }
+  }
+}
