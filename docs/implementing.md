@@ -56,10 +56,11 @@ section), so a port that passes the suite can still have them.
   limit, and reject an entry whose final size or CRC differs from its
   header. Bound the number of entries. Match the entry path exactly,
   without normalizing it. *Test:* the `provisioning.archive` cases.
-- **XML: no DTD, detected in the right encoding** (§4.5). Reject any
-  `DOCTYPE`. Look for it after decoding the prolog in the encoding the
-  parser itself would choose. A byte-level search misses a UTF-16 document
-  (`utf16-doctype.omp`). Some parsers do not resolve entities but pass the
+- **XML: UTF-8 only, no DTD** (§4.5.1 item 4). Reject a UTF-16 BOM and any
+  declared encoding other than UTF-8 yourself: a parser that reads UTF-16
+  or Latin-1 accepts what other ports reject (`utf16.omp`,
+  `latin1-declared.omp`). Reject any `DOCTYPE` as the parser reports it,
+  not by a byte search. Some parsers do not resolve entities but pass the
   declaration through as a token that is easy to ignore by mistake.
 - **The PIN never appears in an error or a log** (§4.1). It is part of the
   URL, and many HTTP stacks put the URL into their error text. Go's
