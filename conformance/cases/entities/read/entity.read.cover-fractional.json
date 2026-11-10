@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "id": "entity.read.cover-fractional",
+  "specRefs": [
+    "devices.entity-state",
+    "devices.integer-read"
+  ],
+  "description": "A cover: doubles are truncated toward zero before use: 37, closing, lamels 44 → tilt 51.",
+  "provenance": "spec §6.1–§6.3; tools/oracles/entities.py",
+  "operation": "entity.read",
+  "input": {
+    "fixture": "fixtures/interfaces/all-widget-types.json",
+    "entityId": "w-rs3",
+    "values": [
+      {
+        "key": {
+          "callType": "ATTRIBUTE",
+          "cluId": "CLU_501234567",
+          "objectName": "ROL2020",
+          "index": "0"
+        },
+        "value": {
+          "type": "double",
+          "bits": "400599999999999a",
+          "decimal": "2.7"
+        }
+      },
+      {
+        "key": {
+          "callType": "ATTRIBUTE",
+          "cluId": "CLU_501234567",
+          "objectName": "ROL2020",
+          "index": "1"
+        },
+        "value": {
+          "type": "double",
+          "bits": "4042f33333333333",
+          "decimal": "37.9"
+        }
+      },
+      {
+        "key": {
+          "callType": "ATTRIBUTE",
+          "cluId": "CLU_501234567",
+          "objectName": "ROL2020",
+          "index": "2"
+        },
+        "value": {
+          "type": "double",
+          "bits": "4046733333333333",
+          "decimal": "44.9"
+        }
+      }
+    ]
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "state": {
+        "position": {
+          "type": "int",
+          "value": "37"
+        },
+        "isClosed": false,
+        "motion": "closing",
+        "tilt": {
+          "type": "int",
+          "value": "51"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "entity.intent.cover-close-tilt",
+  "specRefs": [
+    "devices.intents"
+  ],
+  "description": "A cover: closeTilt is lamels 90.",
+  "provenance": "spec §6.1–§6.3; tools/oracles/entities.py",
+  "operation": "entity.intent",
+  "input": {
+    "fixture": "fixtures/interfaces/all-widget-types.json",
+    "entityId": "w-rs3",
+    "values": [],
+    "intent": "closeTilt"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "actions": [
+        {
+          "callType": "METHOD",
+          "cluId": "CLU_501234567",
+          "objectName": "ROL2020",
+          "event": "CLICK",
+          "value": "90",
+          "index": "5"
+        }
+      ]
+    }
+  }
+}

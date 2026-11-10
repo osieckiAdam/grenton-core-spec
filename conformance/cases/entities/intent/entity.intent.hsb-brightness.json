@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "entity.intent.hsb-brightness",
+  "specRefs": [
+    "devices.intents"
+  ],
+  "description": "setBrightness 1/3 of 0–255 rounds to 2 places.",
+  "provenance": "spec §6.1–§6.3; tools/oracles/entities.py",
+  "operation": "entity.intent",
+  "input": {
+    "fixture": "fixtures/interfaces/all-widget-types.json",
+    "entityId": "w-led_0",
+    "values": [],
+    "intent": "setBrightness",
+    "args": {
+      "brightness": 0.3333333333333333
+    }
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "actions": [
+        {
+          "callType": "METHOD",
+          "cluId": "CLU_501234567",
+          "objectName": "LED4444",
+          "event": "CLICK",
+          "value": "85.0",
+          "index": "8"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "entity.intent.hsb-off",
+  "specRefs": [
+    "devices.intents"
+  ],
+  "description": "turnOff sends the OFF method.",
+  "provenance": "spec §6.1–§6.3; tools/oracles/entities.py",
+  "operation": "entity.intent",
+  "input": {
+    "fixture": "fixtures/interfaces/all-widget-types.json",
+    "entityId": "w-led_0",
+    "values": [],
+    "intent": "turnOff"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "actions": [
+        {
+          "callType": "METHOD",
+          "cluId": "CLU_501234567",
+          "objectName": "LED4444",
+          "event": "OFF",
+          "value": "",
+          "index": "2"
+        }
+      ]
+    }
+  }
+}

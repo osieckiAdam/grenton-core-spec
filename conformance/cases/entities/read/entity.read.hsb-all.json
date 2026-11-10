@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "id": "entity.read.hsb-all",
+  "specRefs": [
+    "devices.entity-state"
+  ],
+  "description": "LED channels map to hue 0–360 and saturation/brightness 0–1.",
+  "provenance": "spec §6.1–§6.3; tools/oracles/entities.py",
+  "operation": "entity.read",
+  "input": {
+    "fixture": "fixtures/interfaces/all-widget-types.json",
+    "entityId": "w-led_0",
+    "values": [
+      {
+        "key": {
+          "callType": "ATTRIBUTE",
+          "cluId": "CLU_501234567",
+          "objectName": "LED4444",
+          "index": "0"
+        },
+        "value": {
+          "type": "int",
+          "value": "1"
+        }
+      },
+      {
+        "key": {
+          "callType": "ATTRIBUTE",
+          "cluId": "CLU_501234567",
+          "objectName": "LED4444",
+          "index": "3"
+        },
+        "value": {
+          "type": "int",
+          "value": "180"
+        }
+      },
+      {
+        "key": {
+          "callType": "ATTRIBUTE",
+          "cluId": "CLU_501234567",
+          "objectName": "LED4444",
+          "index": "5"
+        },
+        "value": {
+          "type": "int",
+          "value": "50"
+        }
+      },
+      {
+        "key": {
+          "callType": "ATTRIBUTE",
+          "cluId": "CLU_501234567",
+          "objectName": "LED4444",
+          "index": "7"
+        },
+        "value": {
+          "type": "int",
+          "value": "255"
+        }
+      }
+    ]
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "state": {
+        "isOn": true,
+        "hue": {
+          "type": "double",
+          "bits": "4066800000000000",
+          "decimal": "180.0"
+        },
+        "saturation": {
+          "type": "double",
+          "bits": "3fe0000000000000",
+          "decimal": "0.5"
+        },
+        "brightness": {
+          "type": "double",
+          "bits": "3ff0000000000000",
+          "decimal": "1.0"
+        }
+      }
+    }
+  }
+}

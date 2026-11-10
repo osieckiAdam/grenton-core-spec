@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "id": "entity.read.dimmer-string",
+  "specRefs": [
+    "devices.entity-state"
+  ],
+  "description": "A dimmer: a string is not re-parsed: unknown.",
+  "provenance": "spec §6.1–§6.3; tools/oracles/entities.py",
+  "operation": "entity.read",
+  "input": {
+    "fixture": "fixtures/interfaces/all-widget-types.json",
+    "entityId": "w-dimmer_0",
+    "values": [
+      {
+        "key": {
+          "callType": "ATTRIBUTE",
+          "cluId": "CLU_501234567",
+          "objectName": "DIM3333",
+          "index": "0"
+        },
+        "value": {
+          "type": "string",
+          "value": "50"
+        }
+      }
+    ]
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "state": {
+        "isOn": null,
+        "brightness": null
+      }
+    }
+  }
+}

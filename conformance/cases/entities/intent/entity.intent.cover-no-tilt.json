@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "entity.intent.cover-no-tilt",
+  "specRefs": [
+    "devices.intents"
+  ],
+  "description": "setTilt without slats is a no-op.",
+  "provenance": "spec §6.1–§6.3; tools/oracles/entities.py",
+  "operation": "entity.intent",
+  "input": {
+    "fixture": "fixtures/interfaces/completeness.json",
+    "entityId": "c-cover-no-tilt-no-stop",
+    "values": [],
+    "intent": "setTilt",
+    "args": {
+      "tilt": 50
+    }
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "actions": []
+    }
+  }
+}

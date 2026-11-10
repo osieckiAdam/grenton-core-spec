@@ -5,14 +5,19 @@
     python3 tools/suite.py manifest   rewrite conformance/manifest.json
     python3 tools/suite.py bump X.Y.Z  set the spec and suite version everywhere
     python3 tools/suite.py fixtures   rebuild conformance/fixtures/projects/*.omp
-                                      from conformance/sources/projects/*/
+                                      from conformance/sources/projects/*/ and
+                                      conformance/fixtures/archives/*.zip from
+                                      conformance/sources/archives/*.json
 
 `check` also re-derives expected values that have an independent oracle:
 AES cases through the `openssl` CLI, `number.format` through Python's
 round() (the reference semantics), `mapping.interface` through
 tools/oracles/mapping.py (written from spec §6), `provisioning.omp` through
-tools/oracles/omp.py (written from spec §4.5) plus the mapping oracle, every
-.omp fixture against its sources, and every double's
+tools/oracles/omp.py (written from spec §4.5) plus the mapping oracle,
+`provisioning.archive`/`provisioning.fetch` through tools/oracles/archive.py
+(spec §4.1–§4.3), `entity.*` through tools/oracles/entities.py (spec §6.1–§6.3;
+its schedule parser is also run against the `schedule.*` cases), every .omp
+fixture against its sources, every archive against its recipe, and every double's
 `decimal` against its `bits`. It never uses a port's output as the source
 of truth.
 """
@@ -32,12 +37,13 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CONFORMANCE = os.path.join(ROOT, "conformance")
 CASES = os.path.join(CONFORMANCE, "cases")
 PROJECT_SOURCES = os.path.join(CONFORMANCE, "sources", "projects")
+ARCHIVE_SOURCES = os.path.join(CONFORMANCE, "sources", "archives")
 FIXTURES = os.path.join(CONFORMANCE, "fixtures")
 MANIFEST = os.path.join(CONFORMANCE, "manifest.json")
 
 SCHEMA_VERSION = 1
-SUITE_VERSION = "0.14.0"
-SPEC_VERSION = "0.14.0"
+SUITE_VERSION = "0.15.0"
+SPEC_VERSION = "0.15.0"
 
 # operation -> (profile, required input keys, optional input keys)
 OPERATIONS = {
@@ -60,6 +66,10 @@ OPERATIONS = {
     "mapping.interface": ("mapping", {"fixture"}, set()),
     "provisioning.omp": ("project", {"fixture"}, {"interfaceId"}),
     "session.scenario": ("session", {"clu", "responseTimeoutMs", "steps"}, {"pingIntervalMs", "registerIntervalMs", "registerFrameLimitBytes"}),
+    "provisioning.archive": ("provisioning", {"fixture"}, set()),
+    "provisioning.fetch": ("provisioning", {"pin"}, {"response", "unreachable"}),
+    "entity.read": ("entities", {"fixture", "entityId", "values"}, set()),
+    "entity.intent": ("entities", {"fixture", "entityId", "values", "intent"}, {"args"}),
 }
 
 # Stable requirement ids -> spec sections (see spec/conformance.md).
@@ -77,9 +87,12 @@ REQUIREMENTS = {
     "session.report-routing": "§5.4.3, §5.3.3", "session.keepalive": "§5.3.1",
     "session.lifecycle": "§5.4.5", "session.actions": "§5.3.4, §3.3",
     "session.loops": "§5.4.4",
+    "provisioning.response": "§4.2", "provisioning.pin-secrecy": "§4.2", "provisioning.archive": "§4.3",
+    "devices.entity-state": "§6.1, §6.3", "devices.integer-read": "§6.2", "devices.intents": "§6.1, §6.3",
 }
 
 ERROR_CODES = {"crypto.invalidKeyMaterial", "provisioning.connection", "payload.unresolvedPlaceholder",
+               "provisioning.authenticationFailed",
                "provisioning.invalidData", "provisioning.interfaceNotFound", "provisioning.interfaceAmbiguous"}
 CASE_KEYS = {"schemaVersion", "id", "specRefs", "description", "provenance", "operation", "input", "expect"}
 ID_RE = re.compile(r"^[a-z0-9]+(\.[A-Za-z0-9-]+)+$")
@@ -95,7 +108,7 @@ def json_files(top):
 def fixture_files():
     for dirpath, _, files in os.walk(FIXTURES):
         for name in sorted(files):
-            if name.endswith((".json", ".omp")):
+            if name.endswith((".json", ".omp", ".zip")):
                 yield os.path.join(dirpath, name)
 
 
@@ -154,6 +167,119 @@ def check_projects(errors):
                 sources.append((arcname, f.read()))
         if built != sources:   # names, order and content; not bytes (zlib may differ)
             errors.append(f"fixtures/projects/{name}.omp differs from its sources: run `python3 tools/suite.py fixtures`")
+
+
+def archive_names():
+    return sorted(f[:-5] for f in os.listdir(ARCHIVE_SOURCES) if f.endswith(".json")) \
+        if os.path.isdir(ARCHIVE_SOURCES) else []
+
+
+def archive_recipe(name):
+    with open(os.path.join(ARCHIVE_SOURCES, name + ".json"), encoding="utf-8") as f:
+        return json.load(f)
+
+
+def recipe_content(entry):
+    if "from" in entry:
+        with open(os.path.join(CONFORMANCE, entry["from"]), "rb") as f:
+            content = f.read()
+    else:
+        content = entry["text"].encode("utf-8")
+    if "padTo" in entry:
+        if entry["padTo"] < len(content):
+            raise SystemExit(f"padTo {entry['padTo']} is shorter than {entry['name']}")
+        content += b" " * (entry["padTo"] - len(content))
+    return content
+
+
+def central_directory(data):
+    """[(name, method, crc, declared size, compressed size, local offset)], read
+    from the headers themselves, plus each local header's (crc, declared size)."""
+    eocd = data.rfind(b"PK\x05\x06")
+    count, _, offset = struct.unpack("<HII", data[eocd + 10:eocd + 20])
+    records, pos = [], offset
+    for _ in range(count):
+        if data[pos:pos + 4] != b"PK\x01\x02":
+            raise ValueError("central directory")
+        method, = struct.unpack("<H", data[pos + 10:pos + 12])
+        crc, csize, usize, nlen, xlen, clen = struct.unpack("<IIIHHH", data[pos + 16:pos + 34])
+        local, = struct.unpack("<I", data[pos + 42:pos + 46])
+        name = data[pos + 46:pos + 46 + nlen].decode("utf-8")
+        lcrc, _, lusize = struct.unpack("<III", data[local + 14:local + 26])
+        records.append((name, method, crc, usize, csize, local, lcrc, lusize))
+        pos += 46 + nlen + xlen + clen
+    return records
+
+
+def build_archive(name):
+    """A deterministic ZIP from its recipe; `lie` patches both headers."""
+    import warnings
+    recipe = archive_recipe(name)
+    if "raw" in recipe:
+        return recipe["raw"].encode("utf-8")
+    buffer = io.BytesIO()
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")   # a duplicate name is the point of one fixture
+        with zipfile.ZipFile(buffer, "w") as archive:
+            for entry in recipe["entries"]:
+                info = zipfile.ZipInfo(entry["name"], date_time=(1980, 1, 1, 0, 0, 0))
+                info.compress_type = zipfile.ZIP_STORED if entry.get("method") == "store" else zipfile.ZIP_DEFLATED
+                archive.writestr(info, recipe_content(entry))
+    data = bytearray(buffer.getvalue())
+    eocd = data.rfind(b"PK\x05\x06")
+    _, _, pos = struct.unpack("<HII", data[eocd + 10:eocd + 20])
+    for entry in recipe["entries"]:
+        nlen, xlen, clen = struct.unpack("<HHH", data[pos + 28:pos + 34])
+        local, = struct.unpack("<I", data[pos + 42:pos + 46])
+        lie = entry.get("lie", {})
+        for crc_at, size_at in ((pos + 16, pos + 24), (local + 14, local + 22)):
+            if lie.get("crc"):
+                crc, = struct.unpack("<I", data[crc_at:crc_at + 4])
+                data[crc_at:crc_at + 4] = struct.pack("<I", crc ^ 0xFFFFFFFF)
+            if "size" in lie:
+                size, = struct.unpack("<I", data[size_at:size_at + 4])
+                data[size_at:size_at + 4] = struct.pack("<I", size + lie["size"])
+        pos += 46 + nlen + xlen + clen
+    return bytes(data)
+
+
+def check_archives(errors):
+    """Each archive holds what its recipe says, read back from its headers."""
+    import zlib
+    for name in archive_names():
+        path = os.path.join(FIXTURES, "archives", name + ".zip")
+        rel = f"fixtures/archives/{name}.zip"
+        if not os.path.isfile(path):
+            errors.append(f"{rel} is missing: run `python3 tools/suite.py fixtures`")
+            continue
+        with open(path, "rb") as f:
+            data = f.read()
+        recipe = archive_recipe(name)
+        if "raw" in recipe:
+            if data != recipe["raw"].encode("utf-8"):
+                errors.append(f"{rel} differs from its recipe: run `python3 tools/suite.py fixtures`")
+            continue
+        try:
+            records = central_directory(data)
+        except (ValueError, struct.error, UnicodeDecodeError):
+            errors.append(f"{rel}: unreadable headers")
+            continue
+        entries = recipe["entries"]
+        if [r[0] for r in records] != [e["name"] for e in entries]:
+            errors.append(f"{rel}: entries differ from its recipe: run `python3 tools/suite.py fixtures`")
+            continue
+        for (ename, method, crc, usize, csize, local, lcrc, lusize), entry in zip(records, entries):
+            content = recipe_content(entry)
+            want_method = 0 if entry.get("method") == "store" else 8
+            nlen, xlen = struct.unpack("<HH", data[local + 26:local + 30])
+            raw = data[local + 30 + nlen + xlen:local + 30 + nlen + xlen + csize]
+            actual = raw if method == 0 else zlib.decompressobj(-15).decompress(raw)
+            lie = entry.get("lie", {})
+            want_crc = zlib.crc32(content) ^ (0xFFFFFFFF if lie.get("crc") else 0)
+            want_size = len(content) + lie.get("size", 0)
+            if (method != want_method or actual != content or (crc, usize) != (want_crc, want_size)
+                    or (lcrc, lusize) != (crc, usize)):
+                errors.append(f"{rel}: entry {ename} differs from its recipe: run `python3 tools/suite.py fixtures`")
 
 
 def case_files():
@@ -238,6 +364,7 @@ STEPS = {
     "expectNoReport": ({"expectNoReport"}, set()),
     "expectClosed": ({"expectClosed"}, set()),
     "fail": ({"fail"}, set()),
+    "failSend": ({"failSend"}, set()),
 }
 CALLS = {"start", "stop", "ping", "register", "fetch", "execute"}
 STATES = {"idle", "starting", "ready", "degraded", "stopped"}
@@ -382,7 +509,7 @@ def check_scenario(doc, errors):
                 errors.append(f"{at}: socket {body['socket']} is not bound yet")
             if verb == "respond" and body["msgId"].startswith("$") and body["msgId"] not in captures:
                 errors.append(f"{at}: {body['msgId']} is not captured yet")
-        elif verb in ("expectClosed", "fail") and step[verb] not in labels:
+        elif verb in ("expectClosed", "fail", "failSend") and step[verb] not in labels:
             errors.append(f"{at}: socket {step[verb]} is not bound yet")
         elif verb == "expectState" and step["expectState"] not in STATES:
             errors.append(f"{at}: unknown state {step['expectState']}")
@@ -519,6 +646,67 @@ def oracle(doc, errors):
                 root = json.load(f)
             if all(k in root for k in ("id", "version", "name", "icon", "theme", "encryption", "clus", "pages")):
                 errors.append(f"{where}: expects reject, but the fixture has every root field of §3.4")
+    if op in ("schedule.rules", "schedule.cron"):
+        # The entities oracle's schedule parser, written from §6.3.13, must
+        # agree with these hand-written cases.
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        from oracles.entities import schedule_rules, schedule_cron
+        if op == "schedule.rules":
+            got = {"outcome": "ok", "value": {"rules": schedule_rules(inp["text"])}}
+        else:
+            text = schedule_cron(inp["hour"], inp["minute"], inp["days"])
+            got = {"outcome": "reject"} if text is None else {"outcome": "ok", "value": {"text": text}}
+        if not json_equal(got, exp):
+            errors.append(f"{where}: the schedule oracle gives {json.dumps(got)[:300]}")
+    if op in ("provisioning.archive", "provisioning.fetch"):
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        from oracles.archive import archive_value, fetch_value
+        if op == "provisioning.fetch" and ("response" in inp) == bool(inp.get("unreachable")):
+            errors.append(f"{where}: give exactly one of `response` and `unreachable: true`")
+            return
+        body = inp.get("response", {}).get("body") if op == "provisioning.fetch" else {"fixture": inp["fixture"]}
+        data = b""
+        if body and "fixture" in body:
+            path = os.path.join(CONFORMANCE, body["fixture"])
+            if not os.path.isfile(path):
+                errors.append(f"{where}: fixture {body['fixture']} does not exist")
+                return
+            with open(path, "rb") as f:
+                data = f.read()
+        elif body:
+            data = bytes(body["zeros"])
+        got = archive_value(data) if op == "provisioning.archive" else fetch_value(inp, data)
+        if not json_equal(got, exp):
+            errors.append(f"{where}: the archive oracle gives {json.dumps(got)[:300]}")
+    if op in ("entity.read", "entity.intent"):
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        from oracles.mapping import map_interface
+        from oracles.entities import case_value
+        path = os.path.join(CONFORMANCE, inp["fixture"])
+        if not os.path.isfile(path):
+            errors.append(f"{where}: fixture {inp['fixture']} does not exist")
+            return
+        with open(path, encoding="utf-8") as f:
+            mapping = map_interface(json.load(f))
+        from oracles.entities import find_entity
+        entity = find_entity(mapping, inp["entityId"])
+        if entity is not None:
+            # A value under a key the entity does not read would silently
+            # test "unknown" instead of what the case describes.
+            refs = json.dumps(entity, sort_keys=True)
+            for v in inp["values"]:
+                if json.dumps(v["key"], sort_keys=True)[1:-1] not in refs:
+                    errors.append(f"{where}: {v['key']} is not a reference of {inp['entityId']}")
+        try:
+            got = case_value(mapping, inp, op)
+        except LookupError:
+            errors.append(f"{where}: the mapping produces no entity {inp['entityId']}")
+            return
+        except (KeyError, ValueError) as e:
+            errors.append(f"{where}: the intent or its args do not fit the entity: {e!r}")
+            return
+        if not json_equal(got, exp):
+            errors.append(f"{where}: the entities oracle gives {json.dumps(got)[:300]}")
     if op in ("coercion.boolFromOnOff", "coercion.truthy"):
         # The reference's own Python expressions, run on the decoded value.
         v = python_value(inp["value"])
@@ -715,6 +903,11 @@ def main():
             with open(os.path.join(FIXTURES, "projects", name + ".omp"), "wb") as f:
                 f.write(build_project(name))
             print(f"wrote conformance/fixtures/projects/{name}.omp")
+        os.makedirs(os.path.join(FIXTURES, "archives"), exist_ok=True)
+        for name in archive_names():
+            with open(os.path.join(FIXTURES, "archives", name + ".zip"), "wb") as f:
+                f.write(build_archive(name))
+            print(f"wrote conformance/fixtures/archives/{name}.zip")
         return 0
     if command != "check":
         print(__doc__)
@@ -730,7 +923,12 @@ def main():
             ids.add(doc["id"])
             if isinstance(doc.get("input"), dict) and "fixture" in doc["input"]:
                 referenced.add(doc["input"]["fixture"])
+            body = (doc.get("input", {}).get("response") or {}).get("body") or {} \
+                if isinstance(doc.get("input"), dict) else {}
+            if "fixture" in body:
+                referenced.add(body["fixture"])
     check_projects(errors)
+    check_archives(errors)
     for path in fixture_files():
         rel = os.path.relpath(path, CONFORMANCE)
         if rel not in referenced:

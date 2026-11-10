@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "id": "entity.read.dimmer-below-range",
+  "specRefs": [
+    "devices.entity-state"
+  ],
+  "description": "A dimmer: −10 is clamped to 0 and off.",
+  "provenance": "spec §6.1–§6.3; tools/oracles/entities.py",
+  "operation": "entity.read",
+  "input": {
+    "fixture": "fixtures/interfaces/all-widget-types.json",
+    "entityId": "w-dimmer_0",
+    "values": [
+      {
+        "key": {
+          "callType": "ATTRIBUTE",
+          "cluId": "CLU_501234567",
+          "objectName": "DIM3333",
+          "index": "0"
+        },
+        "value": {
+          "type": "int",
+          "value": "-10"
+        }
+      }
+    ]
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "state": {
+        "isOn": false,
+        "brightness": {
+          "type": "double",
+          "bits": "0000000000000000",
+          "decimal": "0.0"
+        }
+      }
+    }
+  }
+}

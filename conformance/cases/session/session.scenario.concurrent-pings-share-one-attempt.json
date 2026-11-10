@@ -1,0 +1,171 @@
+{
+  "schemaVersion": 1,
+  "id": "session.scenario.concurrent-pings-share-one-attempt",
+  "specRefs": [
+    "session.lifecycle",
+    "session.keepalive"
+  ],
+  "description": "A ping called while another is on the wire sends nothing and returns that ping's result, an answer or a timeout; a shared timeout counts once, so two more leave the main socket open.",
+  "provenance": "spec §5.3–§5.4 text, conformance.md §4b",
+  "operation": "session.scenario",
+  "input": {
+    "clu": {
+      "id": "CLU_1",
+      "ip": "10.0.0.1",
+      "port": 1234
+    },
+    "responseTimeoutMs": 5000,
+    "pingIntervalMs": 3600000,
+    "registerIntervalMs": 3600000,
+    "steps": [
+      {
+        "call": "start",
+        "as": "start"
+      },
+      {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "checkAlive()"
+        }
+      },
+      {
+        "respond": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "1"
+        }
+      },
+      {
+        "await": "start",
+        "result": null
+      },
+      {
+        "expectState": "ready"
+      },
+      {
+        "call": "ping",
+        "as": "a"
+      },
+      {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "checkAlive()"
+        }
+      },
+      {
+        "call": "ping",
+        "as": "b"
+      },
+      {
+        "expectQuiet": true
+      },
+      {
+        "respond": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "1"
+        }
+      },
+      {
+        "await": "a",
+        "result": {
+          "ok": true
+        }
+      },
+      {
+        "await": "b",
+        "result": {
+          "ok": true
+        }
+      },
+      {
+        "call": "ping",
+        "as": "c"
+      },
+      {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "checkAlive()"
+        }
+      },
+      {
+        "call": "ping",
+        "as": "d"
+      },
+      {
+        "expectQuiet": true
+      },
+      {
+        "advance": 5000
+      },
+      {
+        "await": "c",
+        "result": {
+          "ok": false
+        }
+      },
+      {
+        "await": "d",
+        "result": {
+          "ok": false
+        }
+      },
+      {
+        "call": "ping",
+        "as": "t2"
+      },
+      {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "checkAlive()"
+        }
+      },
+      {
+        "advance": 5000
+      },
+      {
+        "await": "t2",
+        "result": {
+          "ok": false
+        }
+      },
+      {
+        "call": "ping",
+        "as": "t3"
+      },
+      {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "checkAlive()"
+        }
+      },
+      {
+        "respond": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "1"
+        }
+      },
+      {
+        "await": "t3",
+        "result": {
+          "ok": true
+        }
+      },
+      {
+        "expectState": "ready"
+      }
+    ]
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "completed": true
+    }
+  }
+}

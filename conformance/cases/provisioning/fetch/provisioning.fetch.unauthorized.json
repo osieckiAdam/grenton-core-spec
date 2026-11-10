@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "provisioning.fetch.unauthorized",
+  "specRefs": [
+    "provisioning.response",
+    "provisioning.pin-secrecy"
+  ],
+  "description": "401 is a wrong PIN.",
+  "provenance": "spec §4.1–§4.3; tools/oracles/archive.py",
+  "operation": "provisioning.fetch",
+  "input": {
+    "pin": "149 853",
+    "response": {
+      "status": 401
+    }
+  },
+  "expect": {
+    "outcome": "error",
+    "code": "provisioning.authenticationFailed"
+  }
+}

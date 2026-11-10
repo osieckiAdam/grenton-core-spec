@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "id": "entity.read.cover-wide-double",
+  "specRefs": [
+    "devices.entity-state",
+    "devices.integer-read"
+  ],
+  "description": "A cover: a double outside Int64 is unknown, never a crash.",
+  "provenance": "spec §6.1–§6.3; tools/oracles/entities.py",
+  "operation": "entity.read",
+  "input": {
+    "fixture": "fixtures/interfaces/all-widget-types.json",
+    "entityId": "w-rs3",
+    "values": [
+      {
+        "key": {
+          "callType": "ATTRIBUTE",
+          "cluId": "CLU_501234567",
+          "objectName": "ROL2020",
+          "index": "0"
+        },
+        "value": {
+          "type": "double",
+          "bits": "fe37e43c8800759c",
+          "decimal": "-1e+300"
+        }
+      },
+      {
+        "key": {
+          "callType": "ATTRIBUTE",
+          "cluId": "CLU_501234567",
+          "objectName": "ROL2020",
+          "index": "1"
+        },
+        "value": {
+          "type": "double",
+          "bits": "7e37e43c8800759c",
+          "decimal": "1e+300"
+        }
+      },
+      {
+        "key": {
+          "callType": "ATTRIBUTE",
+          "cluId": "CLU_501234567",
+          "objectName": "ROL2020",
+          "index": "2"
+        },
+        "value": {
+          "type": "double",
+          "bits": "7e37e43c8800759c",
+          "decimal": "1e+300"
+        }
+      }
+    ]
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "state": {
+        "position": null,
+        "isClosed": null,
+        "motion": "unknown",
+        "tilt": null
+      }
+    }
+  }
+}

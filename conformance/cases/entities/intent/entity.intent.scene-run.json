@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "entity.intent.scene-run",
+  "specRefs": [
+    "devices.intents"
+  ],
+  "description": "run sends the widget's value.",
+  "provenance": "spec §6.1–§6.3; tools/oracles/entities.py",
+  "operation": "entity.intent",
+  "input": {
+    "fixture": "fixtures/interfaces/all-widget-types.json",
+    "entityId": "w-scene_0",
+    "values": [],
+    "intent": "run"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "actions": [
+        {
+          "callType": "SCRIPT",
+          "cluId": "CLU_501234567",
+          "objectName": "scena_wieczor",
+          "event": "CLICK",
+          "value": "\"123\""
+        }
+      ]
+    }
+  }
+}

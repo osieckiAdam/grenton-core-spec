@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "entity.read.hsb-partial",
+  "specRefs": [
+    "devices.entity-state"
+  ],
+  "description": "Unreported channels stay unknown.",
+  "provenance": "spec §6.1–§6.3; tools/oracles/entities.py",
+  "operation": "entity.read",
+  "input": {
+    "fixture": "fixtures/interfaces/all-widget-types.json",
+    "entityId": "w-led_0",
+    "values": [
+      {
+        "key": {
+          "callType": "ATTRIBUTE",
+          "cluId": "CLU_501234567",
+          "objectName": "LED4444",
+          "index": "5"
+        },
+        "value": {
+          "type": "double",
+          "bits": "4039800000000000",
+          "decimal": "25.5"
+        }
+      }
+    ]
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "state": {
+        "isOn": null,
+        "hue": null,
+        "saturation": {
+          "type": "double",
+          "bits": "3fd051eb851eb852",
+          "decimal": "0.255"
+        },
+        "brightness": null
+      }
+    }
+  }
+}

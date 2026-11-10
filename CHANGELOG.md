@@ -1,5 +1,32 @@
 # Changelog
 
+## Spec 0.15.0, suite 0.15.0 — 2026-11-10
+
+Rules the first port followed without the spec saying so, and two profiles that check them. Writing down the Swift port's lessons for the next port (`docs/implementing.md`) showed six places where a port could follow the letter of the spec and still repeat a bug the Swift port had: a zip bomb through a header-only size check, the PIN in a transport error, a followed redirect, a crash on a wide double, a leaked session, and two sockets on one port. The checklist of §9.5 also claimed entity normalizations as covered while no case tested them. A second port, grenton-core-go, written from the spec alone, then found what the text left open: a send rejected at once, concurrent pings, the XML encodings, unpaired surrogates, and an oracle that missed two places a widget refers to a CLU.
+
+Spec:
+
+- §4.2: redirects are not followed — a `3xx` is `connection`, one request per download; no error text and no log line contains the PIN in any form (as given, without whitespace, percent-encoded).
+- §4.3: the limit is normative — **10 MiB** for the body and for `data.json` — and counted on the bytes actually received and inflated; an entry whose inflated size or CRC-32 differs from its headers is `invalidData`; exactly one `mygrenton/data.json`, a regular file, matched byte for byte. §4.5.1 counts the same way.
+- §4.5.1: the project XML is UTF-8 (a UTF-8 BOM and declaration allowed); UTF-16 or any other declared encoding is `invalidData`, also where the parser could read it — Object Manager writes UTF-8. A `\u` escape of an unpaired surrogate in node JSON is `invalidData`, like invalid UTF-8.
+- §5.4.1 item 4: a send the transport rejects is a failure of the socket — it is closed and every pending request on it ends with `ConnectionClosed`; otherwise a socket whose local address is gone is never replaced, because nothing times out.
+- §5.4.5: a `ping()` called while a ping is on the wire sends nothing and returns that ping's result.
+- §5.4.5: after `stop()` a session holds no socket, timer, loop or task; an abandoned session releases them where the language can observe it, otherwise `stop()` is documented as mandatory.
+- §6.1: reads in a canonical range are clamped to it (**Δ**, as the Swift port already did).
+- §6.2: integer reads — an `int` directly, a `double` truncated toward zero, non-finite or outside Int64 → unknown, never a crash. §6.3.8 (cover position, motion, tilt: truncated before and after the mapping, as the reference does), §6.3.9, §6.3.12 (mode; the set point is clamped only when `min ≤ max`) and §6.3.13 (counts) use it.
+- §7.1: the unfiltered mode is one unconnected socket that sends and receives; two sockets sharing a port are no substitute.
+- §9.5: items 6–8 name the suite operations and what stays port-tested.
+
+Suite (391 cases, 137 new; profiles `provisioning` and `entities`):
+
+- `provisioning.archive` (15 cases on 15 archives built from recipes in `conformance/sources/archives/`: at and one byte over the limit, a 200-byte header over an 11 MiB entry, sizes off by one either way, a broken CRC, near-miss paths, a duplicate entry) and `provisioning.fetch` (11 cases): the runner serves the response over real HTTP on loopback and checks the request count, the request-target and that no error text holds the PIN.
+- `entity.read` (44) and `entity.intent` (59): entities bound to a store the runner fills and a command sink; `tools/oracles/entities.py`, written from §6.1–§6.3, computes every expectation, and `check` runs its schedule parser against the 16 hand-written `schedule.*` cases (all agree) and refuses a value under a key the entity does not read.
+- `project`: a CLU used only by multisensor channels and one used only by a contact side's `clickAction` are listed (the oracle missed both, §4.5.4's text did not); UTF-8 with a BOM, ISO-8859-1 declared, UTF-16 (replacing `utf16-doctype`, which a UTF-8-only rule makes redundant), an unpaired surrogate.
+- `session`: an answered ping resets the timeout streak (a port that never reset it passed all 51 scenarios); a rejected send replaces the socket and ends every pending request, through a new step `{"failSend": "@s"}`; concurrent pings share one attempt, and its timeout counts once.
+- New error code in cases: `provisioning.authenticationFailed`. conformance.md §8: the body limit has no case (an over-limit body that is still an archive cannot be built portably); logs are port-tested.
+
+Run against grenton-core-swift before release: all 383 cases pass with the library unchanged (only its runner grew). Three deliberate breakages of the library each failed the suite as intended — the PIN left in a transport error (`provisioning.fetch.unreachable`), the lamel read mapped before truncation (`entity.read.cover-fractional`, `-negative-zero`), and redirects followed (`provisioning.fetch.redirect-302`, `-307`: 21 requests).
+
 ## Spec 0.14.0, suite 0.14.0 — 2026-10-26
 
 Icons travel with the devices. The protocol has no device class — a relay behind a lamp and one behind a pump are the same `switch` — and the only hint of what a device is, is the icon the installer chose in Object Manager, which the mobile interface carries on every widget (`icon`) or component (`image`): in one installation, 101 `ON_OFF` components, every one with an `image` such as `bulb`, `plafond`, `power_socket`, `floor_heating`. The first app on the Swift port wanted to list lights only and found that the device model dropped the field.

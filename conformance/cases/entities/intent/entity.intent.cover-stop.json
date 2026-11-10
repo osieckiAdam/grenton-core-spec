@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "entity.intent.cover-stop",
+  "specRefs": [
+    "devices.intents"
+  ],
+  "description": "A cover: stop sends the stop action.",
+  "provenance": "spec §6.1–§6.3; tools/oracles/entities.py",
+  "operation": "entity.intent",
+  "input": {
+    "fixture": "fixtures/interfaces/all-widget-types.json",
+    "entityId": "w-rs3",
+    "values": [],
+    "intent": "stop"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "actions": [
+        {
+          "callType": "METHOD",
+          "cluId": "CLU_501234567",
+          "objectName": "ROL2020",
+          "event": "CLICK",
+          "value": "",
+          "index": "9"
+        }
+      ]
+    }
+  }
+}

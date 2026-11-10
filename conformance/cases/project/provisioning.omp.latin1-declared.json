@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "provisioning.omp.latin1-declared",
+  "specRefs": [
+    "provisioning.omp-archive"
+  ],
+  "description": "A system.xml declaring ISO-8859-1 is rejected although its bytes are ASCII: the project XML is UTF-8.",
+  "provenance": "spec §4.5 text; expectations re-derived by tools/oracles/omp.py and tools/oracles/mapping.py",
+  "operation": "provisioning.omp",
+  "input": {
+    "fixture": "fixtures/projects/latin1-declared.omp"
+  },
+  "expect": {
+    "outcome": "error",
+    "code": "provisioning.invalidData"
+  }
+}

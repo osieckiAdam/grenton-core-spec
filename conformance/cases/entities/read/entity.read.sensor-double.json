@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "id": "entity.read.sensor-double",
+  "specRefs": [
+    "devices.entity-state"
+  ],
+  "description": "A sensor passes the stored value on.",
+  "provenance": "spec §6.1–§6.3; tools/oracles/entities.py",
+  "operation": "entity.read",
+  "input": {
+    "fixture": "fixtures/interfaces/all-widget-types.json",
+    "entityId": "w-value_0",
+    "values": [
+      {
+        "key": {
+          "callType": "ATTRIBUTE",
+          "cluId": "CLU_501234567",
+          "objectName": "PAN4756",
+          "index": "0"
+        },
+        "value": {
+          "type": "double",
+          "bits": "4035800000000000",
+          "decimal": "21.5"
+        }
+      }
+    ]
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "state": {
+        "value": {
+          "type": "double",
+          "bits": "4035800000000000",
+          "decimal": "21.5"
+        }
+      }
+    }
+  }
+}

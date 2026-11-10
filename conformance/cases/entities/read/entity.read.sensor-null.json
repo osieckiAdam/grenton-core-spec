@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "id": "entity.read.sensor-null",
+  "specRefs": [
+    "devices.entity-state"
+  ],
+  "description": "A reported nil is a null value, not unknown.",
+  "provenance": "spec §6.1–§6.3; tools/oracles/entities.py",
+  "operation": "entity.read",
+  "input": {
+    "fixture": "fixtures/interfaces/all-widget-types.json",
+    "entityId": "w-value_0",
+    "values": [
+      {
+        "key": {
+          "callType": "ATTRIBUTE",
+          "cluId": "CLU_501234567",
+          "objectName": "PAN4756",
+          "index": "0"
+        },
+        "value": {
+          "type": "null"
+        }
+      }
+    ]
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "state": {
+        "value": {
+          "type": "null"
+        }
+      }
+    }
+  }
+}

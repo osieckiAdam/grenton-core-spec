@@ -1,0 +1,40 @@
+<object-stream>
+  <!-- CLU_B is used only by multisensor channels, CLU_C only by the clickAction of a
+       contact side, CLU_D by nothing. -->
+  <TreeObject id="1">
+    <name>CLU_A_FIRST_FLOOR</name>
+    <specificObject id="2">
+      <name>CLU_A_FIRST_FLOOR</name>
+      <nameOnCLU>CLU_A</nameOnCLU>
+      <ipAddress>10.0.0.1</ipAddress>
+      <serialNumber>0bebc201</serialNumber>
+    </specificObject>
+  </TreeObject>
+  <TreeObject id="11">
+    <name>CLU_B_AIR</name>
+    <specificObject id="12">
+      <name>CLU_B_AIR</name>
+      <nameOnCLU>CLU_B</nameOnCLU>
+      <ipAddress>10.0.0.2</ipAddress>
+      <serialNumber>1dcd6502</serialNumber>
+    </specificObject>
+  </TreeObject>
+  <TreeObject id="21">
+    <name>CLU_C_GATE</name>
+    <specificObject id="22">
+      <name>CLU_C_GATE</name>
+      <nameOnCLU>CLU_C</nameOnCLU>
+      <ipAddress>10.0.0.3</ipAddress>
+      <serialNumber>1c9c3803</serialNumber>
+    </specificObject>
+  </TreeObject>
+  <TreeObject id="31">
+    <name>CLU_D_SPARE</name>
+    <specificObject id="32">
+      <name>CLU_D_SPARE</name>
+      <nameOnCLU>CLU_D</nameOnCLU>
+      <ipAddress>10.0.0.4</ipAddress>
+      <serialNumber>05f5e104</serialNumber>
+    </specificObject>
+  </TreeObject>
+</object-stream>

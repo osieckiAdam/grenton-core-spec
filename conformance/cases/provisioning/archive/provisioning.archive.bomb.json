@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "provisioning.archive.bomb",
+  "specRefs": [
+    "provisioning.archive"
+  ],
+  "description": "The headers declare 200 bytes; the entry inflates to 11 MiB. Counted while inflating: invalidData.",
+  "provenance": "spec §4.3; tools/oracles/archive.py",
+  "operation": "provisioning.archive",
+  "input": {
+    "fixture": "fixtures/archives/bomb.zip"
+  },
+  "expect": {
+    "outcome": "error",
+    "code": "provisioning.invalidData"
+  }
+}

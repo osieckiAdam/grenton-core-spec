@@ -3,8 +3,8 @@
 | | |
 |---|---|
 | **Status** | Design (for implementation) |
-| **Version** | 0.14.0 |
-| **Date** | 2026-10-26 |
+| **Version** | 0.15.0 |
+| **Date** | 2026-11-10 |
 | **Reference implementation** | `homeassistant-grenton` (Python, Home Assistant integration) |
 | **Purpose** | Language-agnostic specification — the basis for ports (first: Swift) |
 | **Conformance suite** | `conformance/` + the contract in [`conformance.md`](conformance.md) |
@@ -217,15 +217,21 @@ GET http://{host}:{port}/api/v1/interface/hash/{pin}
 |---|---|---|
 | `200` | body = ZIP file | — |
 | `401` | wrong PIN | `ProvisioningError.authenticationFailed` |
-| other | — | `ProvisioningError.connection(status)` |
+| other, including `3xx` | — | `ProvisioningError.connection(status)` |
 | network error | — | `ProvisioningError.connection(cause)` |
+
+- **Redirects are not followed.** A `3xx` is an answer like any other status: the client sends exactly one request per download. Reason: a redirected download would take a key-bearing archive from wherever `Location` points.
+- **The PIN never appears in an error or a log.** It is part of the URL, and transport errors of many HTTP stacks carry the URL in their text; the description of every `ProvisioningError` and every log line contain none of the forms of the PIN — as given, without whitespace, or percent-encoded. Reason: the PIN grants the key of the installation for as long as the dialog is open, and error texts end up in application logs.
 
 ### 4.3 ZIP processing
 
 1. Open the response body as a ZIP archive; format error → `ProvisioningError.invalidData("bad zip")`.
-2. Required entry: **`mygrenton/data.json`**; missing → `invalidData`.
+2. Required entry: **`mygrenton/data.json`**, exactly one, a regular file; the entry path is matched in full and byte for byte (no case folding, no `./` or `\` normalization, no interpreting `..`). Missing, repeated or a directory → `invalidData`.
 3. Read as UTF-8, parse the JSON → `MobileInterface` (Model, §3); JSON/schema error → `invalidData`.
-4. **Resource limits:** the size of the response body and the size of `data.json` after decompression are bounded (recommended: 10 MB each) — exceeding them → `invalidData` (protection against a zip bomb/garbage response); the entry path is matched exactly, without interpreting `..`.
+4. **Resource limits: 10 MiB (10 485 760 bytes)** for the response body and for `data.json` after decompression — more → `invalidData`. Both are **counted on the bytes actually received and actually inflated**, and reading stops at the limit; the size an archive header declares is never trusted. Reason: a header can lie, and a check of the declared size alone let a zip bomb through.
+5. **Integrity:** an entry whose inflated size differs from the size its headers declare, or whose CRC-32 differs from the declared one → `invalidData`.
+
+The same counting (§4.3 items 4–5) applies to the entries of a project file (§4.5.1).
 
 ### 4.4 Identity and reconfiguration
 
@@ -246,9 +252,9 @@ All import errors are `ProvisioningError` (§8). Order of checking when there ar
 
 1. The `.omp` file is a ZIP archive; a format error, a read or decompression error of any used entry, two entries with the same name → `invalidData`.
 2. Used entries (name matched in full): **`properties.xml`**, **`system.xml`** and every entry named exactly `nodes/{n}/data.json`, where `{n}` is a non-empty string of ASCII digits. Missing `properties.xml` or `system.xml` → `invalidData`. The remaining entries (scripts, diagnostics) are ignored — they are not read.
-3. **Resource limits:** the file size, the size of each used entry after decompression and the total size of the used entries after decompression — each at most 64 MiB (recommended); the number of archive entries at most 10,000. Exceeding them → `invalidData`. The limit is higher than in §4.3 because the `system.xml` of a large installation is several megabytes.
-4. **XML without DTD.** A document with a document type declaration (`<!DOCTYPE …>`) in any encoding → `invalidData`; the encoding is determined by the XML parser (the `encoding` declaration, BOM), not by searching bytes. Without a DTD there are no entities, so there is no XXE and no "billion laughs". XML syntax error → `invalidData`.
-5. **Strict JSON.** The entry `nodes/{n}/data.json` is read as UTF-8; invalid UTF-8, invalid JSON, values outside JSON (`NaN`, `Infinity`), an integer outside the signed 64-bit range, a number that is not finite as a double (`1e400`), or a repeated key in an object → `invalidData`, even when the entry turns out not to be an interface. **Nesting** of arrays and objects deeper than the port's limit → `invalidData`; the limit is at least 32 and at most 1024 levels (real nodes have about ten), and the parser must not depend on a stack growing with the input depth beyond this limit: an entry with ten thousand levels ends in `invalidData`, not in a process crash.
+3. **Resource limits:** the file size, the size of each used entry after decompression and the total size of the used entries after decompression — each at most 64 MiB (recommended); the number of archive entries at most 10,000. Exceeding them → `invalidData`. Sizes are counted as in §4.3 items 4–5: on the bytes actually inflated, and an entry whose size or CRC-32 differs from its headers → `invalidData`. The limit is higher than in §4.3 because the `system.xml` of a large installation is several megabytes.
+4. **UTF-8 XML without DTD.** `properties.xml` and `system.xml` are UTF-8, as Object Manager writes them; a UTF-8 BOM and an `encoding` declaration naming UTF-8 (in any letter case) are allowed. A UTF-16 BOM, a declaration naming any other encoding, or invalid UTF-8 → `invalidData`, also when the parser could read it. A document with a document type declaration (`<!DOCTYPE …>`) → `invalidData`, as reported by the XML parser, not found by searching bytes. Without a DTD there are no entities, so there is no XXE and no "billion laughs". XML syntax error → `invalidData`.
+5. **Strict JSON.** The entry `nodes/{n}/data.json` is read as UTF-8; invalid UTF-8, invalid JSON, values outside JSON (`NaN`, `Infinity`), an integer outside the signed 64-bit range, a number that is not finite as a double (`1e400`), a `\u` escape of an unpaired surrogate (`"\ud800"`; a pair such as `"\ud83c\udf21"` is one character), or a repeated key in an object → `invalidData`, even when the entry turns out not to be an interface. **Nesting** of arrays and objects deeper than the port's limit → `invalidData`; the limit is at least 32 and at most 1024 levels (real nodes have about ten), and the parser must not depend on a stack growing with the input depth beyond this limit: an entry with ten thousand levels ends in `invalidData`, not in a process crash.
 6. **XML references** (OM serialization). An element with the attribute `reference="{r}"` denotes the element with the attribute `id="{r}"`. Every element read in §4.5.4–§4.5.5 — `TreeObject`, `specificObject`, `children` and text fields — that has `reference` is replaced by its target; a target with its own `reference` is resolved further. A missing target, a reference cycle or two elements with the same `id` → `invalidData`.
 7. **The text of an XML field** is the element's content with leading and trailing whitespace trimmed; an empty element or one containing only whitespace is treated as a missing field. **A hexadecimal number** is 1–8 digits `0-9a-fA-F`, without sign, prefix or separators.
 
@@ -522,7 +528,7 @@ One instance per CLU. Session state:
    - not in `pending` and the frame is a `clientReport` (msg_id `00000000` + payload prefix) → report path (§5.4.3);
    - otherwise → debug log, discard.
 3. **Response timeout: 5 s** — remove from `pending`, return a `TimeoutError`. A response that arrives later no longer has a `pending` and is discarded like any unexpected frame. The deadline counts from handing the datagram to the transport and bounds **the whole attempt**, also when the transport never completes the send (a socket that has lost the network): the request ends in a timeout regardless of the send's state, and closing or replacing the socket does not wait for hung sends longer than one response timeout. **Δ** The myGrenton app waits 5 s for a ping, but 15 s for an action and a read; the CLU responds to actions within tens of milliseconds, so Core stays with 5 s for all requests, and the port may expose a separate action timeout.
-4. Socket close/failure: all `pending` end with a `ConnectionClosed` error. A failure of the main socket outside `stop()` moves the session to `degraded` without a main socket; the next ping opens a new one (§5.4.5).
+4. Socket close/failure: all `pending` end with a `ConnectionClosed` error. **A send the transport rejects** (an error returned at once, e.g. the local address is gone after a network change) is a failure of that socket, not of the one request: the socket is closed, every `pending` on it ends with `ConnectionClosed`, the request whose send was rejected included. Reason: such a socket rejects every later send too, and since nothing goes out, no ping ever times out and the three-ping rule (§5.4.5) would never replace it. A failure of the main socket outside `stop()` moves the session to `degraded` without a main socket; the next ping opens a new one (§5.4.5).
 
 #### 5.4.2 Chunking and registration
 
@@ -581,12 +587,14 @@ idle ──start()──► starting ──► ready ◄──► degraded ─�
 Rules:
 
 - A session in the `stopped` state **accepts no datagram**: whatever arrives during cleanup or after it (e.g. a report from a subscription whose `clientDestroy` has not yet arrived) changes neither the state, nor the store, nor the diagnostic snapshot; the old socket is closed without reading the rest.
+- **After `stop()` the session holds no socket, timer, loop or background task.** A session the application stops using without calling `stop()` must not keep them alive either: where the language lets the port observe that the session is no longer referenced, it then closes the socket and ends the loops (without `clientDestroy` — the subscriptions expire on the CLU); where it does not, the port documents `stop()` (or its close operation) as the mandatory end of every session. Reason: a leaked session keeps a socket open and keeps pinging the CLU for the life of the process.
 - `start()` and `stop()` are **idempotent**; after `stop()` it is permitted to call `start()` again on the same instance (a requirement of the background/foreground cycle on mobile).
 - `stop()` first ends the pending requests with a `ConnectionClosed` error, then sends `clientDestroy(0,0,i)` for every remembered chunk (§5.3.2, without waiting for a response), closes the main socket and forgets the chunks. After a renewed `start()` the chunk list is empty — the layer above establishes the subscriptions anew via `register(keys)`.
 - Multi-step operations (`start`, `register`, `stop`) are **mutually serialized** — they cannot interleave (e.g. two registrations mixing chunk numbers). A call during an operation in progress waits or is merged with the current one.
 - A `connect`/first-ping error is not fatal for the whole system — the other CLUs keep working; the session enters `degraded`, and the ping loop acts as a retry (the next successful ping → re-registration → `ready`). Values from this re-registration reach the layer above via the report path (§5.4.3), as from any chunk; a chunk that failed contributes `failed` at its positions. If in `degraded` **the main socket does not exist** (its creation failed or the socket failed, §5.4.1 item 4), every ping tick first retries opening the main socket, and only then sends the ping. A new main socket is a new address for the CLU: subscriptions established from the old socket expire by themselves, and the re-registration after a successful ping establishes them anew.
 - **A registration with a failed chunk leaves the session pending recovery**, also when the session remains `ready` (the CLU responded to pings but did not respond to one chunk): the CLU then has an incomplete list, so the nearest successful ping — explicit or from the loop — registers the whole list again as on recovery, with values via the report path, and only a registration without a failed chunk ends the retrying. A chunk that failed does not change the session state; `degraded` is decided by pings alone.
 - `execute` without an open main socket (`idle`, `stopped`, `degraded` without a socket) ends with the error `SessionError.notConnected` and sends nothing. An action does not open the socket by itself; `start()` or a ping does.
+- **Concurrent pings share one attempt.** A `ping()` called while a ping of the session is on the wire (from the loop, another caller or `start()`) sends nothing and returns the result of that ping when it ends; it is not a failure of its own.
 - `ping()` and `register(keys)` in the `idle` or `stopped` state send nothing and do not change the session: `ping()` returns failure, `register` returns all `failed` and **does not remember the keys** nor start the loops. Only `start()` opens the session; a `register` call during `start()` waits for its completion (serialization) and then works normally.
 - **Three consecutive unanswered pings** close the main socket: pending requests end with `ConnectionClosed`, the session is `degraded` without a socket, and the nearest ping opens a new one (rule above) and a successful ping triggers re-registration. The counter belongs to the main socket: it counts **attempts on the wire** (every sent `checkAlive()`, from the loop, explicit or the initial one from `start()`, counted once regardless of the number of callers waiting on it) that ended in a timeout since that socket was opened or since the last successful ping; a successful ping resets it, and a new socket (after replacement, after a failure, after `start()`) starts from zero, so it gets its own three attempts. Reason: a transport that has lost the network (e.g. Wi-Fi) may hold the socket in a state in which sends never complete; a new socket is a new port and clean subscriptions.
 - A registration interrupted by `stop()` ends like a chunk that failed: `failed` at the positions of the unfinished chunks (§5.4.2 item 4). A chunk whose request has already gone out is deregistered like any other.
@@ -666,6 +674,7 @@ Technology-neutral (actor / serial queue / mutex — the port's choice):
 mapRange((a,b) → (c,d), v) = c + (v−a)/(b−a) · (d−c);   when b−a ≤ 0 → c
 ```
 
+- **Reads in a canonical range are clamped to it** (brightness and saturation to [0,1], hue to [0,360], cover position and tilt to [0,100]): a CLU reporting outside the configured range does not break the range the entity promises (**Δ** the reference implementation passes such values on).
 - **Validation of intent inputs:** `mapRange` does not clamp — every intent that accepts a numeric value **first clamps it to the canonical range** (brightness/saturation to [0,1], hue to [0,360], position/tilt to [0,100], setValue to [min,max]); rounding of halves: half-to-even (consistent with the reference implementation's `round`).
 
 ### 6.2 Common coercions
@@ -673,6 +682,7 @@ mapRange((a,b) → (c,d), v) = c + (v−a)/(b−a) · (d−c);   when b−a ≤ 
 - **`boolFromOnOff(v)`** (switches): `true` ⇔ `v` is the string `"ON"`, the bool `true` **or a number equal to 1** (`int` 1, `double` 1.0). Other values → `false` (including `"1"`, `2`, `"on"`); `null` → unknown state. Reference implementation: `value == "ON" or value == True` — in Python `1 == True` and `1.0 == True` are true. Relays (`DOU…`, feature 0) report their state as the number 0/1, so this branch decides the state of most switches.
 - **`truthy(v)`** (binary sensors, LED on/off): standard truthiness (`0`/`0.0`/`""`/`false`/`null` → false); `null` → unknown state (before coercion).
 - Numeric reads: `int`/`double` directly; a string is not re-parsed as a number (casting took place on receipt).
+- **Integer reads** (cover position and tilt, motion and state codes, the thermostat mode, schedule counts): an `int` directly; a `double` truncated toward zero (Python's `int()`, as the reference implementation reads them); a `double` that is not finite or whose truncation lies outside the signed 64-bit range → **unknown**, never a crash. Other types → unknown. Reason: an integer wider than 64 bits arrives as a `double` (§3.1 item 4), and a conversion that traps takes the whole application down.
 
 ### 6.3 Device catalog
 
@@ -735,17 +745,17 @@ Seven entities with fixed channels — the channel determines the **canonical ki
 - Subscribed states: `state`, `position`, conditionally `lamelPosition`.
 - **Slats (tilt) are present ⇔ the field `lamelMoveTimeout` occurs in the object** (the reference implementation's heuristic for "the shutter has slats"). `stop` is present ⇔ `stopAction` occurs.
 - Normalized state:
-  - `position ∈ [0,100]` — the raw `position` value (0 = closed, 100 = open);
-  - `motion`: from `state` — `0 → idle`, `1 → opening`, `2 → closing`;
-  - `isClosed = (position == 0)`;
-  - `tilt ∈ [0,100] = 100 − mapRange((0,90)→(0,100), lamelPosition)` — the device reports 0–90 on a scale inverse to the canonical one.
-- Intents: `open()` → setPosition("100"); `close()` → setPosition("0"); `setPosition(p)` → `setPositionAction` with an int 0–100; `stop()` → `stopAction` (if present); `setTilt(t∈[0,100])` → `setLamelPositionAction` with `int(90 − mapRange((0,100)→(0,90), t))`; `openTilt()` = setTilt(100) ⇒ device value 0; `closeTilt()` = setTilt(0) ⇒ 90.
+  - `position ∈ [0,100]` — an integer: the integer read (§6.2) of `position`, clamped (0 = closed, 100 = open);
+  - `motion`: from the integer read of `state` — `0 → idle`, `1 → opening`, `2 → closing`, other or unknown → `unknown`;
+  - `isClosed = (position == 0)`; unknown while `position` is unknown;
+  - `tilt ∈ [0,100]` — an integer: `int(100 − mapRange((0,90)→(0,100), L))` clamped, where `L` is the integer read of `lamelPosition` — the device reports 0–90 on a scale inverse to the canonical one; the read is truncated **before** the mapping and the result after it, as the reference implementation does; unknown without slats.
+- Intents: `open()` → setPosition("100"); `close()` → setPosition("0"); `setPosition(p)` (an integer) → `setPositionAction` with `p` clamped to 0–100, as a decimal integer; `stop()` → `stopAction` (if present); `setTilt(t)` (an integer, clamped to 0–100) → `setLamelPositionAction` with `int(90 − mapRange((0,100)→(0,90), t))`; without slats → a no-op; `openTilt()` = setTilt(100) ⇒ device value 0; `closeTilt()` = setTilt(0) ⇒ 90.
 - The remaining fields of the V3 object (moveUp/Down, hold, calibration…) — out of scope for v1; the DTO preserves them.
 
 #### 6.3.9 `StateSensor` + `Trigger` — from `ROLLER_SHUTTER` (legacy)
 
 - **Completeness requirement:** the **first** component has ≥1 action; otherwise a device without entities (**Δ** the reference implementation indexes `components[0]` without checking — an empty component crashes the mapping).
-- Entity `_sensor`: an enumerated state from the first component: `0→stopped, 1→opening, 2→closing, 3→locked, other→unknown`.
+- Entity `_sensor`: an enumerated state from the integer read (§6.2) of the first component: `0→stopped, 1→opening, 2→closing, 3→locked, other or unknown→unknown`.
 - Entity `_button` (`Trigger`): executes the **first** action of the first component.
 - `Trigger` is the general canonical "button" entity: a single intent `press()` that executes the assigned `ActionRef`.
 
@@ -768,11 +778,11 @@ The widget of the Grenton Thermostat virtual object. Feature semantics according
 - State:
   - `currentTemperature`, `targetTemperature` — numbers (`targetTemperature` is the resulting `TargetTemp`, dependent on the mode);
   - `minTemperature`, `maxTemperature` — limits (optional);
-  - `mode` from the Mode feature: `0 → manual`, `1 → holiday`, `2 → schedule`, other → unknown;
+  - `mode` from the integer read (§6.2) of the Mode feature: `0 → manual`, `1 → holiday`, `2 → schedule`, other → unknown;
   - `isOn = truthy(state)` — the State feature: 0 = thermostat stopped (does not control the output), 1 = running;
   - `output` — `controlOutValue` raw (0/1 for a digital output, a level for an analog one).
 - Intents (all actions have `$value$`, §3.3):
-  - `setTargetTemperature(t)` → `setTargetTemperatureAction` (PointValue, manual setpoint); `t` clamped to `[min, max]` when both limits are known; `value = format(round(t, 1))` (§10 item 3);
+  - `setTargetTemperature(t)` → `setTargetTemperatureAction` (PointValue, manual setpoint); `t` clamped to `[min, max]` when both limits are known and `min ≤ max` (otherwise sent unclamped); `value = format(round(t, 1))` (§10 item 3);
   - `setMode(m)` → `setModeAction` with `"0"`/`"1"`/`"2"`;
   - `turnOn()` / `turnOff()` → `setStateAction` with `"1"` / `"0"`;
   - a missing control → the intent is a no-op (like a shutter's `stop()` without `stopAction`).
@@ -791,7 +801,7 @@ The widget of the Grenton `EventScheduler` virtual object (CLU Z-Wave firmware 5
 - State:
   - `isActive = truthy(state)` — the State feature: 1 = the scheduler fires its rules, 0 = stopped;
   - `rules` — the parsed rule list (or `nil`);
-  - `ruleCount`, `freeRuleSlots` (`ruleSpace` — the object's `RuleAvailableCount`) — ints when present;
+  - `ruleCount`, `freeRuleSlots` (`ruleSpace` — the object's `RuleAvailableCount`) — integer reads (§6.2) when present;
   - `nextRule`, `currentRule` — a rule or `nil`.
 - Intents (actions with `$value$` take a value, §3.3; a missing control → the intent is a no-op):
   - `setActive(true)` → `startAction`, `setActive(false)` → `stopAction` (no value);
@@ -841,12 +851,12 @@ Interfaces that **the platform must provide** (injected; canonical names):
 
 ```
 UdpSocketFactory.open(remoteHost, remotePort) -> UdpSocket   // bind on an ephemeral port
-UdpSocket.send(datagram: bytes)                              // to the fixed peer
+UdpSocket.send(datagram: bytes)                              // to the fixed peer; may fail at once (§5.4.1 item 4)
 UdpSocket.incoming: stream/callback (bytes)                  // incoming datagrams
 UdpSocket.close()
 ```
 
-Requirements: the socket has **its own local ephemeral port** (this is the port the CLU sends notifications to, §5.3.2); reception of unicasts on that port; no multicast/broadcast requirement. Filtering the source down to the CLU address is permitted (**Δ** — the reference implementation does not do it), but the port implementation **must have a tested mode without filtering** (reception from any sender) as a fully supported fallback: a CLU with several network interfaces may send reports from a source address other than the one the registration was sent to.
+Requirements: the socket has **its own local ephemeral port** (this is the port the CLU sends notifications to, §5.3.2); reception of unicasts on that port; no multicast/broadcast requirement. Filtering the source down to the CLU address is permitted (**Δ** — the reference implementation does not do it), but the port implementation **must have a tested mode without filtering** (reception from any sender) as a fully supported fallback: a CLU with several network interfaces may send reports from a source address other than the one the registration was sent to. In that mode **one unconnected socket** both sends and receives: it is bound to the ephemeral port, sends to the CLU's address, and accepts datagrams from any sender on that port. Two sockets sharing one port (a listener plus a connected socket, `SO_REUSEPORT`) are not a substitute: the kernel delivers each datagram from a foreign source to one of them, and the connected one discards it.
 
 ### 7.2 `AesCbcCipher`
 
@@ -964,7 +974,9 @@ The session integration tests run against it: chunked registration (a key list a
 3. Interface fixture → identical set of devices/entities (9.3) ✔ — suite: `mapping.*`
 4. Payload construction: register (var/attr keys), the 4 action variants — 1:1 string comparison ✔ — suite: `wire.*`, `payload.*`
 5. Fake CLU scenarios (9.4) ✔
-6. Devices normalizations: dimmer round-trip, LED HSB round-trip, inverted cover tilt, reverseState XOR ✔
+6. Devices normalizations and intents: dimmer round-trip, LED HSB round-trip, inverted cover tilt, reverseState XOR, integer reads, the action every intent sends ✔ — suite: `entity.*`
+7. Provisioning: the Object Manager response over real HTTP (status, redirects, the PIN in errors) and the archive limits ✔ — suite: `provisioning.fetch`, `provisioning.archive`
+8. Not in the suite — the port tests them itself: the transports of §7.1 (in the unfiltered mode a datagram from a foreign source port reaches the session; in the filtered mode it does not), the release of resources after `stop()` and for an abandoned session (§5.4.5), the update signals of §6.5, and the system combining several CLU sessions.
 
 ---
 

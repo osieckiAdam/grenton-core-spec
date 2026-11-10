@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "provisioning.archive.path-variants",
+  "specRefs": [
+    "provisioning.archive"
+  ],
+  "description": "Only near-misses of the path: ./, upper case, a backslash, a leading slash, a trailing space. None matches.",
+  "provenance": "spec §4.3; tools/oracles/archive.py",
+  "operation": "provisioning.archive",
+  "input": {
+    "fixture": "fixtures/archives/path-variants.zip"
+  },
+  "expect": {
+    "outcome": "error",
+    "code": "provisioning.invalidData"
+  }
+}

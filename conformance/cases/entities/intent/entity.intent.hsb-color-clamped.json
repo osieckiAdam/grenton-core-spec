@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "id": "entity.intent.hsb-color-clamped",
+  "specRefs": [
+    "devices.intents"
+  ],
+  "description": "setColor clamps hue to 0–360 and saturation to 0–1.",
+  "provenance": "spec §6.1–§6.3; tools/oracles/entities.py",
+  "operation": "entity.intent",
+  "input": {
+    "fixture": "fixtures/interfaces/all-widget-types.json",
+    "entityId": "w-led_0",
+    "values": [],
+    "intent": "setColor",
+    "args": {
+      "hue": 400,
+      "saturation": -0.5
+    }
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "actions": [
+        {
+          "callType": "METHOD",
+          "cluId": "CLU_501234567",
+          "objectName": "LED4444",
+          "event": "CLICK",
+          "value": "360.0",
+          "index": "4"
+        },
+        {
+          "callType": "METHOD",
+          "cluId": "CLU_501234567",
+          "objectName": "LED4444",
+          "event": "CLICK",
+          "value": "0.0",
+          "index": "6"
+        }
+      ]
+    }
+  }
+}

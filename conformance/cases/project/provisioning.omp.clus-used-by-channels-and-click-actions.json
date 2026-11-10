@@ -1,0 +1,569 @@
+{
+  "schemaVersion": 1,
+  "id": "provisioning.omp.clus-used-by-channels-and-click-actions",
+  "specRefs": [
+    "provisioning.omp"
+  ],
+  "description": "A CLU used only by the channels of a MULTISENSOR and one used only by the clickAction of a CONTACT_SENSOR_DOUBLE side are listed; a CLU nothing refers to is not. The multisensor label holds a surrogate pair escape, which is one character.",
+  "provenance": "spec §4.5 text; expectations re-derived by tools/oracles/omp.py and tools/oracles/mapping.py",
+  "operation": "provisioning.omp",
+  "input": {
+    "fixture": "fixtures/projects/used-clus.omp"
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "interfaces": [
+        {
+          "id": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+          "name": "Single"
+        }
+      ],
+      "interface": {
+        "id": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+        "version": 0,
+        "name": "Single",
+        "icon": "home_2",
+        "theme": "RED",
+        "encryption": {
+          "key": "AAECAwQFBgcICQoLDA0ODw==",
+          "iv": "EBESExQVFhcYGRobHB0eHw=="
+        },
+        "clus": [
+          {
+            "id": "CLU_A",
+            "name": "CLU_A_FIRST_FLOOR",
+            "ip": "10.0.0.1",
+            "serialNumber": "200000001",
+            "port": 1234,
+            "connectionType": "LOCAL_ONLY"
+          },
+          {
+            "id": "CLU_B",
+            "name": "CLU_B_AIR",
+            "ip": "10.0.0.2",
+            "serialNumber": "500000002",
+            "port": 1234,
+            "connectionType": "LOCAL_ONLY"
+          },
+          {
+            "id": "CLU_C",
+            "name": "CLU_C_GATE",
+            "ip": "10.0.0.3",
+            "serialNumber": "480000003",
+            "port": 1234,
+            "connectionType": "LOCAL_ONLY"
+          }
+        ],
+        "pushNotifications": [],
+        "pages": [
+          {
+            "name": "Only page",
+            "icon": "star",
+            "isFullscreenWidget": false,
+            "widgets": [
+              {
+                "id": "va000001",
+                "type": "VALUE_V2"
+              },
+              {
+                "id": "ms000001",
+                "type": "MULTISENSOR"
+              },
+              {
+                "id": "cs000001",
+                "type": "CONTACT_SENSOR_DOUBLE"
+              }
+            ]
+          }
+        ]
+      },
+      "mapping": {
+        "devices": [
+          {
+            "id": "va000001",
+            "widgetType": "VALUE_V2",
+            "kind": "sensor",
+            "name": "Counter",
+            "icon": "info",
+            "page": {
+              "index": 0,
+              "name": "Only page",
+              "icon": "star"
+            },
+            "section": null,
+            "entities": [
+              {
+                "kind": "sensor",
+                "id": "va000001_0",
+                "name": "Counter",
+                "icon": "info",
+                "state": {
+                  "callType": "VARIABLE",
+                  "cluId": "CLU_A",
+                  "index": "X_COUNT"
+                },
+                "sensorKind": "generic",
+                "unit": null,
+                "grentonUnit": "UNKNOWN",
+                "valueType": "INTEGER",
+                "precision": 0
+              }
+            ]
+          },
+          {
+            "id": "ms000001",
+            "widgetType": "MULTISENSOR",
+            "kind": "multisensor",
+            "name": "Air 🌡",
+            "icon": "multisensor",
+            "page": {
+              "index": 0,
+              "name": "Only page",
+              "icon": "star"
+            },
+            "section": null,
+            "entities": [
+              {
+                "kind": "sensor",
+                "id": "ms000001_air_co2",
+                "name": "Air 🌡",
+                "icon": "multisensor",
+                "state": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_B",
+                  "objectName": "MUL2001",
+                  "index": "1"
+                },
+                "sensorKind": "co2",
+                "unit": "ppm",
+                "grentonUnit": null,
+                "valueType": null,
+                "precision": null
+              },
+              {
+                "kind": "sensor",
+                "id": "ms000001_sound",
+                "name": "Air 🌡",
+                "icon": "multisensor",
+                "state": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_B",
+                  "objectName": "MUL2001",
+                  "index": "2"
+                },
+                "sensorKind": "soundPressure",
+                "unit": "dB",
+                "grentonUnit": null,
+                "valueType": null,
+                "precision": null
+              },
+              {
+                "kind": "sensor",
+                "id": "ms000001_air_voc",
+                "name": "Air 🌡",
+                "icon": "multisensor",
+                "state": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_B",
+                  "objectName": "MUL2001",
+                  "index": "3"
+                },
+                "sensorKind": "voc",
+                "unit": "ppb",
+                "grentonUnit": null,
+                "valueType": null,
+                "precision": null
+              },
+              {
+                "kind": "sensor",
+                "id": "ms000001_light",
+                "name": "Air 🌡",
+                "icon": "multisensor",
+                "state": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_B",
+                  "objectName": "MUL2001",
+                  "index": "4"
+                },
+                "sensorKind": "illuminance",
+                "unit": "lx",
+                "grentonUnit": null,
+                "valueType": null,
+                "precision": null
+              },
+              {
+                "kind": "sensor",
+                "id": "ms000001_pressure",
+                "name": "Air 🌡",
+                "icon": "multisensor",
+                "state": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_B",
+                  "objectName": "MUL2001",
+                  "index": "5"
+                },
+                "sensorKind": "pressure",
+                "unit": "hPa",
+                "grentonUnit": null,
+                "valueType": null,
+                "precision": null
+              },
+              {
+                "kind": "sensor",
+                "id": "ms000001_humidity",
+                "name": "Air 🌡",
+                "icon": "multisensor",
+                "state": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_B",
+                  "objectName": "MUL2001",
+                  "index": "6"
+                },
+                "sensorKind": "humidity",
+                "unit": "%",
+                "grentonUnit": null,
+                "valueType": null,
+                "precision": null
+              },
+              {
+                "kind": "sensor",
+                "id": "ms000001_temperature",
+                "name": "Air 🌡",
+                "icon": "multisensor",
+                "state": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_B",
+                  "objectName": "MUL2001",
+                  "index": "7"
+                },
+                "sensorKind": "temperature",
+                "unit": "°C",
+                "grentonUnit": null,
+                "valueType": null,
+                "precision": null
+              }
+            ]
+          },
+          {
+            "id": "cs000001",
+            "widgetType": "CONTACT_SENSOR_DOUBLE",
+            "kind": "contactSensor",
+            "name": "Left door / Right door",
+            "icon": null,
+            "page": {
+              "index": 0,
+              "name": "Only page",
+              "icon": "star"
+            },
+            "section": null,
+            "entities": [
+              {
+                "kind": "contactSensor",
+                "id": "cs000001_binary_sensor_left",
+                "name": "Left door",
+                "icon": "lock",
+                "state": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_A",
+                  "objectName": "DIN2011",
+                  "index": "1"
+                },
+                "reversed": false,
+                "onIndication": "On",
+                "offIndication": "Off"
+              },
+              {
+                "kind": "trigger",
+                "id": "cs000001_button_left",
+                "name": "Left door",
+                "icon": "lock",
+                "action": {
+                  "callType": "METHOD",
+                  "cluId": "CLU_C",
+                  "objectName": "DOU3001",
+                  "event": "CLICK",
+                  "value": "0",
+                  "index": "0"
+                }
+              },
+              {
+                "kind": "contactSensor",
+                "id": "cs000001_binary_sensor_right",
+                "name": "Right door",
+                "icon": "lock",
+                "state": {
+                  "callType": "ATTRIBUTE",
+                  "cluId": "CLU_A",
+                  "objectName": "DIN2012",
+                  "index": "1"
+                },
+                "reversed": false,
+                "onIndication": "On",
+                "offIndication": "Off"
+              }
+            ]
+          }
+        ],
+        "physicalObjects": [
+          {
+            "key": {
+              "cluId": "CLU_A",
+              "kind": "variable",
+              "name": "X_COUNT",
+              "index": null
+            },
+            "widgets": [
+              {
+                "deviceId": "va000001",
+                "widgetType": "VALUE_V2",
+                "name": "Counter",
+                "page": {
+                  "index": 0,
+                  "name": "Only page",
+                  "icon": "star"
+                },
+                "entityIds": [
+                  "va000001_0"
+                ]
+              }
+            ]
+          },
+          {
+            "key": {
+              "cluId": "CLU_B",
+              "kind": "object",
+              "name": "MUL2001",
+              "index": "1"
+            },
+            "widgets": [
+              {
+                "deviceId": "ms000001",
+                "widgetType": "MULTISENSOR",
+                "name": "Air 🌡",
+                "page": {
+                  "index": 0,
+                  "name": "Only page",
+                  "icon": "star"
+                },
+                "entityIds": [
+                  "ms000001_air_co2"
+                ]
+              }
+            ]
+          },
+          {
+            "key": {
+              "cluId": "CLU_B",
+              "kind": "object",
+              "name": "MUL2001",
+              "index": "2"
+            },
+            "widgets": [
+              {
+                "deviceId": "ms000001",
+                "widgetType": "MULTISENSOR",
+                "name": "Air 🌡",
+                "page": {
+                  "index": 0,
+                  "name": "Only page",
+                  "icon": "star"
+                },
+                "entityIds": [
+                  "ms000001_sound"
+                ]
+              }
+            ]
+          },
+          {
+            "key": {
+              "cluId": "CLU_B",
+              "kind": "object",
+              "name": "MUL2001",
+              "index": "3"
+            },
+            "widgets": [
+              {
+                "deviceId": "ms000001",
+                "widgetType": "MULTISENSOR",
+                "name": "Air 🌡",
+                "page": {
+                  "index": 0,
+                  "name": "Only page",
+                  "icon": "star"
+                },
+                "entityIds": [
+                  "ms000001_air_voc"
+                ]
+              }
+            ]
+          },
+          {
+            "key": {
+              "cluId": "CLU_B",
+              "kind": "object",
+              "name": "MUL2001",
+              "index": "4"
+            },
+            "widgets": [
+              {
+                "deviceId": "ms000001",
+                "widgetType": "MULTISENSOR",
+                "name": "Air 🌡",
+                "page": {
+                  "index": 0,
+                  "name": "Only page",
+                  "icon": "star"
+                },
+                "entityIds": [
+                  "ms000001_light"
+                ]
+              }
+            ]
+          },
+          {
+            "key": {
+              "cluId": "CLU_B",
+              "kind": "object",
+              "name": "MUL2001",
+              "index": "5"
+            },
+            "widgets": [
+              {
+                "deviceId": "ms000001",
+                "widgetType": "MULTISENSOR",
+                "name": "Air 🌡",
+                "page": {
+                  "index": 0,
+                  "name": "Only page",
+                  "icon": "star"
+                },
+                "entityIds": [
+                  "ms000001_pressure"
+                ]
+              }
+            ]
+          },
+          {
+            "key": {
+              "cluId": "CLU_B",
+              "kind": "object",
+              "name": "MUL2001",
+              "index": "6"
+            },
+            "widgets": [
+              {
+                "deviceId": "ms000001",
+                "widgetType": "MULTISENSOR",
+                "name": "Air 🌡",
+                "page": {
+                  "index": 0,
+                  "name": "Only page",
+                  "icon": "star"
+                },
+                "entityIds": [
+                  "ms000001_humidity"
+                ]
+              }
+            ]
+          },
+          {
+            "key": {
+              "cluId": "CLU_B",
+              "kind": "object",
+              "name": "MUL2001",
+              "index": "7"
+            },
+            "widgets": [
+              {
+                "deviceId": "ms000001",
+                "widgetType": "MULTISENSOR",
+                "name": "Air 🌡",
+                "page": {
+                  "index": 0,
+                  "name": "Only page",
+                  "icon": "star"
+                },
+                "entityIds": [
+                  "ms000001_temperature"
+                ]
+              }
+            ]
+          },
+          {
+            "key": {
+              "cluId": "CLU_A",
+              "kind": "object",
+              "name": "DIN2011",
+              "index": "1"
+            },
+            "widgets": [
+              {
+                "deviceId": "cs000001",
+                "widgetType": "CONTACT_SENSOR_DOUBLE",
+                "name": "Left door / Right door",
+                "page": {
+                  "index": 0,
+                  "name": "Only page",
+                  "icon": "star"
+                },
+                "entityIds": [
+                  "cs000001_binary_sensor_left"
+                ]
+              }
+            ]
+          },
+          {
+            "key": {
+              "cluId": "CLU_C",
+              "kind": "object",
+              "name": "DOU3001",
+              "index": "0"
+            },
+            "widgets": [
+              {
+                "deviceId": "cs000001",
+                "widgetType": "CONTACT_SENSOR_DOUBLE",
+                "name": "Left door / Right door",
+                "page": {
+                  "index": 0,
+                  "name": "Only page",
+                  "icon": "star"
+                },
+                "entityIds": [
+                  "cs000001_button_left"
+                ]
+              }
+            ]
+          },
+          {
+            "key": {
+              "cluId": "CLU_A",
+              "kind": "object",
+              "name": "DIN2012",
+              "index": "1"
+            },
+            "widgets": [
+              {
+                "deviceId": "cs000001",
+                "widgetType": "CONTACT_SENSOR_DOUBLE",
+                "name": "Left door / Right door",
+                "page": {
+                  "index": 0,
+                  "name": "Only page",
+                  "icon": "star"
+                },
+                "entityIds": [
+                  "cs000001_binary_sensor_right"
+                ]
+              }
+            ]
+          }
+        ],
+        "skippedWidgets": [
+          []
+        ]
+      }
+    }
+  }
+}

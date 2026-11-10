@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "id": "entity.read.schedule-not-text",
+  "specRefs": [
+    "devices.entity-state",
+    "devices.schedule"
+  ],
+  "description": "A rule list that is not text is no rules known.",
+  "provenance": "spec §6.1–§6.3; tools/oracles/entities.py",
+  "operation": "entity.read",
+  "input": {
+    "fixture": "fixtures/interfaces/scheduler-tv-remote.json",
+    "entityId": "w-sched-full_0",
+    "values": [
+      {
+        "key": {
+          "callType": "ATTRIBUTE",
+          "cluId": "CLU_501234567",
+          "objectName": "EVE1",
+          "index": "0"
+        },
+        "value": {
+          "type": "int",
+          "value": "5"
+        }
+      }
+    ]
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "state": {
+        "isActive": null,
+        "rules": null,
+        "ruleCount": null,
+        "freeRuleSlots": null,
+        "nextRule": null,
+        "currentRule": null
+      }
+    }
+  }
+}

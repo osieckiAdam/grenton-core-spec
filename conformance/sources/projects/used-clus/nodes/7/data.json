@@ -1,0 +1,195 @@
+{
+  "id": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+  "label": "Single",
+  "icon": "home_2",
+  "theme": "red",
+  "blockCloud": true,
+  "cloudSharing": null,
+  "darkLogoPath": null,
+  "lightLogoPath": null,
+  "pushNotifications": null,
+  "pages": [
+    {
+      "id": 1016,
+      "label": "Only page",
+      "icon": "star",
+      "widgets": [
+        {
+          "id": 1017,
+          "type": "VALUE_V2",
+          "dtoId": "va000001",
+          "unit": "UNKNOWN",
+          "valueType": "INTEGER",
+          "precision": 0,
+          "icon": "info",
+          "label": "Counter",
+          "value": {
+            "cluId": "CLU_A",
+            "objectName": "X_COUNT",
+            "index": "X_COUNT",
+            "callType": "VARIABLE"
+          }
+        },
+        {
+          "id": 1020,
+          "type": "MULTISENSOR",
+          "dtoId": "ms000001",
+          "icon": "multisensor",
+          "label": "Air \ud83c\udf21",
+          "labelVisible": true,
+          "objectAirCo2": {
+            "minValue": {
+              "cluId": null,
+              "objectName": null,
+              "index": null,
+              "callType": "ATTRIBUTE"
+            },
+            "value": {
+              "cluId": "CLU_B",
+              "objectName": "MUL2001",
+              "index": "1",
+              "callType": "ATTRIBUTE"
+            }
+          },
+          "objectSound": {
+            "minValue": {
+              "cluId": null,
+              "objectName": null,
+              "index": null,
+              "callType": "ATTRIBUTE"
+            },
+            "value": {
+              "cluId": "CLU_B",
+              "objectName": "MUL2001",
+              "index": "2",
+              "callType": "ATTRIBUTE"
+            }
+          },
+          "objectAirVco": {
+            "minValue": {
+              "cluId": null,
+              "objectName": null,
+              "index": null,
+              "callType": "ATTRIBUTE"
+            },
+            "value": {
+              "cluId": "CLU_B",
+              "objectName": "MUL2001",
+              "index": "3",
+              "callType": "ATTRIBUTE"
+            }
+          },
+          "objectLight": {
+            "minValue": {
+              "cluId": null,
+              "objectName": null,
+              "index": null,
+              "callType": "ATTRIBUTE"
+            },
+            "value": {
+              "cluId": "CLU_B",
+              "objectName": "MUL2001",
+              "index": "4",
+              "callType": "ATTRIBUTE"
+            }
+          },
+          "objectPressure": {
+            "minValue": {
+              "cluId": null,
+              "objectName": null,
+              "index": null,
+              "callType": "ATTRIBUTE"
+            },
+            "value": {
+              "cluId": "CLU_B",
+              "objectName": "MUL2001",
+              "index": "5",
+              "callType": "ATTRIBUTE"
+            }
+          },
+          "objectHumidity": {
+            "minValue": {
+              "cluId": null,
+              "objectName": null,
+              "index": null,
+              "callType": "ATTRIBUTE"
+            },
+            "value": {
+              "cluId": "CLU_B",
+              "objectName": "MUL2001",
+              "index": "6",
+              "callType": "ATTRIBUTE"
+            }
+          },
+          "objectTemperature": {
+            "minValue": {
+              "cluId": null,
+              "objectName": null,
+              "index": null,
+              "callType": "ATTRIBUTE"
+            },
+            "value": {
+              "cluId": "CLU_B",
+              "objectName": "MUL2001",
+              "index": "7",
+              "callType": "ATTRIBUTE"
+            }
+          }
+        },
+        {
+          "id": 1021,
+          "type": "CONTACT_SENSOR_DOUBLE",
+          "dtoId": "cs000001",
+          "componentLeft": {
+            "icon": "lock",
+            "label": "Left door",
+            "onIndication": "On",
+            "offIndication": "Off",
+            "reverseState": false,
+            "object": {
+              "value": {
+                "cluId": "CLU_A",
+                "objectName": "DIN2011",
+                "index": "1",
+                "callType": "ATTRIBUTE"
+              },
+              "clickAction": {
+                "cluId": "CLU_C",
+                "valueFormattedForDto": "0",
+                "objectName": "DOU3001",
+                "index": "0",
+                "type": "CLICK",
+                "value": "0",
+                "callType": "METHOD"
+              }
+            }
+          },
+          "componentRight": {
+            "icon": "lock",
+            "label": "Right door",
+            "onIndication": "On",
+            "offIndication": "Off",
+            "reverseState": false,
+            "object": {
+              "value": {
+                "cluId": "CLU_A",
+                "objectName": "DIN2012",
+                "index": "1",
+                "callType": "ATTRIBUTE"
+              },
+              "clickAction": {
+                "cluId": null,
+                "valueFormattedForDto": "1",
+                "objectName": null,
+                "index": null,
+                "type": "CLICK",
+                "value": "1",
+                "callType": "ATTRIBUTE"
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

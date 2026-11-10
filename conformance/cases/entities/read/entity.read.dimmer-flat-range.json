@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "id": "entity.read.dimmer-flat-range",
+  "specRefs": [
+    "devices.entity-state"
+  ],
+  "description": "A range with max = min maps everything to the low end (§6.1).",
+  "provenance": "spec §6.1–§6.3; tools/oracles/entities.py",
+  "operation": "entity.read",
+  "input": {
+    "fixture": "fixtures/interfaces/entity-ranges.json",
+    "entityId": "d-flat_0",
+    "values": [
+      {
+        "key": {
+          "callType": "ATTRIBUTE",
+          "cluId": "CLU_501234567",
+          "objectName": "DIM5001",
+          "index": "0"
+        },
+        "value": {
+          "type": "int",
+          "value": "10"
+        }
+      }
+    ]
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "state": {
+        "isOn": true,
+        "brightness": {
+          "type": "double",
+          "bits": "0000000000000000",
+          "decimal": "0.0"
+        }
+      }
+    }
+  }
+}
