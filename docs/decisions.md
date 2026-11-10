@@ -180,6 +180,19 @@ lowercase msg_ids, and any positive subscription number.
 - A JSON nesting limit of 32–1024 for project nodes (0.11.2): a crafted
   project file with thousands of levels crashed a recursive parser in a
   debug build before a 512 limit was reached; real nodes nest ten deep.
+- The project XML is UTF-8 only, and an unpaired surrogate escape in node
+  JSON is invalid (0.15.0): Object Manager is the only writer of `.omp`
+  files and writes UTF-8; parsers read different sets of other encodings,
+  so the same file imported in one port and failed in another. Replacing a
+  lone surrogate with U+FFFD was rejected: it can sit in an object name or
+  a CLU id, where the import would succeed and the widget stay dead.
+- No element or value caps, no bound on `precision`, no fixtures for
+  forged ZIP headers (0.15.0): the Go port proposed them; files come from
+  Object Manager, so the byte limits are the guard and the rest stays a
+  port's own hygiene.
+- A rejected send fails the socket (0.15.0): after a network change every
+  send fails at once, nothing times out, and the three-ping rule alone
+  never replaces the socket.
 - The `.omp` is the second provisioning source (0.8.0, 0.10.0): the
   converter reproduces the downloaded interface field for field on a real
   project; widgets never sent to a phone get `omp-<editor id>`.

@@ -364,6 +364,7 @@ STEPS = {
     "expectNoReport": ({"expectNoReport"}, set()),
     "expectClosed": ({"expectClosed"}, set()),
     "fail": ({"fail"}, set()),
+    "failSend": ({"failSend"}, set()),
 }
 CALLS = {"start", "stop", "ping", "register", "fetch", "execute"}
 STATES = {"idle", "starting", "ready", "degraded", "stopped"}
@@ -508,7 +509,7 @@ def check_scenario(doc, errors):
                 errors.append(f"{at}: socket {body['socket']} is not bound yet")
             if verb == "respond" and body["msgId"].startswith("$") and body["msgId"] not in captures:
                 errors.append(f"{at}: {body['msgId']} is not captured yet")
-        elif verb in ("expectClosed", "fail") and step[verb] not in labels:
+        elif verb in ("expectClosed", "fail", "failSend") and step[verb] not in labels:
             errors.append(f"{at}: socket {step[verb]} is not bound yet")
         elif verb == "expectState" and step["expectState"] not in STATES:
             errors.append(f"{at}: unknown state {step['expectState']}")

@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 1,
+  "id": "session.scenario.a-rejected-send-ends-every-pending-request",
+  "specRefs": [
+    "session.lifecycle",
+    "session.correlation",
+    "session.actions"
+  ],
+  "description": "An action whose send is rejected ends with connectionClosed, and so does the ping already waiting on the same socket.",
+  "provenance": "spec §5.3–§5.4 text, conformance.md §4b",
+  "operation": "session.scenario",
+  "input": {
+    "clu": {
+      "id": "CLU_1",
+      "ip": "10.0.0.1",
+      "port": 1234
+    },
+    "responseTimeoutMs": 5000,
+    "pingIntervalMs": 3600000,
+    "registerIntervalMs": 3600000,
+    "steps": [
+      {
+        "call": "start",
+        "as": "start"
+      },
+      {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "checkAlive()"
+        }
+      },
+      {
+        "respond": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "1"
+        }
+      },
+      {
+        "await": "start",
+        "result": null
+      },
+      {
+        "expectState": "ready"
+      },
+      {
+        "call": "ping",
+        "as": "waiting"
+      },
+      {
+        "expectSent": {
+          "socket": "@main",
+          "msgId": "$ka",
+          "payload": "checkAlive()"
+        }
+      },
+      {
+        "failSend": "@main"
+      },
+      {
+        "call": "execute",
+        "action": {
+          "event": "ON",
+          "cluId": "CLU_1",
+          "objectName": "DOU1001",
+          "index": "0",
+          "value": "1",
+          "callType": "ATTRIBUTE"
+        },
+        "as": "act"
+      },
+      {
+        "await": "act",
+        "result": {
+          "error": "session.connectionClosed"
+        }
+      },
+      {
+        "await": "waiting",
+        "result": {
+          "ok": false
+        }
+      },
+      {
+        "expectClosed": "@main"
+      },
+      {
+        "expectState": "degraded"
+      }
+    ]
+  },
+  "expect": {
+    "outcome": "ok",
+    "value": {
+      "completed": true
+    }
+  }
+}

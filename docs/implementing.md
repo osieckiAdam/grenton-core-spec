@@ -2,9 +2,9 @@
 
 The spec states the rules. `decisions.md` keeps the measurements behind
 them. This file is for the person, or the agent, who writes the next port.
-It lists the places where the first port (`grenton-core-swift`) went wrong,
-or nearly did, even though the rule was already in the spec or was added
-because of the failure.
+It lists the places where the first ports (`grenton-core-swift`, then
+`grenton-core-go`) went wrong, or nearly did, even though the rule was
+already in the spec or was added because of the failure.
 
 Each item names the spec section, what happened, and how to test for it.
 Several of these are not covered by the conformance suite (see the last
@@ -103,6 +103,23 @@ section), so a port that passes the suite can still have them.
   30 s from the *start* of the previous registration, no renewal starts
   while the session is degraded, three unanswered pings replace the socket,
   and a failed chunk is recovered by the next answered ping in any state.
+- **A rejected send is a failed socket** (§5.4.1 item 4). After a network
+  change the local address is gone and every send fails at once. Swift
+  passed the error to the one request, so the socket was never replaced:
+  nothing went out, no ping ever timed out, and the session stayed degraded
+  for good. Treat the send error like a failure of the socket. *Test:* the
+  `failSend` scenarios.
+- **Concurrent pings share one attempt** (§5.4.5). Swift and Go both first
+  returned `false` at once to a second `ping()` while one was on the wire,
+  which an application reads as "the CLU does not answer". The second
+  caller waits for the ping in flight. *Test:*
+  `concurrent-pings-share-one-attempt`.
+- **Never close a socket while holding the session lock** (§7.1). Many
+  transports join their reader in `close()`; a reader delivering a datagram
+  waits for the session lock; the session holding that lock waits in
+  `close()`. Go hit this twice, once in the race between two openings of
+  the main socket. Collect sockets to close under the lock and close them
+  after releasing it, or make delivery never wait for the session.
 - **Every timer goes through the injected clock** (§7.4). One stray
   real-time sleep (a retry delay, a debounce) makes the session suite hang
   on a virtual clock that never moves, or flake when the clock is real.
@@ -171,9 +188,14 @@ section), so a port that passes the suite can still have them.
 - **The session barrier.** conformance.md §4b allows a 200 ms real-time
   quiet window for negative assertions, or a deterministic idle check. The
   Swift runner uses the window, which makes negative scenarios slow and only
-  probabilistic. Design the session so that the runner can tell it is idle
-  (an executor you control, a count of pending work), and the barrier
-  becomes exact.
+  probabilistic. Design the session so that the runner can tell it is idle,
+  and the barrier becomes exact. The Go port does it with an activity count
+  passed in by the runner: every goroutine of the session reports when it
+  parks (waiting for a reply, a timer, the gate) and whoever wakes it
+  reports it runnable again; the runner delivers datagrams and fires the
+  virtual timers synchronously, and "count is zero" is the barrier. The
+  whole session profile then runs in well under a second, also under a race
+  detector. The hook is a test seam, not part of the spec.
 - **Expected values never come from the port.** When a case fails, the port
   is wrong until shown otherwise. A wrong case is a spec change with an
   independent source, never an edit to the vendored copy or a quiet skip.

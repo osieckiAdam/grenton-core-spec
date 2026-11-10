@@ -269,7 +269,9 @@
         { "type": "object", "additionalProperties": false, "required": ["expectClosed"],
           "properties": { "expectClosed": { "$ref": "#/$defs/session.socket" } } },
         { "type": "object", "additionalProperties": false, "required": ["fail"],
-          "properties": { "fail": { "$ref": "#/$defs/session.socket" } } }
+          "properties": { "fail": { "$ref": "#/$defs/session.socket" } } },
+        { "type": "object", "additionalProperties": false, "required": ["failSend"],
+          "properties": { "failSend": { "$ref": "#/$defs/session.socket" } } }
       ]
     }
   }

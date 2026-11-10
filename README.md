@@ -49,7 +49,7 @@ Expected values never come from a port. They come from the spec text,
 Python derivation written from the spec (`tools/oracles/`).
 `tools/suite.py check` re-derives them wherever such an oracle exists.
 
-Version 0.15.0 contains six profiles, 383 cases in total:
+Version 0.15.0 contains six profiles, 391 cases in total:
 
 - `stateless` (182 cases): AES-CBC, frames, payloads (registration, one-shot
   read, actions, reports), value casting, the Object Manager URL and PIN,
@@ -58,17 +58,18 @@ Version 0.15.0 contains six profiles, 383 cases in total:
   entities, completeness rules, widget-level tolerance, normative order,
   thermostats and double scenes, and devices grouped by the CLU object
   they operate.
-- `session` (51 scenarios): one CLU session against a CLU played by the
+- `session` (55 scenarios): one CLU session against a CLU played by the
   runner on a virtual clock — correlation and timeouts, keep-alive,
   sequential chunked registration on one socket, report routing by
   subscription number, unregistering, lifecycle,
-  recovery, actions, and the periodic ping and re-registration loops.
-- `project` (14 cases on 11 project fixtures): importing a mobile interface
+  recovery, rejected sends, shared pings, actions, and the periodic ping and re-registration loops.
+- `project` (18 cases on 15 project fixtures): importing a mobile interface
   from an Object Manager project file (`.omp`) — interface selection,
   key, CLUs and push objects, the editor-to-interface conversion of every
   widget type (stand-in ids for widgets never sent to a phone), checked
   through the same device mapping
-  as a downloaded interface; and broken archives.
+  as a downloaded interface; and broken archives, UTF-8-only XML
+  and strict node JSON.
 - `provisioning` (26 cases on 15 archive fixtures): the interface archive
   (exact entry path, the 10 MiB limit counted while inflating, lying sizes,
   CRC, duplicates) and the Object Manager download over real HTTP on

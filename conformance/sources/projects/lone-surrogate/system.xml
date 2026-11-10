@@ -1,0 +1,85 @@
+<object-stream>
+  <!-- Push objects shared through XStream references live outside the tree. -->
+  <library>
+    <PushDefinition id="90">
+      <name>PUSH_SHARED</name>
+      <nameOnCLU>PUS2002</nameOnCLU>
+      <typeName>Push</typeName>
+      <typeId>31</typeId>
+      <typeVersion>1</typeVersion>
+    </PushDefinition>
+  </library>
+  <TreeObject id="1">
+    <name>CLU_A_FIRST_FLOOR</name>
+    <specificObject id="2">
+      <name>CLU_A_FIRST_FLOOR</name>
+      <nameOnCLU>CLU_A</nameOnCLU>
+      <ipAddress>10.0.0.1</ipAddress>
+      <serialNumber>0bebc201</serialNumber>
+    </specificObject>
+    <children>
+      <TreeObject id="3">
+        <name>LIGHT_ONE</name>
+        <specificObject id="4">
+          <name>LIGHT_ONE</name>
+          <nameOnCLU>DOU1001</nameOnCLU>
+          <typeName>DigitalOut</typeName>
+        </specificObject>
+      </TreeObject>
+      <TreeObject id="5">
+        <name>PUSH_ALARM</name>
+        <specificObject id="6">
+          <name>PUSH_ALARM</name>
+          <nameOnCLU>PUS1001</nameOnCLU>
+          <typeName>Push</typeName>
+          <typeId>31</typeId>
+          <typeVersion>1</typeVersion>
+        </specificObject>
+      </TreeObject>
+    </children>
+  </TreeObject>
+  <TreeObject id="10">
+    <name>CLU_B_GATE</name>
+    <specificObject id="11">
+      <name>CLU_B_GATE</name>
+      <nameOnCLU>CLU_B</nameOnCLU>
+      <ipAddress>10.0.0.2</ipAddress>
+      <serialNumber>1dcd6502</serialNumber>
+    </specificObject>
+    <children>
+      <TreeObject id="12">
+        <name>PUSH_SHARED</name>
+        <specificObject reference="90"/>
+      </TreeObject>
+    </children>
+  </TreeObject>
+  <TreeObject id="20">
+    <name>CLU_C_SPARE</name>
+    <specificObject id="21">
+      <name>CLU_C_SPARE</name>
+      <nameOnCLU>CLU_C</nameOnCLU>
+      <ipAddress>10.0.0.3</ipAddress>
+      <serialNumber>1c9c3803</serialNumber>
+    </specificObject>
+  </TreeObject>
+  <!-- A second record of CLU_A later in the document is ignored. -->
+  <TreeObject id="30">
+    <name>CLU_A_COPY</name>
+    <specificObject id="31">
+      <name>CLU_A_COPY</name>
+      <nameOnCLU>CLU_A</nameOnCLU>
+      <ipAddress>10.0.0.99</ipAddress>
+      <serialNumber>00000001</serialNumber>
+    </specificObject>
+  </TreeObject>
+  <!-- A Push object outside any CLU is skipped. -->
+  <TreeObject id="40">
+    <name>ORPHAN</name>
+    <specificObject id="41">
+      <nameOnCLU>PUS9999</nameOnCLU>
+      <typeName>Push</typeName>
+      <typeId>31</typeId>
+      <typeVersion>1</typeVersion>
+    </specificObject>
+  </TreeObject>
+</object-stream>

@@ -83,9 +83,29 @@ def reject_doctype(raw):
         raise invalid()
 
 
+XML_ENCODING_RE = re.compile(rb"<\?xml\s[^>]*?encoding\s*=\s*([\"'])(.*?)\1")
+
+
+def require_utf8(raw):
+    """§4.5.1 pt 4: UTF-8 only, a UTF-8 BOM allowed; a UTF-16 BOM, a declared
+    encoding other than UTF-8, or invalid UTF-8 is invalidData."""
+    if raw.startswith(b"\xef\xbb\xbf"):
+        raw = raw[3:]
+    elif raw.startswith((b"\xff\xfe", b"\xfe\xff")):
+        raise invalid()
+    declared = XML_ENCODING_RE.match(raw)
+    if declared and declared.group(2).lower() != b"utf-8":
+        raise invalid()
+    try:
+        raw.decode("utf-8")
+    except UnicodeDecodeError:
+        raise invalid()
+
+
 def parse_xml(raw):
     if raw is None:
         raise invalid()
+    require_utf8(raw)
     reject_doctype(raw)       # before ElementTree ever sees the document
     try:
         root = ET.fromstring(raw)
@@ -182,10 +202,25 @@ def strict_json(raw):
             raise invalid()
         return value
     try:
-        return json.loads(raw.decode("utf-8"), object_pairs_hook=pairs, parse_constant=constant,
-                          parse_float=number, parse_int=integer)
+        doc = json.loads(raw.decode("utf-8"), object_pairs_hook=pairs, parse_constant=constant,
+                         parse_float=number, parse_int=integer)
     except (UnicodeDecodeError, ValueError):
         raise invalid()
+    # Python keeps an unpaired surrogate escape ("\ud800") as a lone code
+    # point; §4.5.1 pt 5 makes it invalidData. Depth is at most 64 here.
+    def no_lone_surrogate(v):
+        if isinstance(v, str):
+            if any("\ud800" <= ch <= "\udfff" for ch in v):
+                raise invalid()
+        elif isinstance(v, dict):
+            for k, item in v.items():
+                no_lone_surrogate(k)
+                no_lone_surrogate(item)
+        elif isinstance(v, list):
+            for item in v:
+                no_lone_surrogate(item)
+    no_lone_surrogate(doc)
+    return doc
 
 
 # MARK: - Interfaces (§4.5.2)
@@ -678,24 +713,23 @@ def page(p):
 
 
 def used_clus(pages):
-    """cluIds of converted refs and actions; stubs carry none (§4.5.4)."""
+    """cluIds of converted refs and actions; stubs carry none (§4.5.4).
+    Every converted object with a cluId is a ref or an action, wherever it
+    sits: components, sides and their clickAction, object, multisensor
+    channels."""
     used = set()
 
-    def add(r):
-        if isinstance(r, dict) and isinstance(r.get("cluId"), str):
-            used.add(r["cluId"])
+    def walk(node):
+        if isinstance(node, dict):
+            if isinstance(node.get("cluId"), str):
+                used.add(node["cluId"])
+            for v in node.values():
+                walk(v)
+        elif isinstance(node, list):
+            for v in node:
+                walk(v)
 
-    for p in pages:
-        for w in p["widgets"]:
-            for c in w.get("components", []):
-                add(c.get("state"))
-                for a in c.get("actions", []):
-                    add(a)
-            for side in ("componentLeft", "componentRight"):
-                if side in w:
-                    add(w[side]["object"].get("value"))
-            for r in w.get("object", {}).values():
-                add(r)
+    walk([p["widgets"] for p in pages])
     return used
 
 

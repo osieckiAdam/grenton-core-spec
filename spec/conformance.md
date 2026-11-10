@@ -170,6 +170,7 @@ Steps (every object has exactly one verb):
 | `{"expectNoReport": true}` | no new report after the barrier |
 | `{"expectClosed": "@s"}` | socket `@s` was closed by the session |
 | `{"fail": "@s"}` | the transport reports a failure of socket `@s`: reception on it ends (§5.4.1 item 4) |
+| `{"failSend": "@s"}` | the next send on socket `@s` is rejected at once with an error (§5.4.1 item 4); the rejected datagram is not a sent one, so no `expectSent` sees it; one send only |
 
 The structure of the steps is described by `conformance/schemas/case.schema.json`, and `tools/suite.py check` checks every case against the schema and the rules between steps (labels and captures bound before use, every `call` received by an `await`). The runner rejects a step it does not recognize instead of skipping it.
 
